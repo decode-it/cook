@@ -17,7 +17,16 @@ namespace :cook do
         exe = Build::Executable.new("cook")
         exe.add_sources(FileList.new("src/**/*.cpp"))
         exe.add_include_path("src")
-        exe.add_include_path("gubg.std/src")
+        %w[std io].each{|e|exe.add_include_path("gubg.#{e}/src")}
+        case :debug
+        when :debug
+            exe.add_option('g')
+        else
+            exe.add_define('NDEBUG')
+        end
+    end
+    task :clean do
+        rm_rf(".cache")
     end
     task :build => :init do
         exe.build
@@ -29,11 +38,11 @@ end
 desc "Builds cook"
 task :build => "cook:build"
 desc "Tests cook"
-task :test => ["cook:build", "cook:run"]
+task :test => ["cook:clean", "cook:build", "cook:run"]
 
 desc "Updates all submodules the their respective heads"
 task :uth do
-    %w[build std chaiscript].each do |part|
+    %w[build std io chaiscript].each do |part|
         Dir.chdir("gubg.#{part}") do
             sh "git checkout master"
             sh "git pull --rebase"

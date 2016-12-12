@@ -10,3 +10,7 @@
 	path = gubg.chaiscript
 	url = https://github.com/gfannes/gubg.chaiscript
 	branch = master
+[submodule "gubg.io"]
+	path = gubg.io
+	url = https://github.com/gfannes/gubg.io
+	branch = master
