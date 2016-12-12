@@ -1,49 +1,15 @@
 print(">> Top level recipes")
 
-class Recipe
-{
-    def Recipe(ns,tag)
-    {
-        this.ns = ns
-        this.tag = tag
-        this.files = Map()
-    }
-    def name()
-    {
-        "${this.ns}#${this.tag}"
-    }
-    def add(dir, pattern, config)
-    {
-        auto fn = "${dir}/${pattern}"
-        auto info = ["dir":dir, "ref":pattern]
-        for_each(config, fun[info](p){info[p.first] = p.second})
-        this.files[fn] = info
-        this
-    }
-    def add(dir, pattern)
-    {
-        this.add(dir, pattern, Map())
-    }
-    def print()
-    {
-        print(this.name)
-        for_each(this.files, fun(p){
-            print("${p.first} => ${p.second}")
-        })
-        this
-    }
-}
+recipe("cook", "exe", fun(r){
+    r.add_source("src", "main.cpp")
+    r.add_source("src", "cook/recipe/Loader.cpp")
+    r.add_source("src", "cook/chai/Engine.cpp")
 
-def recipe(ns,tag, cb)
-{
-    auto r = Recipe(ns,tag)
-    print("Creating new recipe ${r.name}")
-    cb(r)
-    print("Created")
-}
+    r.add_header("src", "cook/main.hpp")
+    r.add_header("src", "cook/recipe/Description.hpp")
+    r.add_header("src", "cook/recipe/Loader.hpp")
+    r.add_header("src", "cook/chai/Engine.hpp")
 
-recipe("cook", "lib", fun(r){
-    r.add("src", "main.cpp", ["type":"source"])
     r.print()
 })
 

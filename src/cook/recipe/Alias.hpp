@@ -9,6 +9,8 @@ namespace cook { namespace recipe {
     class Alias
     {
         public:
+            Alias(const std::string &ns, const std::string &tag): ns_(ns), tag_(tag) {}
+
             const std::string &ns() const {return ns_;}
             const std::string &tag() const {return tag_;}
 

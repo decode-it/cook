@@ -18,6 +18,8 @@ namespace cook { namespace recipe {
             static constexpr const char *logns = "Loader";
 
         public:
+            Loader();
+
             ReturnCode load(const gubg::file::Name &fn)
             {
                 MSS_BEGIN(ReturnCode, logns);
@@ -28,6 +30,7 @@ namespace cook { namespace recipe {
 
         private:
             chai::Engine chai_engine_;
+            DescriptionPerAlias descriptions_;
     };
 
 } } 

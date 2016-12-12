@@ -10,12 +10,16 @@ namespace cook { namespace chai {
     class Engine
     {
         public:
+            using Raw = chaiscript::ChaiScript_Basic;
+
             Engine();
+
+            Raw &raw() {return engine_;}
 
             ReturnCode eval_file(const gubg::file::Name &);
 
         private:
-            chaiscript::ChaiScript_Basic engine_;
+            Raw engine_;
     };
 
 } } 
