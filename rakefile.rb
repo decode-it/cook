@@ -1,6 +1,7 @@
 begin
     require("./gubg.build/shared.rb")
 rescue LoadError
+    puts("This seems to be a fresh clone: I will update all required submodules for you.")
     sh "git submodule update --init"
     retry
 end
@@ -29,3 +30,13 @@ desc "Builds cook"
 task :build => "cook:build"
 desc "Tests cook"
 task :test => ["cook:build", "cook:run"]
+
+desc "Updates all submodules the their respective heads"
+task :uth do
+    %w[build std chaiscript].each do |part|
+        Dir.chdir("gubg.#{part}") do
+            sh "git checkout master"
+            sh "git pull --rebase"
+        end
+    end
+end
