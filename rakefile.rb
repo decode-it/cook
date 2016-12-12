@@ -1,4 +1,6 @@
-ENV["gubg"] = File.join(Dir.pwd, ".gubg")
+gubg_dir = File.join(Dir.pwd, ".gubg")
+ENV["gubg"] = gubg_dir
+
 begin
     require("./gubg.build/shared.rb")
 rescue LoadError
@@ -21,6 +23,9 @@ namespace :gubg do
         end
     end
 
+    task :proper do
+        rm_rf gubg_dir
+    end
     desc "Updates all submodules the their respective heads"
     task :uth do
         each_mod do
@@ -42,10 +47,11 @@ end
 
 namespace :cook do
     exe = nil
-    task :init do
+    task :init => "gubg:define" do
         require("gubg/build/Executable")
         exe = Build::Executable.new("cook")
         exe.add_sources(FileList.new("src/**/*.[hc]pp"))
+        exe.add_sources(FileList.new(File.join(gubg_dir, "include/**/*.hpp")))
         exe.add_include_path("src")
         %w[std io].each{|e|exe.add_include_path("gubg.#{e}/src")}
         exe.add_include_path(".gubg/include")
