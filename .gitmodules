@@ -1,0 +1,12 @@
+[submodule "gubg.std"]
+	path = gubg.std
+	url = https://github.com/gfannes/gubg.std
+	branch = master
+[submodule "gubg.build"]
+	path = gubg.build
+	url = https://github.com/gfannes/gubg.build
+	branch = master
+[submodule "gubg.chaiscript"]
+	path = gubg.chaiscript
+	url = https://github.com/gfannes/gubg.chaiscript
+	branch = master
