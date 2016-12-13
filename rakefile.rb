@@ -70,7 +70,8 @@ namespace :cook do
         exe.build
     end
     task :run => :init do
-        exe.run
+        exe.run("cook#exe")
+        sh "make cook.exe"
     end
 end
 desc "Builds cook"
@@ -78,4 +79,6 @@ task :build => "cook:build"
 desc "Tests cook"
 task :test => ["cook:build", "cook:run"]
 
-task :clean => ["cook:clean"]
+task :clean => "cook:clean" do
+    rm_f(FileList.new("**/*.obj"))
+end

@@ -5,18 +5,24 @@
 
 namespace cook { namespace recipe { 
 
-    void create_new_recipe(const std::string &ns, const std::string &tag, std::function<void (Description &)> callback)
+    bool Loader::create_new_recipe(const std::string &ns, const std::string &tag, std::function<void (Description &)> callback)
     {
-        Description description(Alias(ns, tag));
+        MSS_BEGIN(bool);
+        const Alias alias(ns, tag);
+        auto p = descriptions_.emplace(alias, alias);
+        MSS(p.second, std::cerr << "Recipe " << alias << " already exists" << std::endl);
+        auto &description = p.first->second;
         callback(description);
+        MSS_END();
     }
 
     Loader::Loader()
     {
         auto &chai = chai_engine_.raw();
-        chai.add(chaiscript::fun(create_new_recipe), "recipe");
+        chai.add(chaiscript::fun(&Loader::create_new_recipe, this), "recipe");
         chai.add(chaiscript::fun(&Description::add_source), "add_source");
         chai.add(chaiscript::fun(&Description::add_header), "add_header");
+        chai.add(chaiscript::fun(&Description::add_library), "add_library");
         chai.add(chaiscript::fun(&Description::print), "print");
     }
 

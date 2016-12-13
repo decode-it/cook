@@ -1,3 +1,5 @@
-cook.exe
+*.exe
+*.obj
+makefile
 .cache/
 .gubg/

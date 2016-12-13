@@ -10,6 +10,11 @@ recipe("cook", "exe", fun(r){
     r.add_header("src", "cook/recipe/Loader.hpp")
     r.add_header("src", "cook/chai/Engine.hpp")
 
+    r.add_header(".gubg/include", "gubg/file/Name.hpp")
+
+    r.add_library("dl")
+    r.add_library("pthread")
+
     r.print()
 })
 

@@ -5,6 +5,7 @@
 #include "gubg/file/Name.hpp"
 #include "gubg/debug.hpp"
 #include <map>
+#include <set>
 
 namespace cook { namespace recipe { 
 
@@ -30,6 +31,8 @@ namespace cook { namespace recipe {
             return os;
         }
     } 
+    using FileInfo = std::map<gubg::file::Name, file::Info>;
+    using Libraries = std::set<std::string>;
 
     class Description
     {
@@ -37,12 +40,22 @@ namespace cook { namespace recipe {
             static constexpr const char *logns = "recipe::Description";
 
         public:
+
             Description(const Alias &alias): alias_(alias) {}
 
             const Alias &alias() const {return alias_;}
 
+            const FileInfo &sources() const {return sources_;}
+            const FileInfo &headers() const {return headers_;}
+            const Libraries &libraries() const {return libraries_;}
+
+            //Methods exposed to chai
             void add_source(const std::string &dir, const std::string &pattern) { add_(sources_, file::Source, dir, pattern); }
             void add_header(const std::string &dir, const std::string &pattern) { add_(headers_, file::Header, dir, pattern); }
+            void add_library(const std::string &library)
+            {
+                libraries_.insert(library);
+            }
             void print() const
             {
                 std::cout << "Sources:" << std::endl;
@@ -54,8 +67,6 @@ namespace cook { namespace recipe {
             }
 
         private:
-            using FileInfo = std::map<gubg::file::Name, file::Info>;
-
             void add_(FileInfo &dst, file::Type type, const std::string &dir, const std::string &pattern)
             {
                 gubg::file::Name fp(dir); fp /= pattern;
@@ -68,6 +79,7 @@ namespace cook { namespace recipe {
             const Alias alias_;
             FileInfo sources_;
             FileInfo headers_;
+            Libraries libraries_;
     };
 
 } } 
