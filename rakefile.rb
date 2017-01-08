@@ -43,6 +43,23 @@ namespace :gubg do
             sh "rake define"
         end
     end
+    task :ut => :define do
+        require("gubg/build/Executable")
+        ut = Build::Executable.new("unit_tests")
+        ut.add_sources(FileList.new("gubg.io/src/test/file/System.cpp"))
+        ut.add_sources("#{gubg_dir}/source/catch_runner.cpp")
+        ut.add_include_path("#{gubg_dir}/include")
+        ut.add_library_path("#{gubg_dir}/lib")
+        ut.add_library("gubg.std", "gubg.io", "stdc++fs")
+        case :debug
+        when :debug
+            ut.add_option('g')
+        else
+            ut.add_define('NDEBUG')
+        end
+        options = %w[-a -d yes]
+        ut.run(options)
+    end
 end
 
 namespace :cook do
@@ -54,7 +71,7 @@ namespace :cook do
         exe.add_sources(FileList.new(File.join(gubg_dir, "include/**/*.hpp")))
         exe.add_include_path("src")
         %w[std io].each{|e|exe.add_include_path("gubg.#{e}/src")}
-        exe.add_include_path(".gubg/include")
+        exe.add_include_path("#{gubg_dir}/include")
         exe.add_library("dl")
         case :debug
         when :debug
