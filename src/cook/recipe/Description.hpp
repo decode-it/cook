@@ -2,8 +2,8 @@
 #define HEADER_cook_recipe_Description_hpp_ALREADY_INCLUDED
 
 #include "cook/recipe/Alias.hpp"
-#include "gubg/file/Name.hpp"
 #include "gubg/debug.hpp"
+#include "gubg/std/filesystem.hpp"
 #include <map>
 #include <set>
 
@@ -16,8 +16,8 @@ namespace cook { namespace recipe {
         };
         struct Info
         {
-            gubg::file::Name dir;
-            gubg::file::Name rel;
+            std::filesystem::path dir;
+            std::filesystem::path rel;
             Type type;
 
             void stream(std::ostream &os) const
@@ -31,7 +31,7 @@ namespace cook { namespace recipe {
             return os;
         }
     } 
-    using FileInfo = std::map<gubg::file::Name, file::Info>;
+    using FileInfo = std::map<std::filesystem::path, file::Info>;
     using Libraries = std::set<std::string>;
 
     class Description
@@ -69,7 +69,7 @@ namespace cook { namespace recipe {
         private:
             void add_(FileInfo &dst, file::Type type, const std::string &dir, const std::string &pattern)
             {
-                gubg::file::Name fp(dir); fp /= pattern;
+                std::filesystem::path fp(dir); fp /= pattern;
                 auto &info = dst[fp];
                 info.dir = dir;
                 info.rel = pattern;

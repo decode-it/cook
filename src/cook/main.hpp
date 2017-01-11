@@ -24,7 +24,7 @@ namespace cook {
 
         description.print();
 
-        std::set<gubg::file::Name> include_paths;
+        std::set<std::filesystem::path> include_paths;
         for (const auto &p: description.sources())
             include_paths.insert(p.second.dir);
         for (const auto &p: description.headers())
@@ -32,22 +32,22 @@ namespace cook {
 
         {
             std::ofstream fo("makefile");
-            std::list<gubg::file::Name> objects;
+            std::list<std::filesystem::path> objects;
             for (const auto &p: description.sources())
             {
                 const auto &source = p.first;
-                const auto obj = source + ".obj";
+                auto obj = source; obj += ".obj";
                 objects.push_back(obj);
-                fo << obj << ": " << source << std::endl;
+                fo << obj.string() << ": " << source.string() << std::endl;
                 fo << "\tg++ -std=c++17 -c -o " << obj << " " << source;
                 for (const auto &ip: include_paths)
                     fo << " -I " << ip;
                 fo << std::endl;
             }
-            const gubg::file::Name exe = "cook.exe";
-            fo << exe << ":";
+            const std::filesystem::path exe = "cook.exe";
+            fo << exe.string() << ":";
             for (const auto &obj: objects)
-                fo << " " << obj;
+                fo << " " << obj.string();
             fo << std::endl;
             fo << "\tg++ -std=c++17 -o " << exe;
             for (const auto &obj: objects)

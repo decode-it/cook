@@ -72,7 +72,7 @@ namespace :cook do
         exe.add_include_path("src")
         %w[std io].each{|e|exe.add_include_path("gubg.#{e}/src")}
         exe.add_include_path("#{gubg_dir}/include")
-        exe.add_library("dl")
+        exe.add_library("dl", "stdc++fs")
         case :debug
         when :debug
             exe.add_option('g')
