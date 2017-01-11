@@ -3,7 +3,7 @@
 
 #include "cook/recipe/Alias.hpp"
 #include "gubg/debug.hpp"
-#include "gubg/std/filesystem.hpp"
+#include "gubg/file/System.hpp"
 #include <map>
 #include <set>
 
@@ -69,11 +69,17 @@ namespace cook { namespace recipe {
         private:
             void add_(FileInfo &dst, file::Type type, const std::string &dir, const std::string &pattern)
             {
-                std::filesystem::path fp(dir); fp /= pattern;
-                auto &info = dst[fp];
-                info.dir = dir;
-                info.rel = pattern;
-                info.type = type;
+                S("add_");
+                auto add_file = [&](const std::filesystem::path &fp)
+                {
+                    L(C(fp));
+                    /* std::filesystem::path fp(dir); fp /= pattern; */
+                    auto &info = dst[fp];
+                    info.dir = dir;
+                    info.rel = pattern;
+                    info.type = type;
+                };
+                gubg::file::each_glob(pattern, add_file, dir);
             }
 
             const Alias alias_;

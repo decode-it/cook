@@ -4,7 +4,6 @@
 #include "cook/recipe/Description.hpp"
 #include "cook/Codes.hpp"
 #include "cook/chai/Engine.hpp"
-#include "gubg/file/Name.hpp"
 #include "gubg/mss.hpp"
 #include <map>
 
@@ -20,7 +19,7 @@ namespace cook { namespace recipe {
         public:
             Loader();
 
-            ReturnCode load(const gubg::file::Name &fn)
+            ReturnCode load(const std::filesystem::path &fn)
             {
                 MSS_BEGIN(ReturnCode, logns);
                 L("Loading recipes from " << fn);
