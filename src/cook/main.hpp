@@ -51,7 +51,8 @@ namespace cook {
             fo << std::endl;
 
             fo << "rule compile" << std::endl;
-            fo << "  command = $compiler -c $cflags -o $out $in $include_paths" << std::endl;
+            fo << "  command = $compiler -c -MD -MF $out.d $cflags -o $out $in $include_paths" << std::endl;
+            fo << "  depfile = $out.d" << std::endl;
             fo << "rule link" << std::endl;
             fo << "  command = $linker $lflags -o $out $in $libraries" << std::endl;
             fo << std::endl;
