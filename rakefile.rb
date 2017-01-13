@@ -88,7 +88,7 @@ namespace :cook do
     end
     task :run => :init do
         exe.run("cook#exe")
-        sh "make cook.exe"
+        sh "ninja"
     end
 end
 desc "Builds cook"
