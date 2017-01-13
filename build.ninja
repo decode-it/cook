@@ -1,0 +1,26 @@
+compiler = g++ -std=c++17
+linker = g++ -std=c++17
+delete = rm -f
+
+cflags = 
+include_paths = -I ".gubg/include" -I "gubg.io/src" -I "src"
+lflags = 
+libraries = -ldl -lpthread -lstdc++fs
+rule compile
+  command = $compiler -c -MD -MF $out.d $cflags -o $out $in $include_paths
+  depfile = $out.d
+rule link
+  command = $linker $lflags -o $out $in $libraries
+
+build src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
+build src/cook/recipe/Loader.cpp.obj: compile src/cook/recipe/Loader.cpp
+build src/main.cpp.obj: compile src/main.cpp
+build cook.exe: link $
+    src/cook/chai/Engine.cpp.obj $
+    src/cook/recipe/Loader.cpp.obj $
+    src/main.cpp.obj
+
+rule clean
+  command = ninja -t clean
+build clean: clean
+default cook.exe

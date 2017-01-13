@@ -74,14 +74,8 @@ namespace cook {
             fo << std::endl;
 
             fo << "rule clean" << std::endl;
-            fo << "  command = $delete " << exe.string();;
-            for (const auto &obj: objects)
-                fo << " $" << std::endl << "    " << obj.string();
-            fo << std::endl;
-            fo << std::endl;
-
-            fo << "build clean: clean"; 
-            fo << std::endl;
+            fo << "  command = ninja -t clean" << std::endl;
+            fo << "build clean: clean" << std::endl;
 
             fo << "default " << exe.string() << std::endl;
         }
