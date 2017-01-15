@@ -12,6 +12,9 @@ namespace cook {
     {
         MSS_BEGIN(ReturnCode);
 
+        /* const std::string config = "debug"; */
+        const std::string config = "release";
+
         recipe::Loader loader;
         MSS(loader.load("recipes.chai"));
 
@@ -30,6 +33,10 @@ namespace cook {
         for (const auto &p: description.headers())
             include_paths.insert(p.second.dir);
 
+        std::map<std::string, std::string> defines;
+        if (config == "release")
+            defines["NDEBUG"] = "";
+
         {
             std::ofstream fo("build.ninja");
 
@@ -38,7 +45,21 @@ namespace cook {
             fo << "delete = rm -f" << std::endl;
             fo << std::endl;
 
-            fo << "cflags = " << std::endl;
+            fo << "cflags = ";
+            if (config == "debug")
+                fo << "-g ";
+            fo << std::endl;
+            fo << "defines = ";
+            for (const auto &p: defines)
+            {
+                const auto &key = p.first;
+                const auto &value = p.second;
+                if (value.empty())
+                    fo << "-D" << key;
+                else
+                    fo << "-D" << key << "=" << value;
+            }
+            fo << std::endl;
             fo << "include_paths =";
             for (const auto &ip: include_paths)
                 fo << " -I " << ip;
@@ -51,15 +72,14 @@ namespace cook {
             fo << std::endl;
 
             fo << "rule compile" << std::endl;
-            fo << "  command = $compiler -c -MD -MF $out.d $cflags -o $out $in $include_paths" << std::endl;
+            fo << "  command = $compiler -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths" << std::endl;
             fo << "  depfile = $out.d" << std::endl;
             fo << "rule link" << std::endl;
             fo << "  command = $linker $lflags -o $out $in $libraries" << std::endl;
             fo << std::endl;
 
             std::list<std::filesystem::path> objects;
-            const std::filesystem::path build_dir = ".build";
-            const std::string config = "debug";
+            const std::filesystem::path build_dir = ".cook";
             for (const auto &p: description.sources())
             {
                 const auto &source = p.first;

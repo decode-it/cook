@@ -3,22 +3,23 @@ linker = g++ -std=c++17
 delete = rm -f
 
 cflags = 
+defines = -DNDEBUG
 include_paths = -I ".gubg/include" -I "gubg.io/src" -I "src"
 lflags = 
 libraries = -ldl -lpthread -lstdc++fs
 rule compile
-  command = $compiler -c -MD -MF $out.d $cflags -o $out $in $include_paths
+  command = $compiler -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths
   depfile = $out.d
 rule link
   command = $linker $lflags -o $out $in $libraries
 
-build .build/debug/src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
-build .build/debug/src/cook/recipe/Loader.cpp.obj: compile src/cook/recipe/Loader.cpp
-build .build/debug/src/main.cpp.obj: compile src/main.cpp
+build .cook/release/src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
+build .cook/release/src/cook/recipe/Loader.cpp.obj: compile src/cook/recipe/Loader.cpp
+build .cook/release/src/main.cpp.obj: compile src/main.cpp
 build cook.exe: link $
-    .build/debug/src/cook/chai/Engine.cpp.obj $
-    .build/debug/src/cook/recipe/Loader.cpp.obj $
-    .build/debug/src/main.cpp.obj
+    .cook/release/src/cook/chai/Engine.cpp.obj $
+    .cook/release/src/cook/recipe/Loader.cpp.obj $
+    .cook/release/src/main.cpp.obj
 
 rule clean
   command = ninja -t clean
