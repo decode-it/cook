@@ -58,10 +58,12 @@ namespace cook {
             fo << std::endl;
 
             std::list<std::filesystem::path> objects;
+            const std::filesystem::path build_dir = ".build";
+            const std::string config = "debug";
             for (const auto &p: description.sources())
             {
                 const auto &source = p.first;
-                auto obj = source; obj += ".obj";
+                auto obj = build_dir; obj /= config; obj /= source; obj += ".obj";
                 objects.push_back(obj);
                 fo << "build " << obj.string() << ": compile " << source.string() << std::endl;
             }

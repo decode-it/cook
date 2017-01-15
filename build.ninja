@@ -12,13 +12,13 @@ rule compile
 rule link
   command = $linker $lflags -o $out $in $libraries
 
-build src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
-build src/cook/recipe/Loader.cpp.obj: compile src/cook/recipe/Loader.cpp
-build src/main.cpp.obj: compile src/main.cpp
+build .build/debug/src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
+build .build/debug/src/cook/recipe/Loader.cpp.obj: compile src/cook/recipe/Loader.cpp
+build .build/debug/src/main.cpp.obj: compile src/main.cpp
 build cook.exe: link $
-    src/cook/chai/Engine.cpp.obj $
-    src/cook/recipe/Loader.cpp.obj $
-    src/main.cpp.obj
+    .build/debug/src/cook/chai/Engine.cpp.obj $
+    .build/debug/src/cook/recipe/Loader.cpp.obj $
+    .build/debug/src/main.cpp.obj
 
 rule clean
   command = ninja -t clean
