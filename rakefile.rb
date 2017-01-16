@@ -62,6 +62,18 @@ namespace :gubg do
     end
 end
 
+module Ninja
+    def self.build
+        Rake::sh("ninja") do |ok, res|
+            unless ok
+                puts("Something went wrong, may you don't have ninja installed:")
+                puts("* Ubuntu: sudo apt install ninja-build")
+                raise("stop")
+            end
+        end
+    end
+end
+
 namespace :cook do
     exe = nil
     task :init => "gubg:define" do
@@ -83,12 +95,22 @@ namespace :cook do
     task :clean do
         rm_rf(".cache")
     end
-    task :build => :init do
+    task :build_with_ruby => :init do
         exe.build
     end
-    task :run => :init do
-        exe.run("cook#exe")
-        sh "ninja"
+    task :build do
+        if !File.exist?("cook.exe")
+            if File.exist?("build.ninja")
+                Ninja::build
+            else
+                Rake::Task["cook:build_with_ruby"].invoke
+            end
+        end
+        sh "./cook.exe cook#exe"
+        Ninja::build
+    end
+    task :run do
+        sh "./cook.exe cook#exe"
     end
 end
 desc "Builds cook"

@@ -2,4 +2,4 @@
 makefile
 .cache/
 .gubg/
-.build/
+.cook/
