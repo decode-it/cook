@@ -10,7 +10,7 @@ namespace cook {
         std::string config = "release";
         bool print_help = false;
         std::string help_message;
-        bool do_build = false;
+        bool do_build = true;
         std::string alias;
 
         bool parse(int argc, const char **argv)
@@ -19,7 +19,7 @@ namespace cook {
             gubg::OptionParser opt("Cooking fresh binaries, C++-style");
             opt.add_switch('h', "--help", "Print this help", [&](){print_help = true;});
             opt.add_mandatory('c', "--config", "Configuration: [release|debug]", [&](const std::string &str){config = str;});
-            opt.add_switch('b', "--build", "Perform the build as well", [&](){do_build = true;});
+            opt.add_switch('n', "--no-build", "Only generate the build.ninja file", [&](){do_build = false;});
             auto args = gubg::OptionParser::create_args(argc, argv);
             MSS(opt.parse(args));
             help_message = opt.help();

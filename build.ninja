@@ -2,8 +2,8 @@ compiler = g++ -std=c++17
 linker = g++ -std=c++17
 delete = rm -f
 
-cflags = -g 
-defines = 
+cflags = 
+defines = -DNDEBUG
 include_paths = -I ".gubg/extern/ChaiScript/include" -I "gubg.io/src" -I "gubg.std/src" -I "src"
 lflags = 
 libraries = -ldl -lpthread -lstdc++fs
@@ -13,33 +13,33 @@ rule compile
 rule link
   command = $linker $lflags -o $out $in $libraries
 
-build .cook/debug/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
-build .cook/debug/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
-build .cook/debug/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj: compile gubg.io/src/gubg/bitmagic/bitmagic.cpp
-build .cook/debug/gubg.io/src/gubg/file/Descriptor.cpp.obj: compile gubg.io/src/gubg/file/Descriptor.cpp
-build .cook/debug/gubg.io/src/gubg/file/File.cpp.obj: compile gubg.io/src/gubg/file/File.cpp
-build .cook/debug/gubg.io/src/gubg/file/Filesystem.cpp.obj: compile gubg.io/src/gubg/file/Filesystem.cpp
-build .cook/debug/gubg.io/src/gubg/file/Forest.cpp.obj: compile gubg.io/src/gubg/file/Forest.cpp
-build .cook/debug/gubg.io/src/gubg/hash/MD5.cpp.obj: compile gubg.io/src/gubg/hash/MD5.cpp
-build .cook/debug/gubg.io/src/gubg/parse/basic.cpp.obj: compile gubg.io/src/gubg/parse/basic.cpp
-build .cook/debug/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile gubg.io/src/gubg/parse/xml/Coding.cpp
-build .cook/debug/src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
-build .cook/debug/src/cook/recipe/Loader.cpp.obj: compile src/cook/recipe/Loader.cpp
-build .cook/debug/src/main.cpp.obj: compile src/main.cpp
+build .cook/release/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
+build .cook/release/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
+build .cook/release/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj: compile gubg.io/src/gubg/bitmagic/bitmagic.cpp
+build .cook/release/gubg.io/src/gubg/file/Descriptor.cpp.obj: compile gubg.io/src/gubg/file/Descriptor.cpp
+build .cook/release/gubg.io/src/gubg/file/File.cpp.obj: compile gubg.io/src/gubg/file/File.cpp
+build .cook/release/gubg.io/src/gubg/file/Filesystem.cpp.obj: compile gubg.io/src/gubg/file/Filesystem.cpp
+build .cook/release/gubg.io/src/gubg/file/Forest.cpp.obj: compile gubg.io/src/gubg/file/Forest.cpp
+build .cook/release/gubg.io/src/gubg/hash/MD5.cpp.obj: compile gubg.io/src/gubg/hash/MD5.cpp
+build .cook/release/gubg.io/src/gubg/parse/basic.cpp.obj: compile gubg.io/src/gubg/parse/basic.cpp
+build .cook/release/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile gubg.io/src/gubg/parse/xml/Coding.cpp
+build .cook/release/src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
+build .cook/release/src/cook/recipe/Loader.cpp.obj: compile src/cook/recipe/Loader.cpp
+build .cook/release/src/main.cpp.obj: compile src/main.cpp
 build cook.exe: link $
-    .cook/debug/gubg.io/src/gubg/OptionParser.cpp.obj $
-    .cook/debug/gubg.io/src/gubg/Strange.cpp.obj $
-    .cook/debug/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
-    .cook/debug/gubg.io/src/gubg/file/Descriptor.cpp.obj $
-    .cook/debug/gubg.io/src/gubg/file/File.cpp.obj $
-    .cook/debug/gubg.io/src/gubg/file/Filesystem.cpp.obj $
-    .cook/debug/gubg.io/src/gubg/file/Forest.cpp.obj $
-    .cook/debug/gubg.io/src/gubg/hash/MD5.cpp.obj $
-    .cook/debug/gubg.io/src/gubg/parse/basic.cpp.obj $
-    .cook/debug/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
-    .cook/debug/src/cook/chai/Engine.cpp.obj $
-    .cook/debug/src/cook/recipe/Loader.cpp.obj $
-    .cook/debug/src/main.cpp.obj
+    .cook/release/gubg.io/src/gubg/OptionParser.cpp.obj $
+    .cook/release/gubg.io/src/gubg/Strange.cpp.obj $
+    .cook/release/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
+    .cook/release/gubg.io/src/gubg/file/Descriptor.cpp.obj $
+    .cook/release/gubg.io/src/gubg/file/File.cpp.obj $
+    .cook/release/gubg.io/src/gubg/file/Filesystem.cpp.obj $
+    .cook/release/gubg.io/src/gubg/file/Forest.cpp.obj $
+    .cook/release/gubg.io/src/gubg/hash/MD5.cpp.obj $
+    .cook/release/gubg.io/src/gubg/parse/basic.cpp.obj $
+    .cook/release/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
+    .cook/release/src/cook/chai/Engine.cpp.obj $
+    .cook/release/src/cook/recipe/Loader.cpp.obj $
+    .cook/release/src/main.cpp.obj
 
 rule clean
   command = ninja -t clean
