@@ -3,23 +3,30 @@
 
 #include "cook/Codes.hpp"
 #include "cook/recipe/Loader.hpp"
+#include "cook/Options.hpp"
 #include "gubg/mss.hpp"
 #include <fstream>
 #include <set>
+#include <cstdlib>
 
 namespace cook { 
     ReturnCode main(int argc, const char **argv)
     {
         MSS_BEGIN(ReturnCode);
 
-        /* const std::string config = "debug"; */
-        const std::string config = "release";
+        Options options;
+        MSS(options.parse(argc, argv));
+
+        if (options.print_help || options.alias.empty())
+        {
+            std::cout << options.help_message << std::endl;
+            MSS_RETURN_OK();
+        }
 
         recipe::Loader loader;
         MSS(loader.load("recipes.chai"));
 
-        MSS(argc == 2);
-        const recipe::Alias alias(argv[1]);
+        const recipe::Alias alias(options.alias);
 
         const recipe::Description *ptr;
         MSS(loader.get(ptr, alias));
@@ -34,7 +41,7 @@ namespace cook {
             include_paths.insert(p.second.dir);
 
         std::map<std::string, std::string> defines;
-        if (config == "release")
+        if (options.config == "release")
             defines["NDEBUG"] = "";
 
         {
@@ -46,7 +53,7 @@ namespace cook {
             fo << std::endl;
 
             fo << "cflags = ";
-            if (config == "debug")
+            if (options.config == "debug")
                 fo << "-g ";
             fo << std::endl;
             fo << "defines = ";
@@ -83,7 +90,7 @@ namespace cook {
             for (const auto &p: description.sources())
             {
                 const auto &source = p.first;
-                auto obj = build_dir; obj /= config; obj /= source; obj += ".obj";
+                auto obj = build_dir; obj /= options.config; obj /= source; obj += ".obj";
                 objects.push_back(obj);
                 fo << "build " << obj.string() << ": compile " << source.string() << std::endl;
             }
@@ -101,6 +108,9 @@ namespace cook {
 
             fo << "default " << exe.string() << std::endl;
         }
+
+        if (options.do_build)
+            MSS(std::system("ninja -v") == 0);
 
         MSS_END();
     }

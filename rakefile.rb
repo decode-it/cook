@@ -66,7 +66,7 @@ module Ninja
     def self.build
         Rake::sh("ninja") do |ok, res|
             unless ok
-                puts("Something went wrong, may you don't have ninja installed:")
+                puts("Something went wrong, maybe you don't have ninja installed:")
                 puts("* Ubuntu: sudo apt install ninja-build")
                 raise("stop")
             end
@@ -80,9 +80,12 @@ namespace :cook do
         require("gubg/build/Executable")
         exe = Build::Executable.new("cook")
         exe.add_sources(FileList.new("src/**/*.[hc]pp"))
-        exe.add_sources(FileList.new(File.join(gubg_dir, "include/**/*.hpp")))
         exe.add_include_path("src")
-        %w[std io].each{|e|exe.add_include_path("gubg.#{e}/src")}
+        %w[std io].each do |e|
+            dir = "gubg.#{e}/src"
+            exe.add_sources(FileList.new(File.join(dir, "gubg/**/*.[hc]pp")))
+            exe.add_include_path(dir)
+        end
         exe.add_include_path("#{gubg_dir}/include")
         exe.add_library("dl", "stdc++fs")
         case :debug
@@ -118,6 +121,8 @@ task :build => "cook:build"
 desc "Tests cook"
 task :test => ["cook:build", "cook:run"]
 
+desc "Clean"
 task :clean => "cook:clean" do
     rm_f(FileList.new("**/*.obj"))
+    rm_rf(".cook")
 end
