@@ -52,7 +52,15 @@ namespace cook {
             fo << "delete = rm -f" << std::endl;
             fo << std::endl;
 
-            fo << "cflags = ";
+            fo << "cflags =";
+            if (false) {}
+            else if (options.arch == "x32") fo << " -m32";
+            else if (options.arch == "x64") fo << " -m64";
+            else
+            {
+                std::cerr << "Unknown arch " << options.arch << std::endl;
+                MSS(false);
+            }
             if (options.config == "debug")
                 fo << "-g ";
             fo << std::endl;
@@ -72,7 +80,16 @@ namespace cook {
                 fo << " -I " << ip;
             fo << std::endl;
 
-            fo << "lflags = " << std::endl;
+            fo << "lflags =";
+            if (false) {}
+            else if (options.arch == "x32") fo << " -m32";
+            else if (options.arch == "x64") fo << " -m64";
+            else
+            {
+                std::cerr << "Unknown arch " << options.arch << std::endl;
+                MSS(false);
+            }
+            fo << std::endl;
             fo << "libraries =";
             for (const auto &lib: description.libraries())
                 fo << " -l" << lib;
@@ -90,7 +107,7 @@ namespace cook {
             for (const auto &p: description.sources())
             {
                 const auto &source = p.first;
-                auto obj = build_dir; obj /= options.config; obj /= source; obj += ".obj";
+                auto obj = build_dir; obj /= options.arch; obj /= options.config; obj /= source; obj += ".obj";
                 objects.push_back(obj);
                 fo << "build " << obj.string() << ": compile " << source.string() << std::endl;
             }

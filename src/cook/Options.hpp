@@ -8,6 +8,7 @@ namespace cook {
     struct Options
     {
         std::string config = "release";
+        std::string arch = "x32";
         bool print_help = false;
         std::string help_message;
         bool do_build = true;
@@ -19,6 +20,7 @@ namespace cook {
             gubg::OptionParser opt("Cooking fresh binaries, C++-style");
             opt.add_switch('h', "--help", "Print this help", [&](){print_help = true;});
             opt.add_mandatory('c', "--config", "Configuration: [release|debug]", [&](const std::string &str){config = str;});
+            opt.add_mandatory('a', "--arch", "Architecture: [x32|x64|uno]", [&](const std::string &str){arch = str;});
             opt.add_switch('n', "--no-build", "Only generate the build.ninja file", [&](){do_build = false;});
             auto args = gubg::OptionParser::create_args(argc, argv);
             MSS(opt.parse(args));
