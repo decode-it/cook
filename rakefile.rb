@@ -123,6 +123,7 @@ task :test => ["cook:build", "cook:run"]
 
 desc "Clean"
 task :clean => "cook:clean" do
-    rm_f(FileList.new("**/*.obj"))
+    rm(FileList.new("**/*.obj"))
+    rm(FileList.new("*.exe"))
     rm_rf(".cook")
 end
