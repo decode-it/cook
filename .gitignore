@@ -3,3 +3,5 @@ makefile
 .cache/
 .gubg/
 .cook/
+.ninja_deps
+.ninja_log
