@@ -20,6 +20,7 @@ namespace :setup do
         sh "sudo apt install ninja-build"
         #Fixes problems with #including bits/c++config.h
         sh "sudo apt install gcc-multilib g++-multilib"
+        Rake::Task["gubg:define"].invoke
     end
 end
 
@@ -135,4 +136,9 @@ task :clean => "cook:clean" do
     rm(FileList.new("**/*.obj"))
     rm(FileList.new("*.exe"))
     rm_rf(".cook")
+end
+
+desc "Install"
+task :install => "build" do
+    cp "cook.exe", "/usr/local/bin/cook"
 end
