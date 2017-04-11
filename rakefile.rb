@@ -13,6 +13,14 @@ task :default do
     sh "rake -T"
 end
 
+namespace :setup do
+    desc "Setup for ubuntu"
+    task :ubuntu do
+        #Fixes problems with #including bits/c++config.h
+        sh "sudo apt-get install gcc-multilib g++-multilib"
+    end
+end
+
 namespace :gubg do
     def each_mod()
         mods = %w[build std io chaiscript].map{|e|"gubg.#{e}"}
