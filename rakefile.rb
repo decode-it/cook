@@ -16,8 +16,10 @@ end
 namespace :setup do
     desc "Setup for ubuntu"
     task :ubuntu do
+        #We rely on ninja
+        sh "sudo apt install ninja-build"
         #Fixes problems with #including bits/c++config.h
-        sh "sudo apt-get install gcc-multilib g++-multilib"
+        sh "sudo apt install gcc-multilib g++-multilib"
     end
 end
 
@@ -74,8 +76,7 @@ module Ninja
     def self.build
         Rake::sh("ninja") do |ok, res|
             unless ok
-                puts("Something went wrong, maybe you don't have ninja installed:")
-                puts("* Ubuntu: sudo apt install ninja-build")
+                puts("Something went wrong, please run the setup for your platform")
                 raise("stop")
             end
         end
