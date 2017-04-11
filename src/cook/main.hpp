@@ -112,7 +112,7 @@ namespace cook {
                 fo << "build " << obj.string() << ": compile " << source.string() << std::endl;
             }
 
-            const std::filesystem::path exe = "cook.exe";
+            const std::filesystem::path exe = alias.ns()+"."+alias.tag();
             fo << "build " << exe.string() << ": link";
             for (const auto &obj: objects)
                 fo << " $" << std::endl << "    " << obj.string();
