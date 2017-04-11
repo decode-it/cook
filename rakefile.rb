@@ -78,6 +78,7 @@ module Ninja
         Rake::sh("ninja") do |ok, res|
             unless ok
                 puts("Something went wrong, please run the setup for your platform")
+                puts(" * Ubuntu: rake setup:ubuntu")
                 raise("stop")
             end
         end
