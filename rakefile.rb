@@ -141,5 +141,5 @@ end
 
 desc "Install"
 task :install => "build" do
-    cp "cook.exe", "/usr/local/bin/cook"
+    sh("sudo cp cook.exe /usr/local/bin/cook")
 end
