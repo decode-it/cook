@@ -32,7 +32,9 @@ namespace cook { namespace recipe {
         }
     } 
     using FileInfo = std::map<std::filesystem::path, file::Info>;
-    using Libraries = std::set<std::string>;
+    using IncludePaths = std::set<std::filesystem::path>;
+    using LibraryPaths = std::set<std::filesystem::path>;
+    using Libraries = std::vector<std::string>;
 
     class Description
     {
@@ -47,14 +49,22 @@ namespace cook { namespace recipe {
 
             const FileInfo &sources() const {return sources_;}
             const FileInfo &headers() const {return headers_;}
+            const IncludePaths &include_paths() const {return include_paths_;}
+            const LibraryPaths &library_paths() const {return library_paths_;}
             const Libraries &libraries() const {return libraries_;}
 
             //Methods exposed to chai
             void add_source(const std::string &dir, const std::string &pattern) { add_(sources_, file::Source, dir, pattern); }
             void add_header(const std::string &dir, const std::string &pattern) { add_(headers_, file::Header, dir, pattern); }
+            void add_include_path(const std::string &dir) { include_paths_.insert(dir); }
+            void add_library_path(const std::string &dir) { library_paths_.insert(dir); }
             void add_library(const std::string &library)
             {
-                libraries_.insert(library);
+                for (const auto &lib: libraries_)
+                    if (lib == library)
+                        //Already present
+                        return;
+                libraries_.push_back(library);
             }
             void print() const
             {
@@ -85,6 +95,8 @@ namespace cook { namespace recipe {
             const Alias alias_;
             FileInfo sources_;
             FileInfo headers_;
+            IncludePaths include_paths_;
+            LibraryPaths library_paths_;
             Libraries libraries_;
     };
 

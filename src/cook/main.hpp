@@ -39,6 +39,8 @@ namespace cook {
             include_paths.insert(p.second.dir);
         for (const auto &p: description.headers())
             include_paths.insert(p.second.dir);
+        for (const auto &p: description.include_paths())
+            include_paths.insert(p);
 
         std::map<std::string, std::string> defines;
         if (options.config == "release")
@@ -90,6 +92,10 @@ namespace cook {
                 MSS(false);
             }
             fo << std::endl;
+            fo << "library_paths =";
+            for (const auto &path: description.library_paths())
+                fo << " -L" << path;
+            fo << std::endl;
             fo << "libraries =";
             for (const auto &lib: description.libraries())
                 fo << " -l" << lib;
@@ -99,7 +105,7 @@ namespace cook {
             fo << "  command = $compiler -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths" << std::endl;
             fo << "  depfile = $out.d" << std::endl;
             fo << "rule link" << std::endl;
-            fo << "  command = $linker $lflags -o $out $in $libraries" << std::endl;
+            fo << "  command = $linker $lflags -o $out $in $library_paths $libraries" << std::endl;
             fo << std::endl;
 
             std::list<std::filesystem::path> objects;

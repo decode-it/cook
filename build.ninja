@@ -6,12 +6,13 @@ cflags = -m32
 defines = -DNDEBUG
 include_paths = -I ".gubg/extern/ChaiScript/include" -I "gubg.io/src" -I "gubg.std/src" -I "src"
 lflags = -m32
+library_paths =
 libraries = -ldl -lpthread -lstdc++fs
 rule compile
   command = $compiler -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths
   depfile = $out.d
 rule link
-  command = $linker $lflags -o $out $in $libraries
+  command = $linker $lflags -o $out $in $library_paths $libraries
 
 build .cook/x32/release/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
 build .cook/x32/release/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp

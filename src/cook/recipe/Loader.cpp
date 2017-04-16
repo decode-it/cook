@@ -22,6 +22,8 @@ namespace cook { namespace recipe {
         chai.add(chaiscript::fun(&Loader::create_new_recipe, this), "recipe");
         chai.add(chaiscript::fun(&Description::add_source), "add_source");
         chai.add(chaiscript::fun(&Description::add_header), "add_header");
+        chai.add(chaiscript::fun(&Description::add_include_path), "add_include_path");
+        chai.add(chaiscript::fun(&Description::add_library_path), "add_library_path");
         chai.add(chaiscript::fun(&Description::add_library), "add_library");
         chai.add(chaiscript::fun(&Description::print), "print");
     }
