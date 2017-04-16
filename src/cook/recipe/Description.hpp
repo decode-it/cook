@@ -34,6 +34,7 @@ namespace cook { namespace recipe {
     using FileInfo = std::map<std::filesystem::path, file::Info>;
     using IncludePaths = std::set<std::filesystem::path>;
     using LibraryPaths = std::set<std::filesystem::path>;
+    //Order is important: we cannot use std::set
     using Libraries = std::vector<std::string>;
 
     class Description
