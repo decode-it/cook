@@ -26,6 +26,8 @@ namespace cook {
         recipe::Loader loader;
         MSS(loader.load("recipes.chai"));
 
+        MSS(loader.resolve());
+
         const recipe::Alias alias(options.alias);
 
         const recipe::Description *ptr;

@@ -36,6 +36,7 @@ namespace cook { namespace recipe {
     using LibraryPaths = std::set<std::filesystem::path>;
     //Order is important: we cannot use std::set
     using Libraries = std::vector<std::string>;
+    using Dependencies = std::set<std::string>;
 
     class Description
     {
@@ -43,7 +44,6 @@ namespace cook { namespace recipe {
             static constexpr const char *logns = "recipe::Description";
 
         public:
-
             Description(const Alias &alias): alias_(alias) {}
 
             const Alias &alias() const {return alias_;}
@@ -53,6 +53,7 @@ namespace cook { namespace recipe {
             const IncludePaths &include_paths() const {return include_paths_;}
             const LibraryPaths &library_paths() const {return library_paths_;}
             const Libraries &libraries() const {return libraries_;}
+            const Dependencies &dependencies() const {return dependencies_;}
 
             //Methods exposed to chai
             void add_source(const std::string &dir, const std::string &pattern) { add_(sources_, file::Source, dir, pattern); }
@@ -67,6 +68,7 @@ namespace cook { namespace recipe {
                         return;
                 libraries_.push_back(library);
             }
+            void depends_on(const std::string &alias) { dependencies_.insert(alias); }
             void print() const
             {
                 std::cout << "Sources:" << std::endl;
@@ -75,6 +77,16 @@ namespace cook { namespace recipe {
                 std::cout << "Headers:" << std::endl;
                 for (const auto &p: headers_)
                     std::cout << " * " << p.first << " => " << p.second << std::endl;
+            }
+
+            void merge(const Description &rhs)
+            {
+                sources_.insert(rhs.sources_.begin(), rhs.sources_.end());
+                headers_.insert(rhs.headers_.begin(), rhs.headers_.end());
+                include_paths_.insert(rhs.include_paths_.begin(), rhs.include_paths_.end());
+                library_paths_.insert(rhs.library_paths_.begin(), rhs.library_paths_.end());
+                for (const auto &lib: rhs.libraries_)
+                    add_library(lib);
             }
 
         private:
@@ -99,6 +111,7 @@ namespace cook { namespace recipe {
             IncludePaths include_paths_;
             LibraryPaths library_paths_;
             Libraries libraries_;
+            Dependencies dependencies_;
     };
 
 } } 

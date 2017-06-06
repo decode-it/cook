@@ -6,6 +6,7 @@
 #include "cook/chai/Engine.hpp"
 #include "gubg/mss.hpp"
 #include <map>
+#include <iostream>
 
 namespace cook { namespace recipe { 
 
@@ -25,6 +26,54 @@ namespace cook { namespace recipe {
                 L("Loading recipes from " << fn);
                 MSS(chai_engine_.eval_file(fn));
                 L("Loaded " << descriptions_.size() << " recipes");
+                MSS_END();
+            }
+
+            ReturnCode resolve()
+            {
+                MSS_BEGIN(ReturnCode, logns);
+
+                bool changed;
+                do
+                {
+                    changed = false;
+                    for (auto &p: descriptions_)
+                    {
+                        auto &a_alias = p.first;
+                        auto &a = p.second;
+                        std::set<std::string> new_deps;
+                        {
+                            const auto &deps = a.dependencies();
+                            for (const auto &b_alias: deps)
+                            {
+                                auto b_it = descriptions_.find(b_alias);
+                                MSS(b_it != descriptions_.end(), std::cerr << "Error: Could not find dependency " << b_alias << " needed by " << a_alias << std::endl);
+                                if (b_alias != a_alias.str())
+                                    for (const auto &c_alias: b_it->second.dependencies())
+                                        if (c_alias != a_alias.str() && deps.count(c_alias) != 0)
+                                            new_deps.insert(c_alias);
+                            }
+                        }
+                        if (!new_deps.empty())
+                            changed = true;
+                        for (const auto &new_alias: new_deps)
+                            a.depends_on(new_alias);
+                    }
+                } while (changed);
+
+                for (auto &p: descriptions_)
+                {
+                    auto &a_alias = p.first;
+                    auto &a = p.second;
+                    const auto &deps = a.dependencies();
+                    for (const auto &b_alias: deps)
+                    {
+                        auto b_it = descriptions_.find(b_alias);
+                        MSS(b_it != descriptions_.end(), std::cerr << "Error: Could not find dependency " << b_alias << " needed by " << a_alias << std::endl);
+                        a.merge(b_it->second);
+                    }
+                }
+
                 MSS_END();
             }
 
