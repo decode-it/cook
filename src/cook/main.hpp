@@ -29,7 +29,7 @@ namespace cook {
         const recipe::Alias alias(options.alias);
 
         const recipe::Description *ptr;
-        MSS(loader.get(ptr, alias));
+        MSS(loader.get(ptr, alias), std::cerr << "[error]{Could not find recipe for " << alias << "}" << std::endl);
         const auto &description = *ptr;
 
         description.print();
@@ -64,7 +64,7 @@ namespace cook {
                 MSS(false);
             }
             if (options.config == "debug")
-                fo << "-g ";
+                fo << " -g ";
             fo << std::endl;
             fo << "defines = ";
             for (const auto &p: defines)
@@ -113,7 +113,7 @@ namespace cook {
             for (const auto &p: description.sources())
             {
                 const auto &source = p.first;
-                auto obj = build_dir; obj /= options.arch; obj /= options.config; obj /= source; obj += ".obj";
+                auto obj = build_dir; obj /= alias.str(); obj /= options.arch; obj /= options.config; obj /= source; obj += ".obj";
                 objects.push_back(obj);
                 fo << "build " << obj.string() << ": compile " << source.string() << std::endl;
             }

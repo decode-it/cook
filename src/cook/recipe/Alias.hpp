@@ -3,6 +3,7 @@
 
 #include <string>
 #include <ostream>
+#include <sstream>
 #include <utility>
 
 namespace cook { namespace recipe { 
@@ -23,7 +24,7 @@ namespace cook { namespace recipe {
             }
             Alias(const std::string &ns, const std::string &tag): ns_(ns), tag_(tag) {}
 
-            bool operator<(const Alias &rhs) const {return std::make_pair(ns_, tag_) < std::make_pair(ns_, tag_);}
+            bool operator<(const Alias &rhs) const {return std::make_pair(ns_, tag_) < std::make_pair(rhs.ns_, rhs.tag_);}
 
             const std::string &ns() const {return ns_;}
             const std::string &tag() const {return tag_;}
@@ -31,6 +32,13 @@ namespace cook { namespace recipe {
             void stream(std::ostream &os) const
             {
                 os << ns_ << '#' << tag_;
+            }
+
+            std::string str() const
+            {
+                std::ostringstream oss;
+                stream(oss);
+                return oss.str();
             }
 
         private:

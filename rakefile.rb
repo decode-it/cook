@@ -140,6 +140,11 @@ task :clean => "cook:clean" do
 end
 
 desc "Install"
-task :install => "build" do
-    sh("sudo cp cook.exe /usr/local/bin/cook")
+task :install, [:bin] => "build" do |task, args|
+    bin = args[:bin]
+    if bin
+        sh("cp cook.exe #{bin}")
+    else
+        sh("sudo cp cook.exe /usr/local/bin/cook")
+    end
 end
