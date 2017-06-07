@@ -13,6 +13,9 @@ task :default do
     sh "rake -T"
 end
 
+task :declare
+task :define
+
 namespace :setup do
     desc "Setup for ubuntu"
     task :ubuntu do
