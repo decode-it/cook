@@ -52,6 +52,7 @@ namespace :gubg do
             sh "rake declare"
         end
     end
+    desc "Build and install gubg"
     task :define => :declare do
         each_mod do
             sh "rake define"
@@ -115,7 +116,7 @@ namespace :cook do
     task :build_with_ruby => :init do
         exe.build
     end
-    task :build do
+    task :build => "gubg:define" do
         if !File.exist?("cook.exe")
             if File.exist?("build.ninja")
                 Ninja::build

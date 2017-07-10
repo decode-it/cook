@@ -17,9 +17,15 @@ namespace cook {
         Options options;
         MSS(options.parse(argc, argv));
 
-        if (options.print_help || options.alias.empty())
+        if (options.print_help || (options.alias.empty() && options.project_name.empty()))
         {
             std::cout << options.help_message << std::endl;
+            MSS_RETURN_OK();
+        }
+
+        if (!options.project_name.empty())
+        {
+            std::cout << "Creating project " << options.project_name << std::endl;
             MSS_RETURN_OK();
         }
 
