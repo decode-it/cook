@@ -5,11 +5,14 @@
 #include "cook/recipe/Loader.hpp"
 #include "cook/Options.hpp"
 #include "gubg/mss.hpp"
+#include "gubg/file/System.hpp"
+#include "gubg/std/filesystem.hpp"
 #include <fstream>
 #include <set>
 #include <cstdlib>
 
 namespace cook { 
+
     ReturnCode main(int argc, const char **argv)
     {
         MSS_BEGIN(ReturnCode);
@@ -26,6 +29,35 @@ namespace cook {
         if (!options.project_name.empty())
         {
             std::cout << "Creating project " << options.project_name << std::endl;
+
+            std::filesystem::path dir = options.project_name;
+            MSS(!std::filesystem::is_directory(dir), std::cout << "Error: project folder " << dir << " already exists" << std::endl);
+            MSS(std::filesystem::create_directory(dir));
+
+            {
+                auto fn = dir; fn /= "rakefile.rb";
+                MSS(!std::filesystem::is_regular_file(fn), std::cout << "Error: " << fn << " already exists" << std::endl);
+                std::ofstream fo(fn);
+                fo << "lol";
+
+            }
+            {
+                auto fn = dir; fn /= "recipes.chai";
+                MSS(!std::filesystem::is_regular_file(fn), std::cout << "Error: " << fn << " already exists" << std::endl);
+                std::ofstream fo(fn);
+                fo << "lol";
+
+            }
+            {
+                dir /= "src";
+                MSS(std::filesystem::create_directory(dir));
+                auto fn = dir; fn /= "main.cpp";
+                MSS(!std::filesystem::is_regular_file(fn), std::cout << "Error: " << fn << " already exists" << std::endl);
+                std::ofstream fo(fn);
+                fo << "#include <iostream>\n\nusing namespace std;\n\nint main()\n{\n\n\treturn 0;\n}";
+
+            }
+
             MSS_RETURN_OK();
         }
 
@@ -64,7 +96,7 @@ namespace cook {
 
             fo << "cflags =";
             if (false) {}
-            else if (options.arch == "x32") fo << " -m32";
+                else if (options.arch == "x32") fo << " -m32";
             else if (options.arch == "x64") fo << " -m64";
             else
             {
@@ -92,7 +124,7 @@ namespace cook {
 
             fo << "lflags =";
             if (false) {}
-            else if (options.arch == "x32") fo << " -m32";
+                else if (options.arch == "x32") fo << " -m32";
             else if (options.arch == "x64") fo << " -m64";
             else
             {
