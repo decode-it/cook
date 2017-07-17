@@ -40,13 +40,13 @@ namespace :gubg do
         rm_rf gubg_dir
     end
     task :declare do
-        each_mod do
+        GUBG::each_submod do |info|
             sh "rake declare"
         end
     end
     desc "Build and install gubg"
     task :define => :declare do
-        each_mod do
+        GUBG::each_submod do |info|
             sh "rake define"
         end
     end
