@@ -2,7 +2,7 @@ gubg_dir = File.join(Dir.pwd, ".gubg")
 ENV["gubg"] = gubg_dir
 
 begin
-    require("./gubg.build/shared.rb")
+    require_relative("gubg.build/shared.rb")
 rescue LoadError
     puts("This seems to be a fresh clone: I will update all required submodules for you.")
     sh "git submodule update --init"
@@ -27,25 +27,17 @@ namespace :setup do
     end
 end
 
-namespace :gubg do
-    def each_mod()
-        mods = %w[build std io chaiscript].map{|e|"gubg.#{e}"}
-        mods.each do |mod|
-            Dir.chdir(mod) do
-                yield
-            end
-        end
+desc "Update submodules to head"
+task :uth do
+    GUBG::each_submod do |info|
+        sh "git checkout #{info[:branch]}"
+        sh "git pull --rebase"
     end
+end
 
+namespace :gubg do
     task :proper do
         rm_rf gubg_dir
-    end
-    desc "Updates all submodules the their respective heads"
-    task :uth do
-        each_mod do
-            sh "git checkout master"
-            sh "git pull --rebase"
-        end
     end
     task :declare do
         each_mod do
