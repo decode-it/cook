@@ -1,4 +1,4 @@
-print(">> cook recipes")
+log(">> cook recipes")
 
 //We only use our local submods if the parent did not add the gubg#func yet
 recipe("gubg", "func", "unless_exists", fun(r){
@@ -22,4 +22,4 @@ recipe("cook", "exe", fun(r){
     r.add_library("stdc++fs")
 })
 
-print("<< cook recipes")
+log("<< cook recipes")

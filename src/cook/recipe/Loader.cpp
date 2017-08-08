@@ -23,12 +23,14 @@ namespace cook { namespace recipe {
             }
             else if (extra == "unless_exists")
             {
-                std::cout << "Recipe for " << alias << " already exists in " << it->second.base() << ", skipping the one from " << base_dir << std::endl;
+                if (options_.verbose >= 1)
+                    std::cout << "Recipe for " << alias << " already exists in " << it->second.base() << ", skipping the one from " << base_dir << std::endl;
                 MSS_RETURN_OK();
             }
             else if (extra == "overwrite_if_exists")
             {
-                std::cout << "Overwriting previous recipe for " << alias << " (old was in " << it->second.base() << ", new is in " << base_dir << ")" << std::endl;
+                if (options_.verbose >= 1)
+                    std::cout << "Overwriting previous recipe for " << alias << " (old was in " << it->second.base() << ", new is in " << base_dir << ")" << std::endl;
                 descriptions_.erase(it);
             }
             else
@@ -47,17 +49,32 @@ namespace cook { namespace recipe {
     bool Loader::add_dir(const std::string &dir)
     {
         MSS_BEGIN(bool);
-        std::cout << "Adding dir " << dir << std::endl;
+        if (options_.verbose >= 1)
+            std::cout << indent_() << "Adding dir " << dir << std::endl;
         MSS(load(dir, "recipes.chai"));
         MSS_END();
     }
 
-    Loader::Loader()
+    std::string Loader::indent_() const
+    {
+        return std::string(2*(path_stack_.size()-1), ' ');
+    }
+
+    bool Loader::log(const std::string &str)
+    {
+        MSS_BEGIN(bool);
+        if (options_.verbose >= 1)
+            std::cout << indent_() << str << std::endl;
+        MSS_END();
+    }
+
+    Loader::Loader(const Options &options): options_(options)
     {
         auto &chai = chai_engine_.raw();
         chai.add(chaiscript::fun(&Loader::create_new_recipe_3, this), "recipe");
-        chai.add(chaiscript::fun(&Loader::create_new_recipe_4, this), "recipe");
+        chai.add(chaiscript::fun(&Loader::create_new_recipe_4, this), "recipe");//Additional "extra" argument: "unless_exists" or "overwrite_if_exists"
         chai.add(chaiscript::fun(&Loader::add_dir, this), "add_dir");
+        chai.add(chaiscript::fun(&Loader::log, this), "log");
         chai.add(chaiscript::fun(&Description::add_source), "add_source");
         chai.add(chaiscript::fun(&Description::add_header), "add_header");
         chai.add(chaiscript::fun(&Description::add_include_path), "add_include_path");

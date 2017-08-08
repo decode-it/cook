@@ -71,7 +71,7 @@ namespace cook {
 
         if (!options.alias.empty())
         {
-            recipe::Loader loader;
+            recipe::Loader loader(options);
             MSS(loader.load("", "recipes.chai"));
 
             MSS(loader.resolve());
@@ -82,7 +82,7 @@ namespace cook {
             MSS(loader.get(ptr, alias), std::cerr << "[error]{Could not find recipe for " << alias << "}" << std::endl);
             const auto &description = *ptr;
 
-            if (options.verbose)
+            if (options.verbose >= 2)
                 description.print();
 
             std::set<std::filesystem::path> include_paths;

@@ -1,6 +1,7 @@
 #ifndef HEADER_cook_recipe_Loader_hpp_ALREADY_INCLUDED
 #define HEADER_cook_recipe_Loader_hpp_ALREADY_INCLUDED
 
+#include "cook/Options.hpp"
 #include "cook/recipe/Description.hpp"
 #include "cook/Codes.hpp"
 #include "cook/chai/Engine.hpp"
@@ -18,7 +19,7 @@ namespace cook { namespace recipe {
             static constexpr const char *logns = "Loader";
 
         public:
-            Loader();
+            Loader(const Options &options);
 
             ReturnCode load(const std::filesystem::path &dir, const std::filesystem::path &fn)
             {
@@ -98,10 +99,13 @@ namespace cook { namespace recipe {
                 return create_new_recipe_(ns, tag, extra, callback);
             }
             bool add_dir(const std::string &dir);
+            bool log(const std::string &dir);
 
         private:
             bool create_new_recipe_(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Description &)> callback);
+            std::string indent_() const;
 
+            const Options &options_;
             chai::Engine chai_engine_;
             DescriptionPerAlias descriptions_;
             std::vector<std::filesystem::path> path_stack_;

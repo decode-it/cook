@@ -11,7 +11,7 @@ namespace cook {
         std::string arch = "x32";
         bool print_help = false;
         std::string help_message;
-        bool verbose = false;
+        int verbose = 0;
         bool clean = false;
         bool do_build = true;
         std::string alias;
@@ -22,7 +22,8 @@ namespace cook {
             MSS_BEGIN(bool);
             gubg::OptionParser opt("Cooking fresh binaries, C++-style");
             opt.add_switch('h', "--help", "Print this help", [&](){print_help = true;});
-            opt.add_switch('v', "--verbose", "Verbose output", [&](){verbose = true;});
+            opt.add_switch('v', "--verbose", "Verbose output", [&](){verbose = 1;});
+            opt.add_switch('V', "--very-verbose", "Very verbose output", [&](){verbose = 2;});
             opt.add_switch('C', "--clean", "Clean-up temporary build results", [&](){clean = true;});
             opt.add_mandatory('c', "--config", "Configuration: [release|debug]", [&](std::string str){config = str;});
             opt.add_mandatory('a', "--arch", "Architecture: [x32|x64|uno]", [&](std::string str){arch = str;});
