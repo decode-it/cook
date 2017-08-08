@@ -72,7 +72,8 @@ namespace cook {
         MSS(loader.get(ptr, alias), std::cerr << "[error]{Could not find recipe for " << alias << "}" << std::endl);
         const auto &description = *ptr;
 
-        description.print();
+        if (options.verbose)
+            description.print();
 
         std::set<std::filesystem::path> include_paths;
         for (const auto &p: description.sources())
