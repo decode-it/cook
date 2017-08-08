@@ -6,6 +6,90 @@
 
 namespace cook { namespace recipe { 
 
+    static constexpr const char *logns = "Loader";
+
+    ReturnCode Loader::load(const std::filesystem::path &dir, const std::filesystem::path &fn)
+    {
+        MSS_BEGIN(ReturnCode, logns);
+        L("Loading recipes from " << (dir/fn));
+        path_stack_.push_back(dir);
+        MSS(chai_engine_.eval_file(dir/fn));
+        path_stack_.pop_back();
+        L("Loaded " << descriptions_.size() << " recipes");
+        MSS_END();
+    }
+
+    ReturnCode Loader::resolve()
+    {
+        MSS_BEGIN(ReturnCode);
+
+        bool changed;
+        do
+        {
+            changed = false;
+            L("***Starting again:");
+            for (auto &p: descriptions_)
+            {
+                auto &a_alias = p.first;
+                auto &a = p.second;
+                L(C(a_alias));
+                std::set<std::string> new_deps;
+                {
+                    const auto &deps = a.dependencies();
+                    for (const auto &b_alias: deps)
+                    {
+                        L("  depends on " << C(b_alias));
+                        auto b_it = descriptions_.find(b_alias);
+                        MSS(b_it != descriptions_.end(), std::cerr << "Error: Could not find dependency " << b_alias << " needed by " << a_alias << std::endl);
+                        if (b_alias != a_alias.str())
+                            for (const auto &c_alias: b_it->second.dependencies())
+                            {
+                                L("    which depends on " << C(c_alias));
+                                if (c_alias != a_alias.str() && deps.count(c_alias) == 0)
+                                    new_deps.insert(c_alias);
+                            }
+                    }
+                }
+                if (!new_deps.empty())
+                {
+                    changed = true;
+                    for (const auto &new_alias: new_deps)
+                    {
+                        L("  adding new dependency " << new_alias);
+                        a.depends_on(new_alias);
+                    }
+                }
+            }
+        } while (changed);
+        L("***No more dependencies to resolve");
+
+        for (auto &p: descriptions_)
+        {
+            auto &a_alias = p.first;
+            auto &a = p.second;
+            L(C(a_alias));
+            const auto &deps = a.dependencies();
+            for (const auto &b_alias: deps)
+            {
+                L("  depends on " << C(b_alias));
+                auto b_it = descriptions_.find(b_alias);
+                MSS(b_it != descriptions_.end(), std::cerr << "Error: Could not find dependency " << b_alias << " needed by " << a_alias << std::endl);
+                a.merge(b_it->second);
+            }
+        }
+
+        MSS_END();
+    }
+
+    ReturnCode Loader::get(const Description *&description, const Alias &alias) const
+    {
+        MSS_BEGIN(ReturnCode);
+        auto p = descriptions_.find(alias);
+        MSS(p != descriptions_.end());
+        description = &p->second;
+        MSS_END();
+    }
+
     bool Loader::create_new_recipe_(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Description &)> callback)
     {
         MSS_BEGIN(bool, "create_new_recipe");
