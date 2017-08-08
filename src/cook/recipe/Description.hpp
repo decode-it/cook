@@ -46,6 +46,9 @@ namespace cook { namespace recipe {
         public:
             Description(const Alias &alias): alias_(alias) {}
 
+            void set_base(const std::filesystem::path &dir) {base_ = dir;}
+            const std::filesystem::path &base() const {return base_;}
+
             const Alias &alias() const {return alias_;}
 
             const FileInfo &sources() const {return sources_;}
@@ -90,9 +93,11 @@ namespace cook { namespace recipe {
             }
 
         private:
-            void add_(FileInfo &dst, file::Type type, const std::string &dir, const std::string &pattern)
+            void add_(FileInfo &dst, file::Type type, const std::string &subdir, const std::string &pattern)
             {
                 S("add_");
+                std::filesystem::path dir = base_; dir /= subdir;
+                L(C(subdir)C(dir)C(pattern));
                 auto add_file = [&](const std::filesystem::path &fp)
                 {
                     L(C(fp));
@@ -106,6 +111,7 @@ namespace cook { namespace recipe {
             }
 
             const Alias alias_;
+            std::filesystem::path base_;
             FileInfo sources_;
             FileInfo headers_;
             IncludePaths include_paths_;

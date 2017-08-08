@@ -72,7 +72,7 @@ namespace cook {
         if (!options.alias.empty())
         {
             recipe::Loader loader;
-            MSS(loader.load("recipes.chai"));
+            MSS(loader.load("", "recipes.chai"));
 
             MSS(loader.resolve());
 

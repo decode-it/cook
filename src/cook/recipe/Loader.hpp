@@ -20,11 +20,13 @@ namespace cook { namespace recipe {
         public:
             Loader();
 
-            ReturnCode load(const std::filesystem::path &fn)
+            ReturnCode load(const std::filesystem::path &dir, const std::filesystem::path &fn)
             {
                 MSS_BEGIN(ReturnCode, logns);
-                L("Loading recipes from " << fn);
-                MSS(chai_engine_.eval_file(fn));
+                L("Loading recipes from " << (dir/fn));
+                path_stack_.push_back(dir);
+                MSS(chai_engine_.eval_file(dir/fn));
+                path_stack_.pop_back();
                 L("Loaded " << descriptions_.size() << " recipes");
                 MSS_END();
             }
@@ -87,11 +89,22 @@ namespace cook { namespace recipe {
             }
 
             //Methods exposed to chai
-            bool create_new_recipe(const std::string &ns, const std::string &tag, std::function<void (Description &)> callback);
+            bool create_new_recipe_3(const std::string &ns, const std::string &tag, std::function<void (Description &)> callback)
+            {
+                return create_new_recipe_(ns, tag, "", callback);
+            }
+            bool create_new_recipe_4(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Description &)> callback)
+            {
+                return create_new_recipe_(ns, tag, extra, callback);
+            }
+            bool add_dir(const std::string &dir);
 
         private:
+            bool create_new_recipe_(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Description &)> callback);
+
             chai::Engine chai_engine_;
             DescriptionPerAlias descriptions_;
+            std::vector<std::filesystem::path> path_stack_;
     };
 
 } } 
