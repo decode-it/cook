@@ -13,8 +13,12 @@ task :default do
     sh "rake -T"
 end
 
-task :declare
-task :define
+desc "Prepare the submods"
+task :prepare do
+    GUBG::each_submod do |info|
+        sh "rake prepare"
+    end
+end
 
 namespace :setup do
     desc "Setup for ubuntu"
@@ -34,6 +38,8 @@ task :uth do
         sh "git pull --rebase"
     end
 end
+
+task :update => :uth
 
 namespace :gubg do
     task :proper do
@@ -83,9 +89,11 @@ end
 
 namespace :cook do
     exe = nil
-    task :init => "gubg:define" do
+    cook_bootstrap = "cook_bootstrap"
+    cook_bootstrap_fn = "#{cook_bootstrap}.exe"
+    task :init do
         require("gubg/build/Executable")
-        exe = Build::Executable.new("cook")
+        exe = Build::Executable.new(cook_bootstrap)
         exe.add_sources(FileList.new("src/**/*.[hc]pp"))
         exe.add_include_path("src")
         %w[std io].each do |e|
@@ -93,8 +101,8 @@ namespace :cook do
             exe.add_sources(FileList.new(File.join(dir, "gubg/**/*.[hc]pp")))
             exe.add_include_path(dir)
         end
-        exe.add_include_path("#{gubg_dir}/include")
-        exe.add_library("dl", "stdc++fs")
+        exe.add_include_path("gubg.chaiscript/extern/ChaiScript/include")
+        exe.add_library("dl", "stdc++fs", "pthread")
         case :debug
         when :debug
             exe.add_option('g')
@@ -108,19 +116,25 @@ namespace :cook do
     task :build_with_ruby => :init do
         exe.build
     end
-    task :build => "gubg:define" do
-        if !File.exist?("cook.exe")
+    task :build do
+        if !File.exist?(cook_bootstrap_fn)
             if File.exist?("build.ninja")
+                puts("Building #{cook_bootstrap_fn} with the current build.ninja")
                 Ninja::build
-            else
-                Rake::Task["cook:build_with_ruby"].invoke
             end
         end
-        sh "./cook.exe cook#exe"
+        if !File.exist?(cook_bootstrap_fn)
+            puts("Building #{cook_bootstrap_fn} with ruby")
+            Rake::Task["cook:build_with_ruby"].invoke
+        end
+        raise("Could not create #{cook_bootstrap_fn}") unless File.exist?(cook_bootstrap_fn)
+
+        puts("Bootstrapping cook")
+        sh "./#{cook_bootstrap_fn} cook#exe"
         Ninja::build
     end
     task :run do
-        sh "./cook.exe cook#exe"
+        sh "./#{cook_bootstrap_fn} cook#exe"
     end
 end
 desc "Builds cook"
