@@ -112,6 +112,7 @@ namespace :cook do
     end
     task :clean do
         rm_rf(".cache")
+	rm_f "build.ninja"
     end
     task :build_with_ruby => :init do
         exe.build

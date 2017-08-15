@@ -7,7 +7,7 @@ recipe("gubg", "func", "unless_exists", fun(r){
     r.add_source("gubg.io/src", "gubg/**.cpp")
 })
 recipe("chai", "func", "unless_exists", fun(r){
-    r.add_header(".gubg/extern/ChaiScript/include", "chaiscript/*.hpp")
+    r.add_header("gubg.chaiscript/extern/ChaiScript/include", "chaiscript/*.hpp")
 })
 
 recipe("cook", "exe", fun(r){
