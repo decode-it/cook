@@ -46,7 +46,7 @@ namespace cook {
                 auto fn = dir; fn /= "rakefile.rb";
                 MSS(!std::filesystem::is_regular_file(fn), std::cout << "Error: " << fn << " already exists" << std::endl);
                 std::ofstream fo(fn);
-                fo << "lol";
+                fo << "task :run do\nsh 'g++ src/main.cpp -o main'\nsh './main'\nend";
 
             }
             {
