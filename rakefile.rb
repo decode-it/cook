@@ -19,6 +19,7 @@ task :prepare do
         sh "rake prepare"
     end
 end
+task :run
 
 namespace :setup do
     desc "Setup for ubuntu"
@@ -27,7 +28,7 @@ namespace :setup do
         sh "sudo apt install ninja-build"
         #Fixes problems with #including bits/c++config.h
         sh "sudo apt install gcc-multilib g++-multilib"
-        Rake::Task["gubg:define"].invoke
+        Rake::Task["gubg:run"].invoke
     end
 end
 
@@ -45,18 +46,18 @@ namespace :gubg do
     task :proper do
         rm_rf gubg_dir
     end
-    task :declare do
+    task :prepare do
         GUBG::each_submod do |info|
-            sh "rake declare"
+            sh "rake prepare"
         end
     end
     desc "Build and install gubg"
-    task :define => :declare do
+    task :run => :prepare do
         GUBG::each_submod do |info|
-            sh "rake define"
+            sh "rake run"
         end
     end
-    task :ut => :define do
+    task :ut => :run do
         require("gubg/build/Executable")
         ut = Build::Executable.new("unit_tests")
         ut.add_sources(FileList.new("gubg.io/src/test/file/System.cpp"))
