@@ -33,6 +33,7 @@ namespace cook { namespace recipe {
     } 
     using FileInfo = std::map<std::filesystem::path, file::Info>;
     using IncludePaths = std::set<std::filesystem::path>;
+    using Defines = std::map<std::string, std::string>;
     using LibraryPaths = std::set<std::filesystem::path>;
     //Order is important: we cannot use std::set
     using Libraries = std::vector<std::string>;
@@ -54,6 +55,7 @@ namespace cook { namespace recipe {
             const FileInfo &sources() const {return sources_;}
             const FileInfo &headers() const {return headers_;}
             const IncludePaths &include_paths() const {return include_paths_;}
+            const Defines &defines() const {return defines_;}
             const LibraryPaths &library_paths() const {return library_paths_;}
             const Libraries &libraries() const {return libraries_;}
             const Dependencies &dependencies() const {return dependencies_;}
@@ -72,6 +74,8 @@ namespace cook { namespace recipe {
             void add_source(const std::string &dir, const std::string &pattern) { add_(sources_, file::Source, dir, pattern); }
             void add_header(const std::string &dir, const std::string &pattern) { add_(headers_, file::Header, dir, pattern); }
             void add_include_path(const std::string &dir) { include_paths_.insert(dir); }
+            void add_define_1(const std::string &name) { defines_[name] = ""; }
+            void add_define_2(const std::string &name, const std::string &value) { defines_[name] = value; }
             void add_library_path(const std::string &dir) { library_paths_.insert(dir); }
             void add_library(const std::string &library)
             {
@@ -84,6 +88,9 @@ namespace cook { namespace recipe {
             void depends_on(const std::string &alias) { dependencies_.insert(alias); }
             void print() const
             {
+                std::cout << "Defines:" << std::endl;
+                for (const auto &p: defines_)
+                    std::cout << " * " << p.first << " => " << p.second << std::endl;
                 std::cout << "Sources:" << std::endl;
                 for (const auto &p: sources_)
                     std::cout << " * " << p.first << " => " << p.second << std::endl;
@@ -96,6 +103,7 @@ namespace cook { namespace recipe {
             {
                 sources_.insert(rhs.sources_.begin(), rhs.sources_.end());
                 headers_.insert(rhs.headers_.begin(), rhs.headers_.end());
+                defines_.insert(rhs.defines_.begin(), rhs.defines_.end());
                 include_paths_.insert(rhs.include_paths_.begin(), rhs.include_paths_.end());
                 library_paths_.insert(rhs.library_paths_.begin(), rhs.library_paths_.end());
                 for (const auto &lib: rhs.libraries_)
@@ -125,6 +133,7 @@ namespace cook { namespace recipe {
             FileInfo sources_;
             FileInfo headers_;
             IncludePaths include_paths_;
+            Defines defines_;
             LibraryPaths library_paths_;
             Libraries libraries_;
             Dependencies dependencies_;

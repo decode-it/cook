@@ -97,6 +97,15 @@ namespace cook { namespace recipe {
             auto &alias = p.first;
             auto &descr = p.second;
             os << "[recipe](name:" << alias << ")(ns:" << alias.ns() << ")(tag:" << alias.tag() << "){" << std::endl;
+            for (const auto &p: descr.defines())
+            {
+                const auto &name = p.first;
+                const auto &value = p.second;
+                os << "  [define](name:" << name << ")";
+                if (!value.empty())
+                    os << "(value:" << value << ")";
+                os << std::endl;
+            }
             {
                 IncludePaths include_paths;
                 descr.get_all_include_paths(include_paths);
@@ -200,6 +209,8 @@ namespace cook { namespace recipe {
         chai.add(chaiscript::fun(&Description::add_source), "add_source");
         chai.add(chaiscript::fun(&Description::add_header), "add_header");
         chai.add(chaiscript::fun(&Description::add_include_path), "add_include_path");
+        chai.add(chaiscript::fun(&Description::add_define_1), "add_define");
+        chai.add(chaiscript::fun(&Description::add_define_2), "add_define");
         chai.add(chaiscript::fun(&Description::add_library_path), "add_library_path");
         chai.add(chaiscript::fun(&Description::add_library), "add_library");
         chai.add(chaiscript::fun(&Description::depends_on), "depends_on");

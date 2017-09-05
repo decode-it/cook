@@ -95,7 +95,7 @@ namespace cook {
             recipe::IncludePaths include_paths;
             description.get_all_include_paths(include_paths);
 
-            std::map<std::string, std::string> defines;
+            recipe::Defines defines = description.defines();
             if (options.config == "release")
                 defines["NDEBUG"] = "";
 
@@ -125,9 +125,9 @@ namespace cook {
                     const auto &key = p.first;
                     const auto &value = p.second;
                     if (value.empty())
-                        fo << "-D" << key;
+                        fo << " -D" << key;
                     else
-                        fo << "-D" << key << "=" << value;
+                        fo << " -D" << key << "=" << value;
                 }
                 fo << std::endl;
                 fo << "include_paths =";
