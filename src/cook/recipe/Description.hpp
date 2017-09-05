@@ -58,6 +58,16 @@ namespace cook { namespace recipe {
             const Libraries &libraries() const {return libraries_;}
             const Dependencies &dependencies() const {return dependencies_;}
 
+            void get_all_include_paths(IncludePaths &res) const
+            {
+                for (const auto &p: sources())
+                    res.insert(p.second.dir);
+                for (const auto &p: headers())
+                    res.insert(p.second.dir);
+                for (const auto &p: include_paths())
+                    res.insert(p);
+            }
+
             //Methods exposed to chai
             void add_source(const std::string &dir, const std::string &pattern) { add_(sources_, file::Source, dir, pattern); }
             void add_header(const std::string &dir, const std::string &pattern) { add_(headers_, file::Header, dir, pattern); }

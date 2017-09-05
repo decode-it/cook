@@ -14,6 +14,7 @@ namespace cook {
         int verbose = 0;
         bool clean = false;
         bool do_build = true;
+        bool print_recipes = false;
         std::string alias;
         std::string project_name;
 
@@ -29,6 +30,7 @@ namespace cook {
             opt.add_mandatory('a', "--arch", "Architecture: [x32|x64|uno]", [&](std::string str){arch = str;});
             opt.add_switch('n', "--no-build", "Only generate the build.ninja file", [&](){do_build = false;});
             opt.add_mandatory('p', "--project", "Create new project with <name>", [&](std::string str){project_name = str;});
+            opt.add_switch('t', "--tree", "Print all recipes in tree format", [&](){print_recipes = true;});
             auto args = gubg::OptionParser::create_args(argc, argv);
             MSS(opt.parse(args));
             help_message = opt.help();

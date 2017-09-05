@@ -24,6 +24,8 @@ namespace cook { namespace recipe {
 
             ReturnCode get(const Description *&description, const Alias &alias) const;
 
+            void stream(std::ostream &os) const;
+
             //Methods exposed to chai
             bool create_new_recipe_3(const std::string &ns, const std::string &tag, std::function<void (Description &)> callback)
             {

@@ -90,6 +90,44 @@ namespace cook { namespace recipe {
         MSS_END();
     }
 
+    void Loader::stream(std::ostream &os) const
+    {
+        for (auto &p: descriptions_)
+        {
+            auto &alias = p.first;
+            auto &descr = p.second;
+            os << "[recipe](name:" << alias << ")(ns:" << alias.ns() << ")(tag:" << alias.tag() << "){" << std::endl;
+            {
+                IncludePaths include_paths;
+                descr.get_all_include_paths(include_paths);
+                for (const auto &path: include_paths)
+                    os << "  [include_path](path:" << path.native() << ")" << std::endl;
+            }
+            {
+                auto to_s = [](file::Type type)
+                {
+                    switch (type)
+                    {
+                        case file::Source: return "source"; break;
+                        case file::Header: return "header"; break;
+                        case file::ForceInclude: return "force_include"; break;
+                    }
+                    return "";
+                };
+                auto stream_files = [&](const FileInfo &file_info)
+                {
+                    for (const auto &p: file_info)
+                        os << "  [file](type:" << to_s(p.second.type) << ")(path:" << p.first.native() << ")" << std::endl;
+                };
+                stream_files(descr.sources());
+                stream_files(descr.headers());
+            }
+            for (const auto &dep: descr.dependencies())
+                os << "  [depends_on](name:" << dep << ")" << std::endl;
+            os << "}" << std::endl;
+        }
+    }
+
     bool Loader::create_new_recipe_(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Description &)> callback)
     {
         MSS_BEGIN(bool, "create_new_recipe");

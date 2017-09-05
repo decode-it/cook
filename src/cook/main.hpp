@@ -69,6 +69,13 @@ namespace cook {
             MSS_RETURN_OK();
         }
 
+        if (options.print_recipes)
+        {
+            recipe::Loader loader(options);
+            MSS(loader.load("", "recipes.chai"));
+            loader.stream(std::cout);
+        }
+
         if (!options.alias.empty())
         {
             recipe::Loader loader(options);
@@ -85,13 +92,8 @@ namespace cook {
             if (options.verbose >= 2)
                 description.print();
 
-            std::set<std::filesystem::path> include_paths;
-            for (const auto &p: description.sources())
-                include_paths.insert(p.second.dir);
-            for (const auto &p: description.headers())
-                include_paths.insert(p.second.dir);
-            for (const auto &p: description.include_paths())
-                include_paths.insert(p);
+            recipe::IncludePaths include_paths;
+            description.get_all_include_paths(include_paths);
 
             std::map<std::string, std::string> defines;
             if (options.config == "release")
