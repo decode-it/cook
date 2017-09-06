@@ -3,7 +3,7 @@ linker = g++ -std=c++17
 delete = rm -f
 
 cflags = -m32
-defines = -DNDEBUG
+defines =  -DNDEBUG
 include_paths = -I "gubg.chaiscript/extern/ChaiScript/include" -I "gubg.io/src" -I "gubg.std/src" -I "src"
 lflags = -m32
 library_paths =
