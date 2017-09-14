@@ -1,15 +1,15 @@
-#ifndef HEADER_cook_recipe_Loader_hpp_ALREADY_INCLUDED
-#define HEADER_cook_recipe_Loader_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_structure_Loader_hpp_ALREADY_INCLUDED
+#define HEADER_cook_structure_Loader_hpp_ALREADY_INCLUDED
 
 #include "cook/Options.hpp"
-#include "cook/recipe/Description.hpp"
+#include "cook/structure/Description.hpp"
 #include "cook/Codes.hpp"
 #include "cook/chai/Engine.hpp"
 #include "gubg/mss.hpp"
 #include <map>
 #include <iostream>
 
-namespace cook { namespace recipe { 
+namespace cook { namespace structure { 
 
     using DescriptionPerAlias = std::map<Alias, Description>;
 
@@ -18,7 +18,7 @@ namespace cook { namespace recipe {
         public:
             Loader(const Options &options);
 
-            ReturnCode load(const std::filesystem::path &dir, const std::filesystem::path &fn);
+            ReturnCode load(std::filesystem::path dir, const std::filesystem::path &fn);
 
             ReturnCode resolve();
 

@@ -1,13 +1,13 @@
-#ifndef HEADER_cook_recipe_Description_hpp_ALREADY_INCLUDED
-#define HEADER_cook_recipe_Description_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_structure_Description_hpp_ALREADY_INCLUDED
+#define HEADER_cook_structure_Description_hpp_ALREADY_INCLUDED
 
-#include "cook/recipe/Alias.hpp"
+#include "cook/structure/Alias.hpp"
 #include "gubg/debug.hpp"
 #include "gubg/file/System.hpp"
 #include <map>
 #include <set>
 
-namespace cook { namespace recipe { 
+namespace cook { namespace structure { 
 
     namespace file { 
         enum Type
@@ -42,7 +42,7 @@ namespace cook { namespace recipe {
     class Description
     {
         private:
-            static constexpr const char *logns = "recipe::Description";
+            static constexpr const char *logns = "structure::Description";
 
         public:
             Description(const Alias &alias): alias_(alias) {}

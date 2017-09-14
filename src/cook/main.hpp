@@ -1,8 +1,8 @@
 #ifndef HEADER_cook_main_hpp_ALREADY_INCLUDED
 #define HEADER_cook_main_hpp_ALREADY_INCLUDED
 
+#include "cook/structure/Loader.hpp"
 #include "cook/Codes.hpp"
-#include "cook/recipe/Loader.hpp"
 #include "cook/Options.hpp"
 #include "gubg/mss.hpp"
 #include "gubg/file/System.hpp"
@@ -14,6 +14,10 @@
 namespace cook { 
 
     const std::filesystem::path build_dir = ".cook";
+    
+    void write_help(const Options & options);
+    bool process_new(const Options & options);
+    bool process_existing(const Options & options);
 
     ReturnCode main(int argc, const char **argv)
     {
@@ -21,81 +25,107 @@ namespace cook {
 
         Options options;
         MSS(options.parse(argc, argv));
-
-        if (options.print_help || (!options.clean && options.project_name.empty() && options.alias.empty()))
+        
+        Options::Mode mode;
+        MSS(options.get_mode(mode), write_help(options));
+        
+        switch(mode)
         {
-            std::cout << options.help_message << std::endl;
-            MSS_RETURN_OK();
+            case Options::Help:
+                write_help(options);
+                break;
+                
+            case Options::New:
+                MSS(process_new(options), write_help(options));
+                break;
+                
+            case Options::Existing:
+                MSS(process_existing(options), write_help(options));
+                break;
         }
+        
+        MSS_END();
+    }
+    
+    void write_help(const Options & options)
+    {
+        std::cout << options.help_message << std::endl;
+    }
+    
+    bool process_new(const Options & options)
+    {
+        MSS_BEGIN(bool);
+        std::cout << "Creating project " << options.project_name << std::endl;
 
+        std::filesystem::path dir = options.path;
+        dir /= options.project_name;
+        MSS(!std::filesystem::is_directory(dir), std::cout << "Error: project folder " << dir << " already exists" << std::endl);
+        MSS(std::filesystem::create_directory(dir));
+
+        {
+            auto fn = dir; fn /= "rakefile.rb";
+            MSS(!std::filesystem::is_regular_file(fn), std::cout << "Error: " << fn << " already exists" << std::endl);
+            std::ofstream fo(fn);
+            fo << "task :run do\nsh 'g++ src/main.cpp -o main'\nsh './main'\nend";   
+        }
+        
+        {
+            auto fn = dir; fn /= "recipes.chai";
+            MSS(!std::filesystem::is_regular_file(fn), std::cout << "Error: " << fn << " already exists" << std::endl);
+            std::ofstream fo(fn);
+            fo << "lol";
+        }
+        
+        {
+            dir /= "src";
+            MSS(std::filesystem::create_directory(dir));
+            auto fn = dir; fn /= "main.cpp";
+            MSS(!std::filesystem::is_regular_file(fn), std::cout << "Error: " << fn << " already exists" << std::endl);
+            std::ofstream fo(fn);
+            fo << "#include <iostream>\n\nusing namespace std;\n\nint main()\n{\n\n\treturn 0;\n}";
+        }
+        
+        MSS_END();
+    }
+    
+    bool process_existing(const Options & options)
+    {
+        MSS_BEGIN(bool);
+        
         if (options.clean)
         {
             std::cout << "Cleaning " << build_dir << std::endl;
             std::filesystem::remove_all(build_dir);
         }
-
-        if (!options.project_name.empty())
-        {
-            std::cout << "Creating project " << options.project_name << std::endl;
-
-            std::filesystem::path dir = options.project_name;
-            MSS(!std::filesystem::is_directory(dir), std::cout << "Error: project folder " << dir << " already exists" << std::endl);
-            MSS(std::filesystem::create_directory(dir));
-
-            {
-                auto fn = dir; fn /= "rakefile.rb";
-                MSS(!std::filesystem::is_regular_file(fn), std::cout << "Error: " << fn << " already exists" << std::endl);
-                std::ofstream fo(fn);
-                fo << "task :run do\nsh 'g++ src/main.cpp -o main'\nsh './main'\nend";
-
-            }
-            {
-                auto fn = dir; fn /= "recipes.chai";
-                MSS(!std::filesystem::is_regular_file(fn), std::cout << "Error: " << fn << " already exists" << std::endl);
-                std::ofstream fo(fn);
-                fo << "lol";
-
-            }
-            {
-                dir /= "src";
-                MSS(std::filesystem::create_directory(dir));
-                auto fn = dir; fn /= "main.cpp";
-                MSS(!std::filesystem::is_regular_file(fn), std::cout << "Error: " << fn << " already exists" << std::endl);
-                std::ofstream fo(fn);
-                fo << "#include <iostream>\n\nusing namespace std;\n\nint main()\n{\n\n\treturn 0;\n}";
-
-            }
-
-            MSS_RETURN_OK();
-        }
-
+        
         if (options.print_recipes)
         {
-            recipe::Loader loader(options);
+            structure::Loader loader(options);
             MSS(loader.load("", "recipes.chai"));
             loader.stream(std::cout);
         }
-
+        
+        
         if (!options.alias.empty())
         {
-            recipe::Loader loader(options);
+            structure::Loader loader(options);
             MSS(loader.load("", "recipes.chai"));
 
             MSS(loader.resolve());
 
-            const recipe::Alias alias(options.alias);
+            const structure::Alias alias(options.alias);
 
-            const recipe::Description *ptr;
+            const structure::Description *ptr;
             MSS(loader.get(ptr, alias), std::cerr << "[error]{Could not find recipe for " << alias << "}" << std::endl);
             const auto &description = *ptr;
 
             if (options.verbose >= 2)
                 description.print();
 
-            recipe::IncludePaths include_paths;
+            structure::IncludePaths include_paths;
             description.get_all_include_paths(include_paths);
 
-            recipe::Defines defines = description.defines();
+            structure::Defines defines = description.defines();
             if (options.config == "release")
                 defines["NDEBUG"] = "";
 
@@ -190,6 +220,7 @@ namespace cook {
 
         MSS_END();
     }
+
 } 
 
 #endif

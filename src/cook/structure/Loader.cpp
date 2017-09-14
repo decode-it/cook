@@ -1,16 +1,21 @@
-#include "cook/recipe/Loader.hpp"
-#include "cook/recipe/Description.hpp"
+#include "cook/structure/Loader.hpp"
+#include "cook/structure/Description.hpp"
 #include "gubg/debug.hpp"
 #include <iostream>
 #include <cassert>
 
-namespace cook { namespace recipe { 
+namespace cook { namespace structure { 
 
     static constexpr const char *logns = "Loader";
 
-    ReturnCode Loader::load(const std::filesystem::path &dir, const std::filesystem::path &fn)
+    ReturnCode Loader::load(std::filesystem::path dir, const std::filesystem::path &fn)
     {
         MSS_BEGIN(ReturnCode, logns);
+        
+        assert(!path_stack_.empty());
+        if (dir.is_relative())
+            dir = path_stack_.back() / dir;
+        
         L("Loading recipes from " << (dir/fn));
         path_stack_.push_back(dir);
         MSS(chai_engine_.eval_file(dir/fn));
@@ -215,6 +220,8 @@ namespace cook { namespace recipe {
         chai.add(chaiscript::fun(&Description::add_library), "add_library");
         chai.add(chaiscript::fun(&Description::depends_on), "depends_on");
         chai.add(chaiscript::fun(&Description::print), "print");
+        
+        path_stack_.push_back(options.path);
     }
 
 } } 

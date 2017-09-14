@@ -1,12 +1,12 @@
-#ifndef HEADER_cook_recipe_Alias_hpp_ALREADY_INCLUDED
-#define HEADER_cook_recipe_Alias_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_structure_Alias_hpp_ALREADY_INCLUDED
+#define HEADER_cook_structure_Alias_hpp_ALREADY_INCLUDED
 
 #include <string>
 #include <ostream>
 #include <sstream>
 #include <utility>
 
-namespace cook { namespace recipe { 
+namespace cook { namespace structure { 
 
     class Alias
     {
