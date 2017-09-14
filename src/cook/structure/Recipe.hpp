@@ -39,13 +39,13 @@ namespace cook { namespace structure {
     using Libraries = std::vector<std::string>;
     using Dependencies = std::set<std::string>;
 
-    class Description
+    class Recipe
     {
         private:
-            static constexpr const char *logns = "structure::Description";
+            static constexpr const char *logns = "structure::Recipe";
 
         public:
-            Description(const Alias &alias): alias_(alias) {}
+            Recipe(const Alias &alias): alias_(alias) {}
 
             void set_base(const std::filesystem::path &dir) {base_ = dir;}
             const std::filesystem::path &base() const {return base_;}
@@ -60,15 +60,7 @@ namespace cook { namespace structure {
             const Libraries &libraries() const {return libraries_;}
             const Dependencies &dependencies() const {return dependencies_;}
 
-            void get_all_include_paths(IncludePaths &res) const
-            {
-                for (const auto &p: sources())
-                    res.insert(p.second.dir);
-                for (const auto &p: headers())
-                    res.insert(p.second.dir);
-                for (const auto &p: include_paths())
-                    res.insert(p);
-            }
+            void get_all_include_paths(IncludePaths &res) const;
 
             //Methods exposed to chai
             void add_source(const std::string &dir, const std::string &pattern) { add_(sources_, file::Source, dir, pattern); }
@@ -77,56 +69,16 @@ namespace cook { namespace structure {
             void add_define_1(const std::string &name) { defines_[name] = ""; }
             void add_define_2(const std::string &name, const std::string &value) { defines_[name] = value; }
             void add_library_path(const std::string &dir) { library_paths_.insert(dir); }
-            void add_library(const std::string &library)
-            {
-                for (const auto &lib: libraries_)
-                    if (lib == library)
-                        //Already present
-                        return;
-                libraries_.push_back(library);
-            }
+            void add_library(const std::string &library);
             void depends_on(const std::string &alias) { dependencies_.insert(alias); }
-            void print() const
-            {
-                std::cout << "Defines:" << std::endl;
-                for (const auto &p: defines_)
-                    std::cout << " * " << p.first << " => " << p.second << std::endl;
-                std::cout << "Sources:" << std::endl;
-                for (const auto &p: sources_)
-                    std::cout << " * " << p.first << " => " << p.second << std::endl;
-                std::cout << "Headers:" << std::endl;
-                for (const auto &p: headers_)
-                    std::cout << " * " << p.first << " => " << p.second << std::endl;
-            }
-
-            void merge(const Description &rhs)
-            {
-                sources_.insert(rhs.sources_.begin(), rhs.sources_.end());
-                headers_.insert(rhs.headers_.begin(), rhs.headers_.end());
-                defines_.insert(rhs.defines_.begin(), rhs.defines_.end());
-                include_paths_.insert(rhs.include_paths_.begin(), rhs.include_paths_.end());
-                library_paths_.insert(rhs.library_paths_.begin(), rhs.library_paths_.end());
-                for (const auto &lib: rhs.libraries_)
-                    add_library(lib);
-            }
+            void print() const;
+            
+            void merge(const Recipe &rhs);
+            
 
         private:
-            void add_(FileInfo &dst, file::Type type, const std::string &subdir, const std::string &pattern)
-            {
-                S("add_");
-                std::filesystem::path dir = base_; dir /= subdir;
-                L(C(subdir)C(dir)C(pattern));
-                auto add_file = [&](const std::filesystem::path &fp)
-                {
-                    L(C(fp));
-                    /* std::filesystem::path fp(dir); fp /= pattern; */
-                    auto &info = dst[fp];
-                    info.dir = dir;
-                    info.rel = pattern;
-                    info.type = type;
-                };
-                gubg::file::each_glob(pattern, add_file, dir);
-            }
+            void add_(FileInfo &dst, file::Type type, const std::string &subdir, const std::string &pattern);
+            
 
             const Alias alias_;
             std::filesystem::path base_;

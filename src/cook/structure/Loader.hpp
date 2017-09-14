@@ -2,7 +2,7 @@
 #define HEADER_cook_structure_Loader_hpp_ALREADY_INCLUDED
 
 #include "cook/Options.hpp"
-#include "cook/structure/Description.hpp"
+#include "cook/structure/Recipe.hpp"
 #include "cook/Codes.hpp"
 #include "cook/chai/Engine.hpp"
 #include "gubg/mss.hpp"
@@ -11,7 +11,7 @@
 
 namespace cook { namespace structure { 
 
-    using DescriptionPerAlias = std::map<Alias, Description>;
+    using DescriptionPerAlias = std::map<Alias, Recipe>;
 
     class Loader
     {
@@ -22,16 +22,16 @@ namespace cook { namespace structure {
 
             ReturnCode resolve();
 
-            ReturnCode get(const Description *&description, const Alias &alias) const;
+            ReturnCode get(const Recipe *&description, const Alias &alias) const;
 
             void stream(std::ostream &os) const;
 
             //Methods exposed to chai
-            bool create_new_recipe_3(const std::string &ns, const std::string &tag, std::function<void (Description &)> callback)
+            bool create_new_recipe_3(const std::string &ns, const std::string &tag, std::function<void (Recipe &)> callback)
             {
                 return create_new_recipe_(ns, tag, "", callback);
             }
-            bool create_new_recipe_4(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Description &)> callback)
+            bool create_new_recipe_4(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Recipe &)> callback)
             {
                 return create_new_recipe_(ns, tag, extra, callback);
             }
@@ -39,7 +39,7 @@ namespace cook { namespace structure {
             bool log(const std::string &dir);
 
         private:
-            bool create_new_recipe_(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Description &)> callback);
+            bool create_new_recipe_(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Recipe &)> callback);
             std::string indent_() const;
 
             const Options &options_;

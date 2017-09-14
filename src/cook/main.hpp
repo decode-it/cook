@@ -115,7 +115,7 @@ namespace cook {
 
             const structure::Alias alias(options.alias);
 
-            const structure::Description *ptr;
+            const structure::Recipe *ptr;
             MSS(loader.get(ptr, alias), std::cerr << "[error]{Could not find recipe for " << alias << "}" << std::endl);
             const auto &description = *ptr;
 

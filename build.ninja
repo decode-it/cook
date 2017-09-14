@@ -25,7 +25,8 @@ build .cook/cook#exe/x32/release/gubg.io/src/gubg/hash/MD5.cpp.obj: compile gubg
 build .cook/cook#exe/x32/release/gubg.io/src/gubg/parse/basic.cpp.obj: compile gubg.io/src/gubg/parse/basic.cpp
 build .cook/cook#exe/x32/release/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile gubg.io/src/gubg/parse/xml/Coding.cpp
 build .cook/cook#exe/x32/release/src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
-build .cook/cook#exe/x32/release/src/cook/recipe/Loader.cpp.obj: compile src/cook/recipe/Loader.cpp
+build .cook/cook#exe/x32/release/src/cook/structure/Loader.cpp.obj: compile src/cook/structure/Loader.cpp
+build .cook/cook#exe/x32/release/src/cook/structure/Recipe.cpp.obj: compile src/cook/structure/Recipe.cpp
 build .cook/cook#exe/x32/release/src/main.cpp.obj: compile src/main.cpp
 build cook.exe: link $
     .cook/cook#exe/x32/release/gubg.io/src/gubg/OptionParser.cpp.obj $
@@ -39,7 +40,8 @@ build cook.exe: link $
     .cook/cook#exe/x32/release/gubg.io/src/gubg/parse/basic.cpp.obj $
     .cook/cook#exe/x32/release/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
     .cook/cook#exe/x32/release/src/cook/chai/Engine.cpp.obj $
-    .cook/cook#exe/x32/release/src/cook/recipe/Loader.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/structure/Loader.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/structure/Recipe.cpp.obj $
     .cook/cook#exe/x32/release/src/main.cpp.obj
 
 rule clean

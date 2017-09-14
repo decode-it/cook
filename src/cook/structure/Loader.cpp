@@ -1,5 +1,5 @@
 #include "cook/structure/Loader.hpp"
-#include "cook/structure/Description.hpp"
+#include "cook/structure/Recipe.hpp"
 #include "gubg/debug.hpp"
 #include <iostream>
 #include <cassert>
@@ -86,7 +86,7 @@ namespace cook { namespace structure {
         MSS_END();
     }
 
-    ReturnCode Loader::get(const Description *&description, const Alias &alias) const
+    ReturnCode Loader::get(const Recipe *&description, const Alias &alias) const
     {
         MSS_BEGIN(ReturnCode);
         auto p = descriptions_.find(alias);
@@ -142,7 +142,7 @@ namespace cook { namespace structure {
         }
     }
 
-    bool Loader::create_new_recipe_(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Description &)> callback)
+    bool Loader::create_new_recipe_(const std::string &ns, const std::string &tag, const std::string &extra, std::function<void (Recipe &)> callback)
     {
         MSS_BEGIN(bool, "create_new_recipe");
         const Alias alias(ns, tag);
@@ -211,15 +211,15 @@ namespace cook { namespace structure {
         chai.add(chaiscript::fun(&Loader::create_new_recipe_4, this), "recipe");//Additional "extra" argument: "unless_exists" or "overwrite_if_exists"
         chai.add(chaiscript::fun(&Loader::add_dir, this), "add_dir");
         chai.add(chaiscript::fun(&Loader::log, this), "log");
-        chai.add(chaiscript::fun(&Description::add_source), "add_source");
-        chai.add(chaiscript::fun(&Description::add_header), "add_header");
-        chai.add(chaiscript::fun(&Description::add_include_path), "add_include_path");
-        chai.add(chaiscript::fun(&Description::add_define_1), "add_define");
-        chai.add(chaiscript::fun(&Description::add_define_2), "add_define");
-        chai.add(chaiscript::fun(&Description::add_library_path), "add_library_path");
-        chai.add(chaiscript::fun(&Description::add_library), "add_library");
-        chai.add(chaiscript::fun(&Description::depends_on), "depends_on");
-        chai.add(chaiscript::fun(&Description::print), "print");
+        chai.add(chaiscript::fun(&Recipe::add_source), "add_source");
+        chai.add(chaiscript::fun(&Recipe::add_header), "add_header");
+        chai.add(chaiscript::fun(&Recipe::add_include_path), "add_include_path");
+        chai.add(chaiscript::fun(&Recipe::add_define_1), "add_define");
+        chai.add(chaiscript::fun(&Recipe::add_define_2), "add_define");
+        chai.add(chaiscript::fun(&Recipe::add_library_path), "add_library_path");
+        chai.add(chaiscript::fun(&Recipe::add_library), "add_library");
+        chai.add(chaiscript::fun(&Recipe::depends_on), "depends_on");
+        chai.add(chaiscript::fun(&Recipe::print), "print");
         
         path_stack_.push_back(options.path);
     }
