@@ -6,6 +6,7 @@
 #include "cook/Codes.hpp"
 #include "cook/Options.hpp"
 #include "cook/work/TreeWriter.hpp"
+#include "cook/work/NinjaWriter.hpp"
 #include "gubg/mss.hpp"
 #include "gubg/file/System.hpp"
 #include "gubg/std/filesystem.hpp"
@@ -55,17 +56,49 @@ namespace cook {
     {
         MSS_BEGIN(bool);
         
-        
+        if (options.clean)
+        {
+            std::cout << "Cleaning " << build_dir << std::endl;
+            std::filesystem::remove_all(build_dir);
+        }
         
         chai::Loader loader(options);
         structure::Book root(std::filesystem::path(options.path) / "recipes.chai");
         MSS(loader.load(root));
-               
+        
         work::DependencyResolver resolver;
         MSS(resolver.resolve(root), std::cerr << "Error resolving the dependencies" << std::endl);
         
-        work::TreeWriter writer;
-        MSS(writer(root));
+        
+        if(options.print_recipes)
+        {
+            work::TreeWriter writer;
+            MSS(writer(resolver.order()));
+        }
+        
+        
+        if (!options.uri.empty())
+        {
+            structure::Uri uri(options.uri);
+            MSS(!uri.empty(), std::cerr << "Invalid uri: " << options.uri << std::endl);
+            
+            work::TopologicalOrder order;
+            MSS(work::simplify_order(order, uri, resolver.order()), std::cerr << "Could not locate uri " << uri << std::endl);
+                
+            work::NinjaWriter writer;
+            std::ofstream ofs("build.ninja");
+            
+            writer.options.build_dir = ".cook";
+            writer.options.output_dir = "";
+            writer.options.compiler = "g++ -std=c++17";
+            writer.options.linker= "g++ -std=c++17";
+            writer.options.archiver= "ar rcs";
+            writer.options.config = options.config;
+            writer.options.additional_defines = (writer.options.config=="release" ? "-DNDEBUG" : "");
+            writer.options.arch = options.arch;
+            
+            MSS(writer(ofs, order, uri));
+        }
         
         MSS_END();
     }

@@ -126,6 +126,7 @@ namespace cook { namespace chai {
         void depends_on(const std::string & uri)                                { recipe_.depends_on(Uri(uri)); }
         void print() const                                                      { recipe_.print(); }
         void set_display_name(const std::string & name)                         { recipe_.set_display_name(name); }
+        void set_target_type(structure::TargetType type)                        { recipe_.set_target_type(type); }
 
         GlobalInfo & info_;
         Recipe & recipe_;
@@ -141,6 +142,7 @@ namespace cook { namespace chai {
         void set_display_name(const std::string & name)                         { book_.set_display_name(name); }
         bool add_dir(const std::string & dir);
         bool add_book(const std::string & tag, std::function<void (BookWrapper &)> callback);
+        
         
         GlobalInfo & info_;
         Book & book_;

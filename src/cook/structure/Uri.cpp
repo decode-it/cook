@@ -41,6 +41,9 @@ namespace cook { namespace structure {
     
     Uri operator+(const Uri & lhs, const Tag & rhs)
     {
+        if(rhs.empty())
+            return lhs;
+        
         Uri res = lhs;
         res += rhs;
         return res;
@@ -61,7 +64,9 @@ namespace cook { namespace structure {
     
     Uri & Uri::operator+=(const Tag & rhs)
     {
-        data_.push_back(rhs);        
+        if(!rhs.empty())
+            data_.push_back(rhs);
+        
         return *this;
     }
     

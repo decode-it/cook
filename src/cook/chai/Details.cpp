@@ -47,7 +47,7 @@ namespace cook { namespace chai {
         MSS(p.second, std::cerr << "'" << tag << "' is not a valid tag" << std::endl);
         MSS(!p.first.empty(), std::cerr << "'" << tag << "' is not a valid tag" << std::endl);
         
-        MSS(!book_.has_subbook(p.first), std::cerr << "A book with name '" << tag << "' already exists in book '" << book_.string() << "'" << std::endl);
+        MSS(book_.find_element(p.first) == 0, std::cerr << "A book with name '" << tag << "' already exists in book '" << book_.string() << "'" << std::endl);
         
         Book * child = nullptr;
         
@@ -111,7 +111,7 @@ namespace cook { namespace chai {
         MSS(!p.first.empty(), std::cerr << "'" << tag << "' is not a valid tag" << std::endl);
                
         // do we have this recipe?
-        MSS(!book_.has_recipe(p.first));
+        MSS(book_.find_element(p.first) == 0, std::cerr << "A recipe with name '" << tag << "' already exists in book '" << book_.string() << "'" << std::endl);
         
         Recipe * recipe = nullptr;
         {

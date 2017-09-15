@@ -1,7 +1,7 @@
 #ifndef HEADER_cook_work_TreeWriter_hpp_ALREADY_INCLUDED
 #define HEADER_cook_work_TreeWriter_hpp_ALREADY_INCLUDED
 
-#include "cook/structure/Book.hpp"
+#include "cook/work/TopologicalOrder.hpp"
 #include "cook/util/TreeNode.hpp"
 
 namespace cook { namespace work {
@@ -9,7 +9,7 @@ namespace cook { namespace work {
     class TreeWriter
     {
     public:
-        bool operator()(const structure::Book & root);
+        bool operator()(const TopologicalOrder & order);
         
     private:
         bool write_book_(const structure::Book & book, util::TreeNode & node);

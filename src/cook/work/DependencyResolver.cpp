@@ -26,22 +26,32 @@ namespace cook { namespace work {
         
         RecipeMap map;
         
-        // create a map from namespace to recipe
-        std::stack<Book *> to_visit_;
-        to_visit_.push(&root);
+        // initialize the book_order
+        order_.books.clear();
+        order_.books.push_back(&root);
+        std::size_t pos = 0;
         
-        while(!to_visit_.empty())
+        for(std::size_t pos = 0; pos < order_.books.size(); ++pos)
         {
-            Book * b = to_visit_.top();
-            to_visit_.pop();
+            Book * b = order_.books[pos];
             
-            // add all recipes to the map
-            for(auto & p : b->recipes())
-                map[p.second.uri()] = &p.second;
-
-            // and add all subbooks
-            for(auto & p : b->subbooks())
-                to_visit_.push(&p.second);
+            
+            for (auto & p: b->elements())
+            {
+                // add all recipes to the map
+                {
+                    Recipe * e = dynamic_cast<Recipe *>(p.second);
+                    if (e)
+                        map[e->uri()] = e;
+                }
+                    
+                // and add all books to the todo
+                {
+                    Book * e = dynamic_cast<Book *>(p.second);
+                    if (e)
+                        order_.books.push_back(e);
+                }
+            }
         }
         
         // loop over every recipe
@@ -69,9 +79,13 @@ namespace cook { namespace work {
     
     void DependencyResolver::propagate_merge_()
     {
-        for(Recipe * recipe : order_)
+        for(Recipe * recipe : order_.recipes)
+        {
+            recipe->add_local_include_paths();
+            
             for(Recipe * dep : recipe->required_recipes())
                 recipe->merge(*dep);
+        }
     }
     
     bool DependencyResolver::construct_topological_order_(Book & root, const RecipeMap & map)
@@ -79,8 +93,8 @@ namespace cook { namespace work {
         MSS_BEGIN(bool);
         
         // prepare the order vector
-        order_.assign(map.size(), nullptr);
-        auto it = order_.rbegin();
+        order_.recipes.assign(map.size(), nullptr);
+        auto it = order_.recipes.rbegin();
         
         std::unordered_map<Recipe *, std::size_t> count_map;
         
@@ -115,7 +129,7 @@ namespace cook { namespace work {
 
             
             assert(count_map[cur] == 0);
-            MSS(it != order_.rend());
+            MSS(it != order_.recipes.rend());
             *it++ = cur;
             
                         
@@ -131,7 +145,7 @@ namespace cook { namespace work {
             }
         }
         
-        MSS(it == order_.rend());
+        MSS(it == order_.recipes.rend());
         MSS_END();
     }
     

@@ -2,6 +2,13 @@
 #include "cook/structure/Book.hpp"
 
 namespace cook { namespace structure { 
+    
+    Recipe::Recipe(const std::filesystem::path & script_fn, const Tag & tag, Book * book)
+                :  Element(Type::Recipe, script_fn, tag, book),
+                   book_(book)
+    {
+        
+    }
        
     void Recipe::get_all_include_paths(IncludePaths &res) const
     {
@@ -22,6 +29,13 @@ namespace cook { namespace structure {
             libraries_.push_back(library);
     }
     
+    void Recipe::add_local_include_paths()
+    {
+        for (const auto &p: sources())
+            include_paths_.insert(p.second.dir);
+        for (const auto &p: headers())
+            include_paths_.insert(p.second.dir);
+    }
     
     void Recipe::print() const
     {
@@ -36,6 +50,20 @@ namespace cook { namespace structure {
             std::cout << " * " << p.first << " => " << p.second << std::endl;
     }
     
+    bool Recipe::get_target_filename(std::string & tgt) const
+    {
+        tgt = uri().string();;
+        
+        switch (target_type())
+        {
+            case TargetType::Executable:                        break;
+            case TargetType::StaticLibrary:     tgt += ".a";    break;
+            default:
+                return false;
+        }
+        return true;
+    }
+    
     void Recipe::merge(const Recipe &rhs)
     {
         defines_.insert(rhs.defines_.begin(), rhs.defines_.end());
@@ -45,12 +73,7 @@ namespace cook { namespace structure {
         for (const auto &lib: rhs.libraries_)
             add_library(lib);
     }
-    
-    Uri Recipe::uri() const
-    {
-        return book().uri() + tag();
-    }
-    
+       
     std::string Recipe::string() const
     {
         std::ostringstream oss;

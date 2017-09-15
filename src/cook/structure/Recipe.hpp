@@ -1,6 +1,7 @@
 #ifndef HEADER_cook_structure_Recipe_hpp_ALREADY_INCLUDED
 #define HEADER_cook_structure_Recipe_hpp_ALREADY_INCLUDED
 
+#include "cook/structure/Element.hpp"
 #include "cook/structure/Uri.hpp"
 #include "cook/structure/Tag.hpp"
 #include "gubg/debug.hpp"
@@ -34,6 +35,25 @@ namespace cook { namespace structure {
         }
     } 
     
+    enum class TargetType
+    {
+        Unknown,
+        Executable,
+        StaticLibrary
+    };
+    
+    inline std::ostream & operator<<(std::ostream & str, TargetType tgt)
+    {
+        switch(tgt)
+        {
+            case TargetType::Executable: str << "Executable"; break;
+            case TargetType::StaticLibrary: str << "StaticLibrary"; break; 
+            default: str << "Unknown";
+        }
+        
+        return str;
+    }
+    
     
     using FileInfo          = std::map<std::filesystem::path, file::Info>;
     using IncludePaths      = std::set<std::filesystem::path>;
@@ -44,7 +64,7 @@ namespace cook { namespace structure {
     
     struct Book;
 
-    class Recipe
+    class Recipe : public Element
     {
         using RequiredRecipes   = std::set<Recipe *>;
         
@@ -52,22 +72,14 @@ namespace cook { namespace structure {
             static constexpr const char *logns = "structure::Recipe";
 
         public:
-            Recipe(const Tag & tag, const std::filesystem::path & script_fn, Book * book)
-                :  tag_(tag),
-                   script_fn_(script_fn),
-                   book_(book),
-                   display_name_(tag.string())
-            {
-            }
+            Recipe(const std::filesystem::path & script_fn, const Tag & tag, Book * book);
                         
-            std::filesystem::path base() const                      { return script_fn_.parent_path(); }
-            const std::filesystem::path & script_filename() const   { return script_fn_; }
-            const Tag & tag() const                                 { return tag_; }
+            std::filesystem::path base() const                      { return script_filename().parent_path(); }
+            const Tag & tag() const                                 { return uri().back(); }
             const Book & book() const                               { return *book_; }
             Book & book()                                           { return *book_; }
-            Uri uri() const;
-            void set_display_name(const std::string & display_name) { display_name_ = display_name; }
-            const std::string & display_name() const                { return display_name_; }
+            TargetType target_type() const                          { return target_type_; }
+            void set_target_type(TargetType target_type)            { target_type_ = target_type; }
 
             const FileInfo &sources() const                     { return sources_; }
             const FileInfo &headers() const                     { return headers_; }
@@ -76,6 +88,9 @@ namespace cook { namespace structure {
             const LibraryPaths &library_paths() const           { return library_paths_; }
             const Libraries &libraries() const                  { return libraries_; }
             const Dependencies &dependencies() const            { return dependencies_; }
+            void add_local_include_paths();
+            
+            bool get_target_filename(std::string & tgt) const;
 
             void get_all_include_paths(IncludePaths &res) const;
 
@@ -92,11 +107,7 @@ namespace cook { namespace structure {
             void merge(const Recipe &rhs);
             
             void add_required_recipe(Recipe * recipe)                                     { if(recipe != nullptr) required_recipes_.insert(recipe); }
-            
-            
             std::string string() const;
-            
-            
 
         private:
             Recipe(const Recipe &) = delete;
@@ -104,10 +115,8 @@ namespace cook { namespace structure {
             Recipe(Recipe &&) = delete;
             Recipe operator=(Recipe &&) = delete;
             
-            const std::filesystem::path script_fn_;
             Book * const book_;
-            const Tag tag_;
-            std::string display_name_;
+            TargetType target_type_;
             
             void add_(FileInfo &dst, file::Type type, const std::string &subdir, const std::string &pattern);
             

@@ -1,8 +1,7 @@
 #ifndef HEADER_cook_work_DependencyResolver_hpp_ALREADY_INCLUDED
 #define HEADER_cook_work_DependencyResolver_hpp_ALREADY_INCLUDED
 
-#include "cook/structure/Book.hpp"
-#include "cook/structure/Recipe.hpp"
+#include "cook/work/TopologicalOrder.hpp"
 #include <vector>
 
 namespace cook { namespace work {
@@ -11,6 +10,7 @@ namespace cook { namespace work {
     {
         using Book      = structure::Book;
         using Recipe    = structure::Recipe;
+        using Element   = structure::Element;
         using Tag       = structure::Tag;
         using Uri       = structure::Uri;
         
@@ -21,12 +21,8 @@ namespace cook { namespace work {
         bool resolve(Book & root);
         bool resolve(Book & root, std::list<unresolved_dependency> & lst );
         
-        
-        
-        const std::vector<Recipe*> & order() const { return order_; }
-        
-        
-        
+        const TopologicalOrder & order() const { return order_; }
+                
     private:
         using RecipeMap = std::unordered_map<Uri, Recipe *>;
         
@@ -34,7 +30,7 @@ namespace cook { namespace work {
         
         bool construct_topological_order_(Book & root, const RecipeMap & map);
         void propagate_merge_();
-        std::vector<Recipe *> order_;
+        TopologicalOrder order_;
     };
 
 } }

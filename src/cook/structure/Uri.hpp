@@ -29,6 +29,7 @@ namespace cook { namespace structure {
         bool operator==(const Uri & rhs) const;
         bool operator!=(const Uri & rhs) const;
         bool operator<(const Uri & rhs) const;
+        bool empty() const { return data_.empty(); }
         
         const Tag & back() const;
         

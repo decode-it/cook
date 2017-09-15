@@ -7,49 +7,25 @@ namespace cook { namespace structure {
     {
         MSS_BEGIN(bool);
         MSS(!tag.empty());
-        
-        MSS(subbooks_.find(tag) == subbooks_.end());
-        
-        Uri child = uri() + tag;
-        
         MSS(script_fn.has_filename());
         
-        auto it = subbooks_.emplace(std::piecewise_construct, std::forward_as_tuple(tag), std::forward_as_tuple(script_fn, child)).first;
-        book = &it->second;
+        book = new Book(script_fn, tag, this);
+        MSS(add_element(tag, book), delete book);
         
         MSS_END();
-    }
-
-    bool Book::add_recipe(Recipe *& recipe, const Tag & tag)
-    {
-        return add_recipe(recipe, tag, script_filename());
     }
     
     bool Book::add_recipe(Recipe *& recipe, const Tag & tag, const std::filesystem::path & script_fn)
     {
         MSS_BEGIN(bool);
         MSS(!tag.empty());
+        MSS(script_fn.has_filename());
         
-        MSS(recipes_.find(tag) == recipes_.end());
-        
-        auto it = recipes_.emplace(std::piecewise_construct, std::forward_as_tuple(tag), std::forward_as_tuple(tag, script_fn, this)).first;
-        
-        recipe = &it->second;
+        recipe = new Recipe(script_fn, tag, this);
+        MSS(add_element(tag, recipe), delete recipe);
 
         MSS_END();
     }
-    
-        
-    bool Book::has_recipe(const Tag & tag) const
-    {
-        return recipes_.find(tag) != recipes_.end();
-    }
-    
-    bool Book::has_subbook(const Tag & tag) const
-    {
-        return recipes_.find(tag) != recipes_.end();
-    }
-    
     
     std::string Book::string() const
     {

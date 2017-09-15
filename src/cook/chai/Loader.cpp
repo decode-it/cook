@@ -1,5 +1,6 @@
 #include "cook/chai/Loader.hpp"
 #include "cook/chai/Details.hpp"
+#include "cook/structure/Recipe.hpp"
 #include <functional>
 
 namespace cook { namespace chai { 
@@ -34,6 +35,12 @@ bool Loader::load(structure::Book & root)
     chai.add(chaiscript::fun(&RecipeWrapper::depends_on),               "depends_on");
     chai.add(chaiscript::fun(&RecipeWrapper::print),                    "print");
     chai.add(chaiscript::fun(&RecipeWrapper::set_display_name),         "display_name");
+    chai.add(chaiscript::fun(&RecipeWrapper::set_target_type),          "target_type");
+    
+    chai.add_global_const(chaiscript::const_var(structure::TargetType::Executable), "executable");
+    chai.add_global_const(chaiscript::const_var(structure::TargetType::StaticLibrary), "static_library");
+//     chai.add(chaiscript::user_type<structure::TargetType::TestEnum>(), "TestEnum");
+//     chai.add_global_const(chaiscript::const_var<structure::TargetType::StaticLibrary>, "static_library");
     
     //         chai.add(chaiscript::fun(add_book, &info), "add_book");
     

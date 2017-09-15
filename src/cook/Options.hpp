@@ -24,7 +24,7 @@ namespace cook {
         bool clean = false;
         bool do_build = true;
         bool print_recipes = false;
-        std::string alias;
+        std::string uri;
         std::string project_name;
         std::string path = "";
         
@@ -64,7 +64,7 @@ namespace cook {
             }
             
             if (args.size() == 1)
-                alias = args.front();
+                uri = args.front();
             
             MSS_END();
         }
