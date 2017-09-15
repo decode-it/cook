@@ -1,4 +1,5 @@
 #include "cook/structure/Recipe.hpp"
+#include "cook/structure/Book.hpp"
 
 namespace cook { namespace structure { 
        
@@ -37,19 +38,30 @@ namespace cook { namespace structure {
     
     void Recipe::merge(const Recipe &rhs)
     {
-        sources_.insert(rhs.sources_.begin(), rhs.sources_.end());
-        headers_.insert(rhs.headers_.begin(), rhs.headers_.end());
         defines_.insert(rhs.defines_.begin(), rhs.defines_.end());
         include_paths_.insert(rhs.include_paths_.begin(), rhs.include_paths_.end());
         library_paths_.insert(rhs.library_paths_.begin(), rhs.library_paths_.end());
+        
         for (const auto &lib: rhs.libraries_)
             add_library(lib);
+    }
+    
+    Uri Recipe::uri() const
+    {
+        return book().uri() + tag();
+    }
+    
+    std::string Recipe::string() const
+    {
+        std::ostringstream oss;
+        oss << uri();
+        return oss.str();
     }
     
     void Recipe::add_(FileInfo &dst, file::Type type, const std::string &subdir, const std::string &pattern)
     {
         S("add_");
-        std::filesystem::path dir = base_; dir /= subdir;
+        std::filesystem::path dir = base(); dir /= subdir;
         L(C(subdir)C(dir)C(pattern));
         auto add_file = [&](const std::filesystem::path &fp)
         {

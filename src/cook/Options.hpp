@@ -20,13 +20,13 @@ namespace cook {
         std::string arch = "x32";
         bool print_help = false;
         std::string help_message;
-        int verbose = 0;
+        unsigned int verbose = 0;
         bool clean = false;
         bool do_build = true;
         bool print_recipes = false;
         std::string alias;
         std::string project_name;
-        std::string path = "./";
+        std::string path = "";
         
         
 

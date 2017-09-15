@@ -24,9 +24,17 @@ build .cook/cook#exe/x32/release/gubg.io/src/gubg/file/Forest.cpp.obj: compile g
 build .cook/cook#exe/x32/release/gubg.io/src/gubg/hash/MD5.cpp.obj: compile gubg.io/src/gubg/hash/MD5.cpp
 build .cook/cook#exe/x32/release/gubg.io/src/gubg/parse/basic.cpp.obj: compile gubg.io/src/gubg/parse/basic.cpp
 build .cook/cook#exe/x32/release/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile gubg.io/src/gubg/parse/xml/Coding.cpp
+build .cook/cook#exe/x32/release/src/cook/chai/Details.cpp.obj: compile src/cook/chai/Details.cpp
 build .cook/cook#exe/x32/release/src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
-build .cook/cook#exe/x32/release/src/cook/structure/Loader.cpp.obj: compile src/cook/structure/Loader.cpp
+build .cook/cook#exe/x32/release/src/cook/chai/Loader.cpp.obj: compile src/cook/chai/Loader.cpp
+build .cook/cook#exe/x32/release/src/cook/structure/Book.cpp.obj: compile src/cook/structure/Book.cpp
+build .cook/cook#exe/x32/release/src/cook/structure/Loader_.cpp.obj: compile src/cook/structure/Loader_.cpp
 build .cook/cook#exe/x32/release/src/cook/structure/Recipe.cpp.obj: compile src/cook/structure/Recipe.cpp
+build .cook/cook#exe/x32/release/src/cook/structure/Tag.cpp.obj: compile src/cook/structure/Tag.cpp
+build .cook/cook#exe/x32/release/src/cook/structure/Uri.cpp.obj: compile src/cook/structure/Uri.cpp
+build .cook/cook#exe/x32/release/src/cook/work/DependencyResolver.cpp.obj: compile src/cook/work/DependencyResolver.cpp
+build .cook/cook#exe/x32/release/src/cook/work/NinjaWriter.cpp.obj: compile src/cook/work/NinjaWriter.cpp
+build .cook/cook#exe/x32/release/src/cook/work/TreeWriter.cpp.obj: compile src/cook/work/TreeWriter.cpp
 build .cook/cook#exe/x32/release/src/main.cpp.obj: compile src/main.cpp
 build cook.exe: link $
     .cook/cook#exe/x32/release/gubg.io/src/gubg/OptionParser.cpp.obj $
@@ -39,9 +47,17 @@ build cook.exe: link $
     .cook/cook#exe/x32/release/gubg.io/src/gubg/hash/MD5.cpp.obj $
     .cook/cook#exe/x32/release/gubg.io/src/gubg/parse/basic.cpp.obj $
     .cook/cook#exe/x32/release/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/chai/Details.cpp.obj $
     .cook/cook#exe/x32/release/src/cook/chai/Engine.cpp.obj $
-    .cook/cook#exe/x32/release/src/cook/structure/Loader.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/chai/Loader.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/structure/Book.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/structure/Loader_.cpp.obj $
     .cook/cook#exe/x32/release/src/cook/structure/Recipe.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/structure/Tag.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/structure/Uri.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/work/DependencyResolver.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/work/NinjaWriter.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/work/TreeWriter.cpp.obj $
     .cook/cook#exe/x32/release/src/main.cpp.obj
 
 rule clean
