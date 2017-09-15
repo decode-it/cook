@@ -44,15 +44,14 @@ namespace cook {
                 break;
                 
             case Options::Existing:
-                MSS(process_test(options), write_help(options));
-//                 MSS(process_existing(options), write_help(options));
+                MSS(process_existing(options), write_help(options));
                 break;
         }
         
         MSS_END();
     }
     
-    bool process_test(const Options & options)
+    bool process_existing(const Options & options)
     {
         MSS_BEGIN(bool);
         
@@ -143,141 +142,6 @@ namespace cook {
         
         MSS_END();
     }
-    
-    bool process_existing(const Options & options)
-    {
-        return true;
-//         MSS_BEGIN(bool);
-//         
-//         if (options.clean)
-//         {
-//             std::cout << "Cleaning " << build_dir << std::endl;
-//             std::filesystem::remove_all(build_dir);
-//         }
-//         
-//         if (options.print_recipes)
-//         {
-//             structure::Loader loader(options);
-//             MSS(loader.load("", "recipes.chai"));
-//             loader.stream(std::cout);
-//         }
-//         
-//         
-//         if (!options.alias.empty())
-//         {
-//             structure::Loader loader(options);
-//             MSS(loader.load("", "recipes.chai"));
-// 
-//             MSS(loader.resolve());
-// 
-//             const structure::Alias alias(options.alias);
-// 
-//             const structure::Recipe *ptr;
-//             MSS(loader.get(ptr, alias), std::cerr << "[error]{Could not find recipe for " << alias << "}" << std::endl);
-//             const auto &description = *ptr;
-// 
-//             if (options.verbose >= 2)
-//                 description.print();
-// 
-//             structure::IncludePaths include_paths;
-//             description.get_all_include_paths(include_paths);
-// 
-//             structure::Defines defines = description.defines();
-//             if (options.config == "release")
-//                 defines["NDEBUG"] = "";
-// 
-//             {
-//                 std::ofstream fo("build.ninja");
-// 
-//                 fo << "compiler = g++ -std=c++17" << std::endl;
-//                 fo << "linker = g++ -std=c++17" << std::endl;
-//                 fo << "delete = rm -f" << std::endl;
-//                 fo << std::endl;
-// 
-//                 fo << "cflags =";
-//                 if (false) {}
-//                 else if (options.arch == "x32") fo << " -m32";
-//                 else if (options.arch == "x64") fo << " -m64";
-//                 else
-//                 {
-//                     std::cerr << "Unknown arch " << options.arch << std::endl;
-//                     MSS(false);
-//                 }
-//                 if (options.config == "debug")
-//                     fo << " -g ";
-//                 fo << std::endl;
-//                 fo << "defines = ";
-//                 for (const auto &p: defines)
-//                 {
-//                     const auto &key = p.first;
-//                     const auto &value = p.second;
-//                     if (value.empty())
-//                         fo << " -D" << key;
-//                     else
-//                         fo << " -D" << key << "=" << value;
-//                 }
-//                 fo << std::endl;
-//                 fo << "include_paths =";
-//                 for (const auto &ip: include_paths)
-//                     fo << " -I " << ip;
-//                 fo << std::endl;
-// 
-//                 fo << "lflags =";
-//                 if (false) {}
-//                 else if (options.arch == "x32") fo << " -m32";
-//                 else if (options.arch == "x64") fo << " -m64";
-//                 else
-//                 {
-//                     std::cerr << "Unknown arch " << options.arch << std::endl;
-//                     MSS(false);
-//                 }
-//                 fo << std::endl;
-//                 fo << "library_paths =";
-//                 for (const auto &path: description.library_paths())
-//                     fo << " -L" << path;
-//                 fo << std::endl;
-//                 fo << "libraries =";
-//                 for (const auto &lib: description.libraries())
-//                     fo << " -l" << lib;
-//                 fo << std::endl;
-// 
-//                 fo << "rule compile" << std::endl;
-//                 fo << "  command = $compiler -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths" << std::endl;
-//                 fo << "  depfile = $out.d" << std::endl;
-//                 fo << "rule link" << std::endl;
-//                 fo << "  command = $linker $lflags -o $out $in $library_paths $libraries" << std::endl;
-//                 fo << std::endl;
-// 
-//                 std::list<std::filesystem::path> objects;
-//                 for (const auto &p: description.sources())
-//                 {
-//                     const auto &source = p.first;
-//                     auto obj = build_dir; obj /= alias.str(); obj /= options.arch; obj /= options.config; obj /= source; obj += ".obj";
-//                     objects.push_back(obj);
-//                     fo << "build " << obj.string() << ": compile " << source.string() << std::endl;
-//                 }
-// 
-//                 const std::filesystem::path exe = alias.ns()+"."+alias.tag();
-//                 fo << "build " << exe.string() << ": link";
-//                 for (const auto &obj: objects)
-//                     fo << " $" << std::endl << "    " << obj.string();
-//                 fo << std::endl;
-//                 fo << std::endl;
-// 
-//                 fo << "rule clean" << std::endl;
-//                 fo << "  command = ninja -t clean" << std::endl;
-//                 fo << "build clean: clean" << std::endl;
-// 
-//                 fo << "default " << exe.string() << std::endl;
-//             }
-// 
-//             if (options.do_build)
-//                 MSS(std::system("ninja -v") == 0);
-//         }
-// 
-//         MSS_END();
-    }
-
 } 
 
 #endif
