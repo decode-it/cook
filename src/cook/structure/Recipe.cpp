@@ -1,5 +1,6 @@
 #include "cook/structure/Recipe.hpp"
 #include "cook/structure/Book.hpp"
+#include <sstream>
 
 namespace cook { namespace structure { 
     
@@ -7,7 +8,6 @@ namespace cook { namespace structure {
                 :  Element(Type::Recipe, script_fn, tag, book),
                    book_(book)
     {
-        
     }
        
     void Recipe::get_all_include_paths(IncludePaths &res) const
@@ -22,25 +22,25 @@ namespace cook { namespace structure {
     
     void Recipe::add_library(const std::string &library)
     {
-        for (const auto &lib: libraries_)
+        for (const auto &lib: in_.libraries)
             if (lib == library)
                 //Already present
                 return;
-            libraries_.push_back(library);
+            in_.libraries.push_back(library);
     }
     
     void Recipe::add_local_include_paths()
     {
         for (const auto &p: sources())
-            include_paths_.insert(p.second.dir);
+            add_include_path(p.second.dir);
         for (const auto &p: headers())
-            include_paths_.insert(p.second.dir);
+            add_include_path(p.second.dir);
     }
     
     void Recipe::print() const
     {
         std::cout << "Defines:" << std::endl;
-        for (const auto &p: defines_)
+        for (const auto &p: in_.defines)
             std::cout << " * " << p.first << " => " << p.second << std::endl;
         std::cout << "Sources:" << std::endl;
         for (const auto &p: sources_)
@@ -50,29 +50,91 @@ namespace cook { namespace structure {
             std::cout << " * " << p.first << " => " << p.second << std::endl;
     }
     
-    bool Recipe::get_target_filename(std::string & tgt) const
+    std::string Recipe::propose_target_identifier() const
     {
-        tgt = uri().string();;
+        std::string start_point = !display_name().empty() ? display_name() : uri().string();
         
-        switch (target_type())
-        {
-            case TargetType::Executable:                        break;
-            case TargetType::StaticLibrary:     tgt += ".a";    break;
-            default:
-                return false;
-        }
-        return true;
+        // translate the file
+        std::ostringstream oss;
+        for(char c : start_point)
+            if ('c' == '#' || 'c' == ' ')
+                oss << "_";
+            else
+                oss << c;
+        return oss.str();
     }
     
-    void Recipe::merge(const Recipe &rhs)
+    bool Recipe::configure(const Config & config) 
     {
-        defines_.insert(rhs.defines_.begin(), rhs.defines_.end());
-        include_paths_.insert(rhs.include_paths_.begin(), rhs.include_paths_.end());
-        library_paths_.insert(rhs.library_paths_.begin(), rhs.library_paths_.end());
+        MSS_BEGIN(bool);
         
-        for (const auto &lib: rhs.libraries_)
-            add_library(lib);
+        switch(target_type())
+        {
+            case TargetType::StaticLibrary:
+            {
+                std::string id = target_identifier();
+                std::string lib_name = std::string("lib") + id + std::string(".a");
+                
+                output_.library_paths.insert(config.deploy_dir);
+                output_.libraries.push_back(id);
+                
+                for(const auto & p : headers())
+                    output_.include_paths.insert(p.second.dir);
+                
+                output_.filename = config.deploy_dir / lib_name;
+            }
+                break;
+                
+            case TargetType::Executable:
+            {
+                std::string id = target_identifier();
+                std::string exe_name = id;
+                
+                output_.filename = config.deploy_dir / exe_name;
+            }
+                break;
+                
+            default:
+                MSS(false, std::cerr << "Unknown target type for " << uri() << std::endl);
+        }
+        
+        MSS_END();
     }
+    
+    
+    bool Recipe::construct_target(Target & tgt) const
+    {
+        MSS_BEGIN(bool);
+        
+        tgt.identifier = target_identifier();
+        
+        switch(target_type())
+        {
+            case TargetType::StaticLibrary:
+                tgt.link_target = tgt.identifier;
+                tgt.filename = std::string("lib") + tgt.link_target + std::string(".a");
+                break;
+                
+            case TargetType::Executable:
+                tgt.filename = tgt.identifier;
+                break;
+                
+            default:
+                MSS(false, std::cerr << "Unknown target type for " << uri() << std::endl);
+        }
+        
+        MSS_END();
+    }
+    
+//     void Recipe::merge(const Recipe &rhs)
+//     {
+//         defines_.insert(rhs.defines_.begin(), rhs.defines_.end());
+//         include_paths_.insert(rhs.include_paths_.begin(), rhs.include_paths_.end());
+//         library_paths_.insert(rhs.library_paths_.begin(), rhs.library_paths_.end());
+//         
+//         for (const auto &lib: rhs.libraries_)
+//             add_library(lib);
+//     }
        
     std::string Recipe::string() const
     {

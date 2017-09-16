@@ -15,9 +15,7 @@
 #include <cstdlib>
 
 namespace cook { 
-
-    const std::filesystem::path build_dir = ".cook";
-    
+   
     void write_help(const Options & options);
     bool process_new(const Options & options);
     bool process_test(const Options & options);
@@ -57,16 +55,22 @@ namespace cook {
         
         if (options.clean)
         {
-            std::cout << "Cleaning " << build_dir << std::endl;
-            std::filesystem::remove_all(build_dir);
+            std::cout << "Cleaning " << options.build_dir << std::endl;
+            std::filesystem::remove_all(options.build_dir);
         }
         
         chai::Loader loader(options);
-        structure::Book root(std::filesystem::path(options.path) / "recipes.chai");
+        structure::Book root(std::filesystem::path(options.source_dir) / "recipes.chai");
         MSS(loader.load(root));
         
+        
         work::DependencyResolver resolver;
-        MSS(resolver.resolve(root), std::cerr << "Error resolving the dependencies" << std::endl);
+        {
+            structure::Config config;
+            config.build_dir = options.build_dir;
+            config.deploy_dir = options.deploy_dir;
+            MSS(resolver.resolve(root, config), std::cerr << "Error resolving the dependencies" << std::endl);
+        }
         
         
         if(options.print_recipes)
@@ -75,20 +79,24 @@ namespace cook {
             MSS(writer(resolver.order()));
         }
         
-        
-        if (!options.uri.empty())
+        if(!options.uri.empty())
         {
             structure::Uri uri(options.uri);
             MSS(!uri.empty(), std::cerr << "Invalid uri: " << options.uri << std::endl);
             
-            work::TopologicalOrder order;
-            MSS(work::simplify_order(order, uri, resolver.order()), std::cerr << "Could not locate uri " << uri << std::endl);
-                
+            
+            std::list<structure::Recipe *> suborder;
+            {
+                const auto & recipes = resolver.order().recipes;    
+                work::subset_order(std::back_inserter(suborder), uri, util::make_range(recipes), true);
+                MSS(!suborder.empty(), std::cerr << "Could not locate uri " << uri << std::endl);
+            }
+
             work::NinjaWriter writer;
             std::ofstream ofs("build.ninja");
             
-            writer.options.build_dir = ".cook";
-            writer.options.output_dir = "";
+            writer.options.build_dir = options.build_dir;
+            writer.options.deploy_dir = options.deploy_dir;
             writer.options.compiler = "g++ -std=c++17";
             writer.options.linker= "g++ -std=c++17";
             writer.options.archiver= "ar rcs";
@@ -96,7 +104,7 @@ namespace cook {
             writer.options.additional_defines = (writer.options.config=="release" ? "-DNDEBUG" : "");
             writer.options.arch = options.arch;
             
-            MSS(writer(ofs, order, uri));
+            MSS(writer(ofs, suborder, uri));
         }
         
         MSS_END();
@@ -112,7 +120,7 @@ namespace cook {
         MSS_BEGIN(bool);
         std::cout << "Creating project " << options.project_name << std::endl;
 
-        std::filesystem::path dir = options.path;
+        std::filesystem::path dir = options.source_dir;
         dir /= options.project_name;
         MSS(!std::filesystem::is_directory(dir), std::cout << "Error: project folder " << dir << " already exists" << std::endl);
         MSS(std::filesystem::create_directory(dir));

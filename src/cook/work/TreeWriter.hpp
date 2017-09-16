@@ -13,7 +13,7 @@ namespace cook { namespace work {
         
     private:
         bool write_book_(const structure::Book & book, util::TreeNode & node);
-        bool write_recipe_(const structure::Recipe & recipe, util::TreeNode & node);
+        bool write_recipe_(const structure::Recipe & recipe, util::TreeNode & node, const TopologicalOrder & order);
     };
     
 } }

@@ -3,6 +3,8 @@
 
 #include "cook/structure/Book.hpp"
 #include "cook/structure/Recipe.hpp"
+#include "cook/util/Range.hpp"
+#include <unordered_set>
 
 namespace cook { namespace work {
     
@@ -12,8 +14,50 @@ namespace cook { namespace work {
         std::vector<structure::Book *> books;
     };
     
-    
-    bool simplify_order(TopologicalOrder & tgt, const structure::Uri & root, const TopologicalOrder & original_order);
+    template <typename OutputIterator, typename It>
+    OutputIterator subset_order(OutputIterator out_it, const structure::Uri & uri, const util::Range<It> & ordered_recipes, bool add_self = false)
+    {
+        using Recipe = structure::Recipe;
+        
+        // find the root
+        Recipe * root = nullptr;
+        {
+            auto it = std::find_if(RANGE(ordered_recipes), [&](auto * recipe) { return recipe->uri() == uri; });
+            if(it == ordered_recipes.end())
+                return out_it;        
+            root = *it;
+        }
+        
+        
+        
+        std::unordered_set<Recipe *> sub_dag;
+        {
+            std::stack<Recipe *> todo;           
+            auto add_dependencies = [&](Recipe * cur) { for(auto * dep : cur->required_recipes()) todo.push(dep); };
+            add_dependencies(root);
+        
+            while(!todo.empty())
+            {
+                Recipe * cur = todo.top();
+                todo.pop();
+            
+                // only process new element
+                if (!sub_dag.insert(cur).second)
+                    continue;
+            
+                add_dependencies(cur);
+            }
+        }
+        
+        for(Recipe * recipe : ordered_recipes)
+            if(sub_dag.find(recipe) != sub_dag.end())
+                *out_it++ = recipe;
+            
+        if (add_self)
+            *out_it++ = root;
+        
+        return out_it;
+    }
 } }
 
 

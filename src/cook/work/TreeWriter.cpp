@@ -13,7 +13,7 @@ namespace cook { namespace work {
             MSS(write_book_(*book, n));
         
         for(auto * recipe: order.recipes)
-            MSS(write_recipe_(*recipe, n));
+            MSS(write_recipe_(*recipe, n, order));
         
         MSS_END();
     }
@@ -41,24 +41,22 @@ namespace cook { namespace work {
         
     }
     
-    bool TreeWriter::write_recipe_(const structure::Recipe & recipe, util::TreeNode & node)
+    bool TreeWriter::write_recipe_(const structure::Recipe & recipe, util::TreeNode & node, const TopologicalOrder & order)
     {
         MSS_BEGIN(bool);
         auto nn = node.open("recipe");
-        
+                
         // properties
         {
             nn.attr("uri", recipe.uri());
             nn.attr("tag", recipe.tag());
             nn.attr("script", recipe.script_filename().native());
             nn.attr("display_name", recipe.display_name());
+            nn.attr("type", recipe.target_type());
+            nn.attr("build_target", recipe.output().filename.native());
         }
         
-        // streaming of include paths
-        {
-            for(const auto & f : recipe.include_paths())
-                nn.open("include_path").attr("path", f.native());
-        }
+        
         
         // streaming of files
         {
@@ -85,11 +83,48 @@ namespace cook { namespace work {
             stream_files(recipe.headers());
         }
         
+        // extra material, coming from the dependencies
+        structure::TargetConfig cfg;
+        cfg = recipe.input_config();
+        
+        {
+            std::list<structure::Recipe *> suborder;
+            subset_order(std::back_inserter(suborder), recipe.uri(), util::make_range(order.recipes));
+            
+            for(auto it = suborder.begin(); it != suborder.end(); ++it)
+            {
+                auto * dep = *it;
+                structure::merge(cfg, dep->output());
+            }
+        }
+        
+        // streaming of include paths
+        {
+            for(const auto & f : cfg.include_paths)
+                nn.open("include_path").attr("path", f.native());
+        }
+        
+        // streaming of library paths
+        {
+            for(const auto & f : cfg.library_paths)
+                nn.open("library_path").attr("path", f.native());
+        }
+        
+        // streaming of libraries
+        {
+            for(const auto & f : cfg.libraries)
+                nn.open("library").attr("name", f);
+        }
+        
+        
+        
         // streaming of dependencies
         {
             for (const auto & dep : recipe.required_recipes())
                 nn.open("depends_on").attr("uri", dep->uri());
         }
+        
+        
         
         MSS_END();
     }

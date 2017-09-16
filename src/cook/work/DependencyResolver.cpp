@@ -5,12 +5,12 @@
 
 namespace cook { namespace work {
     
-    bool DependencyResolver::resolve(Book & root)
+    bool DependencyResolver::resolve(Book & root, const Config & config)
     {
         MSS_BEGIN(bool);
         
         std::list<unresolved_dependency> lst;
-        MSS(resolve(root, lst));
+        MSS(resolve(root, config, lst));
         
         for(const auto & p : lst)
             std::cerr << "Recipe '" << p.first->uri() << "': could not find dependency " << p.second << std::endl;
@@ -20,7 +20,7 @@ namespace cook { namespace work {
         MSS_END();
     }
     
-    bool DependencyResolver::resolve(Book & root, std::list<unresolved_dependency> & lst )
+    bool DependencyResolver::resolve(Book & root, const Config & config, std::list<unresolved_dependency> & lst )
     {
         MSS_BEGIN(bool);
         
@@ -72,22 +72,41 @@ namespace cook { namespace work {
         
         MSS(construct_topological_order_(root, map), std::cerr << "Cyclic dependency detected" << std::endl);
         
-        propagate_merge_();
+        MSS(set_recipe_target_(config));
         
         MSS_END();
     }
     
-    void DependencyResolver::propagate_merge_()
+    bool DependencyResolver::set_recipe_target_(const Config & config) const
     {
+        MSS_BEGIN(bool);
+        
         for(Recipe * recipe : order_.recipes)
         {
             recipe->add_local_include_paths();
             
-            for(Recipe * dep : recipe->required_recipes())
-                recipe->merge(*dep);
+            MSS(knows_type_(recipe->target_type()), std::cerr << "Unknown target type for " << recipe->uri() << std::endl);
+            recipe->set_target_identifier(recipe->propose_target_identifier());
+            
+            MSS(recipe->configure(config));
         }
+        
+        MSS_END();
     }
     
+    bool DependencyResolver::knows_type_(TargetType type) const
+    {
+        switch(type)
+        {
+            case TargetType::StaticLibrary:
+            case TargetType::Executable:
+                return true;
+                
+            default:
+                return false;
+        }
+    }
+           
     bool DependencyResolver::construct_topological_order_(Book & root, const RecipeMap & map)
     {       
         MSS_BEGIN(bool);

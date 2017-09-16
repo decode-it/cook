@@ -33,6 +33,7 @@ build .cook/cook#exe/x32/release/src/cook/structure/Tag.cpp.obj: compile src/coo
 build .cook/cook#exe/x32/release/src/cook/structure/Uri.cpp.obj: compile src/cook/structure/Uri.cpp
 build .cook/cook#exe/x32/release/src/cook/work/DependencyResolver.cpp.obj: compile src/cook/work/DependencyResolver.cpp
 build .cook/cook#exe/x32/release/src/cook/work/NinjaWriter.cpp.obj: compile src/cook/work/NinjaWriter.cpp
+build .cook/cook#exe/x32/release/src/cook/work/TargetDecider.cpp.obj: compile src/cook/work/TargetDecider.cpp
 build .cook/cook#exe/x32/release/src/cook/work/TopologicalOrder.cpp.obj: compile src/cook/work/TopologicalOrder.cpp
 build .cook/cook#exe/x32/release/src/cook/work/TreeWriter.cpp.obj: compile src/cook/work/TreeWriter.cpp
 build .cook/cook#exe/x32/release/src/main.cpp.obj: compile src/main.cpp
@@ -56,6 +57,7 @@ build cook.exe: link $
     .cook/cook#exe/x32/release/src/cook/structure/Uri.cpp.obj $
     .cook/cook#exe/x32/release/src/cook/work/DependencyResolver.cpp.obj $
     .cook/cook#exe/x32/release/src/cook/work/NinjaWriter.cpp.obj $
+    .cook/cook#exe/x32/release/src/cook/work/TargetDecider.cpp.obj $
     .cook/cook#exe/x32/release/src/cook/work/TopologicalOrder.cpp.obj $
     .cook/cook#exe/x32/release/src/cook/work/TreeWriter.cpp.obj $
     .cook/cook#exe/x32/release/src/main.cpp.obj

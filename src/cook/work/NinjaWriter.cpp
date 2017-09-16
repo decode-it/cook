@@ -1,105 +1,20 @@
 #include "cook/work/NinjaWriter.hpp"
+#include "cook/work/TopologicalOrder.hpp"
 
 namespace cook { namespace work { 
     
-    namespace {
-        
-        std::string convert_target(const structure::Uri & uri)
-        {
-            std::ostringstream str;
-            
-            for(char c : uri.string())
-                str << (c == ' ' || c== '#' ? '_' : c);
-            
-            return str.str();
-        }
-        
-        std::string convert_to_hr(const std::string & name)
-        {
-            std::ostringstream str;
-            
-            for(char c : name)
-                str << (c == ' ' || c== '#' ? '_' : c);
-            
-            return str.str();
-        }
-        
-        
-        
-        std::filesystem::path target_path(const structure::Uri & uri)
-        {
-            std::filesystem::path p;
-            for(const auto & t : uri.tags())
-                p /= t.string();
-            return p;
-        }
-    }
-    
-    
-    bool NinjaWriter::operator()(std::ostream & ofs, const TopologicalOrder & order, const structure::Uri & default_uri)
+    bool NinjaWriter::operator()(std::ostream & ofs, const std::list<Recipe *> & recipes, const structure::Uri & default_uri)
     {
         MSS_BEGIN(bool);
-        
-        MSS(decide_targets_(order));
+
         MSS(write_header_(ofs));
         
-        for(auto * recipe : order.recipes)
-            MSS(write_recipe_(ofs, *recipe));
+        for(auto * recipe : recipes)
+            MSS(write_recipe_(ofs, *recipe, recipes));
         
         // add the default rule
-        {    
-            auto it = targets_.find(default_uri);
-            MSS(it != targets_.end());
-            const NinjaTarget & tgt = it->second;
-            ofs << "default " << tgt.location.string() << std::endl; 
-        }
-        
-        MSS_END();
-    }
-    
-    bool NinjaWriter::decide_targets_(const TopologicalOrder & order)
-    {
-        MSS_BEGIN(bool);
-        
-        for(auto * recipe : order.recipes)
-        {
-            NinjaTarget tgt;
-            
-            {
-                std::string tgt_filename;
-                MSS(recipe->get_target_filename(tgt_filename));
-                tgt.location = options.output_dir / tgt_filename;
-            }
-            
-            tgt.type = recipe->target_type();
-            
-            for (auto * dep : recipe->required_recipes())
-            {
-                auto it = targets_.find(dep->uri());
-                MSS(it != targets_.end());
-                
-                const NinjaTarget & dep_tgt = it->second;
-                
-                switch(dep_tgt.type)
-                {
-                    case structure::TargetType::StaticLibrary:
-                        tgt.extra_objects.insert(dep_tgt.location);               
-                        break;
-                        
-                    case structure::TargetType::Executable:
-                        MSS(false, std::cerr << "recipe " << recipe->uri() << " depends on " << dep->uri() << ", but this is an executable" << std::endl);
-                        
-                    default:
-                        MSS(false, std::cerr << "Unknown target type for " << dep->uri() << std::endl);       
-                }               
-                
-                tgt.extra_objects.insert(dep_tgt.extra_objects.begin(), dep_tgt.extra_objects.end());
-                tgt.extra_libraries.insert(dep_tgt.extra_libraries.begin(), dep_tgt.extra_libraries.end());
-                tgt.extra_library_paths.insert(dep_tgt.extra_library_paths.begin(), dep_tgt.extra_library_paths.end());
-            }
-            
-            targets_[recipe->uri()] = tgt;
-        }
+        ofs << "default " << default_uri << std::endl; 
+        ofs << std::endl << std::endl;
         
         MSS_END();
     }
@@ -147,27 +62,41 @@ namespace cook { namespace work {
         MSS_END();
     }
     
-    bool NinjaWriter::write_recipe_(std::ostream & ofs, const structure::Recipe & recipe)
+    bool NinjaWriter::write_recipe_(std::ostream & ofs, const Recipe & recipe, const std::list<Recipe *> & order)
     {
         MSS_BEGIN(bool);
-        // the settings for this recipe
-        std::filesystem::path obj_tgt = options.build_dir / target_path(recipe.uri()) / std::filesystem::path(options.arch) / std::filesystem::path(options.config);
         
-        auto it = targets_.find(recipe.uri());
-        MSS(it != targets_.end());
-        NinjaTarget & tgt = it->second;
-                
+        const auto & info = recipe.output();
+        
+        // the settings for this recipe
+        std::filesystem::path obj_tgt = options.build_dir / to_path(recipe.uri()) / std::filesystem::path(options.arch) / std::filesystem::path(options.config);
+                       
         ofs << "# Recipe " << recipe.uri().string() << std::endl
             << "#       target type: " << recipe.target_type() << std::endl
             << "#   temporary files: " << obj_tgt.string() << std::endl
-            << "#            result: " << tgt.location.string() << std::endl
+            << "#            result: " << info.filename << std::endl
             << "#" << std::endl;
+            
+        // extra material, coming from the dependencies
+        structure::TargetConfig cfg;
+        cfg = recipe.input_config();
+        
+        {
+            std::list<structure::Recipe *> suborder;
+            subset_order(std::back_inserter(suborder), recipe.uri(), util::make_range(order));
+            
+            for(auto it = suborder.rbegin(); it != suborder.rend(); ++it)
+            {
+                auto * dep = *it;
+                structure::merge(cfg, dep->output());
+            }
+        }
         
         
         // the defines
         {
             ofs << "defines = " << options.additional_defines;
-            for(const auto & p: recipe.defines())
+            for(const auto & p: cfg.defines)
             {
                 ofs << "-D" << p.first;
                 if(p.second.empty())
@@ -179,7 +108,7 @@ namespace cook { namespace work {
         // the include include_paths
         {
             ofs << "include_paths =";
-            for(const auto & i : recipe.include_paths())
+            for(const auto & i : cfg.include_paths)
                 ofs << " -I " << i;
             ofs << std::endl;
         }
@@ -187,9 +116,7 @@ namespace cook { namespace work {
         // the library paths
         {
             ofs << "library_paths =";
-            for (const auto & l: recipe.library_paths())
-                ofs << " -L" << l;
-            for (const auto & l: tgt.extra_library_paths)
+            for (const auto & l: cfg.library_paths)
                 ofs << " -L" << l;
             ofs << std::endl;
         }
@@ -197,9 +124,7 @@ namespace cook { namespace work {
         // the libraries
         {
             ofs << "libraries =";
-            for (const auto & l: recipe.libraries())
-                ofs << " -l" << l;
-            for (const auto & l: tgt.extra_libraries)
+            for (const auto & l: cfg.libraries)
                 ofs << " -l" << l;
             ofs << std::endl;
         }
@@ -226,13 +151,22 @@ namespace cook { namespace work {
                     MSS(false, std::cerr << "Unknown target type for '" << recipe.uri() << "'" << std::endl);
             }
             
-            ofs << "build " << tgt.location.string() << ":  " << command;
+            ofs << "build " << info.filename.native() << ":  " << command;
             for(const auto & obj : objects)
                 ofs << " $" << std::endl << "    " << obj.string();
-            for(const auto & obj : tgt.extra_objects)
-                ofs << " $" << std::endl << "    " << obj.string();
+            
+            if(!recipe.required_recipes().empty())
+            {
+                
+                ofs << " | ";
+                for (auto * dep : recipe.required_recipes())
+                    ofs << dep->output().filename.native() << " ";
+            }
+            
             ofs << std::endl << std::endl;
         }
+        
+        ofs << "build " << recipe.uri() << ": phony " << info.filename.native() << std::endl;
         
         ofs << std::endl 
             << "###################################################################################################" << std::endl
@@ -240,7 +174,5 @@ namespace cook { namespace work {
         
         MSS_END();
     }
-
-
 } }
 

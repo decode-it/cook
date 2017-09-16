@@ -3,6 +3,7 @@
 
 #include "cook/structure/Tag.hpp"
 #include "cook/util/Range.hpp"
+#include "gubg/std/filesystem.hpp"
 #include <string>
 #include <vector>
 
@@ -43,6 +44,8 @@ namespace cook { namespace structure {
     private:
         storage_type data_;
     };
+    
+    std::filesystem::path to_path(const Uri & uri);
 } } 
 
 namespace std {

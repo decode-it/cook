@@ -26,9 +26,9 @@ namespace cook {
         bool print_recipes = false;
         std::string uri;
         std::string project_name;
-        std::string path = "";
-        
-        
+        std::string build_dir = ".cook";
+        std::string source_dir = "";
+        std::string deploy_dir = "";
 
         bool parse(int argc, const char **argv)
         {
@@ -37,13 +37,15 @@ namespace cook {
             
             opt.add_switch('v', "--verbose", "Verbose output",                                                      [&](){verbose = 1;});
             opt.add_switch('V', "--very-verbose", "Very verbose output",                                            [&](){verbose = 2;});
-            opt.add_mandatory('w', "--workspace", "Specify the workspace path.",                                    [&](std::string str) {path = str; });
+            opt.add_mandatory('s', "--source-dir", "Specify the source directory",                                  [&](std::string str){source_dir = str; });
             opt.add_switch('h', "--help", "Print this help. Runs cook in Help mode.",                               [&](){print_help = true;                        mode_ |= Help; });
             opt.add_switch('C', "--clean", "Clean-up temporary build results. Runs cook in Existing mode.",         [&](){clean = true;                             mode_ |= Existing; });
             opt.add_mandatory('c', "--config", "Configuration: [release|debug]. Runs cook in Existing mode.",       [&](std::string str){config = str;              mode_ |= Existing; });
             opt.add_mandatory('a', "--arch", "Architecture: [x32|x64|uno]. Runs cook in Existing mode.",            [&](std::string str){arch = str;                mode_ |= Existing; });
             opt.add_switch('n', "--no-build", "Only generate the build.ninja file. Runs cook in Existing mode.",    [&](){do_build = false;                         mode_ |= Existing; });
             opt.add_switch('t', "--tree", "Print all recipes in tree format. Runs cook in Existing mode.",          [&](){print_recipes = true;                     mode_ |= Existing; });
+            opt.add_mandatory('b', "--build-dir", "Specify the build directory. Runs cook in Existing mode.",       [&](std::string str){build_dir = str;           mode_ |= Existing; });
+            opt.add_mandatory('d', "--deploy-dir", "Specify the deployment directory. Runs cook in Existing mode.", [&](std::string str){deploy_dir = str;          mode_ |= Existing; });
             opt.add_mandatory('p', "--project", "Create new project with <name>.Runs cook in New mode.",            [&](std::string str){project_name = str;        mode_ |= New; });
             
             auto args = gubg::OptionParser::create_args(argc, argv);

@@ -126,4 +126,13 @@ namespace cook { namespace structure {
         return seed;
     }
     
+    std::filesystem::path to_path(const Uri & uri)
+    {
+        std::filesystem::path p;
+        
+        for(Tag t : uri.tags())
+            p /= t.string();
+        return p;
+    }
+    
 } }
