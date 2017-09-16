@@ -56,7 +56,13 @@ namespace cook {
         if (options.clean)
         {
             std::cout << "Cleaning " << options.build_dir << std::endl;
-            std::filesystem::remove_all(options.build_dir);
+            try
+            {
+                std::filesystem::remove_all(options.build_dir);
+            }
+            catch(...)
+            {
+            }
         }
         
         chai::Loader loader(options);
