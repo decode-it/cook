@@ -117,7 +117,7 @@ namespace cook { namespace work {
         {
             ofs << "library_paths =";
             for (const auto & l: cfg.library_paths)
-                ofs << " -L" << l;
+                ofs << " -L" << ( l.empty() ? "./" : l);
             ofs << std::endl;
         }
         
