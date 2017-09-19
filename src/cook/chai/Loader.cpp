@@ -5,11 +5,12 @@
 
 namespace cook { namespace chai { 
 
-bool Loader::load(structure::Book & root)
+bool Loader::load(structure::Book & root, const std::filesystem::path & source_path)
 {
     MSS_BEGIN(bool);
     
     GlobalInfo info(options_, root);
+    MSS(!source_path.has_filename());
     
     // initialize the engine
     auto & chai = info.engine.raw();
@@ -39,13 +40,9 @@ bool Loader::load(structure::Book & root)
     
     chai.add_global_const(chaiscript::const_var(structure::TargetType::Executable), "executable");
     chai.add_global_const(chaiscript::const_var(structure::TargetType::StaticLibrary), "static_library");
-//     chai.add(chaiscript::user_type<structure::TargetType::TestEnum>(), "TestEnum");
-//     chai.add_global_const(chaiscript::const_var<structure::TargetType::StaticLibrary>, "static_library");
-    
-    //         chai.add(chaiscript::fun(add_book, &info), "add_book");
-    
-    // process an empty dir request
-    MSS(info.add_dir(""));
+
+
+    MSS(info.add_dir(source_path.string()));
     
     
     MSS_END();

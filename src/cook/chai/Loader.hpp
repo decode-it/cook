@@ -13,7 +13,7 @@ namespace cook { namespace chai {
     public:
         Loader(const Options &options) :options_(options) {}
         
-        bool load(structure::Book & root);
+        bool load(structure::Book & root, const std::filesystem::path & source_path);
 
     
     private:

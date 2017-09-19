@@ -104,27 +104,6 @@ namespace cook { namespace work {
                 nn.open("include_path").attr("path", f.native());
         }
         
-        // streaming of library paths
-        {
-            for(const auto & f : cfg.library_paths)
-                nn.open("library_path").attr("path", f.native());
-        }
-        
-        // streaming of libraries
-        {
-            for(const auto & f : cfg.libraries)
-                nn.open("library").attr("name", f);
-        }
-        
-        
-        
-        // streaming of dependencies
-        {
-            for (const auto & dep : recipe.required_recipes())
-                nn.open("depends_on").attr("uri", dep->uri());
-        }
-        
-        
         
         MSS_END();
     }

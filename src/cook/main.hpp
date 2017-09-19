@@ -67,7 +67,7 @@ namespace cook {
         
         chai::Loader loader(options);
         structure::Book root(std::filesystem::path(options.source_dir) / "recipes.chai");
-        MSS(loader.load(root));
+        MSS(loader.load(root, std::filesystem::path(options.source_dir)));
         
         
         work::DependencyResolver resolver;
