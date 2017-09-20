@@ -107,7 +107,8 @@ namespace cook {
             writer.options.linker= "g++ -std=c++17";
             writer.options.archiver= "ar rcs";
             writer.options.config = options.config;
-            writer.options.additional_defines = (writer.options.config=="release" ? "-DNDEBUG" : "");
+            writer.options.additional_defines = (writer.options.config=="release" ? "-DNDEBUG" : "-g");
+            
             writer.options.arch = options.arch;
             
             MSS(writer(ofs, suborder, uri));

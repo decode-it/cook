@@ -13,9 +13,7 @@ add_book("cook", fun(b) {
         r.add_header("gubg.io/src", "gubg/**.hpp")
         r.add_source("gubg.io/src", "gubg/**.cpp")
         
-        r.add_header("gubg.chaiscript/extern/ChaiScript/include", "**.hpp")
-#         r.add_source("gubg.chaiscript/extern", "**/*.cpp")
-        
+        r.add_header("gubg.chaiscript/extern/ChaiScript/include", "**.hpp")       
         
         r.add_library("dl")
         r.add_library("pthread")

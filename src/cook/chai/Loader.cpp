@@ -10,7 +10,6 @@ bool Loader::load(structure::Book & root, const std::filesystem::path & source_p
     MSS_BEGIN(bool);
     
     GlobalInfo info(options_, root);
-    MSS(!source_path.has_filename());
     
     // initialize the engine
     auto & chai = info.engine.raw();

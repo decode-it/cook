@@ -6,7 +6,7 @@ namespace cook { namespace work {
     {         
         MSS_BEGIN(bool);
         
-        auto n = util::make_tree_node(std::cout, "recipes");
+        auto n = util::make_tree_node(std::cout, "cook");
         
         // write all the books
         for(auto * book : order.books)

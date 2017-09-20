@@ -134,6 +134,7 @@ namespace :cook do
         puts("Bootstrapping cook")
         sh "./#{cook_bootstrap_fn} cook#exe"
         Ninja::build
+        
     end
     task :run do
         sh "./#{cook_bootstrap_fn} cook#exe"
