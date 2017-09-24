@@ -25,6 +25,7 @@ namespace cook { namespace work {
         using Recipe = structure::Recipe;
         
         bool operator()(std::ostream & ofs, const std::list<Recipe *> & order, const structure::Uri & default_uri);
+        bool operator()(std::ostream & ofs, const std::list<Recipe *> & recipes);
         BuildOptions options;
     
     private:

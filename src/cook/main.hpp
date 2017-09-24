@@ -84,19 +84,28 @@ namespace cook {
             work::TreeWriter writer;
             MSS(writer(resolver.order()));
         }
-        
-        if(!options.uri.empty())
+              
         {
-            structure::Uri uri(options.uri);
-            MSS(!uri.empty(), std::cerr << "Invalid uri: " << options.uri << std::endl);
             
             
             std::list<structure::Recipe *> suborder;
+        
+            if (!options.uri.empty())
             {
-                const auto & recipes = resolver.order().recipes;    
-                work::subset_order(std::back_inserter(suborder), uri, util::make_range(recipes), true);
-                MSS(!suborder.empty(), std::cerr << "Could not locate uri " << uri << std::endl);
+                structure::Uri uri(options.uri);
+                MSS(!uri.empty(), std::cerr << "Invalid uri: " << options.uri << std::endl);
+            
+                {
+                    const auto & recipes = resolver.order().recipes;    
+                    work::subset_order(std::back_inserter(suborder), uri, util::make_range(recipes), true);
+                    MSS(!suborder.empty(), std::cerr << "Could not locate uri " << uri << std::endl);
+                }
             }
+            else
+            {
+                suborder.assign(resolver.order().recipes.begin(), resolver.order().recipes.end());
+            }
+        
 
             work::NinjaWriter writer;
             std::ofstream ofs("build.ninja");
@@ -110,8 +119,14 @@ namespace cook {
             writer.options.additional_defines = (writer.options.config=="release" ? "-DNDEBUG" : "-g");
             
             writer.options.arch = options.arch;
-            
-            MSS(writer(ofs, suborder, uri));
+         
+            if(!options.uri.empty())
+            {
+                structure::Uri uri(options.uri);
+                MSS(writer(ofs, suborder, uri));
+            }
+            else
+                MSS(writer(ofs, suborder));
         }
         
         MSS_END();

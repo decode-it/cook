@@ -3,7 +3,7 @@
 
 namespace cook { namespace work { 
     
-    bool NinjaWriter::operator()(std::ostream & ofs, const std::list<Recipe *> & recipes, const structure::Uri & default_uri)
+    bool NinjaWriter::operator()(std::ostream & ofs, const std::list<Recipe *> & recipes)
     {
         MSS_BEGIN(bool);
 
@@ -11,6 +11,15 @@ namespace cook { namespace work {
         
         for(auto * recipe : recipes)
             MSS(write_recipe_(ofs, *recipe, recipes));
+        
+        MSS_END();
+    }
+    
+    bool NinjaWriter::operator()(std::ostream & ofs, const std::list<Recipe *> & recipes, const structure::Uri & default_uri)
+    {
+        MSS_BEGIN(bool);
+        
+        this->operator()(ofs, recipes);
         
         // add the default rule
         ofs << "default " << default_uri << std::endl; 
