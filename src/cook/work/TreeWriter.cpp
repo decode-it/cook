@@ -95,7 +95,7 @@ namespace cook { namespace work {
                 std::list<structure::Recipe *> suborder;
                 subset_order(std::back_inserter(suborder), recipe.uri(), util::make_range(recipes));
 
-                for(auto it = suborder.begin(); it != suborder.end(); ++it)
+                for (auto it = suborder.begin(); it != suborder.end(); ++it)
                 {
                     auto * dep = *it;
                     structure::merge(cfg, dep->output());
@@ -104,8 +104,22 @@ namespace cook { namespace work {
 
             // streaming of include paths
             {
-                for(const auto & f : cfg.include_paths)
+                for (const auto & f : cfg.include_paths)
                     nn.open("include_path").attr("path", f.native());
+            }
+
+            // streaming of defines
+            {
+                for (const auto & p : cfg.defines)
+                {
+                    const auto &name = p.first;
+                    const auto &value = p.second;
+
+                    auto nnn = nn.open("define");
+                    nnn.attr("name", name);
+                    if (!value.empty())
+                        nnn.attr("value", value);
+                }
             }
         }
         
