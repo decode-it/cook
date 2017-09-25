@@ -3,6 +3,7 @@
 
 #include "cook/work/TopologicalOrder.hpp"
 #include <vector>
+#include <unordered_map>
 
 namespace cook { namespace work {
     
