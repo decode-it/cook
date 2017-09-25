@@ -48,7 +48,7 @@ namespace cook { namespace chai {
         }
         
         // chai functionality
-        bool add_dir(const std::string & dir);
+        bool include(const std::string & file_or_dir);
         bool add_book(const std::string & ns, std::function<void (BookWrapper &)> callback);
         bool create_new_recipe(const std::string & tag, std::function<void (RecipeWrapper &)> callback);
         void set_display_name(const std::string & display_name);
@@ -140,7 +140,7 @@ namespace cook { namespace chai {
         bool create_new_recipe(const std::string & tag, std::function<void (RecipeWrapper &)> callback);
         void print() const                                                      { book_.print(); }
         void set_display_name(const std::string & name)                         { book_.set_display_name(name); }
-        bool add_dir(const std::string & dir);
+        bool include(const std::string & file_or_dir);
         bool add_book(const std::string & tag, std::function<void (BookWrapper &)> callback);
         
         

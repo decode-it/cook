@@ -66,15 +66,15 @@ namespace cook {
         }
         
         chai::Loader loader(options);
-        structure::Book root(std::filesystem::path(options.source_dir) / "recipes.chai");
-        MSS(loader.load(root, std::filesystem::path(options.source_dir)));
+        structure::Book root_book(std::filesystem::path(options.input_fod));
+        MSS(loader.load(root_book));
         
         work::DependencyResolver resolver;
         {
             structure::Config config;
             config.build_dir = options.build_dir;
             config.deploy_dir = options.deploy_dir;
-            MSS(resolver.resolve(root, config), std::cerr << "Error resolving the dependencies" << std::endl);
+            MSS(resolver.resolve(root_book, config), std::cerr << "Error resolving the dependencies" << std::endl);
         }
         
 
@@ -135,7 +135,7 @@ namespace cook {
         MSS_BEGIN(bool);
         std::cout << "Creating project " << options.project_name << std::endl;
 
-        std::filesystem::path dir = options.source_dir;
+        std::filesystem::path dir = options.input_fod;
         dir /= options.project_name;
         MSS(!std::filesystem::is_directory(dir), std::cout << "Error: project folder " << dir << " already exists" << std::endl);
         MSS(std::filesystem::create_directory(dir));

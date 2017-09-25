@@ -1,9 +1,10 @@
 #include "cook/chai/Details.hpp"
+#include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
 
 namespace cook { namespace chai {
     
-    bool BookWrapper::add_dir(const std::string & dir)
+    bool BookWrapper::include(const std::string & file_or_dir)
     {
         MSS_BEGIN(bool);
         
@@ -12,15 +13,17 @@ namespace cook { namespace chai {
         // add a new script info to the stack
         std::filesystem::path script_fn;
         {
-            const std::filesystem::path sdir(dir);
-            if (stack.empty() || sdir.is_absolute())
-                script_fn = sdir;
+            const std::filesystem::path fod_path(file_or_dir);
+
+            if (stack.empty() || fod_path.is_absolute())
+                script_fn = fod_path;
             else
-                script_fn = stack.top().parent_path() / sdir;
-            
-            script_fn /= std::filesystem::path("recipes.chai");
+                script_fn = stack.top().parent_path() / fod_path;
+
+            if (std::filesystem::is_directory(script_fn))
+                script_fn /= std::filesystem::path("recipes.chai");
+
             stack.push(script_fn);
-            Book & book = book_;
         }
         
         {
@@ -28,7 +31,6 @@ namespace cook { namespace chai {
             v.str() << "Processing script file " << script_fn.string() << " started" << std::endl;
             // evaluate the script
             MSS(info_.engine.eval_file(script_fn));
-            
         }
                
         // and pop back from the stack
@@ -75,9 +77,9 @@ namespace cook { namespace chai {
         MSS_END();
     }
     
-    bool GlobalInfo::add_dir(const std::string & dir)
+    bool GlobalInfo::include(const std::string & file_or_dir)
     {
-        return BookWrapper(*this, last_book()).add_dir(dir);
+        return BookWrapper(*this, last_book()).include(file_or_dir);
     }
     
     bool GlobalInfo::add_book(const std::string & tag, std::function<void (BookWrapper &)> callback)

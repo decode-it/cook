@@ -27,7 +27,7 @@ namespace cook {
         bool build_all = false;
         std::string project_name;
         std::string build_dir = ".cook";
-        std::string source_dir;
+        std::string input_fod;
         std::string deploy_dir;
         std::string generate;
 
@@ -38,7 +38,7 @@ namespace cook {
             
             opt.add_switch('v', "--verbose", "Verbose output",                                                      [&](){verbose = 1;});
             opt.add_switch('V', "--very-verbose", "Very verbose output",                                            [&](){verbose = 2;});
-            opt.add_mandatory('s', "--source-dir", "Specify the source directory",                                  [&](std::string str){source_dir = str; });
+            opt.add_mandatory('f', "--input", "Specify the input file/directory",                                   [&](std::string str){input_fod = str; });
             
             opt.add_switch('h', "--help", "Print this help. Runs cook in Help mode.",                               [&](){print_help = true;                        mode_ |= Help; });
             opt.add_switch('C', "--clean", "Clean-up temporary build results. Runs cook in Existing mode.",         [&](){clean = true;                             mode_ |= Existing; });

@@ -5,7 +5,7 @@
 
 namespace cook { namespace chai { 
 
-bool Loader::load(structure::Book & root, const std::filesystem::path & source_path)
+bool Loader::load(structure::Book & root)
 {
     MSS_BEGIN(bool);
     
@@ -13,13 +13,13 @@ bool Loader::load(structure::Book & root, const std::filesystem::path & source_p
     
     // initialize the engine
     auto & chai = info.engine.raw();
-    chai.add(chaiscript::fun(&GlobalInfo::add_dir, &info),              "add_dir");
+    chai.add(chaiscript::fun(&GlobalInfo::include, &info),              "include");
     chai.add(chaiscript::fun(&GlobalInfo::add_book, &info),             "add_book");
     chai.add(chaiscript::fun(&GlobalInfo::create_new_recipe, &info),    "add_recipe");
     chai.add(chaiscript::fun(&GlobalInfo::set_display_name, &info),     "display_name");
     chai.add(chaiscript::fun(&GlobalInfo::print, &info),                "print");
     
-    chai.add(chaiscript::fun(&BookWrapper::add_dir),                    "add_dir");
+    chai.add(chaiscript::fun(&BookWrapper::include),                    "include");
     chai.add(chaiscript::fun(&BookWrapper::add_book),                   "add_book");
     chai.add(chaiscript::fun(&BookWrapper::create_new_recipe),          "add_recipe");
     chai.add(chaiscript::fun(&BookWrapper::set_display_name),           "display_name");
@@ -40,9 +40,7 @@ bool Loader::load(structure::Book & root, const std::filesystem::path & source_p
     chai.add_global_const(chaiscript::const_var(structure::TargetType::Executable), "executable");
     chai.add_global_const(chaiscript::const_var(structure::TargetType::StaticLibrary), "static_library");
 
-
-    MSS(info.add_dir(source_path.string()));
-    
+    MSS(info.include(root.script_filename()));
     
     MSS_END();
 }
