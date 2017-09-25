@@ -27,13 +27,13 @@ namespace cook { namespace work {
         RecipeMap map;
         
         // initialize the book_order
-        order_.books.clear();
-        order_.books.push_back(&root);
+        ordered_books_.clear();
+        ordered_books_.push_back(&root);
         std::size_t pos = 0;
         
-        for(std::size_t pos = 0; pos < order_.books.size(); ++pos)
+        for(std::size_t pos = 0; pos < ordered_books_.size(); ++pos)
         {
-            Book * b = order_.books[pos];
+            Book * b = ordered_books_[pos];
             
             
             for (auto & p: b->elements())
@@ -49,7 +49,7 @@ namespace cook { namespace work {
                 {
                     Book * e = dynamic_cast<Book *>(p.second);
                     if (e)
-                        order_.books.push_back(e);
+                        ordered_books_.push_back(e);
                 }
             }
         }
@@ -81,7 +81,7 @@ namespace cook { namespace work {
     {
         MSS_BEGIN(bool);
         
-        for(Recipe * recipe : order_.recipes)
+        for (Recipe * recipe : ordered_recipes_)
         {
             recipe->add_local_include_paths();
             
@@ -112,8 +112,8 @@ namespace cook { namespace work {
         MSS_BEGIN(bool);
         
         // prepare the order vector
-        order_.recipes.assign(map.size(), nullptr);
-        auto it = order_.recipes.rbegin();
+        ordered_recipes_.assign(map.size(), nullptr);
+        auto it = ordered_recipes_.rbegin();
         
         std::unordered_map<Recipe *, std::size_t> count_map;
         
@@ -148,7 +148,7 @@ namespace cook { namespace work {
 
             
             assert(count_map[cur] == 0);
-            MSS(it != order_.recipes.rend());
+            MSS(it != ordered_recipes_.rend());
             *it++ = cur;
             
                         
@@ -164,7 +164,7 @@ namespace cook { namespace work {
             }
         }
         
-        MSS(it == order_.recipes.rend());
+        MSS(it == ordered_recipes_.rend());
         MSS_END();
     }
     

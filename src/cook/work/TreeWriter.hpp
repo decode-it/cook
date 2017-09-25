@@ -2,6 +2,7 @@
 #define HEADER_cook_work_TreeWriter_hpp_ALREADY_INCLUDED
 
 #include "cook/work/TopologicalOrder.hpp"
+#include "cook/structure/Uri.hpp"
 #include "cook/util/TreeNode.hpp"
 
 namespace cook { namespace work {
@@ -9,11 +10,11 @@ namespace cook { namespace work {
     class TreeWriter
     {
     public:
-        bool operator()(const TopologicalOrder & order);
+        bool recipes(const Recipes &);
+        bool details(const Recipes &, const structure::Uri &uri);
         
     private:
-        bool write_book_(const structure::Book & book, util::TreeNode & node);
-        bool write_recipe_(const structure::Recipe & recipe, util::TreeNode & node, const TopologicalOrder & order);
+        bool write_recipe_(const structure::Recipe & recipe, util::TreeNode & node, const Recipes &, bool details);
     };
     
 } }

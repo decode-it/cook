@@ -23,13 +23,13 @@ namespace cook {
         unsigned int verbose = 0;
         bool clean = false;
         bool do_build = true;
-        bool print_recipes = false;
         std::string uri;
         bool build_all = false;
         std::string project_name;
         std::string build_dir = ".cook";
-        std::string source_dir = "";
-        std::string deploy_dir = "";
+        std::string source_dir;
+        std::string deploy_dir;
+        std::string generate;
 
         bool parse(int argc, const char **argv)
         {
@@ -45,15 +45,20 @@ namespace cook {
             opt.add_mandatory('c', "--config", "Configuration: [release|debug]. Runs cook in Existing mode.",       [&](std::string str){config = str;              mode_ |= Existing; });
             opt.add_mandatory('a', "--arch", "Architecture: [x32|x64|uno]. Runs cook in Existing mode.",            [&](std::string str){arch = str;                mode_ |= Existing; });
             opt.add_switch('n', "--no-build", "Only generate the build.ninja file. Runs cook in Existing mode.",    [&](){do_build = false;                         mode_ |= Existing; });
-            opt.add_switch('t', "--tree", "Print all recipes in tree format. Runs cook in Existing mode.",          [&](){print_recipes = true;                     mode_ |= Existing; });
             opt.add_mandatory('b', "--build-dir", "Specify the build directory. Runs cook in Existing mode.",       [&](std::string str){build_dir = str;           mode_ |= Existing; });
             opt.add_mandatory('d', "--deploy-dir", "Specify the deployment directory. Runs cook in Existing mode.", [&](std::string str){deploy_dir = str;          mode_ |= Existing; });
-            opt.add_mandatory('T', "--target", "Specify the target. Runs cook in Existing mode.",                   [&](std::string str){uri = str;                 mode_ |= Existing; });
             opt.add_switch('A', "--target-all", "Build all targets. Runs cook in Existing mode.",                   [&](){ build_all = true;                        mode_ |= Existing; });
+            opt.add_mandatory('g', "--generate", "Generate output as build.ninja|recipes.tree|details.tree",        [&](std::string str){generate = str;            mode_ |= Existing; });
             opt.add_mandatory('p', "--project", "Create new project with <name>.Runs cook in New mode.",            [&](std::string str){project_name = str;        mode_ |= New; });
             
             auto args = gubg::OptionParser::create_args(argc, argv);
             MSS(opt.parse(args));           
+
+            if (!args.empty())
+            {
+                MSS(args.size() == 1);
+                uri = args.front();
+            }
             
             {
                 std::ostringstream str;
@@ -68,6 +73,9 @@ namespace cook {
                 str << "cook version 1.0.0";
                 help_message = str.str();
             }
+
+            if (generate.empty())
+                generate = "build.ninja";
             
             MSS_END();
         }
@@ -85,7 +93,7 @@ namespace cook {
         }
         
     private:
-        unsigned int mode_ = Unknown;
+        unsigned int mode_ = Existing;
     };
 } 
 

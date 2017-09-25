@@ -8,11 +8,8 @@
 
 namespace cook { namespace work {
     
-    struct TopologicalOrder
-    {
-        std::vector<structure::Recipe *> recipes;
-        std::vector<structure::Book *> books;
-    };
+    using Recipes = std::vector<structure::Recipe *>;
+    using Books = std::vector<structure::Book *>;
     
     template <typename OutputIterator, typename It>
     OutputIterator subset_order(OutputIterator out_it, const structure::Uri & uri, const util::Range<It> & ordered_recipes, bool add_self = false)
@@ -27,8 +24,6 @@ namespace cook { namespace work {
                 return out_it;        
             root = *it;
         }
-        
-        
         
         std::unordered_set<Recipe *> sub_dag;
         {

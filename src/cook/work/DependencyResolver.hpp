@@ -25,7 +25,8 @@ namespace cook { namespace work {
         bool resolve(Book & root, const Config & config);
         bool resolve(Book & root, const Config & config, std::list<unresolved_dependency> & lst);
         
-        const TopologicalOrder & order() const { return order_; }
+        const Recipes & ordered_recipes() const { return ordered_recipes_; }
+        const Books & ordered_books() const { return ordered_books_; }
                 
     private:
         using RecipeMap = std::unordered_map<Uri, Recipe *>;
@@ -35,7 +36,8 @@ namespace cook { namespace work {
         bool knows_type_(TargetType type) const;
         
         bool construct_topological_order_(Book & root, const RecipeMap & map);
-        TopologicalOrder order_;
+        Recipes ordered_recipes_;
+        Books ordered_books_;
     };
 
 } }
