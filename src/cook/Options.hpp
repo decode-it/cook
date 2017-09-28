@@ -93,7 +93,7 @@ namespace cook {
         }
         
     private:
-        unsigned int mode_ = Existing;
+        unsigned int mode_ = Unknown;
     };
 } 
 
