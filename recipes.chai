@@ -1,7 +1,5 @@
 # log(">> cook recipes")
-
 add_book("cook", fun(b) {
-
     b.add_recipe("exe", fun(r) {
         r.display_name("cook.exe")
         r.target_type(executable)

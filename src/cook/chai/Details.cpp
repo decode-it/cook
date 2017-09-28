@@ -20,7 +20,9 @@ namespace cook { namespace chai {
             else
                 script_fn = stack.top().parent_path() / fod_path;
 
-            if (std::filesystem::is_directory(script_fn))
+            if (script_fn.empty())
+                script_fn = std::filesystem::path("recipes.chai");
+            else if (std::filesystem::is_directory(script_fn))
                 script_fn /= std::filesystem::path("recipes.chai");
 
             stack.push(script_fn);

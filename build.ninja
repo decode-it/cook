@@ -11,8 +11,8 @@ rule archive
 rule clean
   command = ninja -t clean
 build clean: clean
-lflags = -m32
-cflags = -m32
+cflags =  -m32
+lflags =  -m32
 
 
 # Recipe cook#exe

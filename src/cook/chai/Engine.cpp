@@ -15,7 +15,7 @@ namespace cook { namespace chai {
     ReturnCode Engine::eval_file(const std::filesystem::path &fn)
     {
         MSS_BEGIN(ReturnCode);
-        MSS(std::filesystem::is_regular_file(fn), std::cerr << "Cannot eval \"" << fn << "\", it does not exist" << std::endl);
+        MSS(std::filesystem::is_regular_file(fn), std::cerr << "Cannot eval " << fn << ", it does not exist" << std::endl);
         engine_.eval_file(fn);
         MSS_END();
     }

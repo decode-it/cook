@@ -110,11 +110,7 @@ namespace cook {
 
                 writer.options.build_dir = options.build_dir;
                 writer.options.deploy_dir = options.deploy_dir;
-                writer.options.compiler = "g++ -std=c++17";
-                writer.options.linker= "g++ -std=c++17";
-                writer.options.archiver= "ar rcs";
                 writer.options.config = options.config;
-                writer.options.additional_defines = (writer.options.config=="release" ? "-DNDEBUG" : "-g");
 
                 writer.options.arch = options.arch;
 

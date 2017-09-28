@@ -16,6 +16,7 @@ namespace cook { namespace work {
         std::string linker;
         std::string archiver;
         std::string cflags;
+        std::string lflags;
         std::string additional_defines;
         std::string arch;
         std::string config;

@@ -22,6 +22,38 @@ namespace cook { namespace work {
     bool NinjaWriter::write_header_(std::ostream & ofs)
     {
         MSS_BEGIN(bool);
+
+        if (false) {}
+        else if (options.arch == "x32")
+        {
+            options.compiler = "g++ -std=c++17";
+            options.cflags += " -m32";
+            options.linker = "g++ -std=c++17";
+            options.lflags += " -m32";
+            options.archiver= "ar rcs";
+            options.additional_defines = (options.config=="release" ? "-DNDEBUG" : "-g");
+        }
+        else if (options.arch == "x64")
+        {
+            options.compiler = "g++ -std=c++17";
+            options.cflags += " -m64";
+            options.linker = "g++ -std=c++17";
+            options.lflags += " -m64";
+            options.archiver= "ar rcs";
+            options.additional_defines = (options.config=="release" ? "-DNDEBUG" : "-g");
+        }
+        else if (options.arch == "uno")
+        {
+            options.compiler = "avr-g++ -std=c++17";
+            options.cflags += " -flto";
+            options.linker = "avr-g++ -std=c++17";
+            options.lflags += " -flto";
+            options.archiver= "avr-gcc-ar rcs";
+            options.additional_defines += " -DARDUINO=10610";
+            options.additional_defines += " -DARDUINO_ARCH_AVR";
+            options.additional_defines += " -DARDUINO_AVR_UNO";
+            options.additional_defines += " -DF_CPU=16000000L";
+        }
         
         ofs << "compiler= " << options.compiler << std::endl
             << "linker= " << options.linker << std::endl
@@ -37,25 +69,9 @@ namespace cook { namespace work {
         ofs << "rule clean" << std::endl
             << "  command = ninja -t clean" << std::endl
             << "build clean: clean" << std::endl;       
-        
-        auto write_arch_flag = [&](const std::string & arch, const std::string prefix)
-        {
-            ofs << prefix << " =";
-            MSS_BEGIN(bool);
-            if (false) {}
-            else if (options.arch == "x32") ofs << " -m32";
-            else if (options.arch == "x64") ofs << " -m64";
-            else
-            {
-                std::cerr << "Unknown arch " << options.arch << std::endl;
-                MSS(false);
-            }
-            ofs << std::endl;
-            MSS_END();
-        };
-        
-        MSS(write_arch_flag(options.arch, "lflags"));
-        MSS(write_arch_flag(options.arch, "cflags"));
+
+        ofs << "cflags = " << options.cflags << std::endl;
+        ofs << "lflags = " << options.lflags << std::endl;
         
         ofs << std::endl << std::endl;
             
