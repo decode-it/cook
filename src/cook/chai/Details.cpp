@@ -3,6 +3,8 @@
 #include "gubg/mss.hpp"
 
 namespace cook { namespace chai {
+
+
     
     bool BookWrapper::include(const std::string & file_or_dir)
     {

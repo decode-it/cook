@@ -65,7 +65,6 @@ namespace cook { namespace structure {
     struct Config
     {
         std::filesystem::path build_dir;
-        std::filesystem::path deploy_dir;
     };
     
     struct RecipeOutput : public TargetConfig

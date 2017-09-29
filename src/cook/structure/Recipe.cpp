@@ -36,7 +36,7 @@ namespace cook { namespace structure {
         for (const auto &p: headers())
             add_include_path(p.second.dir);
     }
-    
+
     void Recipe::print() const
     {
         std::cout << "Defines:" << std::endl;
@@ -75,13 +75,13 @@ namespace cook { namespace structure {
                 std::string id = target_identifier();
                 std::string lib_name = std::string("lib") + id + std::string(".a");
                 
-                output_.library_paths.insert(config.deploy_dir);
+                output_.library_paths.insert("./");
                 output_.libraries.push_back(id);
                 
                 for(const auto & p : headers())
                     output_.include_paths.insert(p.second.dir);
                 
-                output_.filename = config.deploy_dir / lib_name;
+                output_.filename = config.build_dir / lib_name;
             }
                 break;
                 
@@ -90,7 +90,7 @@ namespace cook { namespace structure {
                 std::string id = target_identifier();
                 std::string exe_name = id;
                 
-                output_.filename = config.deploy_dir / exe_name;
+                output_.filename = config.build_dir / exe_name;
             }
                 break;
                 

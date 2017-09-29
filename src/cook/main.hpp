@@ -73,7 +73,6 @@ namespace cook {
         {
             structure::Config config;
             config.build_dir = options.build_dir;
-            config.deploy_dir = options.deploy_dir;
             MSS(resolver.resolve(root_book, config), std::cerr << "Error resolving the dependencies" << std::endl);
         }
         
@@ -101,17 +100,18 @@ namespace cook {
             else if (options.generate == "details.tree")
             {
                 work::TreeWriter writer;
-                MSS(writer.details(suborder, uri));
+                MSS(writer.details(suborder, uri, options.build_dir));
             }
             else if (options.generate == "build.ninja")
             {
                 work::NinjaWriter writer;
-                std::ofstream ofs("build.ninja");
+
+                std::filesystem::path p = options.build_dir;
+                p /= "build.ninja";
+                std::ofstream ofs(p.string());
 
                 writer.options.build_dir = options.build_dir;
-                writer.options.deploy_dir = options.deploy_dir;
                 writer.options.config = options.config;
-
                 writer.options.arch = options.arch;
 
                 MSS(writer(ofs, suborder, uri));

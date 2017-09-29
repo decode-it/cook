@@ -11,10 +11,7 @@ namespace cook { namespace work {
     {
     public:
         bool recipes(const Recipes &);
-        bool details(const Recipes &, const structure::Uri &uri);
-        
-    private:
-        bool write_recipe_(const structure::Recipe & recipe, util::TreeNode & node, const Recipes &, bool details);
+        bool details(const Recipes &, const structure::Uri &uri, const std::filesystem::path & build_dir);
     };
     
 } }

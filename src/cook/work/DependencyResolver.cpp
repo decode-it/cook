@@ -76,7 +76,7 @@ namespace cook { namespace work {
         
         MSS_END();
     }
-    
+
     bool DependencyResolver::set_recipe_target_(const Config & config) const
     {
         MSS_BEGIN(bool);

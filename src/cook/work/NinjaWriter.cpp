@@ -72,6 +72,7 @@ namespace cook { namespace work {
 
         ofs << "cflags = " << options.cflags << std::endl;
         ofs << "lflags = " << options.lflags << std::endl;
+        ofs << "builddir = " << options.build_dir.native() << std::endl;
         
         ofs << std::endl << std::endl;
             

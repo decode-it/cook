@@ -11,7 +11,6 @@ namespace cook { namespace work {
     struct BuildOptions
     {
         std::filesystem::path build_dir;
-        std::filesystem::path deploy_dir;
         std::string compiler;
         std::string linker;
         std::string archiver;
