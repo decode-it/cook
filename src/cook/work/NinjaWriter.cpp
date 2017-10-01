@@ -1,5 +1,7 @@
 #include "cook/work/NinjaWriter.hpp"
 #include "cook/work/TopologicalOrder.hpp"
+#include <ctime>
+#include <iomanip>
 
 namespace cook { namespace work { 
     
@@ -22,6 +24,16 @@ namespace cook { namespace work {
     bool NinjaWriter::write_header_(std::ostream & ofs)
     {
         MSS_BEGIN(bool);
+
+        // comment header
+        {
+            std::time_t t = std::time(nullptr);
+            ofs << "# File written by cook (1.0.0)" << std::put_time(std::gmtime(&t), "%c") << std::endl;
+        }
+
+        ofs << '\n';
+        ofs << "builddir = " << options.build_dir.native() << std::endl;
+
 
         if (false) {}
         else if (options.arch == "x32")
@@ -72,7 +84,6 @@ namespace cook { namespace work {
 
         ofs << "cflags = " << options.cflags << std::endl;
         ofs << "lflags = " << options.lflags << std::endl;
-        ofs << "builddir = " << options.build_dir.native() << std::endl;
         
         ofs << std::endl << std::endl;
             
