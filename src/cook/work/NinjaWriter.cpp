@@ -79,7 +79,7 @@ namespace cook { namespace work {
             << "  command = $archiver $out $in" << std::endl;
             
         ofs << "rule clean" << std::endl
-            << "  command = ninja -t clean" << std::endl
+            << "  command = ninja -C $builddir -t clean" << std::endl
             << "build clean: clean" << std::endl;       
 
         ofs << "cflags = " << options.cflags << std::endl;

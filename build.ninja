@@ -1,4 +1,4 @@
-# File written by cook (1.0.0)Sun Oct  1 15:44:53 2017
+# File written by cook (1.0.0)Sun Oct  1 21:00:21 2017
 
 builddir = ./
 compiler= g++ -std=c++17
@@ -12,7 +12,7 @@ rule link
 rule archive
   command = $archiver $out $in
 rule clean
-  command = ninja -t clean
+  command = ninja -C $builddir -t clean
 build clean: clean
 cflags =  -m32
 lflags =  -m32
