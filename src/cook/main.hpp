@@ -52,7 +52,7 @@ namespace cook {
     bool process_existing(const Options & options)
     {
         MSS_BEGIN(bool);
-        
+
         if (options.clean)
         {
             std::cout << "Cleaning " << options.build_dir << std::endl;
@@ -72,7 +72,7 @@ namespace cook {
         work::DependencyResolver resolver;
         {
             structure::Config config;
-            config.build_dir = options.build_dir;
+            config.build_dir = std::filesystem::path(options.build_dir);;
             MSS(resolver.resolve(root_book, config), std::cerr << "Error resolving the dependencies" << std::endl);
         }
         
