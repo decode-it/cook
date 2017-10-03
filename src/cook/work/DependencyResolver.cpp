@@ -85,8 +85,8 @@ namespace cook { namespace work {
         {
             recipe->add_local_include_paths();
             
-            MSS(knows_type_(recipe->target_type()), std::cerr << "Unknown target type for " << recipe->uri() << std::endl);
-            recipe->set_target_identifier(recipe->propose_target_identifier());
+            if (knows_type_(recipe->target_type()))
+                recipe->set_target_identifier(recipe->propose_target_identifier());
             
             MSS(recipe->configure(config));
         }

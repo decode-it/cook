@@ -104,17 +104,22 @@ namespace cook {
             }
             else if (options.generate == "build.ninja")
             {
-                work::NinjaWriter writer;
+                {
+                    work::NinjaWriter writer;
 
-                std::filesystem::path p = options.build_dir;
-                p /= "build.ninja";
-                std::ofstream ofs(p.string());
+                    std::filesystem::path p = options.build_dir;
+                    p /= "build.ninja";
+                    std::ofstream ofs(p.string());
 
-                writer.options.build_dir = options.build_dir;
-                writer.options.config = options.config;
-                writer.options.arch = options.arch;
+                    writer.options.build_dir = options.build_dir;
+                    writer.options.config = options.config;
+                    writer.options.arch = options.arch;
 
-                MSS(writer(ofs, suborder, uri));
+                    MSS(writer(ofs, suborder, uri));
+                }
+
+                if (options.do_build)
+                    MSS(std::system("ninja -v") == 0);
             }
         }
 

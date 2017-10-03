@@ -95,7 +95,7 @@ namespace cook { namespace structure {
                 break;
                 
             default:
-                MSS(false, std::cerr << "Unknown target type for " << uri() << std::endl);
+                break;
         }
         
         MSS_END();
@@ -120,7 +120,7 @@ namespace cook { namespace structure {
                 break;
                 
             default:
-                MSS(false, std::cerr << "Unknown target type for " << uri() << std::endl);
+                break;
         }
         
         MSS_END();

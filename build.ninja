@@ -1,4 +1,4 @@
-# File written by cook (1.0.0)Sun Oct  1 21:00:21 2017
+# File written by cook (1.0.0)Tue Oct  3 21:58:58 2017
 
 builddir = ./
 compiler= g++ -std=c++17
@@ -20,58 +20,58 @@ lflags =  -m32
 
 # Recipe cook#exe
 #       target type: Executable
-#   temporary files: ./cook/exe/x32/release
+#   temporary files: ./cook/exe/x32/debug
 #            result: "./cook.exe"
 #
-defines = -DNDEBUG
+defines = -g
 include_paths = -I "gubg.chaiscript/extern/ChaiScript/include" -I "gubg.io/src" -I "gubg.std/src" -I "src"
 library_paths =
 libraries = -ldl -lpthread -lstdc++fs
-build ./cook/exe/x32/release/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
-build ./cook/exe/x32/release/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
-build ./cook/exe/x32/release/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj: compile gubg.io/src/gubg/bitmagic/bitmagic.cpp
-build ./cook/exe/x32/release/gubg.io/src/gubg/file/Descriptor.cpp.obj: compile gubg.io/src/gubg/file/Descriptor.cpp
-build ./cook/exe/x32/release/gubg.io/src/gubg/file/File.cpp.obj: compile gubg.io/src/gubg/file/File.cpp
-build ./cook/exe/x32/release/gubg.io/src/gubg/file/Filesystem.cpp.obj: compile gubg.io/src/gubg/file/Filesystem.cpp
-build ./cook/exe/x32/release/gubg.io/src/gubg/file/Forest.cpp.obj: compile gubg.io/src/gubg/file/Forest.cpp
-build ./cook/exe/x32/release/gubg.io/src/gubg/hash/MD5.cpp.obj: compile gubg.io/src/gubg/hash/MD5.cpp
-build ./cook/exe/x32/release/gubg.io/src/gubg/parse/basic.cpp.obj: compile gubg.io/src/gubg/parse/basic.cpp
-build ./cook/exe/x32/release/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile gubg.io/src/gubg/parse/xml/Coding.cpp
-build ./cook/exe/x32/release/src/cook/chai/Details.cpp.obj: compile src/cook/chai/Details.cpp
-build ./cook/exe/x32/release/src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
-build ./cook/exe/x32/release/src/cook/chai/Loader.cpp.obj: compile src/cook/chai/Loader.cpp
-build ./cook/exe/x32/release/src/cook/structure/Book.cpp.obj: compile src/cook/structure/Book.cpp
-build ./cook/exe/x32/release/src/cook/structure/Recipe.cpp.obj: compile src/cook/structure/Recipe.cpp
-build ./cook/exe/x32/release/src/cook/structure/Tag.cpp.obj: compile src/cook/structure/Tag.cpp
-build ./cook/exe/x32/release/src/cook/structure/Uri.cpp.obj: compile src/cook/structure/Uri.cpp
-build ./cook/exe/x32/release/src/cook/work/DependencyResolver.cpp.obj: compile src/cook/work/DependencyResolver.cpp
-build ./cook/exe/x32/release/src/cook/work/NinjaWriter.cpp.obj: compile src/cook/work/NinjaWriter.cpp
-build ./cook/exe/x32/release/src/cook/work/TopologicalOrder.cpp.obj: compile src/cook/work/TopologicalOrder.cpp
-build ./cook/exe/x32/release/src/cook/work/TreeWriter.cpp.obj: compile src/cook/work/TreeWriter.cpp
-build ./cook/exe/x32/release/src/main.cpp.obj: compile src/main.cpp
+build ./cook/exe/x32/debug/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
+build ./cook/exe/x32/debug/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
+build ./cook/exe/x32/debug/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj: compile gubg.io/src/gubg/bitmagic/bitmagic.cpp
+build ./cook/exe/x32/debug/gubg.io/src/gubg/file/Descriptor.cpp.obj: compile gubg.io/src/gubg/file/Descriptor.cpp
+build ./cook/exe/x32/debug/gubg.io/src/gubg/file/File.cpp.obj: compile gubg.io/src/gubg/file/File.cpp
+build ./cook/exe/x32/debug/gubg.io/src/gubg/file/Filesystem.cpp.obj: compile gubg.io/src/gubg/file/Filesystem.cpp
+build ./cook/exe/x32/debug/gubg.io/src/gubg/file/Forest.cpp.obj: compile gubg.io/src/gubg/file/Forest.cpp
+build ./cook/exe/x32/debug/gubg.io/src/gubg/hash/MD5.cpp.obj: compile gubg.io/src/gubg/hash/MD5.cpp
+build ./cook/exe/x32/debug/gubg.io/src/gubg/parse/basic.cpp.obj: compile gubg.io/src/gubg/parse/basic.cpp
+build ./cook/exe/x32/debug/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile gubg.io/src/gubg/parse/xml/Coding.cpp
+build ./cook/exe/x32/debug/src/cook/chai/Details.cpp.obj: compile src/cook/chai/Details.cpp
+build ./cook/exe/x32/debug/src/cook/chai/Engine.cpp.obj: compile src/cook/chai/Engine.cpp
+build ./cook/exe/x32/debug/src/cook/chai/Loader.cpp.obj: compile src/cook/chai/Loader.cpp
+build ./cook/exe/x32/debug/src/cook/structure/Book.cpp.obj: compile src/cook/structure/Book.cpp
+build ./cook/exe/x32/debug/src/cook/structure/Recipe.cpp.obj: compile src/cook/structure/Recipe.cpp
+build ./cook/exe/x32/debug/src/cook/structure/Tag.cpp.obj: compile src/cook/structure/Tag.cpp
+build ./cook/exe/x32/debug/src/cook/structure/Uri.cpp.obj: compile src/cook/structure/Uri.cpp
+build ./cook/exe/x32/debug/src/cook/work/DependencyResolver.cpp.obj: compile src/cook/work/DependencyResolver.cpp
+build ./cook/exe/x32/debug/src/cook/work/NinjaWriter.cpp.obj: compile src/cook/work/NinjaWriter.cpp
+build ./cook/exe/x32/debug/src/cook/work/TopologicalOrder.cpp.obj: compile src/cook/work/TopologicalOrder.cpp
+build ./cook/exe/x32/debug/src/cook/work/TreeWriter.cpp.obj: compile src/cook/work/TreeWriter.cpp
+build ./cook/exe/x32/debug/src/main.cpp.obj: compile src/main.cpp
 build ./cook.exe:  link $
-    ./cook/exe/x32/release/gubg.io/src/gubg/OptionParser.cpp.obj $
-    ./cook/exe/x32/release/gubg.io/src/gubg/Strange.cpp.obj $
-    ./cook/exe/x32/release/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
-    ./cook/exe/x32/release/gubg.io/src/gubg/file/Descriptor.cpp.obj $
-    ./cook/exe/x32/release/gubg.io/src/gubg/file/File.cpp.obj $
-    ./cook/exe/x32/release/gubg.io/src/gubg/file/Filesystem.cpp.obj $
-    ./cook/exe/x32/release/gubg.io/src/gubg/file/Forest.cpp.obj $
-    ./cook/exe/x32/release/gubg.io/src/gubg/hash/MD5.cpp.obj $
-    ./cook/exe/x32/release/gubg.io/src/gubg/parse/basic.cpp.obj $
-    ./cook/exe/x32/release/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
-    ./cook/exe/x32/release/src/cook/chai/Details.cpp.obj $
-    ./cook/exe/x32/release/src/cook/chai/Engine.cpp.obj $
-    ./cook/exe/x32/release/src/cook/chai/Loader.cpp.obj $
-    ./cook/exe/x32/release/src/cook/structure/Book.cpp.obj $
-    ./cook/exe/x32/release/src/cook/structure/Recipe.cpp.obj $
-    ./cook/exe/x32/release/src/cook/structure/Tag.cpp.obj $
-    ./cook/exe/x32/release/src/cook/structure/Uri.cpp.obj $
-    ./cook/exe/x32/release/src/cook/work/DependencyResolver.cpp.obj $
-    ./cook/exe/x32/release/src/cook/work/NinjaWriter.cpp.obj $
-    ./cook/exe/x32/release/src/cook/work/TopologicalOrder.cpp.obj $
-    ./cook/exe/x32/release/src/cook/work/TreeWriter.cpp.obj $
-    ./cook/exe/x32/release/src/main.cpp.obj
+    ./cook/exe/x32/debug/gubg.io/src/gubg/OptionParser.cpp.obj $
+    ./cook/exe/x32/debug/gubg.io/src/gubg/Strange.cpp.obj $
+    ./cook/exe/x32/debug/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
+    ./cook/exe/x32/debug/gubg.io/src/gubg/file/Descriptor.cpp.obj $
+    ./cook/exe/x32/debug/gubg.io/src/gubg/file/File.cpp.obj $
+    ./cook/exe/x32/debug/gubg.io/src/gubg/file/Filesystem.cpp.obj $
+    ./cook/exe/x32/debug/gubg.io/src/gubg/file/Forest.cpp.obj $
+    ./cook/exe/x32/debug/gubg.io/src/gubg/hash/MD5.cpp.obj $
+    ./cook/exe/x32/debug/gubg.io/src/gubg/parse/basic.cpp.obj $
+    ./cook/exe/x32/debug/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/chai/Details.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/chai/Engine.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/chai/Loader.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/structure/Book.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/structure/Recipe.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/structure/Tag.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/structure/Uri.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/work/DependencyResolver.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/work/NinjaWriter.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/work/TopologicalOrder.cpp.obj $
+    ./cook/exe/x32/debug/src/cook/work/TreeWriter.cpp.obj $
+    ./cook/exe/x32/debug/src/main.cpp.obj
 
 build cook#exe: phony ./cook.exe
 

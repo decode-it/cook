@@ -175,20 +175,22 @@ namespace cook { namespace work {
             {
                 case structure::TargetType::Executable:     command = "link"; break;
                 case structure::TargetType::StaticLibrary:  command = "archive"; break;
-                default:
-                    MSS(false, std::cerr << "Unknown target type for '" << recipe.uri() << "'" << std::endl);
+                default: break;
             }
             
-            ofs << "build " << info.filename.native() << ":  " << command;
-            for(const auto & obj : objects)
-                ofs << " $" << std::endl << "    " << obj.string();
-            
-            if(!recipe.required_recipes().empty())
+            if (!command.empty())
             {
-                
-                ofs << " | ";
-                for (auto * dep : recipe.required_recipes())
-                    ofs << dep->output().filename.native() << " ";
+                ofs << "build " << info.filename.native() << ":  " << command;
+                for(const auto & obj : objects)
+                    ofs << " $" << std::endl << "    " << obj.string();
+
+                if(!recipe.required_recipes().empty())
+                {
+
+                    ofs << " | ";
+                    for (auto * dep : recipe.required_recipes())
+                        ofs << dep->output().filename.native() << " ";
+                }
             }
             
             ofs << std::endl << std::endl;
