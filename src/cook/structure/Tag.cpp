@@ -7,14 +7,15 @@ namespace cook { namespace structure {
     
     bool Tag::is_valid(const std::string & tag)
     {
-        return tag.find(SEPARATOR) == std::string::npos;
+        return true;
+        /* return tag.find(Separator) == std::string::npos; */
     }
     
     std::pair<Tag, bool> Tag::construct(const std::string & tag)
     {
         std::pair<Tag, bool> res(Tag(), false);
-        if (tag.find(SEPARATOR) != std::string::npos)
-            return res;
+        /* if (tag.find(Separator) != std::string::npos) */
+            /* return res; */
         
         res.first.tag_ = tag;
         res.second = true;

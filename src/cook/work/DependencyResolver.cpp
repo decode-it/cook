@@ -22,7 +22,7 @@ namespace cook { namespace work {
     
     bool DependencyResolver::resolve(Book & root, const Config & config, std::list<unresolved_dependency> & lst )
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(bool, "resolve");
         
         RecipeMap map;
         
@@ -58,9 +58,10 @@ namespace cook { namespace work {
         for(const auto & p : map)
         {
             const auto & uri = p.first;
+            L(C(uri));
             Recipe * recipe = p.second;
             
-            for(const Uri & dependency : recipe->dependencies())
+            for (const Uri & dependency : recipe->dependencies())
             {
                 Recipe * supplier = find_dependency_(*recipe, dependency, map);
                 if (!supplier)

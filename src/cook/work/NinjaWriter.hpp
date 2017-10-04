@@ -25,12 +25,14 @@ namespace cook { namespace work {
     {
         using Recipe = structure::Recipe;
         
-        bool operator()(std::ostream & ofs, const Recipes &recipes, const structure::Uri & default_uri);
+        bool operator()(std::ostream & os, const Recipes &recipes, const structure::Uri & default_uri);
         BuildOptions options;
     
     private:
-        bool write_recipe_(std::ostream & ofs, const Recipe & recipe, const Recipes & order);
-        bool write_header_(std::ostream & ofs);
+        bool write_header_(std::ostream & os);
+        bool write_global_vars_(std::ostream & os);
+        bool write_rules_(std::ostream & os);
+        bool write_recipe_(std::ostream & os, const Recipe & recipe, const Recipes & order);
     };
 
 } }

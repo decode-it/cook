@@ -5,10 +5,13 @@
 
 namespace cook { namespace structure {
     
-    const static char SEPARATOR = '#';
-    
     struct Tag
     {
+        const static char Separator = '.';
+
+        Tag() {}
+        Tag(const std::string &tag): tag_(tag) {}
+
         static bool is_valid(const std::string & tag);
         static std::pair<Tag, bool> construct(const std::string & tag);
         
