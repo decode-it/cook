@@ -81,7 +81,7 @@ namespace cook {
         else if (options.generate == "recipes.tree")
         {
             work::TreeWriter writer;
-            MSS(writer.recipes(resolver.ordered_recipes()));
+            MSS(writer.static_structure(root_book, resolver.ordered_recipes()));
         }
         else
         {

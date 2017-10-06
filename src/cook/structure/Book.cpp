@@ -34,20 +34,20 @@ namespace cook { namespace structure {
     
     void Book::print() const
     {
-        std::cout << "Book: " << uri().string() << std::endl;
-        if (!recipes_.empty())
-        {
-            std::cout << "  - recipes (" << recipes_.size() << ")" << std::endl;
-            for(const auto & p : recipes_)
-                std::cout << "       " << p.second.string() << std::endl;
-        }
+//        std::cout << "Book: " << uri().string() << std::endl;
+//        if (!recipes_.empty())
+//        {
+//            std::cout << "  - recipes (" << recipes_.size() << ")" << std::endl;
+//            for(const auto & p : recipes_)
+//                std::cout << "       " << p.second.string() << std::endl;
+//        }
         
-        if (!subbooks_.empty())
-        {
-            std::cout << "  - subbooks (" << subbooks_.size() << ")" << std::endl;
-            for(const auto & p : subbooks_)
-                std::cout << "       " << p.second.string() << std::endl;
-        }
+//        if (!subbooks_.empty())
+//        {
+//            std::cout << "  - subbooks (" << subbooks_.size() << ")" << std::endl;
+//            for(const auto & p : subbooks_)
+//                std::cout << "       " << p.second.string() << std::endl;
+//        }
     }
     
 } }

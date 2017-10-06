@@ -13,15 +13,7 @@ namespace cook { namespace structure {
     
     class Book : public Element
     {   
-        using RecipeMap = std::map<Tag, Recipe>;
-        using BookMap = std::map<Tag, Book>;
-        
     public:
-        using BookIterator = BookMap::iterator;
-        using ConstBookIterator = BookMap::const_iterator;
-        using RecipeIterator = RecipeMap::iterator;
-        using ConstRecipeIterator = RecipeMap::const_iterator;
-
         explicit Book(const std::filesystem::path & script_fn, const Tag & tag = Tag(), Book * parent = nullptr) :
             Element(Type::Book, script_fn, tag, parent)
         {
@@ -39,9 +31,6 @@ namespace cook { namespace structure {
         Book & operator=(const Book &) = delete;
         Book(Book &&) = delete;
         Book & operator=(Book &&) = delete;
-                
-        RecipeMap recipes_;
-        BookMap subbooks_;
     };
 } }
 

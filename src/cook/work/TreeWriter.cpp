@@ -2,8 +2,9 @@
 
 namespace cook { namespace work {
 
-template <typename TGTFunctor>
-bool write_recipe(const structure::Recipe & recipe, util::TreeNode & node, const Recipes & recipes, bool details, TGTFunctor && functor)
+namespace {
+
+bool write_recipe_(const structure::Recipe & recipe, util::TreeNode & node, const Recipes & recipes, bool details)
 {
     MSS_BEGIN(bool);
     auto nn = node.open("recipe");
@@ -85,56 +86,121 @@ bool write_recipe(const structure::Recipe & recipe, util::TreeNode & node, const
 
     MSS_END();
 }
-    
-    bool TreeWriter::recipes(const Recipes &recipes)
-    {         
-        MSS_BEGIN(bool);
-        
-        auto n = util::make_tree_node(std::cout, "recipes");
 
-        auto wrapper = [](const std::filesystem::path & p) { return p; };
-        
-        for (auto *recipe: recipes)
-            MSS(write_recipe(*recipe, n, recipes, false, wrapper));
+bool write_book_(const structure::Book & book, util::TreeNode & node)
+{
+    MSS_BEGIN(bool);
 
-        if (!recipes.empty())
+    auto n = node.open("book");
+    n.attr("uri", book.uri()).attr("display_name", book.display_name()).attr("script", book.script_filename().string());
+
+    for(const auto & p : book.elements())
+    {
+        const structure::Element * el = p.second;
+        switch(el->type())
         {
-            auto nn = n.open("default");
-            nn.attr("uri", recipes.back()->uri());
+            case structure::Type::Book:     n.open("book").attr("uri", el->uri()); break;
+            case structure::Type::Recipe:   n.open("recipe").attr("uri", el->uri()); break;
+            default: MSS(false); break;
         }
-        
-        MSS_END();
     }
 
-    bool TreeWriter::details(const Recipes &recipes, const structure::Uri &uri, const std::filesystem::path & build_dir)
-    {         
-        MSS_BEGIN(bool);
-        
-        auto n = util::make_tree_node(std::cout, "details");
-        auto wrapper = [&](const std::filesystem::path & p)
+    MSS_END();
+}
+
+}
+
+bool TreeWriter::static_structure(const structure::Book & root, const Recipes & recipes)
+{
+    MSS_BEGIN(bool);
+
+    auto n = util::make_tree_node(std::cout, "structure");
+
+    using Element = const structure::Element;
+
+    std::stack<Element *> todo;
+    todo.push(&root);
+
+    while(!todo.empty())
+    {
+        Element * el =todo.top();
+        todo.pop();
+        MSS(!!el);
+
+        switch(el->type())
         {
-            if(p.is_absolute())
-                return p;
-            else
-                return build_dir/p;
-        };
-        
-        const structure::Recipe *active_recipe = nullptr;
-        for (auto * recipe: recipes)
-        {
-            MSS(write_recipe(*recipe, n, recipes, true, wrapper));
-            if (recipe->uri() == uri)
-                active_recipe = recipe;
+            case structure::Type::Book:
+                MSS(write_book_(static_cast<const structure::Book&>(*el), n));
+                break;
+
+            case structure::Type::Recipe:
+                MSS(write_recipe_(static_cast<const structure::Recipe&>(*el), n, recipes, true));
+                break;
+
+            default:
+                MSS(false);
+                break;
         }
 
-        {
-            auto nn = n.open("active");
-            MSS(!!active_recipe);
-            nn.attr("uri", active_recipe->uri());
-        }
-        
-        MSS_END();
+        for(const auto & p : el->elements())
+            todo.push(p.second);
     }
-    
+
+    if (!recipes.empty())
+    {
+        n.open("default").attr("uri", recipes.back()->uri());
+    }
+
+    MSS_END();
+}
+
+bool TreeWriter::recipes(const Recipes &recipes)
+{
+    MSS_BEGIN(bool);
+
+    auto n = util::make_tree_node(std::cout, "recipes");
+
+    for (auto *recipe: recipes)
+        MSS(write_recipe_(*recipe, n, recipes, false));
+
+    if (!recipes.empty())
+    {
+        auto nn = n.open("default");
+        nn.attr("uri", recipes.back()->uri());
+    }
+
+    MSS_END();
+}
+
+bool TreeWriter::details(const Recipes &recipes, const structure::Uri &uri, const std::filesystem::path & build_dir)
+{
+    MSS_BEGIN(bool);
+
+    auto n = util::make_tree_node(std::cout, "details");
+    auto wrapper = [&](const std::filesystem::path & p)
+    {
+        if(p.is_absolute())
+            return p;
+        else
+            return build_dir/p;
+    };
+
+    const structure::Recipe *active_recipe = nullptr;
+    for (auto * recipe: recipes)
+    {
+        MSS(write_recipe_(*recipe, n, recipes, true));
+        if (recipe->uri() == uri)
+            active_recipe = recipe;
+    }
+
+    {
+        auto nn = n.open("active");
+        MSS(!!active_recipe);
+        nn.attr("uri", active_recipe->uri());
+    }
+
+    MSS_END();
+}
+
 
 } }

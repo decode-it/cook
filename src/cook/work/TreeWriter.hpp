@@ -12,6 +12,7 @@ namespace cook { namespace work {
     public:
         bool recipes(const Recipes &);
         bool details(const Recipes &, const structure::Uri &uri, const std::filesystem::path & build_dir);
+        bool static_structure(const structure::Book &root, const Recipes &recipes);
     };
     
 } }
