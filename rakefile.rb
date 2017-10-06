@@ -119,7 +119,7 @@ namespace :cook do
         exe.build
     end
     mode = :release
-    mode = :debug
+    #mode = :debug
     task :build do
         if !File.exist?(cook_bootstrap_fn)
             if File.exist?("build.ninja")
@@ -133,7 +133,7 @@ namespace :cook do
         end
         raise("Could not create #{cook_bootstrap_fn}") unless File.exist?(cook_bootstrap_fn)
 
-        puts("Bootstrapping cook")
+        puts("Bootstrapping cook in mode #{mode}")
         sh "./#{cook_bootstrap_fn} -c #{mode} cook.exe"
         Ninja::build
         

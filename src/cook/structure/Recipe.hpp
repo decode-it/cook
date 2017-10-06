@@ -142,7 +142,7 @@ namespace cook { namespace structure {
             Recipe operator=(Recipe &&) = delete;
             
             Book * const book_;
-            TargetType target_type_;
+            TargetType target_type_ = TargetType::Unknown;
             
             void add_(FileInfo &dst, file::Type type, const std::string &subdir, const std::string &pattern);
             

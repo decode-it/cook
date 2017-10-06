@@ -93,6 +93,12 @@ namespace cook { namespace structure {
                 output_.filename = config.build_dir / exe_name;
             }
                 break;
+
+            case TargetType::Unknown:
+            {
+                static_cast<TargetConfig &>(output_) = in_;
+                break;
+            }
                 
             default:
                 break;
