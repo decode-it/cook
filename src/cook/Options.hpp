@@ -16,7 +16,7 @@ namespace cook {
         };
         
         std::string config = "release";
-        std::string arch = "x32";
+        std::string arch = "";
         bool print_help = false;
         std::string help_message;
         unsigned int verbose = 0;

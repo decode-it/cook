@@ -84,24 +84,6 @@ namespace cook { namespace work {
         MSS_BEGIN(bool);
 
         if (false) {}
-        else if (options.arch == "x32")
-        {
-            options.compiler = "g++ -std=c++17";
-            options.cflags += " -m32";
-            options.linker = "g++ -std=c++17";
-            options.lflags += " -m32";
-            options.archiver= "ar rcs";
-            options.additional_defines = (options.config=="release" ? "-DNDEBUG" : "-g");
-        }
-        else if (options.arch == "x64")
-        {
-            options.compiler = "g++ -std=c++17";
-            options.cflags += " -m64";
-            options.linker = "g++ -std=c++17";
-            options.lflags += " -m64";
-            options.archiver= "ar rcs";
-            options.additional_defines = (options.config=="release" ? "-DNDEBUG" : "-g");
-        }
         else if (options.arch == "uno")
         {
             options.compiler = "avr-g++ -std=c++17";
@@ -114,6 +96,28 @@ namespace cook { namespace work {
             options.additional_defines += " -DARDUINO_AVR_UNO";
             options.additional_defines += " -DF_CPU=16000000L";
         }
+        else 
+        {
+            options.compiler = "g++ -std=c++17";
+            options.linker = "g++ -std=c++17";
+            options.archiver= "ar rcs";
+            options.additional_defines = (options.config=="release" ? " -DNDEBUG" : " -g");
+            
+            if (false) {}
+            else if (options.arch == "x32")
+            {
+                options.cflags += " -m32";
+                options.lflags += " -m32";
+            }
+            else if (options.arch == "x64")
+            {
+                options.cflags += " -m64";
+                options.lflags += " -m64";
+            }
+        }
+        
+        options.cflags += options.additional_defines;
+        options.lflags += options.additional_defines;
 
         os << "builddir = " << options.build_dir.native() << std::endl;
         os << "compiler = " << options.compiler << std::endl;
@@ -158,8 +162,13 @@ namespace cook { namespace work {
         // the settings for this recipe
         auto obj_tgt = [&](const Recipe &r)
         {
-            std::filesystem::path res = options.build_dir / to_path(r.uri()) / std::filesystem::path(options.arch) / std::filesystem::path(options.config);
+            std::filesystem::path res = options.build_dir / ".cook" / to_path(r.uri()) / std::filesystem::path(options.arch) / std::filesystem::path(options.config);
             return res;
+        };
+
+        auto make_absolute = [&](const std::filesystem::path & p)
+        {
+            return (p.is_absolute() ? p : options.build_dir / p);
         };
 
         os
@@ -187,7 +196,7 @@ namespace cook { namespace work {
         {
             os << "library_paths =";
             for (const auto & l: cfg.library_paths)
-                os << " -L" << ( l.empty() ? "./" : l);
+                os << " -L" << make_absolute(l).string();
             os << std::endl;
         }
 
