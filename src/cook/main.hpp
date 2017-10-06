@@ -104,12 +104,12 @@ namespace cook {
             }
             else if (options.generate == "build.ninja")
             {
-                {
-                    work::NinjaWriter writer;
+                std::filesystem::path ninja_file = options.build_dir;
+                ninja_file /= "build.ninja";
 
-                    std::filesystem::path p = options.build_dir;
-                    p /= "build.ninja";
-                    std::ofstream ofs(p.string());
+                {
+                    work::NinjaWriter writer;                  
+                    std::ofstream ofs(ninja_file.string());
 
                     writer.options.build_dir = options.build_dir;
                     writer.options.config = options.config;
@@ -119,7 +119,10 @@ namespace cook {
                 }
 
                 if (options.do_build)
-                    MSS(std::system("ninja -v") == 0);
+                {
+                    std::string command = "ninja -v -f " + ninja_file.string();
+                    MSS(std::system(command.c_str()) == 0);
+                }
             }
         }
 
