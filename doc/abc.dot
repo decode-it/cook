@@ -1,0 +1,18 @@
+digraph {
+    "A.so" [shape=octagon]
+    "A.lib" [shape=box]
+    "C.lib" [shape=box]
+    "B.lib" [shape=box]
+    "B.so" [shape=octagon]
+
+    "A.so" -> "A"
+    "A.lib" -> "A"
+    "C.lib" -> "C"
+    "B.lib" -> "B"
+    "B.so" -> "B"
+    "A" -> "a.cpp"
+    "A" -> "c.cpp"
+    "C" -> "c.cpp"
+    "B" -> "c.cpp"
+    "B" -> "b.cpp"
+}

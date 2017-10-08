@@ -163,3 +163,13 @@ task :install, [:bin] => "build" do |task, args|
         sh("sudo cp cook.exe /usr/local/bin/cook")
     end
 end
+
+desc "Create the documentation"
+task :doc do
+    Dir.chdir("doc") do
+        %w[abc complex].each do |name|
+            sh "dot -T png -o #{name}.png #{name}.dot"
+            sh "mimeopen #{name}.png"
+        end
+    end
+end
