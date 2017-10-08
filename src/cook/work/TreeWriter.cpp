@@ -4,7 +4,7 @@ namespace cook { namespace work {
 
 namespace {
 
-bool write_recipe_(const structure::Recipe & recipe, util::TreeNode & node, const Recipes & recipes, bool details)
+bool write_recipe_(util::TreeNode & node, const structure::Recipe & recipe, const Recipes & recipes, bool details)
 {
     MSS_BEGIN(bool);
     auto nn = node.open("recipe");
@@ -12,7 +12,9 @@ bool write_recipe_(const structure::Recipe & recipe, util::TreeNode & node, cons
     // properties
     {
         nn.attr("uri", recipe.uri());
+        nn.attr("tag", recipe.uri().back());
         nn.attr("display_name", recipe.display_name());
+                
         if (details)
         {
             nn.attr("script", recipe.script_filename().native());
@@ -87,12 +89,16 @@ bool write_recipe_(const structure::Recipe & recipe, util::TreeNode & node, cons
     MSS_END();
 }
 
-bool write_book_(const structure::Book & book, util::TreeNode & node)
+bool write_book_(util::TreeNode & node, const structure::Book & book)
 {
     MSS_BEGIN(bool);
 
     auto n = node.open("book");
-    n.attr("uri", book.uri()).attr("display_name", book.display_name()).attr("script", book.script_filename().string());
+    n.attr("uri", book.uri());
+    n.attr("display_name", book.display_name());
+    n.attr("script", book.script_filename().string());
+    
+    
 
     for(const auto & p : book.elements())
     {
@@ -108,6 +114,38 @@ bool write_book_(const structure::Book & book, util::TreeNode & node)
     MSS_END();
 }
 
+bool write_book_rec_(util::TreeNode & node, const structure::Book & book, const Recipes & recipes)
+{
+    MSS_BEGIN(bool);
+
+    auto n = node.open("book");
+    n.attr("uri", book.uri()).attr("display_name", book.display_name()).attr("script", book.script_filename().string());
+    
+    if(!book.uri().tags().empty())
+        n.attr("tag", book.uri().back());
+
+    for(const auto & p : book.elements())
+    {
+        const structure::Element * el = p.second;
+        switch(el->type())
+        {
+            case structure::Type::Book:
+                MSS(write_book_rec_(n, static_cast<const structure::Book &>(*el), recipes));
+                break;
+
+            case structure::Type::Recipe:
+                MSS(write_recipe_(n, static_cast<const structure::Recipe &>(*el), recipes, true));
+                break;
+
+            default:
+                MSS(false);
+                break;
+        }
+    }
+
+    MSS_END();
+}
+
 }
 
 bool TreeWriter::static_structure(const structure::Book & root, const Recipes & recipes)
@@ -115,36 +153,7 @@ bool TreeWriter::static_structure(const structure::Book & root, const Recipes & 
     MSS_BEGIN(bool);
 
     auto n = util::make_tree_node(std::cout, "structure");
-
-    using Element = const structure::Element;
-
-    std::stack<Element *> todo;
-    todo.push(&root);
-
-    while(!todo.empty())
-    {
-        Element * el =todo.top();
-        todo.pop();
-        MSS(!!el);
-
-        switch(el->type())
-        {
-            case structure::Type::Book:
-                MSS(write_book_(static_cast<const structure::Book&>(*el), n));
-                break;
-
-            case structure::Type::Recipe:
-                MSS(write_recipe_(static_cast<const structure::Recipe&>(*el), n, recipes, true));
-                break;
-
-            default:
-                MSS(false);
-                break;
-        }
-
-        for(const auto & p : el->elements())
-            todo.push(p.second);
-    }
+    MSS(write_book_rec_(n, root, recipes));
 
     if (!recipes.empty())
     {
@@ -161,7 +170,7 @@ bool TreeWriter::recipes(const Recipes &recipes)
     auto n = util::make_tree_node(std::cout, "recipes");
 
     for (auto *recipe: recipes)
-        MSS(write_recipe_(*recipe, n, recipes, false));
+        MSS(write_recipe_(n, *recipe, recipes, false));
 
     if (!recipes.empty())
     {
@@ -188,7 +197,7 @@ bool TreeWriter::details(const Recipes &recipes, const structure::Uri &uri, cons
     const structure::Recipe *active_recipe = nullptr;
     for (auto * recipe: recipes)
     {
-        MSS(write_recipe_(*recipe, n, recipes, true));
+        MSS(write_recipe_(n, *recipe, recipes, true));
         if (recipe->uri() == uri)
             active_recipe = recipe;
     }
