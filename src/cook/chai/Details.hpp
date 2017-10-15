@@ -16,7 +16,7 @@ namespace cook { namespace chai {
     struct GlobalInfo;
     struct BookWrapper;
     struct RecipeWrapper;
-    
+
     using ScriptStack = std::stack<std::filesystem::path>;
     using BookStack = std::stack<Book *>;
     

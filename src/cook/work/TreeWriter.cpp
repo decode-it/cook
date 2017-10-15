@@ -96,8 +96,9 @@ bool write_book_(util::TreeNode & node, const structure::Book & book)
     auto n = node.open("book");
     n.attr("uri", book.uri());
     n.attr("display_name", book.display_name());
-    n.attr("script", book.script_filename().string());
-    
+
+    for(const auto & p : book.script_files())
+        n.open("script").attr("path", p.string());
     
 
     for(const auto & p : book.elements())
@@ -119,10 +120,13 @@ bool write_book_rec_(util::TreeNode & node, const structure::Book & book, const 
     MSS_BEGIN(bool);
 
     auto n = node.open("book");
-    n.attr("uri", book.uri()).attr("display_name", book.display_name()).attr("script", book.script_filename().string());
+    n.attr("uri", book.uri()).attr("display_name", book.display_name());
     
     if(!book.uri().tags().empty())
         n.attr("tag", book.uri().back());
+
+    for(const auto & p : book.script_files())
+        n.open("script").attr("path", p.string());
 
     for(const auto & p : book.elements())
     {

@@ -26,6 +26,11 @@ namespace cook { namespace structure {
 
         MSS_END();
     }
+
+    void Book::add_script_file(const std::filesystem::path & script_file)
+    {
+        script_files_.insert(script_file);
+    }
     
     std::string Book::string() const
     {

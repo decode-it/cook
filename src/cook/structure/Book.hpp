@@ -17,20 +17,24 @@ namespace cook { namespace structure {
         explicit Book(const std::filesystem::path & script_fn, const Tag & tag = Tag(), Book * parent = nullptr) :
             Element(Type::Book, script_fn, tag, parent)
         {
+            add_script_file(script_fn);
         }
         
         bool add_subbook(Book *& book, const Tag & tag, const std::filesystem::path & fn);
         bool add_recipe(Recipe *& recipe, const Tag & tag, const std::filesystem::path & fn);
+        void add_script_file(const std::filesystem::path & script_file);
+        const std::set<std::filesystem::path> & script_files() const { return script_files_; }
         
         void print() const;        
         std::string string() const;
-
         
     private:
         Book(const Book &) = delete;
         Book & operator=(const Book &) = delete;
         Book(Book &&) = delete;
         Book & operator=(Book &&) = delete;
+
+        std::set<std::filesystem::path> script_files_;
     };
 } }
 

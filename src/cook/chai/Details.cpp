@@ -28,6 +28,10 @@ namespace cook { namespace chai {
                 script_fn /= std::filesystem::path("recipes.chai");
 
             stack.push(script_fn);
+
+            // add to the recipes in the book
+            assert(!info_.open_books.empty());
+            info_.open_books.top()->add_script_file(script_fn);
         }
         
         {
