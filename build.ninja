@@ -1,17 +1,18 @@
-#File written by cook (1.0.0) on Mon Oct 23 07:45:29 2017
+#File written by cook (1.0.0) on Mon Oct 23 13:25:31 2017
 
 #>> Global variables
 builddir = ./
 compiler = g++ -std=c++17
-linker = g++ -std=c++17
-archiver = ar rcs
 cflags =  -DNDEBUG
-lflags =  -DNDEBUG
+linker = g++ -std=c++17
+lflags = 
+archiver = ar
+aflags = rcs
 #<< Global variables
 
 #>> Rule definitions
 rule compile
-  command = $compiler -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths
+  command = $compiler -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths $force_includes
   depfile = $out.d
 rule link
   command = $linker $lflags -o $out $in $library_paths $libraries
@@ -28,6 +29,7 @@ build clean: clean
 #>> Recipes
 defines =
 include_paths = -I gubg.chaiscript/extern/ChaiScript/include -I gubg.io/src -I gubg.std/src -I src
+force_includes =
 #  >> Recipe "cook.exe"
 #     target type: Executable
 #     temporary files: ./.cook/cook/exe/release

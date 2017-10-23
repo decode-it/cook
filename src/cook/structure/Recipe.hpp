@@ -99,6 +99,7 @@ namespace cook { namespace structure {
 
             const FileInfo &sources() const                                                     { return sources_; }
             const FileInfo &headers() const                                                     { return headers_; }
+            const FileInfo &force_includes() const                                              { return force_includes_; }
             const IncludePaths &include_paths() const                                           { return in_.include_paths; }
             const Defines &defines() const                                                      { return in_.defines; }
             const LibraryPaths &library_paths() const                                           { return in_.library_paths; }
@@ -117,6 +118,7 @@ namespace cook { namespace structure {
 
             void add_source(const std::string &dir, const std::string &pattern)                 { add_(sources_, file::Source, dir, pattern); }
             void add_header(const std::string &dir, const std::string &pattern)                 { add_(headers_, file::Header, dir, pattern); }
+            void add_force_include(const std::string &dir, const std::string &pattern)          { add_(force_includes_, file::ForceInclude, dir, pattern); }
             void add_include_path(const std::string &dir)                                       { in_.include_paths.insert(dir); }
             void add_define(const std::string &name, const std::string &value = std::string())  { in_.defines[name] = value; }
             void add_library_path(const std::string &dir)                                       { in_.library_paths.insert(dir); }
@@ -149,13 +151,13 @@ namespace cook { namespace structure {
             // info directly settable from chai script
             FileInfo sources_;
             FileInfo headers_;
+            FileInfo force_includes_;
             TargetConfig in_;
             Dependencies dependencies_;
             
             // structural information set after first run
             RequiredRecipes required_recipes_;
             std::string identifier_;
-            
             
             RecipeOutput output_;
     };

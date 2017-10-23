@@ -28,6 +28,7 @@ bool Loader::load(structure::Book & root)
     chai.add(chaiscript::fun(&RecipeWrapper::add_source),               "add_source");
     chai.add(chaiscript::fun(&RecipeWrapper::add_header),               "add_header");
     chai.add(chaiscript::fun(&RecipeWrapper::add_include_path),         "add_include_path");
+    chai.add(chaiscript::fun(&RecipeWrapper::add_force_include),        "add_force_include");
     chai.add(chaiscript::fun(&RecipeWrapper::add_define_1),             "add_define");
     chai.add(chaiscript::fun(&RecipeWrapper::add_define_2),             "add_define");
     chai.add(chaiscript::fun(&RecipeWrapper::add_library_path),         "add_library_path");

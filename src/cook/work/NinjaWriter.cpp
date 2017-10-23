@@ -28,6 +28,7 @@ namespace cook { namespace work {
             //TODO: More subtle aggregation of defines and include paths depending on public/private
             std::set<std::string> defines;
             std::set<std::string> include_paths;
+            std::set<std::string> force_includes;
             for (auto * recipe : recipes)
             {
                 for(const auto & p: recipe->defines())
@@ -43,6 +44,9 @@ namespace cook { namespace work {
 
                 for (const auto &i: recipe->include_paths())
                     include_paths.insert(i);
+
+                for (const auto &p: recipe->force_includes())
+                    force_includes.insert(p.first);
             }
             os << "defines =";
             for (const auto &def: defines)
@@ -51,6 +55,10 @@ namespace cook { namespace work {
             os << "include_paths =";
             for (const auto &inc: include_paths)
                 os << " -I " << inc;
+            os << std::endl;
+            os << "force_includes =";
+            for (const auto &p: force_includes)
+                os << " -include " << p;
             os << std::endl;
         }
         for (auto * recipe : recipes)
@@ -108,7 +116,7 @@ namespace cook { namespace work {
 
         os
         << "rule compile" << std::endl
-        << "  command = $compiler -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths" << std::endl
+        << "  command = $compiler -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths $force_includes" << std::endl
         << "  depfile = $out.d" << std::endl;
 
         os

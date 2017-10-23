@@ -16,6 +16,8 @@ namespace cook { namespace structure {
             res.insert(p.second.dir);
         for (const auto &p: headers())
             res.insert(p.second.dir);
+        for (const auto &p: force_includes())
+            res.insert(p.second.dir);
         for (const auto &p: include_paths())
             res.insert(p);
     }
@@ -35,6 +37,8 @@ namespace cook { namespace structure {
             add_include_path(p.second.dir);
         for (const auto &p: headers())
             add_include_path(p.second.dir);
+        for (const auto &p: force_includes())
+            add_include_path(p.second.dir);
     }
 
     void Recipe::print() const
@@ -47,6 +51,9 @@ namespace cook { namespace structure {
             std::cout << " * " << p.first << " => " << p.second << std::endl;
         std::cout << "Headers:" << std::endl;
         for (const auto &p: headers_)
+            std::cout << " * " << p.first << " => " << p.second << std::endl;
+        std::cout << "Force includes:" << std::endl;
+        for (const auto &p: force_includes_)
             std::cout << " * " << p.first << " => " << p.second << std::endl;
     }
     
@@ -79,6 +86,8 @@ namespace cook { namespace structure {
                 output_.libraries.push_back(id);
                 
                 for(const auto & p : headers())
+                    output_.include_paths.insert(p.second.dir);
+                for(const auto & p : force_includes())
                     output_.include_paths.insert(p.second.dir);
                 
                 output_.filename = config.build_dir / lib_name;

@@ -118,6 +118,7 @@ namespace cook { namespace chai {
         // chai functionality
         void add_source(const std::string &dir, const std::string &pattern)     { recipe_.add_source(dir, pattern); }
         void add_header(const std::string &dir, const std::string &pattern)     { recipe_.add_header(dir, pattern); }
+        void add_force_include(const std::string &dir, const std::string &pattern) { recipe_.add_force_include(dir, pattern); }
         void add_include_path(const std::string &dir)                           { recipe_.add_include_path(dir); }
         void add_define_1(const std::string &name)                              { recipe_.add_define(name); }
         void add_define_2(const std::string &name, const std::string &value)    { recipe_.add_define(name, value); }
