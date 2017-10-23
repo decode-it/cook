@@ -59,7 +59,7 @@ namespace cook { namespace chai {
             VerbosityWriter v(1, info_);
             v.str() << "Adding new book " << p.first << " into " << book_.uri() << std::endl;
         
-            if (!book_.add_subbook(child, p.first, info_.last_script()) || !!child)
+            if (!book_.add_subbook(child, p.first, info_.last_script()) || child == nullptr)
                 throw chaiscript::exception::eval_error("Internal logic error while adding book");
         }
         
@@ -119,7 +119,7 @@ namespace cook { namespace chai {
             VerbosityWriter v(2, info_);
             v.str() << "Adding new recipe " << tag << " into book " << book_.uri() << std::endl;
 
-            if (!book_.add_recipe(recipe, p.first, info_.last_script()) || !!recipe)
+            if (!book_.add_recipe(recipe, p.first, info_.last_script()) || recipe == nullptr)
                 throw chaiscript::exception::eval_error("Internal logic error while adding recipe");
         }
         
