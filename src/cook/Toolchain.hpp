@@ -51,18 +51,27 @@ namespace cook {
                 archive.cmd = "avr-gcc-ar";
                 archive.flags = "rcs";
             }
+            else if (arch_ == "c")
+            {
+                compile.cmd = "gcc";
+                compile.flags += " -m32";
+
+                if (false) {}
+                else if (config_ == "release") { compile.defines += " -DNDEBUG"; }
+                else if (config_ == "debug") { compile.flags += " -g"; }
+
+                link.cmd = "gcc";
+                link.flags += " -m32";
+
+                archive.cmd = "ar";
+                archive.flags = "rcs";
+            }
             else 
             {
                 compile.cmd = "g++ -std=c++17";
                 if (false) {}
-                else if (config_ == "release")
-                {
-                    compile.defines += " -DNDEBUG";
-                }
-                else if (config_ == "release")
-                {
-                    compile.flags += " -g";
-                }
+                else if (config_ == "release") { compile.defines += " -DNDEBUG"; }
+                else if (config_ == "debug") { compile.flags += " -g"; }
 
                 link.cmd = "g++ -std=c++17";
 

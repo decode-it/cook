@@ -4,6 +4,7 @@ add_book("cook", fun(b) {
         r.target_type(executable)
         r.add_header("src", "**/*.hpp")
         r.add_source("src", "**.cpp")
+        r.add_source("src", "**.cpp")
         
         r.add_header("gubg.std/src", "gubg/**.hpp")
         
