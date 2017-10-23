@@ -16,7 +16,7 @@ namespace cook { namespace chai {
 
             Raw &raw() {return engine_;}
 
-            ReturnCode eval_file(const std::filesystem::path &);
+            void eval_file(const std::filesystem::path &);
 
         private:
             Raw engine_;

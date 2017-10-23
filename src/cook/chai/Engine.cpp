@@ -12,19 +12,11 @@ namespace cook { namespace chai {
     {
     }
 
-    ReturnCode Engine::eval_file(const std::filesystem::path &fn)
+    void Engine::eval_file(const std::filesystem::path &fn)
     {
-        MSS_BEGIN(ReturnCode);
-        MSS(std::filesystem::is_regular_file(fn), std::cerr << "Cannot eval " << fn << ", it does not exist" << std::endl);
-        try
-        {
-            engine_.eval_file(fn);
-        }
-        catch (const chaiscript::exception::eval_error &exc)
-        {
-            MSS(false, std::cout << "Error: Something went wrong evaluation file " << fn << std::endl << exc.what() << std::endl);
-        }
-        MSS_END();
+        engine_.eval_file(fn);
+
+
     }
 
 } } 

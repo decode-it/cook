@@ -41,7 +41,14 @@ bool Loader::load(structure::Book & root)
     chai.add_global_const(chaiscript::const_var(structure::TargetType::Executable), "executable");
     chai.add_global_const(chaiscript::const_var(structure::TargetType::StaticLibrary), "static_library");
 
-    MSS(info.include(root.script_filename()));
+    try
+    {
+        info.include(root.script_filename());
+    }
+    catch (const chaiscript::exception::eval_error &exc)
+    {
+        MSS(false, std::cout << "Error: Something went wrong evaluation file " << std::endl << exc.what() << std::endl);
+    }
     
     MSS_END();
 }
