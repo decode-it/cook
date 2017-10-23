@@ -112,8 +112,8 @@ namespace cook {
                     std::ofstream ofs(ninja_file.string());
 
                     writer.options.build_dir = options.build_dir;
-                    writer.options.config = options.config;
-                    writer.options.arch = options.arch;
+                    writer.toolchain.set_config(options.config);
+                    writer.toolchain.set_arch(options.arch);
 
                     MSS(writer(ofs, suborder, uri));
                 }

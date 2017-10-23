@@ -83,48 +83,21 @@ namespace cook { namespace work {
     {
         MSS_BEGIN(bool);
 
-        if (false) {}
-        else if (options.arch == "uno")
-        {
-            options.compiler = "avr-g++ -std=c++17";
-            options.cflags += " -flto";
-            options.linker = "avr-g++ -std=c++17";
-            options.lflags += " -flto";
-            options.archiver= "avr-gcc-ar rcs";
-            options.additional_defines += " -DARDUINO=10610";
-            options.additional_defines += " -DARDUINO_ARCH_AVR";
-            options.additional_defines += " -DARDUINO_AVR_UNO";
-            options.additional_defines += " -DF_CPU=16000000L";
-        }
-        else 
-        {
-            options.compiler = "g++ -std=c++17";
-            options.linker = "g++ -std=c++17";
-            options.archiver= "ar rcs";
-            options.additional_defines = (options.config=="release" ? " -DNDEBUG" : " -g");
-            
-            if (false) {}
-            else if (options.arch == "x32")
-            {
-                options.cflags += " -m32";
-                options.lflags += " -m32";
-            }
-            else if (options.arch == "x64")
-            {
-                options.cflags += " -m64";
-                options.lflags += " -m64";
-            }
-        }
-        
-        options.cflags += options.additional_defines;
-        options.lflags += options.additional_defines;
+        Toolchain::CompileInfo compile;
+        Toolchain::LinkInfo link;
+        Toolchain::ArchiveInfo archive;
+        MSS(toolchain.get_info(compile, link, archive));
 
         os << "builddir = " << options.build_dir.native() << std::endl;
-        os << "compiler = " << options.compiler << std::endl;
-        os << "linker = " << options.linker << std::endl;
-        os << "archiver = " << options.archiver << std::endl;
-        os << "cflags = " << options.cflags << std::endl;
-        os << "lflags = " << options.lflags << std::endl;
+
+        os << "compiler = " << compile.cmd << std::endl;
+        os << "cflags = " << compile.flags << compile.defines << std::endl;
+
+        os << "linker = " << link.cmd << std::endl;
+        os << "lflags = " << link.flags << std::endl;
+
+        os << "archiver = " << archive.cmd << std::endl;
+        os << "aflags = " << archive.flags << std::endl;
 
         MSS_END();
     }
@@ -162,7 +135,8 @@ namespace cook { namespace work {
         // the settings for this recipe
         auto obj_tgt = [&](const Recipe &r)
         {
-            std::filesystem::path res = options.build_dir / ".cook" / to_path(r.uri()) / std::filesystem::path(options.arch) / std::filesystem::path(options.config);
+            std::filesystem::path res = options.build_dir / ".cook" / to_path(r.uri());
+            toolchain.add_highlights(res);
             return res;
         };
 
