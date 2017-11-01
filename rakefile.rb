@@ -158,6 +158,7 @@ desc "Install"
 task :install, [:bin] => "build" do |task, args|
     bin = args[:bin]
     if bin
+	GUBG::mkdir(bin)
         sh("cp cook.exe #{bin}")
     else
         sh("sudo cp cook.exe /usr/local/bin/cook")
