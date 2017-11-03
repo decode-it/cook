@@ -171,6 +171,11 @@ namespace cook { namespace structure {
             info.dir = dir;
             info.rel = pattern;
             info.type = type;
+            const auto ext = fp.extension();
+            if (false) {}
+            else if (ext == ".c" || ext == ".h") {info.language.name = "c";}
+            else if (ext == ".cpp" || ext == ".hpp") {info.language.name = "c++";}
+            else if (ext == ".asm") {info.language.name = "asm";}
         };
         gubg::file::each_glob(pattern, add_file, dir);
     }

@@ -18,15 +18,21 @@ namespace cook { namespace structure {
         {
             Unknown = -1, Source, Header, ForceInclude,
         };
+        struct Language
+        {
+            std::string name;
+            std::string standard;
+        };
         struct Info
         {
             std::filesystem::path dir;
             std::filesystem::path rel;
             Type type;
+            Language language;
 
             void stream(std::ostream &os) const
             {
-                os << C(dir)C(rel)C(type, int);
+                os << C(dir)C(rel)C(type, int)C(language.name)C(language.standard);
             }
         };
         inline std::ostream &operator<<(std::ostream &os, const Info &info)
@@ -35,6 +41,7 @@ namespace cook { namespace structure {
             return os;
         }
     } 
+    using FileInfo = std::map<std::filesystem::path, file::Info>;
     
     enum class TargetType
     {
@@ -43,21 +50,17 @@ namespace cook { namespace structure {
         StaticLibrary
     };
     
-    inline std::ostream & operator<<(std::ostream & str, TargetType tgt)
+    inline std::ostream & operator<<(std::ostream & os, TargetType tgt)
     {
         switch(tgt)
         {
-            case TargetType::Executable: str << "Executable"; break;
-            case TargetType::StaticLibrary: str << "StaticLibrary"; break; 
-            default: str << "Unknown";
+            case TargetType::Executable: os << "Executable"; break;
+            case TargetType::StaticLibrary: os << "StaticLibrary"; break; 
+            default: os << "Unknown"; break;
         }
-        
-        return str;
+        return os;
     }
     
-    
-    using FileInfo          = std::map<std::filesystem::path, file::Info>;
-    using Dependencies      = std::set<Uri>;
     
     struct Book;
     
@@ -104,6 +107,8 @@ namespace cook { namespace structure {
             const Defines &defines() const                                                      { return in_.defines; }
             const LibraryPaths &library_paths() const                                           { return in_.library_paths; }
             const Libraries &libraries() const                                                  { return in_.libraries; }
+
+            using Dependencies      = std::set<Uri>;
             const Dependencies &dependencies() const                                            { return dependencies_; }
             
             

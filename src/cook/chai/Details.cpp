@@ -34,7 +34,7 @@ namespace cook { namespace chai {
         
         {
             VerbosityWriter v(1, info_);
-            v.str() << "Processing script file " << script_fn.string() << " started" << std::endl;
+            v.os() << "Processing script file " << script_fn.string() << " started" << std::endl;
             // evaluate the script
             info_.engine.eval_file(script_fn);
         }
@@ -57,7 +57,7 @@ namespace cook { namespace chai {
         
         {
             VerbosityWriter v(1, info_);
-            v.str() << "Adding new book " << p.first << " into " << book_.uri() << std::endl;
+            v.os() << "Adding new book " << p.first << " into " << book_.uri() << std::endl;
         
             if (!book_.add_subbook(child, p.first, info_.last_script()) || child == nullptr)
                 throw chaiscript::exception::eval_error("Internal logic error while adding book");
@@ -68,7 +68,7 @@ namespace cook { namespace chai {
         
         {
             VerbosityWriter v(2, info_);
-            v.str() << "Starting callback for Book: " << child->uri() << std::endl;
+            v.os() << "Starting callback for Book: " << child->uri() << std::endl;
         
             // and call the callback
             stack.push(child);
@@ -112,12 +112,13 @@ namespace cook { namespace chai {
             throw chaiscript::exception::eval_error("Not a valid tag");
                
         // do we have this recipe?
-        /*MSS*/(book_.find_element(p.first) == 0, std::cerr << "A recipe with name '" << tag << "' already exists in book '" << book_.string() << "'" << std::endl);
+        if (book_.find_element(p.first) != 0)
+            std::cerr << "A recipe with name '" << tag << "' already exists in book '" << book_.string() << "', replacing the existing one." << std::endl;
         
         Recipe * recipe = nullptr;
         {
             VerbosityWriter v(2, info_);
-            v.str() << "Adding new recipe " << tag << " into book " << book_.uri() << std::endl;
+            v.os() << "Adding new recipe " << tag << " into book " << book_.uri() << std::endl;
 
             if (!book_.add_recipe(recipe, p.first, info_.last_script()) || recipe == nullptr)
                 throw chaiscript::exception::eval_error("Internal logic error while adding recipe");
@@ -127,7 +128,7 @@ namespace cook { namespace chai {
         
         {
             VerbosityWriter v(2, info_);
-            v.str() << "Starting callback for Recipe: " << recipe->uri() << std::endl;
+            v.os() << "Starting callback for Recipe: " << recipe->uri() << std::endl;
         
             callback(wrapper);
         }

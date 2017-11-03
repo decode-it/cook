@@ -98,7 +98,9 @@ namespace cook { namespace work {
 
         os << "builddir = " << options.build_dir.native() << std::endl;
 
-        os << "compiler = " << compile.cmd << std::endl;
+        os << "compiler_c = " << compile.cmd_c << std::endl;
+        os << "compiler_cpp = " << compile.cmd_cpp << std::endl;
+        os << "compiler_asm = " << compile.cmd_asm << std::endl;
         os << "cflags = " << compile.flags << compile.defines << std::endl;
 
         os << "linker = " << link.cmd << std::endl;
@@ -115,8 +117,18 @@ namespace cook { namespace work {
         MSS_BEGIN(bool);
 
         os
-        << "rule compile" << std::endl
-        << "  command = $compiler -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths $force_includes" << std::endl
+        << "rule compile_c" << std::endl
+        << "  command = $compiler_c -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths $force_includes" << std::endl
+        << "  depfile = $out.d" << std::endl;
+
+        os
+        << "rule compile_cpp" << std::endl
+        << "  command = $compiler_cpp -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths $force_includes" << std::endl
+        << "  depfile = $out.d" << std::endl;
+
+        os
+        << "rule compile_asm" << std::endl
+        << "  command = $compiler_asm $in -o $out" << std::endl
         << "  depfile = $out.d" << std::endl;
 
         os
@@ -195,9 +207,20 @@ namespace cook { namespace work {
         for (const auto &p: recipe.sources())
         {
             const auto &source = p.first;
+            const auto &info = p.second;
             std::filesystem::path obj = obj_tgt(recipe) / source; obj += ".obj";
             objects.push_back(obj);
-            os << "build " << obj.string() << ": compile " << source.string() << std::endl;            
+            if (false) {}
+            else if (info.language.name == "c")
+                os << "build " << obj.string() << ": compile_c " << source.string() << std::endl;            
+            else if (info.language.name == "c++")
+                os << "build " << obj.string() << ": compile_cpp " << source.string() << std::endl;            
+            else if (info.language.name == "asm")
+                os << "build " << obj.string() << ": compile_asm " << source.string() << std::endl;            
+            else
+            {
+                std::cerr << "Unknown language \"" << info.language.name << "\" for " << source << std::endl;
+            }
         }
 
 

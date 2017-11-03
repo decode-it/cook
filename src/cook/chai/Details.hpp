@@ -96,18 +96,18 @@ namespace cook { namespace chai {
                 info_.stream_and_close() << "Done" << std::endl;
         }
         
-        std::ostream & str() 
+        std::ostream & os() 
         { 
             if (should_write_)
                 return info_.open_and_stream();
             else
-                return str_;
+                return oss_;
         }
         
     private:
         GlobalInfo & info_;
         bool should_write_;
-        std::ostringstream str_;
+        std::ostringstream oss_;
     };
     
     

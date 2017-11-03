@@ -8,7 +8,9 @@ namespace cook {
     public:
         struct CompileInfo
         {
-            std::string cmd;
+            std::string cmd_c;
+            std::string cmd_cpp;
+            std::string cmd_asm;
             std::string flags;
             std::string defines;
         };
@@ -38,7 +40,9 @@ namespace cook {
             if (false) {}
             else if (arch_ == "uno")
             {
-                compile.cmd = "avr-g++ -std=c++17";
+                compile.cmd_c = "avr-gcc";
+                compile.cmd_cpp = "avr-g++ -std=c++17";
+                compile.cmd_asm = "avr-as";
                 compile.flags += " -flto";
                 compile.defines += " -DARDUINO=10610";
                 compile.defines += " -DARDUINO_ARCH_AVR";
@@ -51,24 +55,11 @@ namespace cook {
                 archive.cmd = "avr-gcc-ar";
                 archive.flags = "rcs";
             }
-            else if (arch_ == "c")
-            {
-                compile.cmd = "gcc";
-                compile.flags += " -m32";
-
-                if (false) {}
-                else if (config_ == "release") { compile.defines += " -DNDEBUG"; }
-                else if (config_ == "debug") { compile.flags += " -g"; }
-
-                link.cmd = "gcc";
-                link.flags += " -m32";
-
-                archive.cmd = "ar";
-                archive.flags = "rcs";
-            }
             else 
             {
-                compile.cmd = "g++ -std=c++17";
+                compile.cmd_c = "gcc";
+                compile.cmd_cpp = "g++ -std=c++17";
+                compile.cmd_asm = "as";
                 if (false) {}
                 else if (config_ == "release") { compile.defines += " -DNDEBUG"; }
                 else if (config_ == "debug") { compile.flags += " -g"; }
