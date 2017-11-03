@@ -113,8 +113,8 @@ namespace cook { namespace chai {
                
         // do we have this recipe?
         if (book_.find_element(p.first) != 0)
-            std::cerr << "A recipe with name '" << tag << "' already exists in book '" << book_.string() << "', replacing the existing one." << std::endl;
-        
+            throw chaiscript::exception::eval_error("A recipe with the same tag already exists in this book");
+
         Recipe * recipe = nullptr;
         {
             VerbosityWriter v(2, info_);

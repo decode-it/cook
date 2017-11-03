@@ -1,6 +1,7 @@
 #include "cook/chai/Loader.hpp"
 #include "cook/chai/Details.hpp"
 #include "cook/structure/Recipe.hpp"
+#include "cook/util/TreeNode.hpp"
 #include <functional>
 
 namespace cook { namespace chai { 
@@ -47,7 +48,18 @@ bool Loader::load(structure::Book & root)
     }
     catch (const chaiscript::exception::eval_error &exc)
     {
-        MSS(false, std::cout << "Error: Something went wrong evaluation file " << std::endl << exc.what() << std::endl);
+        if (!exc.call_stack.empty())
+        {
+            auto & el = exc.call_stack[0];
+
+            auto n = util::make_tree_node(std::cout, "error");
+            n.attr("script", el.filename());
+            n.attr("line", el.start().line);
+            n.attr("column", el.start().column);
+            n.attr("error", exc.what());
+        }
+
+        MSS(false);
     }
     
     MSS_END();

@@ -38,11 +38,11 @@ namespace cook {
                 break;
                 
             case Options::New:
-                MSS(process_new(options), write_help(options));
+                MSS(process_new(options));
                 break;
                 
             case Options::Existing:
-                MSS(process_existing(options), write_help(options));
+                MSS(process_existing(options));
                 break;
         }
         
