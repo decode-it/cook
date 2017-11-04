@@ -164,7 +164,7 @@ namespace cook { namespace structure {
 
         std::filesystem::path dir = subdir;
         if (dir.is_relative())
-            dir /= subdir;
+            dir = base() / dir;
 
         L(C(subdir)C(dir)C(pattern));
         auto add_file = [&](const std::filesystem::path &fp)
