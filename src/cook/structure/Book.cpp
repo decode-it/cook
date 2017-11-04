@@ -3,14 +3,24 @@
 
 namespace cook { namespace structure {
           
-    bool Book::add_subbook(Book *& book, const Tag & tag, const std::filesystem::path & script_fn)
+    bool Book::get_subbook(Book *& book, const Tag & tag, const std::filesystem::path & script_fn)
     {
         MSS_BEGIN(bool);
         MSS(!tag.empty());
         MSS(script_fn.has_filename());
-        
-        book = new Book(script_fn, tag, this);
-        MSS(add_element(tag, book), delete book);
+
+        Element * element = find_element(tag);
+        if (element == nullptr)
+        {
+            book = new Book(script_fn, tag, this);
+            MSS(add_element(tag, book), delete book);
+        }
+        else
+        {
+            book = dynamic_cast<Book *>(element);
+            MSS(!!book);
+            book->add_script_file(script_fn);
+        }
         
         MSS_END();
     }

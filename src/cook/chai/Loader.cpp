@@ -11,17 +11,19 @@ bool Loader::load(structure::Book & root)
     MSS_BEGIN(bool);
     
     GlobalInfo info(options_, root);
-    
+
     // initialize the engine
     auto & chai = info.engine.raw();
     chai.add(chaiscript::fun(&GlobalInfo::include, &info),              "include");
-    chai.add(chaiscript::fun(&GlobalInfo::add_book, &info),             "add_book");
+    chai.add(chaiscript::fun(&GlobalInfo::open_book_single, &info),     "open_book");
+    chai.add(chaiscript::fun(&GlobalInfo::open_book_ar, &info),     "open_book");
     chai.add(chaiscript::fun(&GlobalInfo::create_new_recipe, &info),    "add_recipe");
     chai.add(chaiscript::fun(&GlobalInfo::set_display_name, &info),     "display_name");
     chai.add(chaiscript::fun(&GlobalInfo::print, &info),                "print");
     
     chai.add(chaiscript::fun(&BookWrapper::include),                    "include");
-    chai.add(chaiscript::fun(&BookWrapper::add_book),                   "add_book");
+    chai.add(chaiscript::fun(&BookWrapper::open_book_single),           "open_book");
+    chai.add(chaiscript::fun(&BookWrapper::open_book_ar),           "open_book");
     chai.add(chaiscript::fun(&BookWrapper::create_new_recipe),          "add_recipe");
     chai.add(chaiscript::fun(&BookWrapper::set_display_name),           "display_name");
     chai.add(chaiscript::fun(&BookWrapper::print),                      "print");
@@ -50,6 +52,8 @@ bool Loader::load(structure::Book & root)
     {
         if (!exc.call_stack.empty())
         {
+//            std::cout << exc.detail << std::endl;
+
             auto & el = exc.call_stack[0];
 
             auto n = util::make_tree_node(std::cout, "error");
@@ -57,6 +61,7 @@ bool Loader::load(structure::Book & root)
             n.attr("line", el.start().line);
             n.attr("column", el.start().column);
             n.attr("error", exc.what());
+            n.attr("detail", exc.detail);
         }
 
         MSS(false);

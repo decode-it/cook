@@ -49,11 +49,13 @@ namespace cook { namespace chai {
         
         // chai functionality
         void include(const std::string & file_or_dir);
-        void add_book(const std::string & ns, std::function<void (BookWrapper &)> callback);
+
+        void open_book_single(const std::string & ns, std::function<void (BookWrapper &)> callback);
+        void open_book_ar(const std::vector<chaiscript::Boxed_Value> & tags, std::function<void (BookWrapper &)> callback);
         void create_new_recipe(const std::string & tag, std::function<void (RecipeWrapper &)> callback);
         void set_display_name(const std::string & display_name);
         void print();
-        
+
         unsigned int verbosity() const { return options.verbose; }
         
         std::ostream & stream() 
@@ -142,7 +144,9 @@ namespace cook { namespace chai {
         void print() const                                                      { book_.print(); }
         void set_display_name(const std::string & name)                         { book_.set_display_name(name); }
         void include(const std::string & file_or_dir);
-        void add_book(const std::string & tag, std::function<void (BookWrapper &)> callback);
+        void open_book_single(const std::string & tag, std::function<void (BookWrapper &)> callback);
+        void open_book_ar(const std::vector<chaiscript::Boxed_Value> & tag, std::function<void (BookWrapper &)> callback);
+        void open_book(const std::vector<std::string> & tags, std::function<void (BookWrapper &)> callback);
         
         
         GlobalInfo & info_;

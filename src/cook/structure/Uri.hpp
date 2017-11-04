@@ -21,7 +21,7 @@ namespace cook { namespace structure {
         Uri() = default;
         explicit Uri(const std::string & complete_path);
         Uri(const util::Range<iterator> & lst);
-        
+
         friend Uri operator+(const Uri & lhs, const Uri & rhs);
         friend Uri operator+(const Uri & lhs, const Tag & rhs);
         Uri & operator+=(const Uri & rhs);

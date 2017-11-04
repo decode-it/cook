@@ -20,7 +20,7 @@ namespace cook { namespace structure {
             add_script_file(script_fn);
         }
         
-        bool add_subbook(Book *& book, const Tag & tag, const std::filesystem::path & fn);
+        bool get_subbook(Book *& book, const Tag & tag, const std::filesystem::path & fn);
         bool add_recipe(Recipe *& recipe, const Tag & tag, const std::filesystem::path & fn);
         void add_script_file(const std::filesystem::path & script_file);
         const std::set<std::filesystem::path> & script_files() const { return script_files_; }

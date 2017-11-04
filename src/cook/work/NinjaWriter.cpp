@@ -137,7 +137,7 @@ namespace cook { namespace work {
 
         os
         << "rule archive" << std::endl
-        << "  command = $archiver $out $in" << std::endl;
+        << "  command = $archiver $aflags $out $in" << std::endl;
 
         os
         << "rule clean" << std::endl
