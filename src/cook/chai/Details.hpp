@@ -113,8 +113,9 @@ namespace cook { namespace chai {
     };
     
     
-    struct RecipeWrapper
+    class RecipeWrapper
     {
+    public:
         RecipeWrapper(GlobalInfo & info, Recipe & recipe) : info_(info), recipe_(recipe) {}
         
         // chai functionality
@@ -135,8 +136,9 @@ namespace cook { namespace chai {
         Recipe & recipe_;
     };
     
-    struct BookWrapper
+    class BookWrapper
     {
+    public:
         BookWrapper(GlobalInfo & info, Book & book) : info_(info), book_(book) {}
         
         // functionality for chai
@@ -146,9 +148,10 @@ namespace cook { namespace chai {
         void include(const std::string & file_or_dir);
         void open_book_single(const std::string & tag, std::function<void (BookWrapper &)> callback);
         void open_book_ar(const std::vector<chaiscript::Boxed_Value> & tag, std::function<void (BookWrapper &)> callback);
+
+    private:
         void open_book(const std::vector<std::string> & tags, std::function<void (BookWrapper &)> callback);
-        
-        
+
         GlobalInfo & info_;
         Book & book_;
     };

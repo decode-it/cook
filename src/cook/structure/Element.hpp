@@ -34,10 +34,10 @@ namespace cook { namespace structure {
         using iterator = ElementMap::const_iterator;
         
         Element(Type type, const std::filesystem::path & script_fn, const Tag & tag = Tag(), Element * parent = nullptr) :
-            uri_( (parent == 0 ? Uri() : parent->uri()) + tag),
+            uri_( (parent == nullptr ? Uri() : parent->uri()) + tag),
             type_(type),
-            script_fn_(script_fn),
-            parent_(parent)
+            parent_(parent),
+            script_fn_(script_fn)
         { 
         }
         
@@ -82,9 +82,9 @@ namespace cook { namespace structure {
         const std::filesystem::path script_fn_;
         const Uri uri_;
         const Type type_;
+        Element * const parent_;
         std::string display_name_;
         ElementMap map_;
-        Element * const parent_;
     };
     
     inline Element::~Element()
