@@ -161,7 +161,11 @@ namespace cook { namespace structure {
     void Recipe::add_(FileInfo &dst, file::Type type, const std::string &subdir, const std::string &pattern)
     {
         S("add_");
-        std::filesystem::path dir = base(); dir /= subdir;
+
+        std::filesystem::path dir = subdir;
+        if (dir.is_relative())
+            dir /= subdir;
+
         L(C(subdir)C(dir)C(pattern));
         auto add_file = [&](const std::filesystem::path &fp)
         {
