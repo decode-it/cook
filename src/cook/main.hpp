@@ -1,6 +1,10 @@
 #ifndef HEADER_cook_main_hpp_ALREADY_INCLUDED
 #define HEADER_cook_main_hpp_ALREADY_INCLUDED
 
+#include "cook/Model.hpp"
+#include "cook/View.hpp"
+#include "cook/Presenter.hpp"
+
 #include "cook/work/DependencyResolver.hpp"
 #include "cook/chai/Loader.hpp"
 #include "cook/Codes.hpp"
@@ -24,6 +28,10 @@ namespace cook {
     ReturnCode main(int argc, const char **argv)
     {
         MSS_BEGIN(ReturnCode);
+
+        Model model;
+        View view;
+        Presenter presenter(model, view);
 
         Options options;
         MSS(options.parse(argc, argv));
