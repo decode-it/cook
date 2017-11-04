@@ -4,7 +4,7 @@
 #include "gubg/OptionParser.hpp"
 #include "gubg/mss.hpp"
 
-namespace cook { 
+namespace cook { namespace view { 
 
     struct Options
     {
@@ -94,6 +94,6 @@ namespace cook {
         unsigned int mode_ = Unknown;
     };
 
-} 
+} } 
 
 #endif

@@ -3,7 +3,7 @@
 
 #include "cook/chai/Engine.hpp"
 #include "cook/structure/Book.hpp"
-#include "cook/Options.hpp"
+#include "cook/view/Options.hpp"
 
 
 namespace cook { namespace chai {
@@ -11,12 +11,12 @@ namespace cook { namespace chai {
     class Loader
     {
     public:
-        Loader(const Options &options) :options_(options) {}
+        Loader(const view::Options &options) :options_(options) {}
         
         bool load(structure::Book & root);
     
     private:
-        const Options & options_;
+        const view::Options & options_;
     };
     
 } }

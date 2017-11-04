@@ -4,7 +4,7 @@
 #include "cook/chai/Engine.hpp"
 #include "cook/structure/Book.hpp"
 #include "cook/structure/Recipe.hpp"
-#include "cook/Options.hpp"
+#include "cook/view/Options.hpp"
 #include <algorithm>
 #include <iterator>
 
@@ -23,13 +23,13 @@ namespace cook { namespace chai {
     
     struct GlobalInfo
     {
-        GlobalInfo(const Options & opt, Book & root) 
+        GlobalInfo(const view::Options & opt, Book & root) 
         : options(opt)
         {
             open_books.push(&root);
         }
         
-        const Options & options;
+        const view::Options & options;
         Engine engine;
         
         BookStack open_books;

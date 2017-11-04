@@ -91,9 +91,9 @@ namespace cook { namespace work {
     {
         MSS_BEGIN(bool);
 
-        Toolchain::CompileInfo compile;
-        Toolchain::LinkInfo link;
-        Toolchain::ArchiveInfo archive;
+        model::Toolchain::CompileInfo compile;
+        model::Toolchain::LinkInfo link;
+        model::Toolchain::ArchiveInfo archive;
         MSS(toolchain.get_info(compile, link, archive));
 
         os << "builddir = " << options.build_dir.native() << std::endl;

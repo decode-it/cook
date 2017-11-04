@@ -8,7 +8,7 @@
 #include "cook/work/DependencyResolver.hpp"
 #include "cook/chai/Loader.hpp"
 #include "cook/Codes.hpp"
-#include "cook/Options.hpp"
+#include "cook/view/Options.hpp"
 #include "cook/work/TreeWriter.hpp"
 #include "cook/work/NinjaWriter.hpp"
 #include "gubg/mss.hpp"
@@ -20,10 +20,10 @@
 
 namespace cook { 
    
-    void write_help(const Options & options);
-    bool process_new(const Options & options);
-    bool process_test(const Options & options);
-    bool process_existing(const Options & options);
+    void write_help(const view::Options & options);
+    bool process_new(const view::Options & options);
+    bool process_test(const view::Options & options);
+    bool process_existing(const view::Options & options);
 
     ReturnCode main(int argc, const char **argv)
     {
@@ -33,25 +33,25 @@ namespace cook {
         View view;
         Presenter presenter(model, view);
 
-        view.process(argc, argv);
+        MSS(view.process(argc, argv));
 
-        Options options;
+        view::Options options;
         MSS(options.parse(argc, argv));
         
-        Options::Mode mode;
+        view::Options::Mode mode;
         MSS(options.get_mode(mode), write_help(options));
         
         switch(mode)
         {
-            case Options::Help:
+            case view::Options::Help:
                 write_help(options);
                 break;
                 
-            case Options::New:
+            case view::Options::New:
                 MSS(process_new(options));
                 break;
                 
-            case Options::Existing:
+            case view::Options::Existing:
                 MSS(process_existing(options));
                 break;
         }
@@ -59,7 +59,7 @@ namespace cook {
         MSS_END();
     }
     
-    bool process_existing(const Options & options)
+    bool process_existing(const view::Options & options)
     {
         MSS_BEGIN(bool);
 
@@ -139,12 +139,12 @@ namespace cook {
         MSS_END();
     }
 
-    void write_help(const Options & options)
+    void write_help(const view::Options & options)
     {
         std::cout << options.help_message << std::endl;
     }
 
-    bool process_new(const Options & options)
+    bool process_new(const view::Options & options)
     {
         MSS_BEGIN(bool);
         std::cout << "Creating project " << options.project_name << std::endl;
