@@ -33,6 +33,8 @@ namespace cook {
         View view;
         Presenter presenter(model, view);
 
+        view.process(argc, argv);
+
         Options options;
         MSS(options.parse(argc, argv));
         

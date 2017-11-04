@@ -12,6 +12,7 @@ namespace cook {
         Presenter(Model &model, View &view): model_(model), view_(view)
         {
             view_.log() << "Cook is starting" << std::endl;
+            view_.send = [&](const std::string &key, const std::any &value){receive_(key, value);};
         }
         ~Presenter()
         {
@@ -19,6 +20,8 @@ namespace cook {
         }
 
     private:
+        void receive_(const std::string &key, const std::any &value);
+
         Model &model_;
         View &view_;
     };
