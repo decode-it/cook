@@ -6,6 +6,7 @@
 #include "cook/util/Range.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
+#include <ostream>
 #include <map>
 
 namespace cook { namespace structure { 
@@ -16,24 +17,15 @@ namespace cook { namespace structure {
         Recipe
     };
     
-    inline std::string to_s(Type type)
+    inline std::ostream & operator<<(std::ostream & os, Type type)
     {
-        switch(type)
+        switch (type)
         {
-            case Type::Book:    return "book";
-            case Type::Recipe:  return "recipe";
-            default:
-                return "";
+            case Type::Book:   os << "Book"; break;
+            case Type::Recipe: os << "Recipe"; break;
         }
+        return os;
     }
-    
-    inline std::ostream & operator<<(std::ostream & str, Type type)
-    {
-        str << to_s(type);        
-        return str;
-    }
-    
-    
     
     class Element 
     {
@@ -43,9 +35,9 @@ namespace cook { namespace structure {
         
         Element(Type type, const std::filesystem::path & script_fn, const Tag & tag = Tag(), Element * parent = nullptr) :
             uri_( (parent == 0 ? Uri() : parent->uri()) + tag),
+            type_(type),
             script_fn_(script_fn),
-            parent_(parent),
-            type_(type)
+            parent_(parent)
         { 
         }
         
@@ -89,10 +81,10 @@ namespace cook { namespace structure {
     private:
         const std::filesystem::path script_fn_;
         const Uri uri_;
+        const Type type_;
         std::string display_name_;
         ElementMap map_;
         Element * const parent_;
-        const Type type_;
     };
     
     inline Element::~Element()
