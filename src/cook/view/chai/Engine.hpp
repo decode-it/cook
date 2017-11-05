@@ -1,11 +1,10 @@
-#ifndef HEADER_cook_chai_Engine_hpp_ALREADY_INCLUDED
-#define HEADER_cook_chai_Engine_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_view_chai_Engine_hpp_ALREADY_INCLUDED
+#define HEADER_cook_view_chai_Engine_hpp_ALREADY_INCLUDED
 
-#include "cook/Codes.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "chaiscript/chaiscript.hpp"
 
-namespace cook { namespace chai { 
+namespace cook { namespace view { namespace chai { 
 
     class Engine
     {
@@ -22,6 +21,6 @@ namespace cook { namespace chai {
             Raw engine_;
     };
 
-} } 
+} } } 
 
 #endif

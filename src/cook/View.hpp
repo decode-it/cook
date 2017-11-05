@@ -1,31 +1,28 @@
 #ifndef HEADER_cook_View_hpp_ALREADY_INCLUDED
 #define HEADER_cook_View_hpp_ALREADY_INCLUDED
 
-#include "cook/Types.hpp"
-#include "gubg/mss.hpp"
+#include "cook/view/Logger.hpp"
+#include "cook/presenter/Interface.hpp"
 #include <iostream>
-#include <functional>
-#include <string>
-#include <any>
 
 namespace cook { 
 
     class View
     {
     public:
-        using Send_func = std::function<bool(const std::string &/*key*/, const std::any &/*value*/)>;
+        void inject(presenter::Interface *itf) {presenter_.inject(itf);}
 
-        void set_receiver(const Send_func &receiver) {send_ = receiver;}
-
-        //Message to the presenter
+        //key-value message to the presenter
         bool send(const std::string &key, const std::any &value);
 
-        std::ostream &log(LogType lt = Message);
+        std::ostream &log(){return logger_.log();}
+        std::ostream &log(LogType lt){return logger_.log(lt);}
 
-        bool process(int argc, const char **argv);
+        bool process_cli(int argc, const char **argv);
 
     private:
-        Send_func send_;
+        presenter::Reference presenter_;
+        view::Logger logger_;
     };
 
 } 

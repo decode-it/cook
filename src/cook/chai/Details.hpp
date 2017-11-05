@@ -1,7 +1,7 @@
 #ifndef HEADER_cook_chai_Details_hpp_ALREADY_INCLUDED
 #define HEADER_cook_chai_Details_hpp_ALREADY_INCLUDED
 
-#include "cook/chai/Engine.hpp"
+#include "cook/view/chai/Engine.hpp"
 #include "cook/structure/Book.hpp"
 #include "cook/structure/Recipe.hpp"
 #include "cook/view/Options.hpp"
@@ -30,7 +30,7 @@ namespace cook { namespace chai {
         }
         
         const view::Options & options;
-        Engine engine;
+        view::chai::Engine engine;
         
         BookStack open_books;
         ScriptStack open_scripts;

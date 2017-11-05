@@ -1,10 +1,8 @@
-#include "cook/chai/Engine.hpp"
-#include "gubg/mss.hpp"
+#include "cook/view/chai/Engine.hpp"
 #include "chaiscript/chaiscript_stdlib.hpp"
 #include <memory>
-#include <iostream>
 
-namespace cook { namespace chai { 
+namespace cook { namespace view { namespace chai { 
 
     using Parser = chaiscript::parser::ChaiScript_Parser<chaiscript::eval::Noop_Tracer, chaiscript::optimizer::Optimizer_Default>;
 
@@ -15,8 +13,6 @@ namespace cook { namespace chai {
     void Engine::eval_file(const std::filesystem::path &fn)
     {
         engine_.eval_file(fn);
-
-
     }
 
-} } 
+} } } 
