@@ -49,6 +49,10 @@ namespace cook { namespace model {
             os << "Library" <<std::endl;
             each([&](const ConstBookPath &path, const Recipe *recipe){
                     os << (!!recipe ? "Recipe: " : "Book: "); name(os, path, recipe); os << std::endl;
+                    if (!!recipe)
+                    recipe->stream(os);
+                    else
+                    path.back()->stream(os);
                     });
         }
 

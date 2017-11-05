@@ -39,7 +39,7 @@ namespace cook { namespace model {
         const RecipePerName &recipe_per_name() const {return recipe_per_name_;}
         void stream(std::ostream &os) const
         {
-            os << name_;
+            os << "name: " << name_ << ", nr books: " << book_per_name_.size() << ", nr recipes: " << recipe_per_name_.size() << std::endl;
         }
 
     private:

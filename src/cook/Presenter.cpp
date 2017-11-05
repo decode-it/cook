@@ -33,15 +33,28 @@ namespace cook {
                     MSS(model_.library.create_recipe(name), view_.log(Error) << "Recipe " << name << " already exists" << std::endl); 
                 }
                 else if (key.pop_if("close")) { model_.library.close_recipe(); }
-                else if (key.pop_if("add"))
+                else
                 {
                     auto recipe = model_.library.recipe();
                     MSS(!!recipe, view_.log(Error) << "No current recipe" << std::endl);
-                    const auto &args = std::any_cast<const Strings &>(value);
-                    MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
-                    recipe->add(args[0], args[1]);
+                    if (false) {}
+                    else if (key.pop_if("type"))
+                    {
+                        const auto type = std::any_cast<std::string>(value);
+                        MSS(recipe->set("type", type), view_.log(Error) << "Unknown type " << type << " already exists" << std::endl); 
+                    }
+                    else if (key.pop_if("working_directory"))
+                    {
+                        MSS(recipe->set("working_directory", std::any_cast<std::string>(value)), view_.log(Error) << "Failed to set the working directory" << std::endl); 
+                    }
+                    else if (key.pop_if("add"))
+                    {
+                        const auto &args = std::any_cast<const Strings &>(value);
+                        MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
+                        recipe->add(args[0], args[1]);
+                    }
+                    else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on recipe");}
                 }
-                else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on recipe");}
             }
             else
             {

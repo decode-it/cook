@@ -65,21 +65,19 @@ namespace cook { namespace view { namespace chai {
         void chai_recipe_3(const std::string &name, const std::string &type, std::function<void()> callback)
         {
             logger_.log(Info) << indent_() << ">> Recipe " << name << " for type \"" << type << "\"" << std::endl;
-            if (false) {}
-            else if (type == "")
-            {
-            }
-            else if (type == "executable")
-            {
-            }
-            else
-            {
-                std::ostringstream oss; oss << "Unknown recipe type \"" << type << "\"";
-                throw chaiscript::exception::eval_error(oss.str());
-            }
             if (!presenter_.set("model.recipe.create", name))
             {
                 std::ostringstream oss; oss << "Recipe \"" << name << "\" already exists";
+                throw chaiscript::exception::eval_error(oss.str());
+            }
+            if (!presenter_.set("model.recipe.type", type))
+            {
+                std::ostringstream oss; oss << "Unsupported recipe type \"" << type << "\" for \"" << name << "\"";
+                throw chaiscript::exception::eval_error(oss.str());
+            }
+            if (!presenter_.set("model.recipe.working_directory", working_directory().string()))
+            {
+                std::ostringstream oss; oss << "Unsupported recipe type \"" << type << "\" for \"" << name << "\"";
                 throw chaiscript::exception::eval_error(oss.str());
             }
             callback();
@@ -109,6 +107,9 @@ namespace cook { namespace view { namespace chai {
             chai.add(chaiscript::fun(&Runner::chai_recipe_2, this), "recipe");
             chai.add(chaiscript::fun(&Runner::chai_add_2, this), "add");
         }
+
+        std::filesystem::path current_script_() const { return script_stack_.back(); }
+        std::filesystem::path working_directory() const { return std::filesystem::current_path() / current_script_().parent_path(); }
         std::filesystem::path expand_(const std::string &file_or_dir)
         {
             std::filesystem::path script_fn;
