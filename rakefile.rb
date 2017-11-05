@@ -119,7 +119,7 @@ namespace :cook do
         exe.build
     end
     mode = :release
-    #mode = :debug
+    mode = :debug
     task :build do
         if !File.exist?(cook_bootstrap_fn)
             if File.exist?("build.ninja")

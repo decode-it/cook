@@ -27,8 +27,20 @@ namespace cook {
             else if (key.pop_if("recipe."))
             {
                 if (false) {}
-                else if (key.pop_if("open")) {}
-                else if (key.pop_if("close")) {}
+                else if (key.pop_if("create"))
+                {
+                    const auto name = std::any_cast<std::string>(value);
+                    MSS(model_.book_stack.create_recipe(name), view_.log(Error) << "Recipe " << name << " already exists" << std::endl); 
+                }
+                else if (key.pop_if("close")) { model_.book_stack.close_recipe(); }
+                else if (key.pop_if("add"))
+                {
+                    auto recipe = model_.book_stack.recipe();
+                    MSS(!!recipe, view_.log(Error) << "No current recipe" << std::endl);
+                    const auto &args = std::any_cast<const Strings &>(value);
+                    MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
+                    recipe->add(args[0], args[1]);
+                }
                 else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on recipe");}
             }
             else
@@ -39,9 +51,13 @@ namespace cook {
         else if (key.pop_if("action."))
         {
             if (false) {}
-            else if (key.pop_if("print_help"))
+            else if (key.pop_if("print."))
             {
-                view_.log(Message) << model_.help_message << std::endl;
+                if (false) {}
+                else if (key.pop_if("help"))
+                    view_.log(Message) << model_.help_message << std::endl;
+                else if (key.pop_if("books"))
+                    model_.book_stack.stream(view_.log(Message));
             }
             else
             {

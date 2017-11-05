@@ -77,12 +77,27 @@ namespace cook { namespace view { namespace chai {
                 std::ostringstream oss; oss << "Unknown recipe type \"" << type << "\"";
                 throw chaiscript::exception::eval_error(oss.str());
             }
-            presenter_.set("model.recipe.open", name);
+            if (!presenter_.set("model.recipe.create", name))
+            {
+                std::ostringstream oss; oss << "Recipe \"" << name << "\" already exists";
+                throw chaiscript::exception::eval_error(oss.str());
+            }
             callback();
             presenter_.set("model.recipe.close", name);
             logger_.log(Info) << indent_() << "<< Recipe " << name << " for type \"" << type << "\"" << std::endl;
         }
         void chai_recipe_2(const std::string &name, std::function<void()> callback) { chai_recipe_3(name, "", callback); }
+        void chai_add_2(const std::string &dir, const std::string &pattern)
+        {
+            logger_.log(Info) << indent_() << ">> Add files from " << dir << " // " << pattern << std::endl;
+            Strings args = {dir, pattern};
+            if (!presenter_.set("model.recipe.add", args))
+            {
+                std::ostringstream oss; oss << "No current recipe when adding files";
+                throw chaiscript::exception::eval_error(oss.str());
+            }
+            logger_.log(Info) << indent_() << "<< Add files from " << dir << " // " << pattern << std::endl;
+        }
 
     private:
         void setup_chai_functions_()
@@ -92,6 +107,7 @@ namespace cook { namespace view { namespace chai {
             chai.add(chaiscript::fun(&Runner::chai_book, this), "book");
             chai.add(chaiscript::fun(&Runner::chai_recipe_3, this), "recipe");
             chai.add(chaiscript::fun(&Runner::chai_recipe_2, this), "recipe");
+            chai.add(chaiscript::fun(&Runner::chai_add_2, this), "add");
         }
         std::filesystem::path expand_(const std::string &file_or_dir)
         {
