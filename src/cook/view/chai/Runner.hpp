@@ -57,9 +57,9 @@ namespace cook { namespace view { namespace chai {
         void chai_book(const std::string &name, std::function<void()> callback)
         {
             logger_.log(Info) << indent_() << ">> Book " << name << std::endl;
-            presenter_.set("model.book_stack.push", name);
+            presenter_.set("model.book.push", name);
             callback();
-            presenter_.set("model.book_stack.pop", name);
+            presenter_.set("model.book.pop", name);
             logger_.log(Info) << indent_() << "<< Book " << name << std::endl;
         }
         void chai_recipe_3(const std::string &name, const std::string &type, std::function<void()> callback)
