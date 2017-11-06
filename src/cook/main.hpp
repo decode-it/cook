@@ -29,11 +29,14 @@ namespace cook {
     {
         MSS_BEGIN(ReturnCode);
 
-        Model model;
-        View view;
-        Presenter presenter(model, view);
+        if (false)
+        {
+            Model model;
+            View view;
+            Presenter presenter(model, view);
 
-        MSS(view.process_cli(argc, argv));
+            MSS(view.process_cli(argc, argv));
+        }
 
         view::Options options;
         MSS(options.parse(argc, argv));
