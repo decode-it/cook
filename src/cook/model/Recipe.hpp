@@ -3,6 +3,7 @@
 
 #include "gubg/file/System.hpp"
 #include "gubg/macro/capture.hpp"
+#include <set>
 #include <ostream>
 
 namespace cook { namespace model { 
@@ -38,6 +39,7 @@ namespace cook { namespace model {
             if (false) { }
             else if (key == "type") { MSS(value.empty() || value == "executable"); type_ = value; }
             else if (key == "working_directory") { wd_ = value; }
+            else if (key == "depends_on") { deps_.insert(value); }
             MSS_END();
         }
 
@@ -68,10 +70,14 @@ namespace cook { namespace model {
 
         void stream(std::ostream &os) const
         {
-            os << name_ << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << std::endl;
+            os << name_ << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
             for (const auto &p: file_per_path_)
             {
-                os << "\t"; p.second.stream(os); os << std::endl;
+                os << "\tFile: "; p.second.stream(os); os << std::endl;
+            }
+            for (const auto &dep: deps_)
+            {
+                os << "\tDep: " << dep << std::endl;
             }
         }
 
@@ -82,6 +88,7 @@ namespace cook { namespace model {
         std::string type_;
         std::filesystem::path wd_;
         FilePerPath file_per_path_;
+        std::set<std::string> deps_;
     };
 
 } } 

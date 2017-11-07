@@ -53,6 +53,11 @@ namespace cook {
                         MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
                         recipe->add(args[0], args[1]);
                     }
+                    else if (key.pop_if("depends_on"))
+                    {
+                        const auto rn = std::any_cast<std::string>(value);
+                        MSS(recipe->set("depends_on", rn), view_.log(Error) << "Failed to set the dependency on " << rn << std::endl); 
+                    }
                     else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on recipe");}
                 }
             }

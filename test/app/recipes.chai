@@ -3,5 +3,6 @@ include("func/func.chai")
 book("app", fun(){
     recipe("exe", "executable", fun(){
         add("main.cpp")
+        depends_on("/func.lib")
     })
 })
