@@ -96,6 +96,7 @@ namespace cook { namespace view { namespace chai {
             }
             logger_.log(Info) << indent_() << "<< Add files from " << dir << " // " << pattern << std::endl;
         }
+        void chai_add_1(const std::string &pattern) { chai_add_2("", pattern); }
 
     private:
         void setup_chai_functions_()
@@ -106,6 +107,7 @@ namespace cook { namespace view { namespace chai {
             chai.add(chaiscript::fun(&Runner::chai_recipe_3, this), "recipe");
             chai.add(chaiscript::fun(&Runner::chai_recipe_2, this), "recipe");
             chai.add(chaiscript::fun(&Runner::chai_add_2, this), "add");
+            chai.add(chaiscript::fun(&Runner::chai_add_1, this), "add");
         }
 
         std::filesystem::path current_script_() const { return script_stack_.back(); }

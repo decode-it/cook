@@ -1,0 +1,7 @@
+include("func/func.chai")
+
+book("app", fun(){
+    recipe("exe", "executable", fun(){
+        add("main.cpp")
+    })
+})

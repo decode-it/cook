@@ -1,0 +1,9 @@
+//Including a non-nested book
+include("func/func.chai")
+
+book("app", fun(){
+    recipe("exe", "executable", fun(){
+        //Adding files with dir nor globbing
+        add("main.cpp")
+    })
+})

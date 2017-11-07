@@ -3,20 +3,25 @@
 
 #include "gubg/file/System.hpp"
 #include "gubg/macro/capture.hpp"
+#include <ostream>
 
 namespace cook { namespace model { 
 
     class Book;
 
+    enum class FileType {Unknown, Source, Header};
+    std::ostream &operator<<(std::ostream &, FileType);
+
     struct File
     {
         std::filesystem::path dir;
         std::filesystem::path path;
+        FileType type = FileType::Unknown;
         std::string language;
 
         void stream(std::ostream &os) const
         {
-            os << C(path)C(dir)C(language);
+            os << C(path)C(dir)C(type)C(language);
         }
     };
     using FilePerPath = std::map<std::filesystem::path, File>;
@@ -52,9 +57,11 @@ namespace cook { namespace model {
                 file.path = fp;
                 const auto ext = fp.extension();
                 if (false) {}
-                else if (ext == ".c" || ext == ".h") {file.language = "c";}
-                else if (ext == ".cpp" || ext == ".hpp") {file.language = "c++";}
-                else if (ext == ".asm") {file.language = "asm";}
+                else if (ext == ".c")   {file.type = FileType::Source; file.language = "c";}
+                else if (ext == ".h")   {file.type = FileType::Header; file.language = "c";}
+                else if (ext == ".cpp") {file.type = FileType::Source; file.language = "c++";}
+                else if (ext == ".hpp") {file.type = FileType::Header; file.language = "c++";}
+                else if (ext == ".asm") {file.type = FileType::Source; file.language = "asm";}
             };
             gubg::file::each_glob(pattern, add_file, dir);
         }
