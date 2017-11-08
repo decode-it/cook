@@ -74,7 +74,10 @@ namespace cook {
             std::cout << "Cleaning " << options.build_dir << std::endl;
             try
             {
+#ifdef _MSC_VER
+#else
                 std::filesystem::remove_all(options.build_dir);
+#endif
             }
             catch(...)
             {

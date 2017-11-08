@@ -13,7 +13,9 @@ namespace cook {
         void inject(presenter::Interface *itf) {presenter_.inject(itf);}
 
         //key-value message to the presenter
-        bool send(const std::string &key, const std::any &value);
+        bool send(const std::string &key, const std::string &value);
+        bool send(const std::string &key, const Strings &value);
+        bool send(const std::string &key);
 
         std::ostream &log(){return logger_.log();}
         std::ostream &log(LogType lt){return logger_.log(lt);}

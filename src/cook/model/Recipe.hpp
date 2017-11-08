@@ -4,6 +4,7 @@
 #include "gubg/file/System.hpp"
 #include "gubg/macro/capture.hpp"
 #include <set>
+#include <map>
 #include <ostream>
 
 namespace cook { namespace model { 

@@ -17,9 +17,9 @@ bool write_recipe_(util::TreeNode & node, const structure::Recipe & recipe, cons
                 
         if (details)
         {
-            nn.attr("script", recipe.script_filename().native());
+            nn.attr("script", recipe.script_filename().string());
             nn.attr("type", recipe.target_type());
-            nn.attr("build_target", recipe.output().filename.native());
+            nn.attr("build_target", recipe.output().filename.string());
         }
     }
 
@@ -43,7 +43,7 @@ bool write_recipe_(util::TreeNode & node, const structure::Recipe & recipe, cons
             auto stream_files = [&](const auto & file_info)
             {
                 for (const auto &p: file_info)
-                    nn.open("file").attr("type", to_s(p.second.type)).attr("path", p.first.native());
+                    nn.open("file").attr("type", to_s(p.second.type)).attr("path", p.first.string());
             };
 
             stream_files(recipe.sources());
@@ -68,7 +68,7 @@ bool write_recipe_(util::TreeNode & node, const structure::Recipe & recipe, cons
         // streaming of include paths
         {
             for (const auto & f : cfg.include_paths)
-                nn.open("include_path").attr("path", f.native());
+                nn.open("include_path").attr("path", f.string());
         }
 
         // streaming of defines

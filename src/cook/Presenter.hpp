@@ -21,10 +21,14 @@ namespace cook {
         }
 
     protected:
-        bool set(const std::string &key, const std::any &value) override;
+        bool set(const std::string &key, const std::string &value) override;
+        bool set(const std::string &key, const Strings &value) override;
+        bool set(const std::string &key) override;
 
     private:
-        bool receive_(const std::string &key, const std::any &value);
+        bool receive_(const std::string &key, const std::string &value);
+        bool receive_(const std::string &key, const Strings &value);
+        bool receive_(const std::string &key);
 
         Model &model_;
         View &view_;

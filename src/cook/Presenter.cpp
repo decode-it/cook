@@ -4,7 +4,7 @@
 
 namespace cook { 
 
-    bool Presenter::set(const std::string &p_key, const std::any &value)
+    bool Presenter::set(const std::string &p_key, const std::string &value)
     {
         MSS_BEGIN(bool);
         view_.log(Info) << "Received message: " << p_key << std::endl;
@@ -12,17 +12,17 @@ namespace cook {
         gubg::Strange key(p_key);
 
         if (false) {}
-        else if (key.pop_if("help.message")) { model_.help_message = std::any_cast<std::string>(value); }
-        else if (key.pop_if("env.build_dir")) { model_.env.set_build_dir(std::any_cast<std::string>(value)); }
-        else if (key.pop_if("toolchain.config")) { model_.toolchain.set_config(std::any_cast<std::string>(value)); }
-        else if (key.pop_if("toolchain.arch")) { model_.toolchain.set_arch(std::any_cast<std::string>(value)); }
+        else if (key.pop_if("help.message")) { model_.help_message = value; }
+        else if (key.pop_if("env.build_dir")) { model_.env.set_build_dir(value); }
+        else if (key.pop_if("toolchain.config")) { model_.toolchain.set_config(value); }
+        else if (key.pop_if("toolchain.arch")) { model_.toolchain.set_arch(value); }
         else if (key.pop_if("model."))
         {
             if (false) {}
             else if (key.pop_if("book."))
             {
                 if (false) {}
-                else if (key.pop_if("push")) { model_.library.push(std::any_cast<std::string>(value)); }
+                else if (key.pop_if("push")) { model_.library.push(value); }
                 else if (key.pop_if("pop")) { model_.library.pop(); }
                 else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on book");}
             }
@@ -31,7 +31,7 @@ namespace cook {
                 if (false) {}
                 else if (key.pop_if("create"))
                 {
-                    const auto name = std::any_cast<std::string>(value);
+                    const auto name = value;
                     MSS(model_.library.create_recipe(name), view_.log(Error) << "Recipe " << name << " already exists" << std::endl); 
                 }
                 else if (key.pop_if("close")) { model_.library.close_recipe(); }
@@ -42,12 +42,12 @@ namespace cook {
                     if (false) {}
                     else if (key.pop_if("type"))
                     {
-                        const auto type = std::any_cast<std::string>(value);
+                        const auto type = value;
                         MSS(recipe->set("type", type), view_.log(Error) << "Unknown type " << type << " already exists" << std::endl); 
                     }
                     else if (key.pop_if("working_directory"))
                     {
-                        MSS(recipe->set("working_directory", std::any_cast<std::string>(value)), view_.log(Error) << "Failed to set the working directory" << std::endl); 
+                        MSS(recipe->set("working_directory", value), view_.log(Error) << "Failed to set the working directory" << std::endl); 
                     }
                     else if (key.pop_if("add"))
                     {
@@ -57,7 +57,7 @@ namespace cook {
                     }
                     else if (key.pop_if("depends_on"))
                     {
-                        const auto rn = std::any_cast<std::string>(value);
+                        const auto rn = value;
                         MSS(recipe->set("depends_on", rn), view_.log(Error) << "Failed to set the dependency on " << rn << std::endl); 
                     }
                     else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on recipe");}
@@ -85,7 +85,7 @@ namespace cook {
                 else if (key.pop_if("ninja"))
                 {
                     model::RecipeDAG dag;
-                    const auto rn = std::any_cast<std::string>(value);
+                    const auto rn = value;
                     MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
                     dag.each_vertex([&](auto r){ view_.log(Info) << *r << std::endl; return true; });
                     presenter::NinjaWriter nw("test.ninja");

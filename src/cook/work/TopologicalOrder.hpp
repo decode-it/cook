@@ -5,6 +5,7 @@
 #include "cook/structure/Recipe.hpp"
 #include "cook/util/Range.hpp"
 #include <unordered_set>
+#include <stack>
 
 namespace cook { namespace work {
     
