@@ -97,11 +97,47 @@ namespace cook { namespace presenter {
         bool write_(const model::RecipeDAG &dag)
         {
             MSS_BEGIN(bool);
+            std::ostringstream oss;
+            auto object_fn = [&](const auto &file){
+                oss.str("");
+                oss << "$builddir" << file.path.native() << ".obj";
+                return oss.str();
+            };
+            auto compile_rule = [](const auto &file){
+                if (false) {}
+                else if (file.language == "c") return "compile_c";
+                else if (file.language == "c++") return "compile_cpp";
+                else if (file.language == "asm") return "compile_asm";
+                return "";
+            };
+            auto source_fn = [](const auto &file){
+                return file.path.native();
+            };
             auto write_recipe = [&](model::Recipe *recipe){
+                MSS_BEGIN(bool);
                 fo_ << std::endl;
                 fo_ << "# >> Recipe " << recipe->uri() << std::endl;
+                auto write_build = [&](const auto &file){
+                    if (file.type == model::FileType::Source)
+                    {
+                        fo_ << "build " << object_fn(file) << ": " << compile_rule(file) << " " << source_fn(file) << std::endl;
+                        //TODO: Currently, we have to repeat these vars for each build statement to make sure that correct and specific per recipe
+                        //Better is to create global-scope vars per recipe with the recipe name mangled-in, and assign these to the vars used in the rules
+                        //here at build rule scope.
+                        fo_ << "    defines = " << std::endl;
+                        fo_ << "    include_paths =";
+                        for (const auto &ip: recipe->include_paths())
+                            fo_ << " -I " << ip.native();
+                        fo_ << std::endl;
+                        fo_ << "    force_includes = " << std::endl;
+                        fo_ << "    library_paths = " << std::endl;
+                        fo_ << "    libraries = " << std::endl;
+                    }
+                    return true;
+                };
+                MSS(recipe->each_file(write_build));
                 fo_ << "# << Recipe " << recipe->uri() << std::endl;
-                return true;
+                MSS_END();
             };
             dag.each_vertex(write_recipe);
             MSS_END();

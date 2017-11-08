@@ -10,7 +10,7 @@ namespace cook { namespace model {
 
     class Book;
 
-    enum class FileType {Unknown, Source, Header};
+    enum class FileType {Unknown, Source, Header, ForceInclude};
     std::ostream &operator<<(std::ostream &, FileType);
 
     struct File
@@ -72,6 +72,17 @@ namespace cook { namespace model {
         }
 
         template <typename Ftor>
+        bool each_file(Ftor ftor)
+        {
+            MSS_BEGIN(bool);
+            for (const auto &p: file_per_path_)
+            {
+                MSS(ftor(p.second));
+            }
+            MSS_END();
+        }
+
+        template <typename Ftor>
         bool each_dependency(Ftor ftor)
         {
             MSS_BEGIN(bool);
@@ -80,6 +91,23 @@ namespace cook { namespace model {
                 MSS(ftor(rn));
             }
             MSS_END();
+        }
+
+        std::set<std::filesystem::path> include_paths() const
+        {
+            std::set<std::filesystem::path> ips;
+            for (const auto &p: file_per_path_)
+            {
+                const auto &file = p.second;
+                switch (file.type)
+                {
+                    case FileType::Header:
+                    case FileType::ForceInclude:
+                        ips.insert(file.dir);
+                        break;
+                }
+            }
+            return ips;
         }
 
         void stream(std::ostream &os) const
