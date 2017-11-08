@@ -17,12 +17,12 @@ namespace cook {
         MSS(presenter_.set("toolchain.config", options.config));
         MSS(presenter_.set("toolchain.arch", options.arch));
         if (options.print_help)
-            MSS(presenter_.set("action.print.help", false));
+            MSS(presenter_.set("action.print.help"));
 
         view::chai::Runner chai_runner(presenter_, logger_);
         MSS(chai_runner.execute(options.input_fod));
 
-        MSS(presenter_.set("action.print.books", false));
+        MSS(presenter_.set("action.print.books"));
 
         MSS(presenter_.set("action.generate.ninja", options.uri));
 
