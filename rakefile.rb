@@ -173,3 +173,10 @@ task :doc do
         end
     end
 end
+
+task :aaa do
+    sh "rake install"
+    sh "cook -f test/app /app.exe"
+    sh "ninja -f test.ninja"
+    sh "cat test.ninja"
+end

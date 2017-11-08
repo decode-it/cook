@@ -40,6 +40,7 @@ namespace cook {
         };
         const bool ok = mvp();
         std::cout << "MVP went " << (ok ? "OK" : "KO") << std::endl << std::endl;
+        MSS_RETURN_OK();
 
         view::Options options;
         MSS(options.parse(argc, argv));
