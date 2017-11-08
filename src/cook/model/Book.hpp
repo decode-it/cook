@@ -36,7 +36,9 @@ namespace cook { namespace model {
         }
 
         const BookPerName &book_per_name() const {return book_per_name_;}
+        BookPerName &book_per_name() {return book_per_name_;}
         const RecipePerName &recipe_per_name() const {return recipe_per_name_;}
+        RecipePerName &recipe_per_name() {return recipe_per_name_;}
         void stream(std::ostream &os) const
         {
             os << "name: " << name_ << ", nr books: " << book_per_name_.size() << ", nr recipes: " << recipe_per_name_.size() << std::endl;
@@ -51,7 +53,8 @@ namespace cook { namespace model {
     using BookPath = std::vector<Book*>;
     using ConstBookPath = std::vector<const Book*>;
 
-    inline void name(std::ostream &os, const ConstBookPath &path)
+    template <typename Path>
+    inline void uri(std::ostream &os, const Path &path)
     {
         gubg::OnlyOnce skip;
         for (auto ptr: path)
@@ -61,9 +64,10 @@ namespace cook { namespace model {
             os << "/" << ptr->name();
         }
     }
-    inline void name(std::ostream &os, const ConstBookPath &path, const Recipe *recipe)
+    template <typename Path>
+    inline void uri(std::ostream &os, const Path &path, const Recipe *recipe)
     {
-        name(os, path);
+        uri(os, path);
         if (!!recipe)
             os << "." << recipe->name();
     }

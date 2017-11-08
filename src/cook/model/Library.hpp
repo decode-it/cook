@@ -3,8 +3,11 @@
 
 #include "cook/model/Book.hpp"
 #include "cook/model/Recipe.hpp"
+#include "gubg/network/DAG.hpp"
 
 namespace cook { namespace model { 
+
+    using RecipeDAG = gubg::network::DAG<Recipe>;
 
     class Library
     {
@@ -14,7 +17,48 @@ namespace cook { namespace model {
             path_.push_back(&root_);
         }
 
-        Recipe *recipe() {return recipe_;}
+        bool get(RecipeDAG &dag, const std::string &rn)
+        {
+            MSS_BEGIN(bool);
+            dag.clear();
+            std::ostringstream oss;
+            std::map<std::string, Recipe*> recipe_per_uri;
+            auto setup_uris = [&](const BookPath &path, Recipe *recipe){
+                MSS_BEGIN(bool);
+
+                if (!recipe) MSS_RETURN_OK();
+
+                oss.str(""); uri(oss, path, recipe);
+                const auto uri = oss.str();
+
+                recipe->set_uri(uri);
+                recipe_per_uri[uri] = recipe;
+
+                MSS_END();
+            };
+            auto add_to_dag = [&](const BookPath &path, Recipe *recipe){
+                MSS_BEGIN(bool);
+
+                if (!recipe) MSS_RETURN_OK();
+
+                MSS(dag.add_vertex(recipe));
+
+                auto add_edge = [&](const std::string &rn){ return dag.add_edge(recipe, recipe_per_uri[rn]); };
+                MSS(recipe->each_dependency(add_edge));
+
+                MSS_END();
+            };
+            {
+                bool ok = true;
+                each([&](const BookPath &path, Recipe *recipe){ ok = ok && setup_uris(path, recipe); });
+                each([&](const BookPath &path, Recipe *recipe){ ok = ok && add_to_dag(path, recipe); });
+                MSS(ok);
+            }
+            MSS(dag.remove_unreachables(recipe_per_uri[rn]));
+            MSS_END();
+        }
+
+        Recipe *current_recipe() {return current_recipe_;}
 
         void push(const std::string &name)
         {
@@ -29,12 +73,12 @@ namespace cook { namespace model {
         bool create_recipe(const std::string &name)
         {
             Book &book = *path_.back();
-            recipe_ = book.create_recipe(name);
-            return !!recipe_;
+            current_recipe_ = book.create_recipe(name);
+            return !!current_recipe_;
         }
         void close_recipe()
         {
-            recipe_ = nullptr;
+            current_recipe_ = nullptr;
         }
 
         template <typename Ftor>
@@ -43,12 +87,18 @@ namespace cook { namespace model {
             ConstBookPath path = {&root_};
             each_(ftor, path);
         }
+        template <typename Ftor>
+        void each(Ftor ftor)
+        {
+            BookPath path = {&root_};
+            each_(ftor, path);
+        }
 
         void stream(std::ostream &os) const
         {
             os << "Library" <<std::endl;
             each([&](const ConstBookPath &path, const Recipe *recipe){
-                    os << (!!recipe ? "Recipe: " : "Book: "); name(os, path, recipe); os << std::endl;
+                    os << (!!recipe ? "Recipe: " : "Book: "); uri(os, path, recipe); os << std::endl;
                     if (!!recipe)
                     recipe->stream(os);
                     else
@@ -57,15 +107,14 @@ namespace cook { namespace model {
         }
 
     private:
-        template <typename Ftor>
-        static void each_(Ftor ftor, ConstBookPath &path)
+        template <typename Ftor, typename Path>
+        static void each_(Ftor ftor, Path &path)
         {
-            for (const auto &p: path.back()->book_per_name())
+            for (auto &p: path.back()->book_per_name())
             {
-                const Book &book = p.second;
-                path.push_back(&book);
+                path.push_back(&p.second);
                 ftor(path, nullptr);
-                for (const auto &p: book.recipe_per_name())
+                for (auto &p: p.second.recipe_per_name())
                 {
                     ftor(path, &p.second);
                 }
@@ -76,7 +125,7 @@ namespace cook { namespace model {
 
         Book root_{"ROOT_BOOK"};
         BookPath path_;
-        Recipe *recipe_ = nullptr;
+        Recipe *current_recipe_ = nullptr;
     };
 
 } } 

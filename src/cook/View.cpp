@@ -23,6 +23,8 @@ namespace cook {
 
         MSS(presenter_.set("action.print.books", false));
 
+        MSS(presenter_.set("action.generate.ninja", options.uri));
+
         MSS_END();
     }
 

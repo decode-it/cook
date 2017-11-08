@@ -14,6 +14,8 @@ open_book("cook", fun(b) {
         
         r.add_header("gubg.io/src", "gubg/**.hpp")
         r.add_source("gubg.io/src", "gubg/**.cpp")
+
+        r.add_header("gubg.algo/src", "gubg/**.hpp")
         
         r.add_header("gubg.chaiscript/extern/ChaiScript/include", "**.hpp")       
         

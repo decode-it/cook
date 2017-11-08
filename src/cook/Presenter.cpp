@@ -35,7 +35,7 @@ namespace cook {
                 else if (key.pop_if("close")) { model_.library.close_recipe(); }
                 else
                 {
-                    auto recipe = model_.library.recipe();
+                    auto recipe = model_.library.current_recipe();
                     MSS(!!recipe, view_.log(Error) << "No current recipe" << std::endl);
                     if (false) {}
                     else if (key.pop_if("type"))
@@ -76,6 +76,17 @@ namespace cook {
                     view_.log(Message) << model_.help_message << std::endl;
                 else if (key.pop_if("books"))
                     model_.library.stream(view_.log(Message));
+            }
+            else if (key.pop_if("generate."))
+            {
+                if (false) {}
+                else if (key.pop_if("ninja"))
+                {
+                    model::RecipeDAG dag;
+                    const auto rn = std::any_cast<std::string>(value);
+                    MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
+                    dag.each_vertex([&](auto r){ view_.log(Info) << *r << std::endl; });
+                }
             }
             else
             {

@@ -33,6 +33,9 @@ namespace cook { namespace model {
         const std::string &name() const {return name_;}
         const std::string &type() const {return type_;}
 
+        const std::string &uri() const {return uri_;}
+        void set_uri(const std::string &uri) {uri_ = uri;}
+
         bool set(const std::string &key, const std::string &value)
         {
             MSS_BEGIN(bool);
@@ -68,9 +71,20 @@ namespace cook { namespace model {
             gubg::file::each_glob(pattern, add_file, dir);
         }
 
+        template <typename Ftor>
+        bool each_dependency(Ftor ftor)
+        {
+            MSS_BEGIN(bool);
+            for (const auto &rn: deps_)
+            {
+                MSS(ftor(rn));
+            }
+            MSS_END();
+        }
+
         void stream(std::ostream &os) const
         {
-            os << name_ << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
+            os << "Recipe " << name_ << ", uri: " << uri_ << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
             for (const auto &p: file_per_path_)
             {
                 os << "\tFile: "; p.second.stream(os); os << std::endl;
@@ -85,11 +99,18 @@ namespace cook { namespace model {
         friend class Book;
 
         std::string name_;
+        std::string uri_;
         std::string type_;
         std::filesystem::path wd_;
         FilePerPath file_per_path_;
         std::set<std::string> deps_;
     };
+
+    inline std::ostream &operator<<(std::ostream &os, const Recipe &r)
+    {
+        r.stream(os);
+        return os;
+    }
 
 } } 
 

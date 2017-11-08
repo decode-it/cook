@@ -97,7 +97,7 @@ namespace :cook do
         exe = Build::Executable.new(cook_bootstrap)
         exe.add_sources(FileList.new("src/**/*.[hc]pp"))
         exe.add_include_path("src")
-        %w[std io].each do |e|
+        %w[std io algo].each do |e|
             dir = "gubg.#{e}/src"
             exe.add_sources(FileList.new(File.join(dir, "gubg/**/*.[hc]pp")))
             exe.add_include_path(dir)

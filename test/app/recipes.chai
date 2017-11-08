@@ -5,4 +5,7 @@ book("app", fun(){
         add("main.cpp")
         depends_on("/func.lib")
     })
+    recipe("unused", "executable", fun(){
+        add("main.cpp")
+    })
 })
