@@ -1,4 +1,5 @@
 #include "cook/Presenter.hpp"
+#include "cook/presenter/NinjaWriter.hpp"
 #include "gubg/Strange.hpp"
 
 namespace cook { 
@@ -12,6 +13,7 @@ namespace cook {
 
         if (false) {}
         else if (key.pop_if("help.message")) { model_.help_message = std::any_cast<std::string>(value); }
+        else if (key.pop_if("env.build_dir")) { model_.env.set_build_dir(std::any_cast<std::string>(value)); }
         else if (key.pop_if("toolchain.config")) { model_.toolchain.set_config(std::any_cast<std::string>(value)); }
         else if (key.pop_if("toolchain.arch")) { model_.toolchain.set_arch(std::any_cast<std::string>(value)); }
         else if (key.pop_if("model."))
@@ -85,7 +87,9 @@ namespace cook {
                     model::RecipeDAG dag;
                     const auto rn = std::any_cast<std::string>(value);
                     MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
-                    dag.each_vertex([&](auto r){ view_.log(Info) << *r << std::endl; });
+                    dag.each_vertex([&](auto r){ view_.log(Info) << *r << std::endl; return true; });
+                    presenter::NinjaWriter nw("test.ninja");
+                    MSS(nw.write(model_.env, model_.toolchain, dag));
                 }
             }
             else

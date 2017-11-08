@@ -13,6 +13,7 @@ namespace cook {
         MSS(options.parse(argc, argv));
 
         MSS(presenter_.set("help.message", options.help_message));
+        MSS(presenter_.set("env.build_dir", options.build_dir));
         MSS(presenter_.set("toolchain.config", options.config));
         MSS(presenter_.set("toolchain.arch", options.arch));
         if (options.print_help)
