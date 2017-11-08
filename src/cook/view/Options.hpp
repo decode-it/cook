@@ -26,7 +26,7 @@ namespace cook { namespace view {
         std::string uri;
         bool build_all = false;
         std::string project_name;
-        std::string build_dir = ".cook";
+        std::string build_dir = "./";
         std::string input_fod = "recipes.chai";
         std::string generate;
 
