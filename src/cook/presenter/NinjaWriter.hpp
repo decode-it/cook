@@ -139,7 +139,7 @@ namespace cook { namespace presenter {
                 fo_ << "# << Recipe " << recipe->uri() << std::endl;
                 MSS_END();
             };
-            dag.each_vertex(write_recipe);
+            dag.each_vertex<gubg::network::Direction::Forward>(write_recipe);
             MSS_END();
         }
 

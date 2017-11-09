@@ -81,7 +81,7 @@ namespace cook {
                     model::RecipeDAG dag;
                     const auto rn = value;
                     MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
-                    dag.each_vertex([&](auto r){ view_.log(Info) << *r << std::endl; return true; });
+                    dag.each_vertex<gubg::network::Direction::Forward>([&](auto r){ view_.log(Info) << *r << std::endl; return true; });
                     presenter::NinjaWriter nw("test.ninja");
                     MSS(nw.write(model_.env, model_.toolchain, dag));
                 }
