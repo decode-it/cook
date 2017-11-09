@@ -31,7 +31,7 @@ namespace cook { namespace presenter {
             MSS_BEGIN(bool);
             fo_ << std::endl;
             fo_ << "# >> Environment" << std::endl;
-            fo_ << "builddir = " << env.build_dir().native() << std::endl;
+            fo_ << "builddir = " << env.build_dir().string() << std::endl;
             fo_ << "# << Environment" << std::endl;
             MSS_END();
         }
@@ -100,7 +100,7 @@ namespace cook { namespace presenter {
             std::ostringstream oss;
             auto object_fn = [&](const auto &file){
                 oss.str("");
-                oss << "$builddir" << file.path.native() << ".obj";
+                oss << "$builddir" << file.path.string() << ".obj";
                 return oss.str();
             };
             auto compile_rule = [](const auto &file){
@@ -111,7 +111,7 @@ namespace cook { namespace presenter {
                 return "";
             };
             auto source_fn = [](const auto &file){
-                return file.path.native();
+                return file.path.string();
             };
             auto local_name = [&](const model::Recipe &r, const char *name){
                 oss.str("");
@@ -129,7 +129,7 @@ namespace cook { namespace presenter {
                 fo_ << "# >> Recipe " << recipe->uri_hr() << std::endl;
                 fo_ << local_name(*recipe, "include_paths") << " =";
                 for (const auto &ip: recipe->include_paths())
-                    fo_ << " -I " << ip.native();
+                    fo_ << " -I " << ip.string();
                 fo_ << std::endl;
                 std::ostringstream object_files;
                 auto write_compile = [&](const auto &file){
