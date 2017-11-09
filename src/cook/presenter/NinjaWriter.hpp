@@ -131,6 +131,8 @@ namespace cook { namespace presenter {
                 for (const auto &ip: recipe->include_paths())
                     fo_ << " -I " << ip.native();
                 fo_ << std::endl;
+                fo_ << local_name(*recipe, "defines") << " =";
+                fo_ << std::endl;
                 std::ostringstream object_files;
                 auto write_compile = [&](const auto &file){
                     if (file.type == model::FileType::Source)
