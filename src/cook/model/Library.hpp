@@ -28,11 +28,8 @@ namespace cook { namespace model {
 
                 if (!recipe) MSS_RETURN_OK();
 
-                oss.str(""); uri(oss, path, recipe);
-                const auto uri = oss.str();
-
-                recipe->set_uri(uri);
-                recipe_per_uri[uri] = recipe;
+                recipe->set_path(path);
+                recipe_per_uri[recipe->uri_hr()] = recipe;
 
                 MSS_END();
             };
@@ -41,9 +38,17 @@ namespace cook { namespace model {
 
                 if (!recipe) MSS_RETURN_OK();
 
-                MSS(dag.add_vertex(recipe));
+                MSS(dag.add_vertex(recipe, false));
 
-                auto add_edge = [&](const std::string &rn){ return dag.add_edge(recipe, recipe_per_uri[rn]); };
+                auto add_edge = [&](const std::string &rn)
+                {
+                    MSS_BEGIN(bool);
+                    auto to = recipe_per_uri[rn];
+                    std::cout << C(recipe->uri_hr())C(to)C(rn) << std::endl;
+                    MSS(!!to);
+                    MSS(dag.add_edge(recipe, to), (std::cout << "Failed to add edge from " << recipe->uri_hr() << " to " << to->uri_hr() << std::endl, dag.stream(std::cout, [](const Recipe &r){return r.uri_hr();})));
+                    MSS_END();
+                };
                 MSS(recipe->each_dependency(add_edge));
 
                 MSS_END();

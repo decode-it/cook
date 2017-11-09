@@ -1,8 +1,10 @@
 #ifndef HEADER_cook_model_Recipe_hpp_ALREADY_INCLUDED
 #define HEADER_cook_model_Recipe_hpp_ALREADY_INCLUDED
 
+#include "cook/model/Uri.hpp"
 #include "gubg/file/System.hpp"
 #include "gubg/macro/capture.hpp"
+#include "gubg/OnlyOnce.hpp"
 #include <set>
 #include <map>
 #include <ostream>
@@ -34,8 +36,20 @@ namespace cook { namespace model {
         const std::string &name() const {return name_;}
         const std::string &type() const {return type_;}
 
-        const std::string &uri() const {return uri_;}
-        void set_uri(const std::string &uri) {uri_ = uri;}
+        const Uri &uri() const {return uri_;}
+        std::string uri_hr() const {return uri_.str('/', '/', '.');}
+        template <typename Path>
+        void set_path(const Path &path)
+        {
+            uri_.clear();
+            gubg::OnlyOnce skip_root;
+            for (auto book_ptr: path)
+            {
+                if (!skip_root())
+                    uri_.add_path_part(book_ptr->name());
+            }
+            uri_.set_name(name());
+        }
 
         bool set(const std::string &key, const std::string &value)
         {
@@ -113,7 +127,7 @@ namespace cook { namespace model {
 
         void stream(std::ostream &os) const
         {
-            os << "Recipe " << name_ << ", uri: " << uri_ << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
+            os << "Recipe " << name_ << ", uri: " << uri_hr() << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
             for (const auto &p: file_per_path_)
             {
                 os << "\tFile: "; p.second.stream(os); os << std::endl;
@@ -128,7 +142,7 @@ namespace cook { namespace model {
         friend class Book;
 
         std::string name_;
-        std::string uri_;
+        Uri uri_;
         std::string type_;
         std::filesystem::path wd_;
         FilePerPath file_per_path_;

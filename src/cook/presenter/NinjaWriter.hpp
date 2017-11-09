@@ -113,21 +113,30 @@ namespace cook { namespace presenter {
             auto source_fn = [](const auto &file){
                 return file.path.native();
             };
+            auto ip_name = [&](const model::Recipe &r){
+                oss.str("");
+                oss << r.uri().str('\0', '_', '_') << "_include_paths";
+                return oss.str();
+            };
             auto write_recipe = [&](model::Recipe *recipe){
                 MSS_BEGIN(bool);
                 fo_ << std::endl;
-                fo_ << "# >> Recipe " << recipe->uri() << std::endl;
+                fo_ << "# >> Recipe " << recipe->uri_hr() << std::endl;
+                fo_ << ip_name(*recipe) << " =";
+                for (const auto &ip: recipe->include_paths())
+                    fo_ << " -I " << ip.native();
+                fo_ << std::endl;
                 auto write_build = [&](const auto &file){
                     if (file.type == model::FileType::Source)
                     {
                         fo_ << "build " << object_fn(file) << ": " << compile_rule(file) << " " << source_fn(file) << std::endl;
-                        //TODO: Currently, we have to repeat these vars for each build statement to make sure that correct and specific per recipe
-                        //Better is to create global-scope vars per recipe with the recipe name mangled-in, and assign these to the vars used in the rules
-                        //here at build rule scope.
                         fo_ << "    defines = " << std::endl;
-                        fo_ << "    include_paths =";
-                        for (const auto &ip: recipe->include_paths())
-                            fo_ << " -I " << ip.native();
+                        fo_ << "    include_paths = $" << ip_name(*recipe);
+                        auto add_ip_for_deps = [&](const model::Recipe &d){
+                            fo_ << " $" << ip_name(d);
+                            return true;
+                        };
+                        dag.each_out(recipe, add_ip_for_deps);
                         fo_ << std::endl;
                         fo_ << "    force_includes = " << std::endl;
                         fo_ << "    library_paths = " << std::endl;
@@ -136,10 +145,10 @@ namespace cook { namespace presenter {
                     return true;
                 };
                 MSS(recipe->each_file(write_build));
-                fo_ << "# << Recipe " << recipe->uri() << std::endl;
+                fo_ << "# << Recipe " << recipe->uri_hr() << std::endl;
                 MSS_END();
             };
-            dag.each_vertex<gubg::network::Direction::Forward>(write_recipe);
+            dag.each_vertex<gubg::network::Direction::Backward>(write_recipe);
             MSS_END();
         }
 
