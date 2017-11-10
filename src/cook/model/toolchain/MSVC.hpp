@@ -1,8 +1,7 @@
 #ifndef HEADER_cook_model_toolchain_MSVC_hpp_ALREADY_INCLUDED
 #define HEADER_cook_model_toolchain_MSVC_hpp_ALREADY_INCLUDED
 
-#include "cook/model/toolchain/Compiler.hpp"
-#include "cook/model/toolchain/Linker.hpp"
+#include "cook/model/toolchain/Interfaces.hpp"
 #include "cook/model/toolchain/Config.hpp"
 #include <sstream>
 
@@ -15,23 +14,17 @@ namespace cook { namespace model { namespace toolchain {
         public:
             Compiler(const Config &config): config_(config) {}
 
-            std::string cmd_template(std::string language,
-                                     std::string object,
-                                     std::string source,
-                                     std::string flags,
-                                     std::string defines,
-                                     std::string include_paths,
-                                     std::string force_includes) const override
+            std::string cmd_template(std::string language, const TemplateStubs &stubs) const override
             {
                 oss_.str("");
                 if (false) {}
                 else if (language == "c")
                 {
-                    oss_ << "cl -c /Tc " << flags << " " << source << " /Fo:" << object << " " << defines << " " << include_paths << " " << force_includes;
+                    oss_ << "cl -c /Tc " << stubs.flags << " " << stubs.source << " /Fo:" << stubs.object << " " << stubs.defines << " " << stubs.include_paths << " " << stubs.force_includes;
                 }
                 else if (language == "c++")
                 {
-                    oss_ << "cl -c " << flags << " " << source << " /Fo:" << object << " " << defines << " " << include_paths << " " << force_includes;
+                    oss_ << "cl -c " << stubs.flags << " " << stubs.source << " /Fo:" << stubs.object << " " << stubs.defines << " " << stubs.include_paths << " " << stubs.force_includes;
                 }
                 else if (language == "asm")
                 {
@@ -86,22 +79,55 @@ namespace cook { namespace model { namespace toolchain {
         public:
             Linker(const Config &config): config_(config) {}
 
-            std::string cmd_template(std::string executable,
-                                     std::string objects) const override
+            std::string cmd_template(const TemplateStubs &stubs) const override
             {
                 oss_.str("");
-                oss_ << "link /OUT:" << executable << " " << objects;
+                oss_ << "link /OUT:" << stubs.executable << " " << stubs.flags << " " << stubs.objects;
                 return oss_.str();
-            }
-            std::string prepare_executable(const Executable &exe) const override
-            {
-                oss_.str(""); oss_ << exe; return oss_.str();
             }
             std::string prepare_objects(const ObjectFiles &objects) const override
             {
                 oss_.str("");
                 for (auto obj: objects)
                     oss_ << " " << obj;
+                return oss_.str();
+            }
+            std::string prepare_flags(const Flags &flags) const override
+            {
+                oss_.str("");
+                for (auto flag: flags)
+                    oss_ << " " << flag;
+                return oss_.str();
+            }
+
+        private:
+            mutable std::ostringstream oss_;
+            const Config config_;
+        };
+
+        class Archiver: public toolchain::Archiver
+        {
+        public:
+            Archiver(const Config &config): config_(config) {}
+
+            std::string cmd_template(const TemplateStubs &stubs) const override
+            {
+                oss_.str("");
+                oss_ << "link /OUT:" << stubs.library << " " << stubs.flags << " " << stubs.objects;
+                return oss_.str();
+            }
+            std::string prepare_objects(const ObjectFiles &objects) const override
+            {
+                oss_.str("");
+                for (auto obj: objects)
+                    oss_ << " " << obj;
+                return oss_.str();
+            }
+            std::string prepare_flags(const Flags &flags) const override
+            {
+                oss_.str("");
+                for (auto flag: flags)
+                    oss_ << " " << flag;
                 return oss_.str();
             }
 

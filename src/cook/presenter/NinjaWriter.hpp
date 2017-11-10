@@ -1,7 +1,7 @@
 #ifndef HEADER_cook_presenter_NinjaWriter_hpp_ALREADY_INCLUDED
 #define HEADER_cook_presenter_NinjaWriter_hpp_ALREADY_INCLUDED
 
-#include "cook/model/Toolchain.hpp"
+#include "cook/model/toolchain/Toolchain.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/string_algo/substitute.hpp"
 #include "gubg/mss.hpp"
@@ -16,12 +16,11 @@ namespace cook { namespace presenter {
         {
         }
 
-        bool write(const model::Env &env, const model::Toolchain &toolchain, const model::RecipeDAG &dag)
+        bool write(const model::Env &env, const model::toolchain::Toolchain &toolchain, const model::RecipeDAG &dag)
         {
             MSS_BEGIN(bool);
             MSS(write_(env));
             MSS(write_(toolchain));
-            MSS(write_rules_());
             MSS(write_(dag));
             MSS_END();
         }
@@ -36,60 +35,91 @@ namespace cook { namespace presenter {
             fo_ << "# << Environment" << std::endl;
             MSS_END();
         }
-        bool write_(const model::Toolchain &toolchain)
+        bool write_(const model::toolchain::Toolchain &toolchain)
         {
             MSS_BEGIN(bool);
             fo_ << std::endl;
             fo_ << "# >> Toolchain" << std::endl;
             model::toolchain::Compiler::Ptr compiler;
             model::toolchain::Linker::Ptr linker;
-            model::Toolchain::ArchiveInfo archive;
-            MSS(toolchain.get_info(compiler, linker, archive));
+            model::toolchain::Archiver::Ptr archiver;
+            MSS(toolchain.get_info(compiler, linker, archiver));
 
-            fo_
-            << "rule compile_c" << std::endl
-            << "  command = " << compiler->cmd_template("c", "$out", "$in", "$cflags", "$defines", "$include_paths", "$force_includes") << std::endl
-            << "  depfile = $out.d" << std::endl;
+            //Compiler rules and global settings
+            {
+                model::toolchain::Compiler::TemplateStubs cstubs;
+                {
+                    cstubs.object = "$out";
+                    cstubs.source = "$in";
+                    cstubs.depfile = "$out.d";
+                    cstubs.flags = "$cflags";
+                    cstubs.defines = "$defines";
+                    cstubs.include_paths = "$include_paths";
+                    cstubs.force_includes = "$force_includes";
+                }
 
-            fo_
-            << "rule compile_cpp" << std::endl
-            << "  command = " << compiler->cmd_template("c++", "$out", "$in", "$cflags", "$defines", "$include_paths", "$force_includes") << std::endl
-            << "  depfile = $out.d" << std::endl;
+                fo_
+                << "rule compile_c" << std::endl
+                << "  command = " << compiler->cmd_template("c", cstubs) << std::endl
+                << "  depfile = $out.d" << std::endl;
 
-            fo_
-            << "rule compile_asm" << std::endl
-            << "  command = " << compiler->cmd_template("asm", "$out", "$in", "$cflags", "$defines", "$include_paths", "$force_includes") << std::endl
-            << "  depfile = $out.d" << std::endl;
+                fo_
+                << "rule compile_cpp" << std::endl
+                << "  command = " << compiler->cmd_template("c++", cstubs) << std::endl
+                << "  depfile = $out.d" << std::endl;
 
-            fo_
-            << "rule link" << std::endl
-            << "  command = " << linker->cmd_template("$out", "$in") << std::endl;
+                fo_
+                << "rule compile_asm" << std::endl
+                << "  command = " << compiler->cmd_template("asm", cstubs) << std::endl
+                << "  depfile = $out.d" << std::endl;
 
-            model::toolchain::Flags flags;
-            fo_ << "cflags = " << compiler->prepare_flags(flags) << std::endl;
-            model::toolchain::Defines defines;
-            fo_ << "defines = " << compiler->prepare_defines(defines) << std::endl;
+                model::toolchain::Flags flags;
+                fo_ << "cflags = " << compiler->prepare_flags(flags) << std::endl;
+                model::toolchain::Defines defines;
+                fo_ << "defines = " << compiler->prepare_defines(defines) << std::endl;
 
-            fo_ << "archiver = " << archive.cmd << std::endl;
-            fo_ << "aflags = " << archive.flags << std::endl;
+                fo_ << std::endl;
+            }
+
+            //Linker rules and global settings
+            {
+                model::toolchain::Linker::TemplateStubs lstubs;
+                {
+                    lstubs.executable = "$out";
+                    lstubs.objects = "$in";
+                    lstubs.flags = "$lflags";
+                }
+
+                fo_
+                << "rule link" << std::endl
+                << "  command = " << linker->cmd_template(lstubs) << std::endl;
+
+                model::toolchain::Flags flags;
+                fo_ << "lflags = " << linker->prepare_flags(flags) << std::endl;
+
+                fo_ << std::endl;
+            }
+
+            //Archiver rules and global settings
+            {
+                model::toolchain::Archiver::TemplateStubs astubs;
+                {
+                    astubs.library = "$out";
+                    astubs.objects = "$in";
+                    astubs.flags = "$aflags";
+                }
+
+                fo_
+                << "rule archive" << std::endl
+                << "  command = " << archiver->cmd_template(astubs) << std::endl;
+
+                model::toolchain::Flags flags;
+                fo_ << "aflags = " << linker->prepare_flags(flags) << std::endl;
+
+                fo_ << std::endl;
+            }
+
             fo_ << "# << Toolchain" << std::endl;
-            MSS_END();
-        }
-        bool write_rules_()
-        {
-            MSS_BEGIN(bool);
-            fo_ << std::endl;
-            fo_ << "# >> Rules" << std::endl;
-
-            fo_
-            << "rule archive" << std::endl
-            << "  command = $archiver $aflags $out $in" << std::endl;
-
-            fo_
-            << "rule clean" << std::endl
-            << "  command = ninja -C $builddir -t clean" << std::endl;
-
-            fo_ << "# << Rules" << std::endl;
             MSS_END();
         }
         static std::string escape_(const std::string &orig)
