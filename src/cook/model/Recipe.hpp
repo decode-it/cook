@@ -16,12 +16,18 @@ namespace cook { namespace model {
     enum class FileType {Unknown, Source, Header, ForceInclude};
     std::ostream &operator<<(std::ostream &, FileType);
 
+    struct Owner
+    {
+        enum Type {Nobody = 0x00, Me = 0x01, Deps = 0x02, Anybody = 0x03};
+    };
+
     struct File
     {
         std::filesystem::path dir;
         std::filesystem::path path;
         FileType type = FileType::Unknown;
         std::string language;
+        Owner::Type owner = Owner::Nobody;
 
         void stream(std::ostream &os) const
         {
@@ -73,6 +79,7 @@ namespace cook { namespace model {
             auto add_file = [&](const std::filesystem::path &fp)
             {
                 auto &file = file_per_path_[fp];
+                file.owner = Owner::Me;
                 file.dir = dir;
                 file.path = fp;
                 const auto ext = fp.extension();
@@ -86,13 +93,25 @@ namespace cook { namespace model {
             gubg::file::each_glob(pattern, add_file, dir);
         }
 
+        bool merge(const Recipe &src)
+        {
+            MSS_BEGIN(bool);
+            for (auto p: src.file_per_path_)
+            {
+                p.second.owner = Owner::Deps;
+                file_per_path_.insert(p);
+            }
+            MSS_END();
+        }
+
         template <typename Ftor>
-        bool each_file(Ftor ftor)
+        bool each_file(Ftor ftor, Owner::Type owner = Owner::Anybody)
         {
             MSS_BEGIN(bool);
             for (const auto &p: file_per_path_)
             {
-                MSS(ftor(p.second));
+                if (p.second.owner & owner)
+                    MSS(ftor(p.second));
             }
             MSS_END();
         }

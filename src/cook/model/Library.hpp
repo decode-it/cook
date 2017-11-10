@@ -59,7 +59,12 @@ namespace cook { namespace model {
                 each([&](const BookPath &path, Recipe *recipe){ ok = ok && add_to_dag(path, recipe); });
                 MSS(ok);
             }
+
             MSS(dag.remove_unreachables(recipe_per_uri[rn]));
+
+            auto distribute = [&](Recipe *from, const Recipe *to){ return from->merge(*to); };
+            MSS(dag.depth_first(distribute));
+            
             MSS_END();
         }
 

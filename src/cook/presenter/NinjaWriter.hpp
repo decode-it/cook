@@ -165,12 +165,10 @@ namespace cook { namespace presenter {
                 for (const auto &ip: recipe->include_paths())
                     fo_ << " -I " << ip.string();
                 fo_ << std::endl;
-                std::ostringstream object_files;
                 auto write_compile = [&](const auto &file){
                     if (file.type == model::FileType::Source)
                     {
                         const auto obj_fn = object_fn(file);
-                        object_files << " " << obj_fn;
                         fo_ << "build " << obj_fn << ": " << compile_rule(file) << " " << source_fn(file) << std::endl;
                         fo_ << "    defines = " << std::endl;
                         fo_ << "    include_paths = $" << local_name(*recipe, "include_paths");
@@ -186,17 +184,17 @@ namespace cook { namespace presenter {
                     }
                     return true;
                 };
-                MSS(recipe->each_file(write_compile));
-                fo_ << local_name(*recipe, "object_files") << " = " << object_files.str() << std::endl;
+                MSS(recipe->each_file(write_compile, model::Owner::Me));
                 if (false) {}
                 else if (recipe->type() == "executable")
                 {
-                    fo_ << "build " << exe_fn(*recipe) << ": link $" << local_name(*recipe, "object_files");
-                    auto add_object_files_for_deps = [&](const model::Recipe &d){
-                        fo_ << " $" << local_name(d, "object_files");
+                    fo_ << "build " << exe_fn(*recipe) << ": link ";
+                    auto add_object = [&](const auto &f){
+                        if (f.type == model::FileType::Source)
+                            fo_ << "$\n    " << object_fn(f) << " ";
                         return true;
                     };
-                    dag.each_out(recipe, add_object_files_for_deps);
+                    MSS(recipe->each_file(add_object, model::Owner::Anybody));
                     fo_ << std::endl;
                 }
                 fo_ << "# << Recipe " << recipe->uri_hr() << std::endl;
