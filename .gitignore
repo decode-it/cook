@@ -5,3 +5,4 @@ makefile
 .cook/
 .ninja_deps
 .ninja_log
+.bcook.*/

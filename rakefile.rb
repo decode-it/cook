@@ -57,108 +57,44 @@ namespace :gubg do
             sh "rake run"
         end
     end
-    task :ut => :run do
-        require("gubg/build/Executable")
-        ut = Build::Executable.new("unit_tests")
-        ut.add_sources(FileList.new("gubg.io/src/test/file/System.cpp"))
-        ut.add_sources("#{gubg_dir}/source/catch_runner.cpp")
-        ut.add_include_path("#{gubg_dir}/include")
-        ut.add_library_path("#{gubg_dir}/lib")
-        ut.add_library("gubg.std", "gubg.io", "stdc++fs")
-        case :debug
-        when :debug
-            ut.add_option('g')
-        else
-            ut.add_define('NDEBUG')
-        end
-        options = %w[-a -d yes]
-        ut.run(options)
+end
+
+def ninja_fn()
+    case GUBG::os
+    when :linux then "gcc.ninja"
+    when :windows then "msvc.ninja"
     end
 end
 
-module Ninja
-    def self.build
-        Rake::sh("ninja") do |ok, res|
-            unless ok
-                puts("Something went wrong, please run the setup for your platform")
-                puts(" * Ubuntu: rake setup:ubuntu")
-                raise("stop")
-            end
-        end
-    end
-end
-
-namespace :cook do
-    exe = nil
-    cook_bootstrap = "cook_bootstrap"
-    cook_bootstrap_fn = "#{cook_bootstrap}.exe"
-    task :init do
-        require("gubg/build/Executable")
-        exe = Build::Executable.new(cook_bootstrap)
-        exe.add_sources(FileList.new("src/**/*.[hc]pp"))
-        exe.add_include_path("src")
-        %w[std io algo].each do |e|
-            dir = "gubg.#{e}/src"
-            exe.add_sources(FileList.new(File.join(dir, "gubg/**/*.[hc]pp")))
-            exe.add_include_path(dir)
-        end
-        exe.add_include_path("gubg.chaiscript/extern/ChaiScript/include")
-        exe.add_library("dl", "stdc++fs", "pthread")
-        case :debug
-        when :debug
-            exe.add_option('g')
-        else
-            exe.add_define('NDEBUG')
-        end
-    end
-    task :clean do
-        rm_rf(".cache")
-	rm_f "build.ninja"
-    end
-    task :build_with_ruby => :init do
-        exe.build
-    end
-    mode = :release
-    # mode = :debug
+namespace :bcook do
+    desc "Build bcook.exe"
     task :build do
-        if !File.exist?(cook_bootstrap_fn)
-            if File.exist?("build.ninja")
-                puts("Building #{cook_bootstrap_fn} with the current build.ninja")
-                Ninja::build
-            end
-        end
-        if !File.exist?(cook_bootstrap_fn)
-            puts("Building #{cook_bootstrap_fn} with ruby")
-            Rake::Task["cook:build_with_ruby"].invoke
-        end
-        raise("Could not create #{cook_bootstrap_fn}") unless File.exist?(cook_bootstrap_fn)
-
-        puts("Bootstrapping cook in mode #{mode}")
-        sh "./#{cook_bootstrap_fn} -c #{mode} cook.exe"
-        Ninja::build
-        
+        sh("ninja -f #{ninja_fn} -v")
     end
-    task :run do
-        sh "./#{cook_bootstrap_fn} -c #{mode} cook.exe"
+    desc "Clean"
+    task :clean do
+        sh("ninja -f #{ninja_fn} -t clean")
     end
 end
-desc "Builds cook"
-task :build => "cook:build"
-desc "Tests cook"
-task :test => ["cook:build", "cook:run"]
+
+desc "Build cook.exe"
+task :build => "bcook:build" do
+    cp "bcook.exe", "cook.exe"
+end
 
 desc "Clean"
-task :clean => "cook:clean" do
+task :clean do
     rm(FileList.new("**/*.obj"))
     rm(FileList.new("*.exe"))
-    rm_rf(".cook")
+    rm_rf(".bcook.*")
+    Rake::Task["bcook:clean"].invoke
 end
 
 desc "Install"
 task :install, [:bin] => "build" do |task, args|
     bin = args[:bin]
     if bin
-	GUBG::mkdir(bin)
+        GUBG::mkdir(bin)
         sh("cp cook.exe #{bin}")
     else
         sh("sudo cp cook.exe /usr/local/bin/cook")
@@ -175,10 +111,10 @@ task :doc do
     end
 end
 
-task :msvc do
-    sh "ninja -f build.cl.ninja -t clean"
-    sh "ninja -f build.cl.ninja"
-    sh "main.exe -f test\\app /app.exe"
+desc "Test"
+task :test do
+    Rake::Task["bcook:build"].invoke
+    sh "./bcook.exe -f test/app /app.exe"
     sh "cat test.ninja"
     sh "ninja -f test.ninja"
 end

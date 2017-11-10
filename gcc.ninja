@@ -1,0 +1,12 @@
+builddir = .bcook.gcc
+
+rule compile
+    command = g++ -std=c++17 $cflags $defines $include_paths -c $in -o $out
+rule link
+    command = g++ -o $out $in $libs
+
+cflags = 
+
+libs = -ldl -lstdc++fs -lpthread
+
+subninja compile.ninja
