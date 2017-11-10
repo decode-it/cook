@@ -1,8 +1,7 @@
 *.exe
 makefile
-.cache/
 .gubg/
-.cook/
+.bcook/
 .ninja_deps
 .ninja_log
-.bcook.*/
+test.ninja

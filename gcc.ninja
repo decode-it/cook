@@ -1,7 +1,6 @@
-builddir = .bcook.gcc
-
 rule compile
-    command = g++ -std=c++17 $cflags $defines $include_paths -c $in -o $out
+    depfile = $out.d
+    command = g++ -std=c++17 $cflags $defines $include_paths -c $in -o $out -MMD -MF $out.d
 rule link
     command = g++ -o $out $in $libs
 
