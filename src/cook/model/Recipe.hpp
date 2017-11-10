@@ -43,7 +43,7 @@ namespace cook { namespace model {
         const std::string &type() const {return type_;}
 
         const Uri &uri() const {return uri_;}
-        std::string uri_hr() const {return uri_.str('/', '/', '.');}
+        std::string uri_hr(bool add_root = true) const {return uri_.str((add_root ? '/' : '\0'), '/', '.');}
         template <typename Path>
         void set_path(const Path &path)
         {

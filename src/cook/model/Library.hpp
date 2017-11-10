@@ -30,6 +30,8 @@ namespace cook { namespace model {
 
                 recipe->set_path(path);
                 recipe_per_uri[recipe->uri_hr()] = recipe;
+                //We add the version _without_ root as well to make the matching more user-friendly
+                recipe_per_uri[recipe->uri_hr(false)] = recipe;
 
                 MSS_END();
             };
