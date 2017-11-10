@@ -175,9 +175,10 @@ task :doc do
     end
 end
 
-task :aaa do
-    sh "rake install"
-    sh "cook -f test/app /app.exe"
-    # sh "ninja -f test.ninja"
+task :msvc do
+    sh "ninja -f build.cl.ninja -t clean"
+    sh "ninja -f build.cl.ninja"
+    sh "main.exe -f test\\app /app.exe"
     sh "cat test.ninja"
+    sh "ninja -f test.ninja"
 end

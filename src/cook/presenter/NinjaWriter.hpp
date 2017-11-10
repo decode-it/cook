@@ -3,6 +3,7 @@
 
 #include "cook/model/Toolchain.hpp"
 #include "gubg/std/filesystem.hpp"
+#include "gubg/string_algo/substitute.hpp"
 #include "gubg/mss.hpp"
 #include <fstream>
 
@@ -40,18 +41,34 @@ namespace cook { namespace presenter {
             MSS_BEGIN(bool);
             fo_ << std::endl;
             fo_ << "# >> Toolchain" << std::endl;
-            model::Toolchain::CompileInfo compile;
-            model::Toolchain::LinkInfo link;
+            model::toolchain::Compiler::Ptr compiler;
+            model::toolchain::Linker::Ptr linker;
             model::Toolchain::ArchiveInfo archive;
-            MSS(toolchain.get_info(compile, link, archive));
+            MSS(toolchain.get_info(compiler, linker, archive));
 
-            fo_ << "compiler_c = " << compile.cmd_c << std::endl;
-            fo_ << "compiler_cpp = " << compile.cmd_cpp << std::endl;
-            fo_ << "compiler_asm = " << compile.cmd_asm << std::endl;
-            fo_ << "cflags = " << compile.flags << compile.defines << std::endl;
+            fo_
+            << "rule compile_c" << std::endl
+            << "  command = " << compiler->cmd_template("c", "$out", "$in", "$cflags", "$defines", "$include_paths", "$force_includes") << std::endl
+            << "  depfile = $out.d" << std::endl;
 
-            fo_ << "linker = " << link.cmd << std::endl;
-            fo_ << "lflags = " << link.flags << std::endl;
+            fo_
+            << "rule compile_cpp" << std::endl
+            << "  command = " << compiler->cmd_template("c++", "$out", "$in", "$cflags", "$defines", "$include_paths", "$force_includes") << std::endl
+            << "  depfile = $out.d" << std::endl;
+
+            fo_
+            << "rule compile_asm" << std::endl
+            << "  command = " << compiler->cmd_template("asm", "$out", "$in", "$cflags", "$defines", "$include_paths", "$force_includes") << std::endl
+            << "  depfile = $out.d" << std::endl;
+
+            fo_
+            << "rule link" << std::endl
+            << "  command = " << linker->cmd_template("$out", "$in") << std::endl;
+
+            model::toolchain::Flags flags;
+            fo_ << "cflags = " << compiler->prepare_flags(flags) << std::endl;
+            model::toolchain::Defines defines;
+            fo_ << "defines = " << compiler->prepare_defines(defines) << std::endl;
 
             fo_ << "archiver = " << archive.cmd << std::endl;
             fo_ << "aflags = " << archive.flags << std::endl;
@@ -65,25 +82,6 @@ namespace cook { namespace presenter {
             fo_ << "# >> Rules" << std::endl;
 
             fo_
-            << "rule compile_c" << std::endl
-            << "  command = $compiler_c -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths $force_includes" << std::endl
-            << "  depfile = $out.d" << std::endl;
-
-            fo_
-            << "rule compile_cpp" << std::endl
-            << "  command = $compiler_cpp -c -MD -MF $out.d $cflags $defines -o $out $in $include_paths $force_includes" << std::endl
-            << "  depfile = $out.d" << std::endl;
-
-            fo_
-            << "rule compile_asm" << std::endl
-            << "  command = $compiler_asm $in -o $out" << std::endl
-            << "  depfile = $out.d" << std::endl;
-
-            fo_
-            << "rule link" << std::endl
-            << "  command = $linker $lflags -o $out $in $library_paths $libraries" << std::endl;
-
-            fo_
             << "rule archive" << std::endl
             << "  command = $archiver $aflags $out $in" << std::endl;
 
@@ -94,14 +92,20 @@ namespace cook { namespace presenter {
             fo_ << "# << Rules" << std::endl;
             MSS_END();
         }
+        static std::string escape_(const std::string &orig)
+        {
+            std::string esc;
+            gubg::string_algo::substitute<std::string>(esc, orig, ":", "$:");
+            return esc;
+        }
         bool write_(const model::RecipeDAG &dag)
         {
             MSS_BEGIN(bool);
             std::ostringstream oss;
             auto object_fn = [&](const auto &file){
                 oss.str("");
-                oss << "$builddir" << file.path.string() << ".obj";
-                return oss.str();
+                oss << file.path.string() << ".obj";
+                return escape_(oss.str());
             };
             auto compile_rule = [](const auto &file){
                 if (false) {}
@@ -111,7 +115,7 @@ namespace cook { namespace presenter {
                 return "";
             };
             auto source_fn = [](const auto &file){
-                return file.path.string();
+                return escape_(file.path.string());
             };
             auto local_name = [&](const model::Recipe &r, const char *name){
                 oss.str("");
