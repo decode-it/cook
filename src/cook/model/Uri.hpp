@@ -20,6 +20,13 @@ namespace cook { namespace model {
         void add_path_part(const std::string &part) {path_.push_back(part);}
         void set_name(const std::string &name) {name_ = name;}
 
+        std::string last_path() const
+        {
+            if (path_.empty())
+                return "";
+            return path_.back();
+        }
+
         void stream(std::ostream &os, char root, char path_sep, char name_sep) const
         {
             for (unsigned int ix = 0; ix < path_.size(); ++ix)

@@ -248,7 +248,7 @@ namespace cook { namespace model {
             else if (type_ == "executable")
                 output_.filename = uri().str('\0', '_', '.');
             else if (type_ == "library")
-                output_.filename = uri().str('\0', '_', '.');
+                output_.filename = uri().last_path();
         }
 
         std::string name_;

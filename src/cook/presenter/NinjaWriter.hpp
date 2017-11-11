@@ -195,7 +195,7 @@ namespace cook { namespace presenter {
                 }
                 else if (recipe.type() == "library")
                 {
-                    os_ << "build " << recipe.output().filename.string() << ": archive ";
+                    os_ << "build " << archiver_->prepare_library(recipe.output().filename.string()) << ": archive ";
                     auto add_object = [&](const auto &f){
                         if (f.type == model::FileType::Source)
                             os_ << "$\n    " << object_fn(f) << " ";

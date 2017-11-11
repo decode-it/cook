@@ -173,6 +173,12 @@ namespace cook { namespace model { namespace toolchain {
                 oss_ << "ar rcs " << stubs.library << " " << stubs.flags << " " << stubs.objects;
                 return oss_.str();
             }
+            std::string prepare_library(const Library &name) const override
+            {
+                oss_.str("");
+                oss_ << "lib" << name << ".a";
+                return oss_.str();
+            }
             std::string prepare_objects(const ObjectFiles &objects) const override
             {
                 oss_.str("");
