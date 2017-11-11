@@ -1,5 +1,6 @@
 #include "cook/Presenter.hpp"
 #include "cook/presenter/NinjaWriter.hpp"
+#include "cook/presenter/TreeWriter.hpp"
 #include "gubg/Strange.hpp"
 
 namespace cook { 
@@ -81,9 +82,28 @@ namespace cook {
                     model::RecipeDAG dag;
                     const auto rn = value;
                     MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
-                    dag.each_vertex<gubg::network::Direction::Forward>([&](const auto &r){ view_.log(Info) << r << std::endl; return true; });
-                    presenter::NinjaWriter nw("test.ninja");
-                    MSS(nw.write(model_.env, model_.toolchain, dag));
+                    {
+                        std::ofstream fo("test.ninja");
+                        presenter::NinjaWriter nw(fo);
+                        MSS(nw.write(model_.env, model_.toolchain, dag));
+                    }
+                }
+                else if (key.pop_if("details"))
+                {
+                    model::RecipeDAG dag;
+                    const auto rn = value;
+                    MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
+                    {
+                        presenter::TreeWriter tw(std::cout);
+                        MSS(tw.write_details(dag, model_.env.build_dir()));
+                    }
+                }
+                else if (key.pop_if("static_structure"))
+                {
+                    {
+                        presenter::TreeWriter tw(std::cout);
+                        MSS(tw.write_static_structure());
+                    }
                 }
             }
             else

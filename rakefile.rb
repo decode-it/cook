@@ -114,7 +114,14 @@ end
 desc "Test"
 task :test do
     Rake::Task["bcook:build"].invoke
-    sh "./bcook.exe -f test/app /app.exe"
-    sh "cat test.ninja"
-    sh "ninja -f test.ninja"
+    case :details
+    when :ninja
+        sh "./bcook.exe -f test/app /app.exe"
+        sh "cat test.ninja"
+        sh "ninja -f test.ninja"
+    when :details
+        sh "./bcook.exe -f test/app -g details.tree /app.exe"
+    when :recipes
+        sh "./bcook.exe -f test/app -g recipes.tree /app.exe"
+    end
 end

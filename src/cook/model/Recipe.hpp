@@ -14,7 +14,18 @@ namespace cook { namespace model {
     class Book;
 
     enum class FileType {Unknown, Source, Header, ForceInclude};
-    std::ostream &operator<<(std::ostream &, FileType);
+    inline std::ostream &operator<<(std::ostream &os, FileType ft)
+    {
+        switch (ft)
+        {
+#define L_CASE(name) case FileType::name: os << #name; break
+            L_CASE(Unknown);
+            L_CASE(Source);
+            L_CASE(Header);
+#undef L_CASE
+        }
+        return os;
+    }
 
     struct Owner
     {
