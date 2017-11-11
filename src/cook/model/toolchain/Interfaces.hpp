@@ -2,23 +2,12 @@
 #define HEADER_cook_model_toolchain_Interfaces_hpp_ALREADY_INCLUDED
 
 #include "cook/model/toolchain/Toolchain.hpp"
+#include "cook/model/toolchain/Types.hpp"
 #include <string>
 #include <vector>
 #include <memory>
 
 namespace cook { namespace model { namespace toolchain { 
-
-    using Object = std::string;
-    using Source = std::string;
-    using DepFile = std::string;
-    using Executable = std::string;
-    using Library = std::string;
-
-    using Flags = std::vector<std::string>;
-    using Defines = std::vector<std::string>;
-    using IncludePaths = std::vector<std::string>;
-    using ForceIncludes = std::vector<std::string>;
-    using ObjectFiles = std::vector<std::string>;
 
     class Compiler
     {
@@ -55,12 +44,16 @@ namespace cook { namespace model { namespace toolchain {
             std::string executable;
             std::string objects;
             std::string flags;
+            std::string library_paths;
+            std::string libraries;
         };
         virtual std::string cmd_template(const TemplateStubs &) const = 0;
 
         virtual std::string prepare_executable(const Executable &fn) const {return fn;}
         virtual std::string prepare_objects(const ObjectFiles &) const = 0;
         virtual std::string prepare_flags(const Flags &) const = 0;
+        virtual std::string prepare_library_paths(const LibraryPaths &) const = 0;
+        virtual std::string prepare_libraries(const Libraries &) const = 0;
     };
 
     class Archiver

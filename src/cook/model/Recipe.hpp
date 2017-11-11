@@ -2,9 +2,11 @@
 #define HEADER_cook_model_Recipe_hpp_ALREADY_INCLUDED
 
 #include "cook/model/Uri.hpp"
+#include "cook/model/toolchain/Types.hpp"
 #include "gubg/file/System.hpp"
 #include "gubg/macro/capture.hpp"
 #include "gubg/OnlyOnce.hpp"
+#include "gubg/Range.hpp"
 #include <set>
 #include <map>
 #include <ostream>
@@ -46,6 +48,9 @@ namespace cook { namespace model {
         }
     };
     using FilePerPath = std::map<std::filesystem::path, File>;
+
+    using Libraries = model::toolchain::Libraries;
+    using LibraryPaths = model::toolchain::LibraryPaths;
 
     class Recipe
     {
@@ -98,7 +103,7 @@ namespace cook { namespace model {
             {
                 type_ = value;
                 if (value.empty()) {}
-                else if (value == "executable")
+                else if (value == "executable" || value == "library")
                 {
                     update_output_();
                 }
@@ -137,13 +142,38 @@ namespace cook { namespace model {
             gubg::file::each_glob(pattern, add_file, dir);
         }
 
+        void add_library(const std::string &lib)
+        {
+            if (std::find_if(RANGE(libraries_), [&](const auto &l){return lib == l;}) != libraries_.end())
+                return;
+            libraries_.push_back(lib);
+        }
+        void add_library_path(const std::filesystem::path &path)
+        {
+            if (std::find_if(RANGE(library_paths_), [&](const auto &p){return path == p;}) != library_paths_.end())
+                return;
+            library_paths_.push_back(path);
+        }
+
         bool merge(const Recipe &src)
         {
             MSS_BEGIN(bool);
-            for (auto p: src.file_per_path_)
+            for (const auto &lib: libraries_)
+                add_library(lib);
+            for (const auto &path: library_paths_)
+                add_library_path(path);
+            if (src.type().empty())
             {
-                p.second.owner = Owner::Deps;
-                file_per_path_.insert(p);
+                for (auto p: src.file_per_path_)
+                {
+                    p.second.owner = Owner::Deps;
+                    file_per_path_.insert(p);
+                }
+            }
+            else if (src.type() == "library")
+            {
+                add_library(src.output().filename.string());
+                add_library_path("./");
             }
             MSS_END();
         }
@@ -159,6 +189,9 @@ namespace cook { namespace model {
             }
             MSS_END();
         }
+
+        Libraries libraries() const {return libraries_;}
+        LibraryPaths library_paths() const {return library_paths_;}
 
         template <typename Ftor>
         bool each_dependency(Ftor ftor)
@@ -211,7 +244,10 @@ namespace cook { namespace model {
     private:
         void update_output_()
         {
-            if (type_ == "executable")
+            if (false) {}
+            else if (type_ == "executable")
+                output_.filename = uri().str('\0', '_', '.');
+            else if (type_ == "library")
                 output_.filename = uri().str('\0', '_', '.');
         }
 
@@ -224,6 +260,8 @@ namespace cook { namespace model {
         FilePerPath file_per_path_;
         std::set<std::string> deps_;
         Output output_;
+        Libraries libraries_;
+        LibraryPaths library_paths_;
     };
 
     inline std::ostream &operator<<(std::ostream &os, const Recipe &r)

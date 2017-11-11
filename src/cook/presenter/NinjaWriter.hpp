@@ -38,10 +38,7 @@ namespace cook { namespace presenter {
             MSS_BEGIN(bool);
             os_ << std::endl;
             os_ << "# >> Toolchain" << std::endl;
-            model::toolchain::Compiler::Ptr compiler;
-            model::toolchain::Linker::Ptr linker;
-            model::toolchain::Archiver::Ptr archiver;
-            MSS(toolchain.get_info(compiler, linker, archiver));
+            MSS(toolchain.get_info(compiler_, linker_, archiver_));
 
             //Compiler rules and global settings
             {
@@ -58,23 +55,23 @@ namespace cook { namespace presenter {
 
                 os_
                 << "rule compile_c" << std::endl
-                << "  command = " << compiler->cmd_template("c", cstubs) << std::endl
+                << "  command = " << compiler_->cmd_template("c", cstubs) << std::endl
                 << "  depfile = $out.d" << std::endl;
 
                 os_
                 << "rule compile_cpp" << std::endl
-                << "  command = " << compiler->cmd_template("c++", cstubs) << std::endl
+                << "  command = " << compiler_->cmd_template("c++", cstubs) << std::endl
                 << "  depfile = $out.d" << std::endl;
 
                 os_
                 << "rule compile_asm" << std::endl
-                << "  command = " << compiler->cmd_template("asm", cstubs) << std::endl
+                << "  command = " << compiler_->cmd_template("asm", cstubs) << std::endl
                 << "  depfile = $out.d" << std::endl;
 
                 model::toolchain::Flags flags;
-                os_ << "cflags = " << compiler->prepare_flags(flags) << std::endl;
+                os_ << "cflags = " << compiler_->prepare_flags(flags) << std::endl;
                 model::toolchain::Defines defines;
-                os_ << "defines = " << compiler->prepare_defines(defines) << std::endl;
+                os_ << "defines = " << compiler_->prepare_defines(defines) << std::endl;
 
                 os_ << std::endl;
             }
@@ -86,14 +83,16 @@ namespace cook { namespace presenter {
                     lstubs.executable = "$out";
                     lstubs.objects = "$in";
                     lstubs.flags = "$lflags";
+                    lstubs.library_paths = "$library_paths";
+                    lstubs.libraries = "$libraries";
                 }
 
                 os_
                 << "rule link" << std::endl
-                << "  command = " << linker->cmd_template(lstubs) << std::endl;
+                << "  command = " << linker_->cmd_template(lstubs) << std::endl;
 
                 model::toolchain::Flags flags;
-                os_ << "lflags = " << linker->prepare_flags(flags) << std::endl;
+                os_ << "lflags = " << linker_->prepare_flags(flags) << std::endl;
 
                 os_ << std::endl;
             }
@@ -109,10 +108,10 @@ namespace cook { namespace presenter {
 
                 os_
                 << "rule archive" << std::endl
-                << "  command = " << archiver->cmd_template(astubs) << std::endl;
+                << "  command = " << archiver_->cmd_template(astubs) << std::endl;
 
                 model::toolchain::Flags flags;
-                os_ << "aflags = " << linker->prepare_flags(flags) << std::endl;
+                os_ << "aflags = " << linker_->prepare_flags(flags) << std::endl;
 
                 os_ << std::endl;
             }
@@ -189,6 +188,21 @@ namespace cook { namespace presenter {
                     };
                     MSS(recipe.each_file(add_object, model::Owner::Anybody));
                     os_ << std::endl;
+                    os_ << "    library_paths = " << linker_->prepare_library_paths(recipe.library_paths());
+                    os_ << std::endl;
+                    os_ << "    libraries = " << linker_->prepare_libraries(recipe.libraries());
+                    os_ << std::endl;
+                }
+                else if (recipe.type() == "library")
+                {
+                    os_ << "build " << recipe.output().filename.string() << ": archive ";
+                    auto add_object = [&](const auto &f){
+                        if (f.type == model::FileType::Source)
+                            os_ << "$\n    " << object_fn(f) << " ";
+                        return true;
+                    };
+                    MSS(recipe.each_file(add_object, model::Owner::Anybody));
+                    os_ << std::endl;
                 }
                 os_ << "# << Recipe " << recipe.uri_hr() << std::endl;
                 MSS_END();
@@ -198,6 +212,9 @@ namespace cook { namespace presenter {
         }
 
         std::ostream &os_;
+        model::toolchain::Compiler::Ptr compiler_;
+        model::toolchain::Linker::Ptr linker_;
+        model::toolchain::Archiver::Ptr archiver_;
     };
 
 } } 

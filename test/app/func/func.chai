@@ -1,5 +1,5 @@
 book("func", fun(){
-    recipe("lib",  fun(){
+    recipe("lib", "",  fun(){
         //Adding files with dir and globbing
         add("inc", "*.h")
         add("src", "*.c")

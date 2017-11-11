@@ -4,6 +4,8 @@
 #include "cook/model/toolchain/Interfaces.hpp"
 #include "cook/model/toolchain/Config.hpp"
 #include <sstream>
+#include <iostream>
+#include <cassert>
 
 namespace cook { namespace model { namespace toolchain { 
 
@@ -112,7 +114,7 @@ namespace cook { namespace model { namespace toolchain {
             std::string cmd_template(const TemplateStubs &stubs) const override
             {
                 oss_.str("");
-                oss_ << "g++ -o " << stubs.executable << " " << stubs.flags << " " << stubs.objects;
+                oss_ << "g++ -o " << stubs.executable << " " << stubs.flags << " " << stubs.objects << " " << stubs.library_paths << " " << stubs.libraries;
                 return oss_.str();
             }
             std::string prepare_objects(const ObjectFiles &objects) const override
@@ -129,6 +131,20 @@ namespace cook { namespace model { namespace toolchain {
                     oss_ << " " << flag;
                 for (auto flag: p_flags)
                     oss_ << " " << flag;
+                return oss_.str();
+            }
+            std::string prepare_library_paths(const LibraryPaths &library_paths) const override
+            {
+                oss_.str("");
+                for (auto path: library_paths)
+                    oss_ << " -L" << path;
+                return oss_.str();
+            }
+            std::string prepare_libraries(const Libraries &libraries) const override
+            {
+                oss_.str("");
+                for (auto lib: libraries)
+                    oss_ << " -l" << lib;
                 return oss_.str();
             }
 
