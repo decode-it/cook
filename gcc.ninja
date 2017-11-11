@@ -1,0 +1,11 @@
+rule compile
+    depfile = $out.d
+    command = g++ -std=c++17 $cflags $defines $include_paths -c $in -o $out -MMD -MF $out.d
+rule link
+    command = g++ -o $out $in $libs
+
+cflags = 
+
+libs = -ldl -lstdc++fs -lpthread
+
+subninja compile.ninja

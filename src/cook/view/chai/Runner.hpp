@@ -28,6 +28,7 @@ namespace cook { namespace view { namespace chai {
             const auto script_fn = expand_(file_or_dir);
             logger_.log(Info) << indent_() << ">> Script " << script_fn << std::endl;
             script_stack_.push_back(script_fn);
+            presenter_.set("script.filename", script_fn);
 
             std::ostream *os = nullptr;
             try { chai_engine_.eval_file(script_fn); }
@@ -47,6 +48,7 @@ namespace cook { namespace view { namespace chai {
             }
 
             script_stack_.pop_back();
+            presenter_.set("script.filename", (script_stack_.empty() ? std::string{} : script_stack_.back().string()));
             logger_.log(Info) << indent_() << "<< Script " << script_fn << (execute_ok_ ? " (OK)" : " (KO)") << std::endl;
 
             return execute_ok_;
@@ -103,6 +105,12 @@ namespace cook { namespace view { namespace chai {
             presenter_.set("model.recipe.depends_on", rn);
             logger_.log(Info) << indent_() << "<< Adding dependency on " << rn << std::endl;
         }
+        void chai_display_name(const std::string &dn)
+        {
+            logger_.log(Info) << indent_() << ">> Setting display name to " << dn << std::endl;
+            presenter_.set("model.recipe.display_name", dn);
+            logger_.log(Info) << indent_() << "<< Setting display name to " << dn << std::endl;
+        }
 
     private:
         void setup_chai_functions_()
@@ -115,6 +123,7 @@ namespace cook { namespace view { namespace chai {
             chai.add(chaiscript::fun(&Runner::chai_add_2, this), "add");
             chai.add(chaiscript::fun(&Runner::chai_add_1, this), "add");
             chai.add(chaiscript::fun(&Runner::chai_depends_on, this), "depends_on");
+            chai.add(chaiscript::fun(&Runner::chai_display_name, this), "display_name");
         }
 
         std::filesystem::path current_script_() const { return script_stack_.back(); }

@@ -12,7 +12,7 @@ namespace cook { namespace view { namespace chai {
 
     void Engine::eval_file(const std::filesystem::path &fn)
     {
-        engine_.eval_file(fn);
+        engine_.eval_file(fn.string());
     }
 
 } } } 

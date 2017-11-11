@@ -2,7 +2,6 @@
 #define HEADER_cook_model_Book_hpp_ALREADY_INCLUDED
 
 #include "cook/model/Recipe.hpp"
-#include "gubg/OnlyOnce.hpp"
 #include <map>
 #include <sstream>
 
@@ -13,11 +12,31 @@ namespace cook { namespace model {
     public:
         using BookPerName = std::map<std::string, Book>;
         using RecipePerName = std::map<std::string, Recipe>;
+        using ScriptFns = std::vector<std::filesystem::path>;
 
         Book() {}
         Book(std::string name): name_(name) {}
 
+        std::string uri_hr() const {return uri_.str('/','/','.');}
+
         const std::string &name() const {return name_;}
+        std::string display_name() const
+        {
+            if (display_name_.empty())
+                return name();
+            return display_name_;
+        }
+
+        bool set(const std::string &key, const std::string &value)
+        {
+            MSS_BEGIN(bool);
+            if (false) {}
+            else if (key == "display_name") {display_name_ = value;}
+            else if (key == "script_filename") {script_fns_.push_back(value);}
+            MSS_END();
+        }
+
+        const ScriptFns &script_filenames() const {return script_fns_;}
 
         Book &goc_book(std::string name)
         {
@@ -31,7 +50,7 @@ namespace cook { namespace model {
             if (recipe_per_name_.count(name) > 0)
                 return nullptr;
             auto &recipe = recipe_per_name_[name];
-            recipe.name_ = name;
+            recipe.set_name(name);
             return &recipe;
         }
 
@@ -45,32 +64,13 @@ namespace cook { namespace model {
         }
 
     private:
+        Uri uri_;
         std::string name_;
+        std::string display_name_;
+        ScriptFns script_fns_;
         BookPerName book_per_name_;
         RecipePerName recipe_per_name_;
     };
-
-    using BookPath = std::vector<Book*>;
-    using ConstBookPath = std::vector<const Book*>;
-
-    template <typename Path>
-    inline void uri(std::ostream &os, const Path &path)
-    {
-        gubg::OnlyOnce skip;
-        for (auto ptr: path)
-        {
-            if (skip())
-                continue;
-            os << "/" << ptr->name();
-        }
-    }
-    template <typename Path>
-    inline void uri(std::ostream &os, const Path &path, const Recipe *recipe)
-    {
-        uri(os, path);
-        if (!!recipe)
-            os << "." << recipe->name();
-    }
 
 } } 
 

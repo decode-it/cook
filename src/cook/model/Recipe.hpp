@@ -14,7 +14,23 @@ namespace cook { namespace model {
     class Book;
 
     enum class FileType {Unknown, Source, Header, ForceInclude};
-    std::ostream &operator<<(std::ostream &, FileType);
+    inline std::ostream &operator<<(std::ostream &os, FileType ft)
+    {
+        switch (ft)
+        {
+#define L_CASE(name) case FileType::name: os << #name; break
+            L_CASE(Unknown);
+            L_CASE(Source);
+            L_CASE(Header);
+#undef L_CASE
+        }
+        return os;
+    }
+
+    struct Owner
+    {
+        enum Type {Nobody = 0x00, Me = 0x01, Deps = 0x02, Anybody = 0x03};
+    };
 
     struct File
     {
@@ -22,6 +38,7 @@ namespace cook { namespace model {
         std::filesystem::path path;
         FileType type = FileType::Unknown;
         std::string language;
+        Owner::Type owner = Owner::Nobody;
 
         void stream(std::ostream &os) const
         {
@@ -33,11 +50,21 @@ namespace cook { namespace model {
     class Recipe
     {
     public:
+        struct Output
+        {
+            std::filesystem::path filename;
+        };
+
+        void set_name(const std::string &name)
+        {
+            name_ = name;
+        }
         const std::string &name() const {return name_;}
+
         const std::string &type() const {return type_;}
 
         const Uri &uri() const {return uri_;}
-        std::string uri_hr() const {return uri_.str('/', '/', '.');}
+        std::string uri_hr(bool add_root = true) const {return uri_.str((add_root ? '/' : '\0'), '/', '.');}
         template <typename Path>
         void set_path(const Path &path)
         {
@@ -49,15 +76,38 @@ namespace cook { namespace model {
                     uri_.add_path_part(book_ptr->name());
             }
             uri_.set_name(name());
+            update_output_();
         }
+
+        std::string display_name() const
+        {
+            if (display_name_.empty())
+                return uri_hr();
+            return display_name_;
+        }
+
+        std::filesystem::path script_filename() const {return script_fn_;}
+
+        const Output &output() const {return output_;}
 
         bool set(const std::string &key, const std::string &value)
         {
             MSS_BEGIN(bool);
             if (false) { }
-            else if (key == "type") { MSS(value.empty() || value == "executable"); type_ = value; }
+            else if (key == "type")
+            {
+                type_ = value;
+                if (value.empty()) {}
+                else if (value == "executable")
+                {
+                    update_output_();
+                }
+                else MSS(false, type_.clear());
+            }
             else if (key == "working_directory") { wd_ = value; }
+            else if (key == "script_filename") { script_fn_ = value; }
             else if (key == "depends_on") { deps_.insert(value); }
+            else if (key == "display_name") { display_name_ = value; }
             MSS_END();
         }
 
@@ -73,6 +123,7 @@ namespace cook { namespace model {
             auto add_file = [&](const std::filesystem::path &fp)
             {
                 auto &file = file_per_path_[fp];
+                file.owner = Owner::Me;
                 file.dir = dir;
                 file.path = fp;
                 const auto ext = fp.extension();
@@ -86,13 +137,25 @@ namespace cook { namespace model {
             gubg::file::each_glob(pattern, add_file, dir);
         }
 
+        bool merge(const Recipe &src)
+        {
+            MSS_BEGIN(bool);
+            for (auto p: src.file_per_path_)
+            {
+                p.second.owner = Owner::Deps;
+                file_per_path_.insert(p);
+            }
+            MSS_END();
+        }
+
         template <typename Ftor>
-        bool each_file(Ftor ftor)
+        bool each_file(Ftor ftor, Owner::Type owner = Owner::Anybody) const
         {
             MSS_BEGIN(bool);
             for (const auto &p: file_per_path_)
             {
-                MSS(ftor(p.second));
+                if (p.second.owner & owner)
+                    MSS(ftor(p.second));
             }
             MSS_END();
         }
@@ -125,6 +188,13 @@ namespace cook { namespace model {
             return ips;
         }
 
+        using Defines = std::map<std::string, std::string>;
+        Defines defines() const
+        {
+            Defines defs;
+            return defs;
+        }
+
         void stream(std::ostream &os) const
         {
             os << "Recipe " << name_ << ", uri: " << uri_hr() << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
@@ -139,14 +209,21 @@ namespace cook { namespace model {
         }
 
     private:
-        friend class Book;
+        void update_output_()
+        {
+            if (type_ == "executable")
+                output_.filename = uri().str('\0', '_', '.');
+        }
 
         std::string name_;
+        std::string display_name_;
         Uri uri_;
         std::string type_;
         std::filesystem::path wd_;
+        std::filesystem::path script_fn_;
         FilePerPath file_per_path_;
         std::set<std::string> deps_;
+        Output output_;
     };
 
     inline std::ostream &operator<<(std::ostream &os, const Recipe &r)

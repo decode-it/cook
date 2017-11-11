@@ -1,7 +1,11 @@
 *.exe
+*.obj
+*.obj.d
 makefile
-.cache/
 .gubg/
-.cook/
+.bcook/
+.cache/
 .ninja_deps
 .ninja_log
+test.ninja
+build.ninja

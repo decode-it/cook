@@ -1,0 +1,20 @@
+defines = -DNDEBUG
+include_paths = -I src -I gubg.std/src -I gubg.io/src -I gubg.algo/src -I gubg.chaiscript/extern/ChaiScript/include
+
+build .bcook/main.obj: compile src/main.cpp
+
+build .bcook/cook/View.obj: compile src/cook/View.cpp
+build .bcook/cook/view/chai/Engine.obj: compile src/cook/view/chai/Engine.cpp
+
+build .bcook/cook/Presenter.obj: compile src/cook/Presenter.cpp
+
+build .bcook/gubg/Strange.obj: compile gubg.io/src/gubg/Strange.cpp
+build .bcook/gubg/OptionParser.obj: compile gubg.io/src/gubg/OptionParser.cpp
+
+build bcook.exe: link $
+    .bcook/main.obj $
+    .bcook/cook/View.obj $
+    .bcook/cook/view/chai/Engine.obj $
+    .bcook/cook/Presenter.obj $
+    .bcook/gubg/Strange.obj $
+    .bcook/gubg/OptionParser.obj

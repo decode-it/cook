@@ -24,7 +24,13 @@ namespace cook {
 
         MSS(presenter_.set("action.print.books"));
 
-        MSS(presenter_.set("action.generate.ninja", options.uri));
+        if (false) {}
+        else if (options.generate == "build.ninja")
+            MSS(presenter_.set("action.generate.ninja", options.uri));
+        else if (options.generate == "details.tree")
+            MSS(presenter_.set("action.generate.details", options.uri));
+        else if (options.generate == "structure.tree")
+            MSS(presenter_.set("action.generate.structure", options.uri));
 
         MSS_END();
     }
