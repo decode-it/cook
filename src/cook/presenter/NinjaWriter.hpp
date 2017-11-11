@@ -187,6 +187,15 @@ namespace cook { namespace presenter {
                         return true;
                     };
                     MSS(recipe.each_file(add_object, model::Owner::Anybody));
+                    {
+                        gubg::OnlyOnce add_pipe;
+                        for (const auto &lib: recipe.libraries())
+                        {
+                            if (add_pipe())
+                                os_ << " |";
+                            os_ << " " << archiver_->prepare_library(lib);
+                        }
+                    }
                     os_ << std::endl;
                     os_ << "    library_paths = " << linker_->prepare_library_paths(recipe.library_paths());
                     os_ << std::endl;
