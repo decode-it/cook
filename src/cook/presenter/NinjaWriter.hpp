@@ -157,12 +157,12 @@ namespace cook { namespace presenter {
                 oss << r.uri().str('\0', '_', '.');
                 return oss.str();
             };
-            auto write_recipe = [&](model::Recipe *recipe){
+            auto write_recipe = [&](const model::Recipe &recipe){
                 MSS_BEGIN(bool);
                 fo_ << std::endl;
-                fo_ << "# >> Recipe " << recipe->uri_hr() << std::endl;
-                fo_ << local_name(*recipe, "include_paths") << " =";
-                for (const auto &ip: recipe->include_paths())
+                fo_ << "# >> Recipe " << recipe.uri_hr() << std::endl;
+                fo_ << local_name(recipe, "include_paths") << " =";
+                for (const auto &ip: recipe.include_paths())
                     fo_ << " -I " << ip.string();
                 fo_ << std::endl;
                 auto write_compile = [&](const auto &file){
@@ -171,12 +171,12 @@ namespace cook { namespace presenter {
                         const auto obj_fn = object_fn(file);
                         fo_ << "build " << obj_fn << ": " << compile_rule(file) << " " << source_fn(file) << std::endl;
                         fo_ << "    defines = " << std::endl;
-                        fo_ << "    include_paths = $" << local_name(*recipe, "include_paths");
+                        fo_ << "    include_paths = $" << local_name(recipe, "include_paths");
                         auto add_ip_for_deps = [&](const model::Recipe &d){
                             fo_ << " $" << local_name(d, "include_paths");
                             return true;
                         };
-                        dag.each_out(recipe, add_ip_for_deps);
+                        dag.each_out(&recipe, add_ip_for_deps);
                         fo_ << std::endl;
                         fo_ << "    force_includes = " << std::endl;
                         fo_ << "    library_paths = " << std::endl;
@@ -184,20 +184,20 @@ namespace cook { namespace presenter {
                     }
                     return true;
                 };
-                MSS(recipe->each_file(write_compile, model::Owner::Me));
+                MSS(recipe.each_file(write_compile, model::Owner::Me));
                 if (false) {}
-                else if (recipe->type() == "executable")
+                else if (recipe.type() == "executable")
                 {
-                    fo_ << "build " << exe_fn(*recipe) << ": link ";
+                    fo_ << "build " << exe_fn(recipe) << ": link ";
                     auto add_object = [&](const auto &f){
                         if (f.type == model::FileType::Source)
                             fo_ << "$\n    " << object_fn(f) << " ";
                         return true;
                     };
-                    MSS(recipe->each_file(add_object, model::Owner::Anybody));
+                    MSS(recipe.each_file(add_object, model::Owner::Anybody));
                     fo_ << std::endl;
                 }
-                fo_ << "# << Recipe " << recipe->uri_hr() << std::endl;
+                fo_ << "# << Recipe " << recipe.uri_hr() << std::endl;
                 MSS_END();
             };
             dag.each_vertex<gubg::network::Direction::Backward>(write_recipe);

@@ -105,7 +105,7 @@ namespace cook { namespace model {
         }
 
         template <typename Ftor>
-        bool each_file(Ftor ftor, Owner::Type owner = Owner::Anybody)
+        bool each_file(Ftor ftor, Owner::Type owner = Owner::Anybody) const
         {
             MSS_BEGIN(bool);
             for (const auto &p: file_per_path_)
