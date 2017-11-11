@@ -5,3 +5,5 @@ book("func", fun(){
         add("src", "*.c")
     })
 })
+book("app", fun(){
+})

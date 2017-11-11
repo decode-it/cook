@@ -32,6 +32,7 @@ namespace cook {
 
         Model &model_;
         View &view_;
+        std::string script_fn_;
     };
 
 } 

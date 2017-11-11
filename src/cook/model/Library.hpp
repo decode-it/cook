@@ -3,11 +3,26 @@
 
 #include "cook/model/Book.hpp"
 #include "cook/model/Recipe.hpp"
+#include "cook/model/Uri.hpp"
 #include "gubg/network/DAG.hpp"
 
 namespace cook { namespace model { 
 
     using RecipeDAG = gubg::network::DAG<Recipe>;
+
+    using BookPath = std::vector<Book*>;
+    using ConstBookPath = std::vector<const Book*>;
+
+    template <typename Path>
+    inline void uri(std::ostream &os, const Path &path, const Recipe *recipe = nullptr)
+    {
+        Uri u;
+        for (auto ptr: path)
+            u.add_path_part(ptr->name());
+        if (recipe)
+            u.set_name(recipe->name());
+        u.stream(os, '/','/','.');
+    }
 
     class Library
     {
@@ -57,8 +72,8 @@ namespace cook { namespace model {
             };
             {
                 bool ok = true;
-                each([&](const BookPath &path, Recipe *recipe){ ok = ok && setup_uris(path, recipe); });
-                each([&](const BookPath &path, Recipe *recipe){ ok = ok && add_to_dag(path, recipe); });
+                each([&](const BookPath &path, Recipe *recipe){ ok = ok && setup_uris(path, recipe); return true; });
+                each([&](const BookPath &path, Recipe *recipe){ ok = ok && add_to_dag(path, recipe); return true; });
                 MSS(ok);
             }
 
@@ -71,6 +86,12 @@ namespace cook { namespace model {
         }
 
         Recipe *current_recipe() {return current_recipe_;}
+        Book *current_book()
+        {
+            if (path_.empty())
+                return nullptr;
+            return path_.back();
+        }
 
         void push(const std::string &name)
         {
@@ -94,17 +115,19 @@ namespace cook { namespace model {
         }
 
         template <typename Ftor>
-        void each(Ftor ftor) const
+        bool each(Ftor ftor) const
         {
             ConstBookPath path = {&root_};
-            each_(ftor, path);
+            return each_(ftor, path);
         }
         template <typename Ftor>
-        void each(Ftor ftor)
+        bool each(Ftor ftor)
         {
             BookPath path = {&root_};
-            each_(ftor, path);
+            return each_(ftor, path);
         }
+
+        const Book &root() const {return root_;}
 
         void stream(std::ostream &os) const
         {
@@ -115,24 +138,27 @@ namespace cook { namespace model {
                     recipe->stream(os);
                     else
                     path.back()->stream(os);
+                    return true;
                     });
         }
 
     private:
         template <typename Ftor, typename Path>
-        static void each_(Ftor ftor, Path &path)
+        static bool each_(Ftor ftor, Path &path)
         {
+            MSS_BEGIN(bool);
             for (auto &p: path.back()->book_per_name())
             {
                 path.push_back(&p.second);
-                ftor(path, nullptr);
+                MSS(ftor(path, nullptr));
                 for (auto &p: p.second.recipe_per_name())
                 {
-                    ftor(path, &p.second);
+                    MSS(ftor(path, &p.second));
                 }
-                each_(ftor, path);
+                MSS(each_(ftor, path));
                 path.pop_back();
             }
+            MSS_END();
         }
 
         Book root_{"ROOT_BOOK"};

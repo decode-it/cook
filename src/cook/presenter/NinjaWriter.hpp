@@ -150,11 +150,6 @@ namespace cook { namespace presenter {
                 oss << r.uri().str('\0', '_', '_') << "_" << name;
                 return oss.str();
             };
-            auto exe_fn = [&](const model::Recipe &r){
-                oss.str("");
-                oss << r.uri().str('\0', '_', '.');
-                return oss.str();
-            };
             auto write_recipe = [&](const model::Recipe &recipe){
                 MSS_BEGIN(bool);
                 os_ << std::endl;
@@ -186,7 +181,7 @@ namespace cook { namespace presenter {
                 if (false) {}
                 else if (recipe.type() == "executable")
                 {
-                    os_ << "build " << exe_fn(recipe) << ": link ";
+                    os_ << "build " << recipe.output().filename.string() << ": link ";
                     auto add_object = [&](const auto &f){
                         if (f.type == model::FileType::Source)
                             os_ << "$\n    " << object_fn(f) << " ";
