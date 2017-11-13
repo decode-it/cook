@@ -1,0 +1,15 @@
+root.print()
+def setup(b){
+    print(">> setup")
+    b.print()
+    print("<< setup")
+}
+auto bb
+root.book("aaa", fun[bb](b){
+    b.print()
+    setup(b)
+    bb = b
+})
+print("before")
+bb.print()
+print("after")

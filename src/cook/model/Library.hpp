@@ -5,6 +5,7 @@
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Uri.hpp"
 #include "gubg/network/DAG.hpp"
+#include "gubg/Strange.hpp"
 
 namespace cook { namespace model { 
 
@@ -21,7 +22,7 @@ namespace cook { namespace model {
             u.add_path_part(ptr->name());
         if (recipe)
             u.set_name(recipe->name());
-        u.stream(os, '/','/','.');
+        u.stream(os, '/','/');
     }
 
     class Library
@@ -29,7 +30,7 @@ namespace cook { namespace model {
     public:
         Library()
         {
-            path_.push_back(&root_);
+            path_.push_back(&root_book_);
         }
 
         bool get(RecipeDAG &dag, const std::string &rn)
@@ -62,8 +63,8 @@ namespace cook { namespace model {
                     MSS_BEGIN(bool);
                     auto to = recipe_per_uri[rn];
                     std::cout << C(recipe->uri_hr())C(to)C(rn) << std::endl;
-                    MSS(!!to);
-                    MSS(dag.add_edge(recipe, to), (std::cout << "Failed to add edge from " << recipe->uri_hr() << " to " << to->uri_hr() << std::endl, dag.stream(std::cout, [](const Recipe &r){return r.uri_hr();})));
+                    MSS(!!to, std::cout << "Error: Did not find destination " << rn << std::endl);
+                    MSS(dag.add_edge(recipe, to), (std::cout << "Error: Failed to add edge from " << recipe->uri_hr() << " to " << to->uri_hr() << std::endl, dag.stream(std::cout, [](const Recipe &r){return r.uri_hr();})));
                     MSS_END();
                 };
                 MSS(recipe->each_dependency(add_edge));
@@ -85,6 +86,20 @@ namespace cook { namespace model {
             MSS_END();
         }
 
+        Book *goc_book(const std::string &uri_hr)
+        {
+            gubg::Strange strange(uri_hr);
+            if (!strange.pop_if('/'))
+                return nullptr;
+            Book *book = &root_book_;
+            std::string name;
+            while (strange.pop_until(name, '/'))
+            {
+                book = &book->goc_book(name);
+            }
+            return book;
+        }
+
         Recipe *current_recipe() {return current_recipe_;}
         Book *current_book()
         {
@@ -103,11 +118,22 @@ namespace cook { namespace model {
             path_.pop_back();
         }
 
-        bool create_recipe(const std::string &name)
+        Recipe *create_recipe(const std::string &uri_hr)
         {
-            Book &book = *path_.back();
-            current_recipe_ = book.create_recipe(name);
-            return !!current_recipe_;
+            gubg::Strange strange(uri_hr);
+            if (!strange.pop_if('/'))
+                return nullptr;
+            Book *book = &root_book_;
+            std::string name;
+            while (strange.pop_until(name, '/'))
+            {
+                book = &book->goc_book(name);
+            }
+
+            if (!book)
+                return nullptr;
+
+            return book->create_recipe(strange.str());
         }
         void close_recipe()
         {
@@ -117,17 +143,17 @@ namespace cook { namespace model {
         template <typename Ftor>
         bool each(Ftor ftor) const
         {
-            ConstBookPath path = {&root_};
+            ConstBookPath path = {&root_book_};
             return each_(ftor, path);
         }
         template <typename Ftor>
         bool each(Ftor ftor)
         {
-            BookPath path = {&root_};
+            BookPath path = {&root_book_};
             return each_(ftor, path);
         }
 
-        const Book &root() const {return root_;}
+        const Book &root() const {return root_book_;}
 
         void stream(std::ostream &os) const
         {
@@ -161,7 +187,7 @@ namespace cook { namespace model {
             MSS_END();
         }
 
-        Book root_{"ROOT_BOOK"};
+        Book root_book_{"ROOT_BOOK"};
         BookPath path_;
         Recipe *current_recipe_ = nullptr;
     };

@@ -17,7 +17,7 @@ namespace cook { namespace model {
         Book() {}
         Book(std::string name): name_(name) {}
 
-        std::string uri_hr() const {return uri_.str('/','/','.');}
+        std::string uri_hr() const {return uri_.str('/','/');}
 
         const std::string &name() const {return name_;}
         std::string display_name() const

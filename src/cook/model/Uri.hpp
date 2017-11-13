@@ -27,23 +27,23 @@ namespace cook { namespace model {
             return path_.back();
         }
 
-        void stream(std::ostream &os, char root, char path_sep, char name_sep) const
+        void stream(std::ostream &os, char root, char path_sep) const
         {
+            add_separator_(os, root);
             for (unsigned int ix = 0; ix < path_.size(); ++ix)
             {
-                add_separator_(os, (ix == 0 ? root : path_sep));
                 os << path_[ix];
+                add_separator_(os, path_sep);
             }
             if (!name_.empty())
             {
-                add_separator_(os, name_sep);
                 os << name_;
             }
         }
-        std::string str(char root, char path_sep, char name_sep) const
+        std::string str(char root, char path_sep) const
         {
             std::ostringstream oss;
-            stream(oss, root, path_sep, name_sep);
+            stream(oss, root, path_sep);
             return oss.str();
         }
 

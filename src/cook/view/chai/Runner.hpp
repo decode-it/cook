@@ -3,6 +3,7 @@
 
 #include "cook/view/chai/Engine.hpp"
 #include "cook/view/Logger.hpp"
+#include "cook/view/Proxy.hpp"
 #include "cook/presenter/Interface.hpp"
 #include "gubg/mss.hpp"
 #include <vector>
@@ -116,7 +117,16 @@ namespace cook { namespace view { namespace chai {
         void setup_chai_functions_()
         {
             auto &chai = chai_engine_.raw();
+
             chai.add(chaiscript::fun(&Runner::chai_include, this), "include");
+
+            chai.add(chaiscript::user_type<proxy::Book>(), "Book");
+            chai.add(chaiscript::constructor<proxy::Book(const proxy::Book&)>(), "Book");
+            chai.add(chaiscript::fun(&proxy::Book::print), "print");
+            chai.add(chaiscript::fun(&proxy::Book::chai_book), "book");
+
+            chai.add(chaiscript::var(root_book_), "root");
+
             chai.add(chaiscript::fun(&Runner::chai_book, this), "book");
             chai.add(chaiscript::fun(&Runner::chai_recipe_3, this), "recipe");
             chai.add(chaiscript::fun(&Runner::chai_recipe_2, this), "recipe");
@@ -156,6 +166,8 @@ namespace cook { namespace view { namespace chai {
         using ScriptStack = std::vector<std::filesystem::path>;
         ScriptStack script_stack_;
         bool execute_ok_ = true;
+
+        proxy::Book root_book_{presenter_};
     };
 
 } } } 

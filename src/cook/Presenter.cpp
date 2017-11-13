@@ -24,6 +24,11 @@ namespace cook {
             else if (key.pop_if("book."))
             {
                 if (false) {}
+                else if (key.pop_if("create"))
+                {
+                    auto book = model_.library.goc_book(value);
+                    MSS(!!book, view_.log(Error) << "Could not create book " << value << std::endl);
+                }
                 else if (key.pop_if("push"))
                 {
                     model_.library.push(value);
@@ -40,7 +45,7 @@ namespace cook {
                 else if (key.pop_if("create"))
                 {
                     const auto name = value;
-                    MSS(model_.library.create_recipe(name), view_.log(Error) << "Recipe " << name << " already exists" << std::endl); 
+                    MSS(!!model_.library.create_recipe(name), view_.log(Error) << "Recipe " << name << " already exists" << std::endl); 
                     auto recipe = model_.library.current_recipe();
                     MSS(!!recipe, view_.log(Error) << "No current recipe" << std::endl);
                     MSS(recipe->set("script_filename", script_fn_), view_.log(Error) << "Failed to set the script filename" << std::endl); 
@@ -145,19 +150,22 @@ namespace cook {
             else if (key.pop_if("recipe."))
             {
                 if (false) {}
-                else
+                else if (key.pop_if("create"))
+                {
+                    const auto &args = value;
+                    MSS(args.size() >= 3, view_.log(Error) << "Not enough arguments for creating a recipe" << std::endl);
+                    auto recipe = model_.library.create_recipe(args[0]);
+                    MSS(!!recipe, view_.log(Error) << "Could not create recipe " << args[0] << std::endl);
+                }
+                else if (key.pop_if("add"))
                 {
                     auto recipe = model_.library.current_recipe();
                     MSS(!!recipe, view_.log(Error) << "No current recipe" << std::endl);
-                    if (false) {}
-                    else if (key.pop_if("add"))
-                    {
-                        const auto &args = value;
-                        MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
-                        recipe->add(args[0], args[1]);
-                    }
-                    else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on recipe" << std::endl);}
+                    const auto &args = value;
+                    MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
+                    recipe->add(args[0], args[1]);
                 }
+                else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on recipe" << std::endl);}
             }
             else
             {

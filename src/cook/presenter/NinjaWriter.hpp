@@ -146,7 +146,7 @@ namespace cook { namespace presenter {
             };
             auto local_name = [&](const model::Recipe &r, const char *name){
                 oss.str("");
-                oss << r.uri().str('\0', '_', '_') << "_" << name;
+                oss << r.uri().str('\0', '_') << "_" << name;
                 return oss.str();
             };
             auto write_recipe = [&](const model::Recipe &recipe){
