@@ -131,7 +131,7 @@ namespace cook { namespace presenter {
             std::ostringstream oss;
             auto object_fn = [&](const auto &file){
                 oss.str("");
-                oss << file.path.string() << ".obj";
+                oss << "${builddir}" << std::filesystem::path::preferred_separator << file.path.relative_path().string() << ".obj";
                 return escape_(oss.str());
             };
             auto compile_rule = [](const auto &file){
