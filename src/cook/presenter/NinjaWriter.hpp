@@ -189,7 +189,7 @@ namespace cook { namespace presenter {
                     MSS(recipe.each_file(add_object, model::Owner::Anybody));
                     {
                         gubg::OnlyOnce add_pipe;
-                        for (const auto &lib: recipe.libraries())
+                        for (const auto &lib: recipe.libraries(model::Owner::Me | model::Owner::Deps))
                         {
                             if (add_pipe())
                                 os_ << " |";
@@ -199,7 +199,7 @@ namespace cook { namespace presenter {
                     os_ << std::endl;
                     os_ << "    library_paths = " << linker_->prepare_library_paths(recipe.library_paths());
                     os_ << std::endl;
-                    os_ << "    libraries = " << linker_->prepare_libraries(recipe.libraries());
+                    os_ << "    libraries = " << linker_->prepare_libraries(recipe.libraries(model::Owner::Anybody));
                     os_ << std::endl;
                 }
                 else if (recipe.type() == "library")

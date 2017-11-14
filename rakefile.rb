@@ -117,8 +117,8 @@ task :test do
     case :ninja
     when :ninja
         sh "./bcook.exe -f test/app /app/exe"
-        sh "cat test.ninja"
-        sh "ninja -f test.ninja"
+        sh "cat build.ninja"
+        sh "ninja"
     when :details
         sh "./bcook.exe -f test/app -g details.tree /app/exe"
     when :structure

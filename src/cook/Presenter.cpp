@@ -57,7 +57,7 @@ namespace cook {
                     const auto rn = value;
                     MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
                     {
-                        std::ofstream fo("test.ninja");
+                        std::ofstream fo("build.ninja");
                         presenter::NinjaWriter nw(fo);
                         MSS(nw.write(model_.env, model_.toolchain, dag));
                     }
@@ -139,6 +139,12 @@ namespace cook {
                         MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for setting the display name" << std::endl);
                         const auto dn = args[1];
                         MSS(recipe->set("display_name", dn), view_.log(Error) << "Failed to set the display name to " << dn << std::endl); 
+                    }
+                    else if (key.pop_if("library"))
+                    {
+                        MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for adding a library" << std::endl);
+                        const auto name = args[1];
+                        MSS(recipe->set("library", name), view_.log(Error) << "Failed to add library " << name << std::endl); 
                     }
                     else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on recipe" << std::endl);}
                 }

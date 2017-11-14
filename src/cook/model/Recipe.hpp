@@ -31,7 +31,7 @@ namespace cook { namespace model {
 
     struct Owner
     {
-        enum Type {Nobody = 0x00, Me = 0x01, Deps = 0x02, Anybody = 0x03};
+        enum Type {Nobody = 0x00, Me = 0x01, Deps = 0x02, External = 0x04, Anybody = 0x07};
     };
 
     struct File
@@ -49,7 +49,14 @@ namespace cook { namespace model {
     };
     using FilePerPath = std::map<std::filesystem::path, File>;
 
-    using Libraries = model::toolchain::Libraries;
+    struct LibraryInfo
+    {
+        std::string name;
+        Owner::Type owner = Owner::Nobody;
+        LibraryInfo() {}
+        LibraryInfo(const std::string &name, Owner::Type owner): name(name), owner(owner) {}
+    };
+    using Libraries = std::vector<LibraryInfo>;
     using LibraryPaths = model::toolchain::LibraryPaths;
 
     class Recipe
@@ -113,6 +120,7 @@ namespace cook { namespace model {
             else if (key == "script_filename") { script_fn_ = value; }
             else if (key == "depends_on") { deps_.insert(value); }
             else if (key == "display_name") { display_name_ = value; }
+            else if (key == "library") { add_library(value, Owner::External); }
             MSS_END();
         }
 
@@ -142,11 +150,11 @@ namespace cook { namespace model {
             gubg::file::each_glob(pattern, add_file, dir);
         }
 
-        void add_library(const std::string &lib)
+        void add_library(const std::string &lib, Owner::Type owner)
         {
-            if (std::find_if(RANGE(libraries_), [&](const auto &l){return lib == l;}) != libraries_.end())
+            if (std::find_if(RANGE(libraries_), [&](const auto &info){return lib == info.name;}) != libraries_.end())
                 return;
-            libraries_.push_back(lib);
+            libraries_.push_back(LibraryInfo{lib, owner});
         }
         void add_library_path(const std::filesystem::path &path)
         {
@@ -158,8 +166,18 @@ namespace cook { namespace model {
         bool merge(const Recipe &src)
         {
             MSS_BEGIN(bool);
-            for (const auto &lib: libraries_)
-                add_library(lib);
+            for (const auto &info: libraries_)
+            {
+                Owner::Type owner = Owner::Nobody;
+                switch (info.owner)
+                {
+                    case Owner::Me:
+                    case Owner::Deps:
+                        owner = Owner::Deps;
+                        break;
+                }
+                add_library(info.name, info.owner);
+            }
             for (const auto &path: library_paths_)
                 add_library_path(path);
             if (src.type().empty())
@@ -172,7 +190,7 @@ namespace cook { namespace model {
             }
             else if (src.type() == "library")
             {
-                add_library(src.output().filename.string());
+                add_library(src.output().filename.string(), Owner::Me);
                 add_library_path("./");
             }
             MSS_END();
@@ -190,7 +208,15 @@ namespace cook { namespace model {
             MSS_END();
         }
 
-        Libraries libraries() const {return libraries_;}
+        toolchain::Libraries libraries(Owner::Type owner) const
+        {
+            toolchain::Libraries libs;
+            for (const auto &info: libraries_)
+                if (info.owner & owner)
+                    libs.push_back(info.name);
+            return libs;
+        }
+        toolchain::Libraries libraries(int owner) const {return libraries((Owner::Type)owner);}
         LibraryPaths library_paths() const {return library_paths_;}
 
         template <typename Ftor>

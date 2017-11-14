@@ -61,6 +61,13 @@ namespace cook { namespace view { namespace chai {
             info_.presenter.set("model.recipe.display_name", args);
             info_.logger.log(Info) << info_.indent() << "<< Setting display name to " << dn << std::endl;
         }
+        void chai_library(const std::string &name)
+        {
+            info_.logger.log(Info) << info_.indent() << ">> Adding library " << name << std::endl;
+            const Strings args = {uri_.str(), name};
+            info_.presenter.set("model.recipe.library", args);
+            info_.logger.log(Info) << info_.indent() << "<< Adding library " << name << std::endl;
+        }
 
     private:
         RunnerInfo &info_;
@@ -180,6 +187,7 @@ namespace cook { namespace view { namespace chai {
             chai.add(chaiscript::fun(&Recipe::chai_add_1), "add");
             chai.add(chaiscript::fun(&Recipe::chai_depends_on), "depends_on");
             chai.add(chaiscript::fun(&Recipe::chai_display_name), "display_name");
+            chai.add(chaiscript::fun(&Recipe::chai_library), "library");
         }
 
         std::filesystem::path expand_(const std::string &file_or_dir)
