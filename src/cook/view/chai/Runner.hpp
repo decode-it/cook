@@ -10,10 +10,19 @@
 
 namespace cook { namespace view { namespace chai { 
 
+    struct RunnerInfo
+    {
+        presenter::Reference presenter;
+        Logger &logger;
+        std::filesystem::path working_directory;
+
+        RunnerInfo(presenter::Reference presenter, Logger &logger): presenter(presenter), logger(logger) {}
+    };
+
     class Runner
     {
     public:
-        Runner(presenter::Reference presenter, Logger &logger): presenter_(presenter), logger_(logger)
+        Runner(presenter::Reference presenter, Logger &logger): presenter_(presenter), logger_(logger), runner_info_{presenter, logger}
         {
             setup_chai_functions_();
         }
@@ -156,6 +165,8 @@ namespace cook { namespace view { namespace chai {
         using ScriptStack = std::vector<std::filesystem::path>;
         ScriptStack script_stack_;
         bool execute_ok_ = true;
+
+        RunnerInfo runner_info_;
     };
 
 } } } 

@@ -21,7 +21,7 @@ namespace cook { namespace model {
             u.add_path_part(ptr->name());
         if (recipe)
             u.set_name(recipe->name());
-        u.stream(os, '/','/','.');
+        u.stream(os, '/','/');
     }
 
     class Library
@@ -62,8 +62,8 @@ namespace cook { namespace model {
                     MSS_BEGIN(bool);
                     auto to = recipe_per_uri[rn];
                     std::cout << C(recipe->uri_hr())C(to)C(rn) << std::endl;
-                    MSS(!!to);
-                    MSS(dag.add_edge(recipe, to), (std::cout << "Failed to add edge from " << recipe->uri_hr() << " to " << to->uri_hr() << std::endl, dag.stream(std::cout, [](const Recipe &r){return r.uri_hr();})));
+                    MSS(!!to, std::cout << "Error: Could not find dependency " << rn << std::endl);
+                    MSS(dag.add_edge(recipe, to), (std::cout << "Error: Failed to add edge from " << recipe->uri_hr() << " to " << to->uri_hr() << std::endl, dag.stream(std::cout, [](const Recipe &r){return r.uri_hr();})));
                     MSS_END();
                 };
                 MSS(recipe->each_dependency(add_edge));
