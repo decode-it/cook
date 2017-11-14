@@ -1,9 +1,9 @@
-book("func", fun(){
-    recipe("lib", "library",  fun(){
+root.book("func", fun(b){
+    b.recipe("lib", "library",  fun(r){
         //Adding files with dir and globbing
-        add("inc", "*.h")
-        add("src", "*.c")
+        r.add("inc", "*.h")
+        r.add("src", "*.c")
     })
 })
-book("app", fun(){
+root.book("app", fun(b){
 })

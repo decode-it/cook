@@ -1,12 +1,16 @@
 include("func/func.chai")
 
-book("app", fun(){
-    recipe("exe", "executable", fun(){
-        display_name("my test application")
-        add("main.cpp")
-        depends_on("/func/lib")
+root.book("app", fun(b){
+    b.print()
+    b.recipe("exe", "executable", fun(r){
+        r.display_name("my test application")
+        r.add("main.cpp")
+        r.depends_on("/func/lib")
     })
-    recipe("unused", "executable", fun(){
-        add("main.cpp")
+    b.recipe("unused", "executable", fun(r){
+        r.add("main.cpp")
+    })
+    b.book("ut", fun(b){
+        b.print()
     })
 })

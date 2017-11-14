@@ -4,6 +4,7 @@
 #include "cook/view/chai/Engine.hpp"
 #include "cook/view/Logger.hpp"
 #include "cook/presenter/Interface.hpp"
+#include "cook/model/Uri.hpp"
 #include "gubg/mss.hpp"
 #include <vector>
 #include <functional>
@@ -12,11 +13,105 @@ namespace cook { namespace view { namespace chai {
 
     struct RunnerInfo
     {
+        using ScriptStack = std::vector<std::filesystem::path>;
+        ScriptStack script_stack;
         presenter::Reference presenter;
         Logger &logger;
-        std::filesystem::path working_directory;
 
         RunnerInfo(presenter::Reference presenter, Logger &logger): presenter(presenter), logger(logger) {}
+
+        std::string indent() const {return std::string(script_stack.size()*2, ' ');}
+        std::filesystem::path current_script() const { return script_stack.back(); }
+        std::filesystem::path working_directory() const { return std::filesystem::current_path() / current_script().parent_path(); }
+    };
+
+    class Recipe
+    {
+    public:
+        Recipe(RunnerInfo &info): info_(info) {}
+        Recipe(RunnerInfo &info, model::Uri uri): info_(info), uri_(uri) {}
+
+        void chai_add_2(const std::string &dir, const std::string &pattern)
+        {
+            info_.logger.log(Info) << info_.indent() << ">> Add files from " << dir << " // " << pattern << std::endl;
+            Strings args = {dir, pattern};
+            if (!info_.presenter.set("model.recipe.add", args))
+            {
+                std::ostringstream oss; oss << "No current recipe when adding files";
+                throw chaiscript::exception::eval_error(oss.str());
+            }
+            info_.logger.log(Info) << info_.indent() << "<< Add files from " << dir << " // " << pattern << std::endl;
+        }
+        void chai_add_1(const std::string &pattern) { chai_add_2("", pattern); }
+        void chai_depends_on(const std::string &rn)
+        {
+            info_.logger.log(Info) << info_.indent() << ">> Adding dependency on " << rn << std::endl;
+            info_.presenter.set("model.recipe.depends_on", rn);
+            info_.logger.log(Info) << info_.indent() << "<< Adding dependency on " << rn << std::endl;
+        }
+        void chai_display_name(const std::string &dn)
+        {
+            info_.logger.log(Info) << info_.indent() << ">> Setting display name to " << dn << std::endl;
+            info_.presenter.set("model.recipe.display_name", dn);
+            info_.logger.log(Info) << info_.indent() << "<< Setting display name to " << dn << std::endl;
+        }
+
+    private:
+        RunnerInfo &info_;
+        model::Uri uri_;
+    };
+
+    class Book
+    {
+    public:
+        Book(RunnerInfo &info): info_(info) {}
+        Book(RunnerInfo &info, model::Uri uri): info_(info), uri_(uri) {}
+
+        void chai_print() const
+        {
+            std::cout << "Book " << uri_.str('/','/') << std::endl;
+        }
+        void chai_book(const std::string &name, std::function<void(Book &)> callback)
+        {
+            info_.logger.log(Info) << info_.indent() << ">> Book " << name << std::endl;
+            model::Uri uri = uri_;
+            uri.add_path_part(name);
+            Book book{info_, uri};
+            info_.presenter.set("model.book.push", name);
+            callback(book);
+            info_.presenter.set("model.book.pop", name);
+            info_.logger.log(Info) << info_.indent() << "<< Book " << name << std::endl;
+        }
+        void chai_recipe_3(const std::string &name, const std::string &type, std::function<void(Recipe &)> callback)
+        {
+            info_.logger.log(Info) << info_.indent() << ">> Recipe " << name << " for type \"" << type << "\"" << std::endl;
+            if (!info_.presenter.set("model.recipe.create", name))
+            {
+                std::ostringstream oss; oss << "Recipe \"" << name << "\" already exists";
+                throw chaiscript::exception::eval_error(oss.str());
+            }
+            if (!info_.presenter.set("model.recipe.type", type))
+            {
+                std::ostringstream oss; oss << "Unsupported recipe type \"" << type << "\" for \"" << name << "\"";
+                throw chaiscript::exception::eval_error(oss.str());
+            }
+            if (!info_.presenter.set("model.recipe.working_directory", info_.working_directory().string()))
+            {
+                std::ostringstream oss; oss << "Unsupported recipe type \"" << type << "\" for \"" << name << "\"";
+                throw chaiscript::exception::eval_error(oss.str());
+            }
+            model::Uri uri = uri_;
+            uri.set_name(name);
+            Recipe recipe{info_, uri};
+            callback(recipe);
+            info_.presenter.set("model.recipe.close", name);
+            info_.logger.log(Info) << info_.indent() << "<< Recipe " << name << " for type \"" << type << "\"" << std::endl;
+        }
+        void chai_recipe_2(const std::string &name, std::function<void(Recipe &)> callback) { chai_recipe_3(name, "", callback); }
+
+    private:
+        RunnerInfo &info_;
+        model::Uri uri_;
     };
 
     class Runner
@@ -30,13 +125,13 @@ namespace cook { namespace view { namespace chai {
         {
             if (!execute_ok_)
             {
-                logger_.log(Info) << indent_() << "Skipping " << file_or_dir << ", execution went wrong" << std::endl;
+                logger_.log(Info) << runner_info_.indent() << "Skipping " << file_or_dir << ", execution went wrong" << std::endl;
                 return execute_ok_;
             }
 
             const auto script_fn = expand_(file_or_dir);
-            logger_.log(Info) << indent_() << ">> Script " << script_fn << std::endl;
-            script_stack_.push_back(script_fn);
+            logger_.log(Info) << runner_info_.indent() << ">> Script " << script_fn << std::endl;
+            runner_info_.script_stack.push_back(script_fn);
             presenter_.set("script.filename", script_fn);
 
             std::ostream *os = nullptr;
@@ -52,101 +147,46 @@ namespace cook { namespace view { namespace chai {
             if (!!os)
             {
                 execute_ok_ = false;
-                for (auto ix = script_stack_.size(); ix-- > 0;)
-                    *os << ix << "\t" << script_stack_[ix] << std::endl;
+                for (auto ix = runner_info_.script_stack.size(); ix-- > 0;)
+                    *os << ix << "\t" << runner_info_.script_stack[ix] << std::endl;
             }
 
-            script_stack_.pop_back();
-            presenter_.set("script.filename", (script_stack_.empty() ? std::string{} : script_stack_.back().string()));
-            logger_.log(Info) << indent_() << "<< Script " << script_fn << (execute_ok_ ? " (OK)" : " (KO)") << std::endl;
+            runner_info_.script_stack.pop_back();
+            presenter_.set("script.filename", (runner_info_.script_stack.empty() ? std::string{} : runner_info_.script_stack.back().string()));
+            logger_.log(Info) << runner_info_.indent() << "<< Script " << script_fn << (execute_ok_ ? " (OK)" : " (KO)") << std::endl;
 
             return execute_ok_;
         }
 
         //Functions called from chaiscript
         void chai_include(const std::string &file_or_dir) {execute(file_or_dir);}
-        void chai_book(const std::string &name, std::function<void()> callback)
-        {
-            logger_.log(Info) << indent_() << ">> Book " << name << std::endl;
-            presenter_.set("model.book.push", name);
-            callback();
-            presenter_.set("model.book.pop", name);
-            logger_.log(Info) << indent_() << "<< Book " << name << std::endl;
-        }
-        void chai_recipe_3(const std::string &name, const std::string &type, std::function<void()> callback)
-        {
-            logger_.log(Info) << indent_() << ">> Recipe " << name << " for type \"" << type << "\"" << std::endl;
-            if (!presenter_.set("model.recipe.create", name))
-            {
-                std::ostringstream oss; oss << "Recipe \"" << name << "\" already exists";
-                throw chaiscript::exception::eval_error(oss.str());
-            }
-            if (!presenter_.set("model.recipe.type", type))
-            {
-                std::ostringstream oss; oss << "Unsupported recipe type \"" << type << "\" for \"" << name << "\"";
-                throw chaiscript::exception::eval_error(oss.str());
-            }
-            if (!presenter_.set("model.recipe.working_directory", working_directory().string()))
-            {
-                std::ostringstream oss; oss << "Unsupported recipe type \"" << type << "\" for \"" << name << "\"";
-                throw chaiscript::exception::eval_error(oss.str());
-            }
-            callback();
-            presenter_.set("model.recipe.close", name);
-            logger_.log(Info) << indent_() << "<< Recipe " << name << " for type \"" << type << "\"" << std::endl;
-        }
-        void chai_recipe_2(const std::string &name, std::function<void()> callback) { chai_recipe_3(name, "", callback); }
-        void chai_add_2(const std::string &dir, const std::string &pattern)
-        {
-            logger_.log(Info) << indent_() << ">> Add files from " << dir << " // " << pattern << std::endl;
-            Strings args = {dir, pattern};
-            if (!presenter_.set("model.recipe.add", args))
-            {
-                std::ostringstream oss; oss << "No current recipe when adding files";
-                throw chaiscript::exception::eval_error(oss.str());
-            }
-            logger_.log(Info) << indent_() << "<< Add files from " << dir << " // " << pattern << std::endl;
-        }
-        void chai_add_1(const std::string &pattern) { chai_add_2("", pattern); }
-        void chai_depends_on(const std::string &rn)
-        {
-            logger_.log(Info) << indent_() << ">> Adding dependency on " << rn << std::endl;
-            presenter_.set("model.recipe.depends_on", rn);
-            logger_.log(Info) << indent_() << "<< Adding dependency on " << rn << std::endl;
-        }
-        void chai_display_name(const std::string &dn)
-        {
-            logger_.log(Info) << indent_() << ">> Setting display name to " << dn << std::endl;
-            presenter_.set("model.recipe.display_name", dn);
-            logger_.log(Info) << indent_() << "<< Setting display name to " << dn << std::endl;
-        }
 
     private:
         void setup_chai_functions_()
         {
             auto &chai = chai_engine_.raw();
             chai.add(chaiscript::fun(&Runner::chai_include, this), "include");
-            chai.add(chaiscript::fun(&Runner::chai_book, this), "book");
-            chai.add(chaiscript::fun(&Runner::chai_recipe_3, this), "recipe");
-            chai.add(chaiscript::fun(&Runner::chai_recipe_2, this), "recipe");
-            chai.add(chaiscript::fun(&Runner::chai_add_2, this), "add");
-            chai.add(chaiscript::fun(&Runner::chai_add_1, this), "add");
-            chai.add(chaiscript::fun(&Runner::chai_depends_on, this), "depends_on");
-            chai.add(chaiscript::fun(&Runner::chai_display_name, this), "display_name");
+            chai.add(chaiscript::var(root_book_), "root");
+            chai.add(chaiscript::fun(&Book::chai_print), "print");
+            chai.add(chaiscript::fun(&Book::chai_book), "book");
+            chai.add(chaiscript::fun(&Book::chai_recipe_3), "recipe");
+            chai.add(chaiscript::fun(&Book::chai_recipe_2), "recipe");
+            chai.add(chaiscript::fun(&Recipe::chai_add_2), "add");
+            chai.add(chaiscript::fun(&Recipe::chai_add_1), "add");
+            chai.add(chaiscript::fun(&Recipe::chai_depends_on), "depends_on");
+            chai.add(chaiscript::fun(&Recipe::chai_display_name), "display_name");
         }
 
-        std::filesystem::path current_script_() const { return script_stack_.back(); }
-        std::filesystem::path working_directory() const { return std::filesystem::current_path() / current_script_().parent_path(); }
         std::filesystem::path expand_(const std::string &file_or_dir)
         {
             std::filesystem::path script_fn;
 
             const std::filesystem::path fod_path(file_or_dir);
 
-            if (script_stack_.empty() || fod_path.is_absolute())
+            if (runner_info_.script_stack.empty() || fod_path.is_absolute())
                 script_fn = fod_path;
             else
-                script_fn = script_stack_.back().parent_path() / fod_path;
+                script_fn = runner_info_.script_stack.back().parent_path() / fod_path;
 
             if (script_fn.empty())
                 script_fn = std::filesystem::path("recipes.chai");
@@ -155,18 +195,17 @@ namespace cook { namespace view { namespace chai {
 
             return script_fn;
         }
-        std::string indent_() const {return std::string(script_stack_.size()*2, ' ');}
 
         presenter::Reference presenter_;
         Logger &logger_;
 
         cook::view::chai::Engine chai_engine_;
 
-        using ScriptStack = std::vector<std::filesystem::path>;
-        ScriptStack script_stack_;
         bool execute_ok_ = true;
 
         RunnerInfo runner_info_;
+
+        Book root_book_{runner_info_};
     };
 
 } } } 
