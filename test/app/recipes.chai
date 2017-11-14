@@ -1,6 +1,8 @@
 include("func/func.chai")
 
-root.book("app", fun(b){
+auto bb
+root.book("app", fun[bb](b){
+    bb = b
     b.print()
     b.recipe("exe", "executable", fun(r){
         r.display_name("my test application")
@@ -13,4 +15,9 @@ root.book("app", fun(b){
     b.book("ut", fun(b){
         b.print()
     })
+})
+print("This is a stored book")
+bb.print()
+bb.recipe("dll", fun(r){
+    r.print()
 })

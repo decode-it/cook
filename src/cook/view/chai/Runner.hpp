@@ -31,13 +31,17 @@ namespace cook { namespace view { namespace chai {
         Recipe(RunnerInfo &info): info_(info) {}
         Recipe(RunnerInfo &info, model::Uri uri): info_(info), uri_(uri) {}
 
+        void chai_print() const
+        {
+            std::cout << "Recipe " << uri_.str('/','/') << std::endl;
+        }
         void chai_add_2(const std::string &dir, const std::string &pattern)
         {
             info_.logger.log(Info) << info_.indent() << ">> Add files from " << dir << " // " << pattern << std::endl;
-            Strings args = {dir, pattern};
+            const Strings args = {uri_.str(), dir, pattern};
             if (!info_.presenter.set("model.recipe.add", args))
             {
-                std::ostringstream oss; oss << "No current recipe when adding files";
+                std::ostringstream oss; oss << "Could not add files";
                 throw chaiscript::exception::eval_error(oss.str());
             }
             info_.logger.log(Info) << info_.indent() << "<< Add files from " << dir << " // " << pattern << std::endl;
@@ -46,13 +50,15 @@ namespace cook { namespace view { namespace chai {
         void chai_depends_on(const std::string &rn)
         {
             info_.logger.log(Info) << info_.indent() << ">> Adding dependency on " << rn << std::endl;
-            info_.presenter.set("model.recipe.depends_on", rn);
+            const Strings args = {uri_.str(), rn};
+            info_.presenter.set("model.recipe.depends_on", args);
             info_.logger.log(Info) << info_.indent() << "<< Adding dependency on " << rn << std::endl;
         }
         void chai_display_name(const std::string &dn)
         {
             info_.logger.log(Info) << info_.indent() << ">> Setting display name to " << dn << std::endl;
-            info_.presenter.set("model.recipe.display_name", dn);
+            const Strings args = {uri_.str(), dn};
+            info_.presenter.set("model.recipe.display_name", args);
             info_.logger.log(Info) << info_.indent() << "<< Setting display name to " << dn << std::endl;
         }
 
@@ -76,35 +82,24 @@ namespace cook { namespace view { namespace chai {
             info_.logger.log(Info) << info_.indent() << ">> Book " << name << std::endl;
             model::Uri uri = uri_;
             uri.add_path_part(name);
+            info_.presenter.set("model.book.create", uri.str());
             Book book{info_, uri};
-            info_.presenter.set("model.book.push", name);
             callback(book);
-            info_.presenter.set("model.book.pop", name);
             info_.logger.log(Info) << info_.indent() << "<< Book " << name << std::endl;
         }
         void chai_recipe_3(const std::string &name, const std::string &type, std::function<void(Recipe &)> callback)
         {
             info_.logger.log(Info) << info_.indent() << ">> Recipe " << name << " for type \"" << type << "\"" << std::endl;
-            if (!info_.presenter.set("model.recipe.create", name))
-            {
-                std::ostringstream oss; oss << "Recipe \"" << name << "\" already exists";
-                throw chaiscript::exception::eval_error(oss.str());
-            }
-            if (!info_.presenter.set("model.recipe.type", type))
-            {
-                std::ostringstream oss; oss << "Unsupported recipe type \"" << type << "\" for \"" << name << "\"";
-                throw chaiscript::exception::eval_error(oss.str());
-            }
-            if (!info_.presenter.set("model.recipe.working_directory", info_.working_directory().string()))
-            {
-                std::ostringstream oss; oss << "Unsupported recipe type \"" << type << "\" for \"" << name << "\"";
-                throw chaiscript::exception::eval_error(oss.str());
-            }
             model::Uri uri = uri_;
             uri.set_name(name);
+            const Strings args = {uri.str(), type, info_.working_directory().string()};
+            if (!info_.presenter.set("model.recipe.create", args))
+            {
+                std::ostringstream oss; oss << "Recipe \"" << uri << "\" already exists";
+                throw chaiscript::exception::eval_error(oss.str());
+            }
             Recipe recipe{info_, uri};
             callback(recipe);
-            info_.presenter.set("model.recipe.close", name);
             info_.logger.log(Info) << info_.indent() << "<< Recipe " << name << " for type \"" << type << "\"" << std::endl;
         }
         void chai_recipe_2(const std::string &name, std::function<void(Recipe &)> callback) { chai_recipe_3(name, "", callback); }
@@ -117,7 +112,7 @@ namespace cook { namespace view { namespace chai {
     class Runner
     {
     public:
-        Runner(presenter::Reference presenter, Logger &logger): presenter_(presenter), logger_(logger), runner_info_{presenter, logger}
+        Runner(presenter::Reference presenter, Logger &logger): presenter_(presenter), logger_(logger)
         {
             setup_chai_functions_();
         }
@@ -165,12 +160,22 @@ namespace cook { namespace view { namespace chai {
         void setup_chai_functions_()
         {
             auto &chai = chai_engine_.raw();
+
             chai.add(chaiscript::fun(&Runner::chai_include, this), "include");
+
+            //user_type and constructor are added to make the books copyable in chaiscript.
+            chai.add(chaiscript::user_type<Book>(), "Book");
+            chai.add(chaiscript::constructor<Book(const Book &)>(), "Book");
             chai.add(chaiscript::var(root_book_), "root");
             chai.add(chaiscript::fun(&Book::chai_print), "print");
             chai.add(chaiscript::fun(&Book::chai_book), "book");
             chai.add(chaiscript::fun(&Book::chai_recipe_3), "recipe");
             chai.add(chaiscript::fun(&Book::chai_recipe_2), "recipe");
+
+            //user_type and constructor are added to make the recipes copyable in chaiscript.
+            chai.add(chaiscript::user_type<Recipe>(), "Recipe");
+            chai.add(chaiscript::constructor<Recipe(const Recipe &)>(), "Recipe");
+            chai.add(chaiscript::fun(&Recipe::chai_print), "print");
             chai.add(chaiscript::fun(&Recipe::chai_add_2), "add");
             chai.add(chaiscript::fun(&Recipe::chai_add_1), "add");
             chai.add(chaiscript::fun(&Recipe::chai_depends_on), "depends_on");
@@ -198,14 +203,12 @@ namespace cook { namespace view { namespace chai {
 
         presenter::Reference presenter_;
         Logger &logger_;
+        RunnerInfo runner_info_{presenter_, logger_};
+        Book root_book_{runner_info_};
 
         cook::view::chai::Engine chai_engine_;
 
         bool execute_ok_ = true;
-
-        RunnerInfo runner_info_;
-
-        Book root_book_{runner_info_};
     };
 
 } } } 

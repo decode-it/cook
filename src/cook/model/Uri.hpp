@@ -1,6 +1,7 @@
 #ifndef HEADER_cook_model_Uri_hpp_ALREADY_INCLUDED
 #define HEADER_cook_model_Uri_hpp_ALREADY_INCLUDED
 
+#include "gubg/Strange.hpp"
 #include <vector>
 #include <string>
 #include <ostream>
@@ -14,11 +15,28 @@ namespace cook { namespace model {
         using Path = std::vector<std::string>;
 
         Uri(){}
+        Uri(const std::string &uri)
+        {
+            gubg::Strange strange(uri);
+            strange.pop_if('/');
+            std::string part;
+            while (strange.pop_until(part, '/'))
+                add_path_part(part);
+            set_name(strange.str());
+        }
 
         void clear() {*this = Uri{};}
 
         void add_path_part(const std::string &part) {path_.push_back(part);}
         void set_name(const std::string &name) {name_ = name;}
+        const std::string &name() const {return name_;}
+
+        template <typename Ftor>
+        void each_path_part(Ftor ftor) const
+        {
+            for (const auto &part: path_)
+                ftor(part);
+        }
 
         std::string last_path() const
         {
@@ -38,12 +56,15 @@ namespace cook { namespace model {
             if (!name_.empty())
                 os << name_;
         }
+        void stream(std::ostream &os) const {stream(os, '/', '/');}
+
         std::string str(char root, char path_sep) const
         {
             std::ostringstream oss;
             stream(oss, root, path_sep);
             return oss.str();
         }
+        std::string str() const {return str('/','/');}
 
     private:
         static void add_separator_(std::ostream &os, char ch)
@@ -55,6 +76,12 @@ namespace cook { namespace model {
         Path path_;
         std::string name_;
     };
+
+    inline std::ostream &operator<<(std::ostream &os, const Uri &uri)
+    {
+        uri.stream(os);
+        return os;
+    }
 
 } } 
 

@@ -21,16 +21,13 @@ namespace cook { namespace model {
             u.add_path_part(ptr->name());
         if (recipe)
             u.set_name(recipe->name());
-        u.stream(os, '/','/');
+        u.stream(os);
     }
 
     class Library
     {
     public:
-        Library()
-        {
-            path_.push_back(&root_);
-        }
+        Library() { }
 
         bool get(RecipeDAG &dag, const std::string &rn)
         {
@@ -85,49 +82,51 @@ namespace cook { namespace model {
             MSS_END();
         }
 
-        Recipe *current_recipe() {return current_recipe_;}
-        Book *current_book()
+        Book *goc_book(const Uri &uri)
         {
-            if (path_.empty())
+            Book *book = &root_book_;
+            uri.each_path_part([&](const auto &name){
+                    book = &book->goc_book(name);
+                    });
+            return book;
+        }
+        Book *goc_book(const std::string &uri_str)
+        {
+            const model::Uri uri(uri_str);
+            return goc_book(uri);
+        }
+
+        Recipe *create_recipe(const std::string &uri_str)
+        {
+            const model::Uri uri(uri_str);
+            auto book = goc_book(uri);
+            if (!book)
                 return nullptr;
-            return path_.back();
+            return book->create_recipe(uri.name());
         }
-
-        void push(const std::string &name)
+        Recipe *get_recipe(const std::string &uri_str)
         {
-            Book &book = path_.back()->goc_book(name);
-            path_.push_back(&book);
-        }
-        void pop()
-        {
-            path_.pop_back();
-        }
-
-        bool create_recipe(const std::string &name)
-        {
-            Book &book = *path_.back();
-            current_recipe_ = book.create_recipe(name);
-            return !!current_recipe_;
-        }
-        void close_recipe()
-        {
-            current_recipe_ = nullptr;
+            const model::Uri uri(uri_str);
+            auto book = goc_book(uri);
+            if (!book)
+                return nullptr;
+            return book->get_recipe(uri.name());
         }
 
         template <typename Ftor>
         bool each(Ftor ftor) const
         {
-            ConstBookPath path = {&root_};
+            ConstBookPath path = {&root_book_};
             return each_(ftor, path);
         }
         template <typename Ftor>
         bool each(Ftor ftor)
         {
-            BookPath path = {&root_};
+            BookPath path = {&root_book_};
             return each_(ftor, path);
         }
 
-        const Book &root() const {return root_;}
+        const Book &root() const {return root_book_;}
 
         void stream(std::ostream &os) const
         {
@@ -161,9 +160,7 @@ namespace cook { namespace model {
             MSS_END();
         }
 
-        Book root_{"ROOT_BOOK"};
-        BookPath path_;
-        Recipe *current_recipe_ = nullptr;
+        Book root_book_{"ROOT_BOOK"};
     };
 
 } } 

@@ -17,7 +17,7 @@ namespace cook { namespace model {
         Book() {}
         Book(std::string name): name_(name) {}
 
-        std::string uri_hr() const {return uri_.str('/','/');}
+        std::string uri_hr() const {return uri_.str();}
 
         const std::string &name() const {return name_;}
         std::string display_name() const
@@ -38,20 +38,27 @@ namespace cook { namespace model {
 
         const ScriptFns &script_filenames() const {return script_fns_;}
 
-        Book &goc_book(std::string name)
+        Book &goc_book(const std::string &name)
         {
             auto &book = book_per_name_[name];
             book.name_ = name;
             return book;
         }
 
-        Recipe *create_recipe(std::string name)
+        Recipe *create_recipe(const std::string &name)
         {
             if (recipe_per_name_.count(name) > 0)
                 return nullptr;
             auto &recipe = recipe_per_name_[name];
             recipe.set_name(name);
             return &recipe;
+        }
+        Recipe *get_recipe(const std::string &name)
+        {
+            auto p = recipe_per_name_.find(name);
+            if (p == recipe_per_name_.end())
+                return nullptr;
+            return &p->second;
         }
 
         const BookPerName &book_per_name() const {return book_per_name_;}

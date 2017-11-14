@@ -24,54 +24,13 @@ namespace cook {
             else if (key.pop_if("book."))
             {
                 if (false) {}
-                else if (key.pop_if("push"))
-                {
-                    model_.library.push(value);
-                    auto book = model_.library.current_book();
-                    MSS(!!book, view_.log(Error) << "No current book" << std::endl);
-                    MSS(book->set("script_filename", script_fn_), view_.log(Error) << "Failed to set the script filename" << std::endl); 
-                }
-                else if (key.pop_if("pop")) { model_.library.pop(); }
-                else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on book" << std::endl);}
-            }
-            else if (key.pop_if("recipe."))
-            {
-                if (false) {}
                 else if (key.pop_if("create"))
                 {
-                    const auto name = value;
-                    MSS(model_.library.create_recipe(name), view_.log(Error) << "Recipe " << name << " already exists" << std::endl); 
-                    auto recipe = model_.library.current_recipe();
-                    MSS(!!recipe, view_.log(Error) << "No current recipe" << std::endl);
-                    MSS(recipe->set("script_filename", script_fn_), view_.log(Error) << "Failed to set the script filename" << std::endl); 
+                    auto book = model_.library.goc_book(value);
+                    MSS(!!book, view_.log(Error) << "Could not goc book " << value << std::endl);
+                    MSS(book->set("script_filename", script_fn_), view_.log(Error) << "Failed to set the script filename" << std::endl); 
                 }
-                else if (key.pop_if("close")) { model_.library.close_recipe(); }
-                else
-                {
-                    auto recipe = model_.library.current_recipe();
-                    MSS(!!recipe, view_.log(Error) << "No current recipe" << std::endl);
-                    if (false) {}
-                    else if (key.pop_if("type"))
-                    {
-                        const auto type = value;
-                        MSS(recipe->set("type", type), view_.log(Error) << "Unknown type " << type << " already exists" << std::endl); 
-                    }
-                    else if (key.pop_if("working_directory"))
-                    {
-                        MSS(recipe->set("working_directory", value), view_.log(Error) << "Failed to set the working directory" << std::endl); 
-                    }
-                    else if (key.pop_if("depends_on"))
-                    {
-                        const auto rn = value;
-                        MSS(recipe->set("depends_on", rn), view_.log(Error) << "Failed to set the dependency on " << rn << std::endl); 
-                    }
-                    else if (key.pop_if("display_name"))
-                    {
-                        const auto dn = value;
-                        MSS(recipe->set("display_name", dn), view_.log(Error) << "Failed to set the display name to " << dn << std::endl); 
-                    }
-                    else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on recipe" << std::endl);}
-                }
+                else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on book" << std::endl);}
             }
             else
             {
@@ -131,7 +90,7 @@ namespace cook {
         MSS_END();
     }
 
-    bool Presenter::set(const std::string &p_key, const Strings &value)
+    bool Presenter::set(const std::string &p_key, const Strings &args)
     {
         MSS_BEGIN(bool);
         view_.log(Info) << "Received message: " << p_key << std::endl;
@@ -145,16 +104,41 @@ namespace cook {
             else if (key.pop_if("recipe."))
             {
                 if (false) {}
+                else if (key.pop_if("create"))
+                {
+                    MSS(args.size() >= 3, view_.log(Error) << "Not enough arguments for creating a recipe" << std::endl);
+                    const auto &uri = args[0];
+                    auto recipe = model_.library.create_recipe(uri);
+                    MSS(!!recipe, view_.log(Error) << "Recipe " << uri << " already exists" << std::endl); 
+                    MSS(recipe->set("script_filename", script_fn_), view_.log(Error) << "Failed to set the script filename" << std::endl); 
+                    const auto &type = args[1];
+                    MSS(recipe->set("type", type), view_.log(Error) << "Unknown type " << type << " already exists" << std::endl); 
+                    const auto &wd = args[2];
+                    MSS(recipe->set("working_directory", wd), view_.log(Error) << "Failed to set the working directory" << std::endl); 
+                }
                 else
                 {
-                    auto recipe = model_.library.current_recipe();
-                    MSS(!!recipe, view_.log(Error) << "No current recipe" << std::endl);
+                    MSS(args.size() >= 1, view_.log(Error) << "At least the uri should be given" << std::endl);
+                    const auto &uri = args[0];
+                    auto recipe = model_.library.get_recipe(uri);
+                    MSS(!!recipe, view_.log(Error) << "Recipe " << uri << " does not exists" << std::endl); 
                     if (false) {}
                     else if (key.pop_if("add"))
                     {
-                        const auto &args = value;
-                        MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
-                        recipe->add(args[0], args[1]);
+                        MSS(args.size() >= 3, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
+                        recipe->add(args[1], args[2]);
+                    }
+                    else if (key.pop_if("depends_on"))
+                    {
+                        MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for specifying a dependency" << std::endl);
+                        const auto rn = args[1];
+                        MSS(recipe->set("depends_on", rn), view_.log(Error) << "Failed to set the dependency on " << rn << std::endl); 
+                    }
+                    else if (key.pop_if("display_name"))
+                    {
+                        MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for setting the display name" << std::endl);
+                        const auto dn = args[1];
+                        MSS(recipe->set("display_name", dn), view_.log(Error) << "Failed to set the display name to " << dn << std::endl); 
                     }
                     else {MSS(false, view_.log(Error) << "Unknown operation " << key << " on recipe" << std::endl);}
                 }
