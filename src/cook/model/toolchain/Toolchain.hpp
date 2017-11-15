@@ -37,12 +37,15 @@ namespace cook { namespace model { namespace toolchain {
             }
             else 
             {
+#ifdef _MSC_VER
+                compiler.reset(new toolchain::msvc::Compiler(config_));
+                linker.reset(new toolchain::msvc::Linker(config_));
+                archiver.reset(new toolchain::msvc::Archiver(config_));
+#else
                 compiler.reset(new toolchain::gcc::Compiler(config_));
                 linker.reset(new toolchain::gcc::Linker(config_));
                 archiver.reset(new toolchain::gcc::Archiver(config_));
-                /* compiler.reset(new toolchain::msvc::Compiler(config_)); */
-                /* linker.reset(new toolchain::msvc::Linker(config_)); */
-                /* archiver.reset(new toolchain::msvc::Archiver(config_)); */
+#endif
             }
             MSS_END();
         }

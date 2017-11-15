@@ -126,6 +126,7 @@ namespace cook { namespace model {
 
         void add(std::string p_dir, const std::string &pattern)
         {
+            S("");L(C(pattern));
             if (p_dir.empty())
                 p_dir = ".";
 
@@ -160,7 +161,7 @@ namespace cook { namespace model {
         {
             if (std::find_if(RANGE(library_paths_), [&](const auto &p){return path == p;}) != library_paths_.end())
                 return;
-            library_paths_.push_back(path);
+            library_paths_.push_back(path.string());
         }
 
         bool merge(const Recipe &src)
@@ -230,9 +231,9 @@ namespace cook { namespace model {
             MSS_END();
         }
 
-        std::set<std::filesystem::path> include_paths() const
+        toolchain::IncludePaths include_paths() const
         {
-            std::set<std::filesystem::path> ips;
+            std::set<std::filesystem::path> ips_set;
             for (const auto &p: file_per_path_)
             {
                 const auto &file = p.second;
@@ -240,10 +241,14 @@ namespace cook { namespace model {
                 {
                     case FileType::Header:
                     case FileType::ForceInclude:
-                        ips.insert(file.dir);
+                        ips_set.insert(file.dir);
                         break;
                 }
             }
+            toolchain::IncludePaths ips{ips_set.size()};
+            ips.resize(0);
+            for (const auto &ip: ips_set)
+                ips.push_back(ip.string());
             return ips;
         }
 

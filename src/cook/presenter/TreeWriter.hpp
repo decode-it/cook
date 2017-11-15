@@ -57,7 +57,7 @@ namespace cook { namespace presenter {
                 MSS(recipe.each_file(add_file, model::Owner::Me));
 
                 for (const auto &ip: recipe.include_paths())
-                    recipe_n.node("include_path").attr("path", ip.string());
+                    recipe_n.node("include_path").attr("path", ip);
 
                 for (const auto &p: recipe.defines())
                 {

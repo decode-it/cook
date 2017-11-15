@@ -3,6 +3,6 @@ rule compile
 rule link
     command = link /OUT:$out $in
 
-cflags = /EHsc
+cflags = /nologo /EHsc
 
 subninja compile.ninja

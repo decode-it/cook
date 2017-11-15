@@ -97,7 +97,10 @@ task :install, [:bin] => "build" do |task, args|
         GUBG::mkdir(bin)
         sh("cp cook.exe #{bin}")
     else
-        sh("sudo cp cook.exe /usr/local/bin/cook")
+        case GUBG::os
+        when :linux then sh("sudo cp cook.exe /usr/local/bin")
+        when :windows then cp("cook.exe", "../bin/")
+        end
     end
 end
 

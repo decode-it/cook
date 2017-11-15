@@ -43,6 +43,7 @@ namespace cook { namespace model { namespace toolchain {
             std::string prepare_flags(const Flags &flags) const override
             {
                 oss_.str("");
+                oss_ << " /nologo /EHsc";
                 for (auto flag: flags)
                     oss_ << " " << flag;
                 return oss_.str();
@@ -58,7 +59,7 @@ namespace cook { namespace model { namespace toolchain {
             {
                 oss_.str("");
                 for (auto ip: include_paths)
-                    oss_ << " -I " << ip;
+                    oss_ << " /I" << ip;
                 return oss_.str();
             }
             std::string prepare_force_includes(const ForceIncludes &force_includes) const override
@@ -82,7 +83,7 @@ namespace cook { namespace model { namespace toolchain {
             std::string cmd_template(const TemplateStubs &stubs) const override
             {
                 oss_.str("");
-                oss_ << "link /OUT:" << stubs.executable << " " << stubs.flags << " " << stubs.objects;
+                oss_ << "link /OUT:" << stubs.executable << " " << stubs.flags << " " << stubs.objects << " " << stubs.libraries;
                 return oss_.str();
             }
             std::string prepare_objects(const ObjectFiles &objects) const override
@@ -99,6 +100,20 @@ namespace cook { namespace model { namespace toolchain {
                     oss_ << " " << flag;
                 return oss_.str();
             }
+            std::string prepare_library_paths(const LibraryPaths &library_paths) const override
+            {
+                oss_.str("");
+                for (auto path: library_paths)
+                    oss_ << " /LIBPATH:" << path;
+                return oss_.str();
+            }
+            std::string prepare_libraries(const Libraries &libraries) const override
+            {
+                oss_.str("");
+                for (auto lib: libraries)
+                    oss_ << " " << lib << ".lib";
+                return oss_.str();
+            }
 
         private:
             mutable std::ostringstream oss_;
@@ -113,7 +128,13 @@ namespace cook { namespace model { namespace toolchain {
             std::string cmd_template(const TemplateStubs &stubs) const override
             {
                 oss_.str("");
-                oss_ << "link /OUT:" << stubs.library << " " << stubs.flags << " " << stubs.objects;
+                oss_ << "lib /OUT:" << stubs.library << " " << stubs.flags << " " << stubs.objects;
+                return oss_.str();
+            }
+            std::string prepare_library(const Library &name) const override
+            {
+                oss_.str("");
+                oss_ << name << ".lib";
                 return oss_.str();
             }
             std::string prepare_objects(const ObjectFiles &objects) const override

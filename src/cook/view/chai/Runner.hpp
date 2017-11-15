@@ -134,7 +134,7 @@ namespace cook { namespace view { namespace chai {
             const auto script_fn = expand_(file_or_dir);
             logger_.log(Info) << runner_info_.indent() << ">> Script " << script_fn << std::endl;
             runner_info_.script_stack.push_back(script_fn);
-            presenter_.set("script.filename", script_fn);
+            presenter_.set("script.filename", script_fn.string());
 
             std::ostream *os = nullptr;
             try { chai_engine_.eval_file(script_fn); }

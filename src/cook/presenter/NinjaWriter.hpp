@@ -153,10 +153,7 @@ namespace cook { namespace presenter {
                 MSS_BEGIN(bool);
                 os_ << std::endl;
                 os_ << "# >> Recipe " << recipe.uri_hr() << std::endl;
-                os_ << local_name(recipe, "include_paths") << " =";
-                for (const auto &ip: recipe.include_paths())
-                    os_ << " -I " << ip.string();
-                os_ << std::endl;
+                os_ << local_name(recipe, "include_paths") << " = " << compiler_->prepare_include_paths(recipe.include_paths()) << std::endl;
                 auto write_compile = [&](const auto &file){
                     if (file.type == model::FileType::Source)
                     {
