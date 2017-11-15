@@ -29,7 +29,7 @@ namespace cook {
             MSS(presenter_.set("action.generate.ninja", options.uri));
         else if (options.generate == "details.tree")
             MSS(presenter_.set("action.generate.details", options.uri));
-        else if (options.generate == "structure.tree")
+        else if (options.generate == "structure.tree" || options.generate == "recipes.tree")
             MSS(presenter_.set("action.generate.structure", options.uri));
 
         MSS_END();

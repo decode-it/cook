@@ -74,7 +74,10 @@ namespace cook { namespace model {
                 MSS(ok);
             }
 
-            MSS(dag.remove_unreachables(recipe_per_uri[rn]));
+            if (!rn.empty())
+            {
+                MSS(dag.remove_unreachables(recipe_per_uri[rn]));
+            }
 
             auto distribute = [&](Recipe &from, const Recipe &to){ return from.merge(to); };
             MSS(dag.each_edge<gubg::network::Direction::Backward>(distribute));
