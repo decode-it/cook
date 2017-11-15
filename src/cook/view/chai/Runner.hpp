@@ -35,18 +35,19 @@ namespace cook { namespace view { namespace chai {
         {
             std::cout << "Recipe " << uri_.str('/','/') << std::endl;
         }
-        void chai_add_2(const std::string &dir, const std::string &pattern)
+        void chai_add_3(const std::string &dir, const std::string &pattern, const std::string &option)
         {
-            info_.logger.log(Info) << info_.indent() << ">> Add files from " << dir << " // " << pattern << std::endl;
-            const Strings args = {uri_.str(), dir, pattern};
+            info_.logger.log(Info) << info_.indent() << ">> Add files from " << dir << " // " << pattern << " as " << option << std::endl;
+            const Strings args = {uri_.str(), dir, pattern, option};
             if (!info_.presenter.set("model.recipe.add", args))
             {
                 std::ostringstream oss; oss << "Could not add files";
                 throw chaiscript::exception::eval_error(oss.str());
             }
-            info_.logger.log(Info) << info_.indent() << "<< Add files from " << dir << " // " << pattern << std::endl;
+            info_.logger.log(Info) << info_.indent() << "<< Add files from " << dir << " // " << pattern << " as " << option << std::endl;
         }
-        void chai_add_1(const std::string &pattern) { chai_add_2("", pattern); }
+        void chai_add_2(const std::string &dir, const std::string &pattern) { chai_add_3(dir, pattern, ""); }
+        void chai_add_1(const std::string &pattern) { chai_add_3("", pattern, ""); }
         void chai_depends_on(const std::string &rn)
         {
             info_.logger.log(Info) << info_.indent() << ">> Adding dependency on " << rn << std::endl;
@@ -183,6 +184,7 @@ namespace cook { namespace view { namespace chai {
             chai.add(chaiscript::user_type<Recipe>(), "Recipe");
             chai.add(chaiscript::constructor<Recipe(const Recipe &)>(), "Recipe");
             chai.add(chaiscript::fun(&Recipe::chai_print), "print");
+            chai.add(chaiscript::fun(&Recipe::chai_add_3), "add");
             chai.add(chaiscript::fun(&Recipe::chai_add_2), "add");
             chai.add(chaiscript::fun(&Recipe::chai_add_1), "add");
             chai.add(chaiscript::fun(&Recipe::chai_depends_on), "depends_on");

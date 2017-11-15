@@ -20,10 +20,11 @@ namespace cook { namespace model {
     {
         switch (ft)
         {
-#define L_CASE(name) case FileType::name: os << #name; break
-            L_CASE(Unknown);
-            L_CASE(Source);
-            L_CASE(Header);
+#define L_CASE(name, str) case FileType::name: os << #str; break
+            L_CASE(Unknown, "unknown");
+            L_CASE(Source, "source");
+            L_CASE(Header, "header");
+            L_CASE(ForceInclude, "force_include");
 #undef L_CASE
         }
         return os;
@@ -124,7 +125,7 @@ namespace cook { namespace model {
             MSS_END();
         }
 
-        void add(std::string p_dir, const std::string &pattern)
+        void add(std::string p_dir, const std::string &pattern, const std::string &option)
         {
             S("");L(C(pattern));
             if (p_dir.empty())
@@ -147,6 +148,11 @@ namespace cook { namespace model {
                 else if (ext == ".cpp") {file.type = FileType::Source; file.language = "c++";}
                 else if (ext == ".hpp") {file.type = FileType::Header; file.language = "c++";}
                 else if (ext == ".asm") {file.type = FileType::Source; file.language = "asm";}
+
+                if (option.empty()) {}
+                else if (option == "header") {file.type = FileType::Header;}
+                else if (option == "source") {file.type = FileType::Source;}
+                else if (option == "force_include") {file.type = FileType::ForceInclude;}
             };
             gubg::file::each_glob(pattern, add_file, dir);
         }

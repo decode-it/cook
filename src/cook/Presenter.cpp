@@ -125,8 +125,8 @@ namespace cook {
                     if (false) {}
                     else if (key.pop_if("add"))
                     {
-                        MSS(args.size() >= 3, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
-                        recipe->add(args[1], args[2]);
+                        MSS(args.size() >= 4, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
+                        recipe->add(args[1], args[2], args[3]);
                     }
                     else if (key.pop_if("depends_on"))
                     {
