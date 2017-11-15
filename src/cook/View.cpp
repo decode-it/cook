@@ -22,7 +22,7 @@ namespace cook {
         view::chai::Runner chai_runner(presenter_, logger_);
         MSS(chai_runner.execute(options.input_fod));
 
-        MSS(presenter_.set("action.print.books"));
+        /* MSS(presenter_.set("action.print.books")); */
 
         if (false) {}
         else if (options.generate == "build.ninja")

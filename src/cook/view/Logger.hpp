@@ -3,6 +3,7 @@
 
 #include "cook/Types.hpp"
 #include <iostream>
+#include <fstream>
 
 namespace cook { namespace view { 
 
@@ -14,8 +15,13 @@ namespace cook { namespace view {
             auto &os = std::cout;
             switch (lt)
             {
-                case Info: os << "Info: "; break;
-                case Message: break;
+                case Info:
+                    return dev_null_;
+                    os << "Info: ";
+                    break;
+                case Message:
+                    /* return dev_null_; */
+                    break;
                 case Error: os << "Error: "; break;
             }
             return os;
@@ -23,6 +29,7 @@ namespace cook { namespace view {
         std::ostream &log() {return log(Message);}
 
     private:
+        std::ofstream dev_null_;
     };
 
 } } 
