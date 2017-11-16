@@ -20,7 +20,7 @@ namespace cook { namespace model {
     {
         switch (ft)
         {
-#define L_CASE(name, str) case FileType::name: os << #str; break
+#define L_CASE(name, str) case FileType::name: os << str; break
             L_CASE(Unknown, "unknown");
             L_CASE(Source, "source");
             L_CASE(Header, "header");

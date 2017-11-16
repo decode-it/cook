@@ -174,7 +174,7 @@ namespace cook { namespace view { namespace chai {
             //user_type and constructor are added to make the books copyable in chaiscript.
             chai.add(chaiscript::user_type<Book>(), "Book");
             chai.add(chaiscript::constructor<Book(const Book &)>(), "Book");
-            chai.add(chaiscript::var(root_book_), "root");
+            chai.add_global(chaiscript::var(root_book_), "root");
             chai.add(chaiscript::fun(&Book::chai_print), "print");
             chai.add(chaiscript::fun(&Book::chai_book), "book");
             chai.add(chaiscript::fun(&Book::chai_recipe_3), "recipe");

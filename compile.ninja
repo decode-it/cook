@@ -1,4 +1,5 @@
 defines = -DNDEBUG
+#defines = 
 include_paths = -I src -I gubg.std/src -I gubg.io/src -I gubg.algo/src -I gubg.chaiscript/extern/ChaiScript/include
 
 build .bcook/main.obj: compile src/main.cpp

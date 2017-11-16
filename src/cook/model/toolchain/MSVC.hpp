@@ -20,11 +20,11 @@ namespace cook { namespace model { namespace toolchain {
                 if (false) {}
                 else if (language == "c")
                 {
-                    oss_ << "cl -c /Tc " << stubs.flags << " " << stubs.source << " /Fo:" << stubs.object << " " << stubs.defines << " " << stubs.include_paths << " " << stubs.force_includes;
+                    oss_ << "cl /nologo -c /Tc " << stubs.flags << " " << stubs.source << " /Fo:" << stubs.object << " " << stubs.defines << " " << stubs.include_paths << " " << stubs.force_includes;
                 }
                 else if (language == "c++")
                 {
-                    oss_ << "cl -c " << stubs.flags << " " << stubs.source << " /Fo:" << stubs.object << " " << stubs.defines << " " << stubs.include_paths << " " << stubs.force_includes;
+                    oss_ << "cl /nologo /EHsc -c " << stubs.flags << " " << stubs.source << " /Fo:" << stubs.object << " " << stubs.defines << " " << stubs.include_paths << " " << stubs.force_includes;
                 }
                 else if (language == "asm")
                 {
@@ -43,7 +43,6 @@ namespace cook { namespace model { namespace toolchain {
             std::string prepare_flags(const Flags &flags) const override
             {
                 oss_.str("");
-                oss_ << " /nologo /EHsc";
                 for (auto flag: flags)
                     oss_ << " " << flag;
                 return oss_.str();
