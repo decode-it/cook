@@ -19,18 +19,11 @@ namespace cook {
     {
         MSS_BEGIN(ReturnCode);
 
-        auto mvp = [&](){
-            MSS_BEGIN(bool);
-            Model model;
-            View view;
-            Presenter presenter(model, view);
+        Model model;
+        View view;
+        Presenter presenter(model, view);
 
-            MSS(view.process_cli(argc, argv));
-            MSS_END();
-        };
-        const bool ok = mvp();
-        std::cout << "MVP went " << (ok ? "OK" : "KO") << std::endl << std::endl;
-        MSS(ok);
+        MSS(view.process_cli(argc, argv));
         
         MSS_END();
     }

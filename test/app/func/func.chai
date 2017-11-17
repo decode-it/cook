@@ -4,6 +4,7 @@ root.book("func", fun(b){
         r.add("inc", "*.h")
         r.add("src", "*.c")
         r.add("src", "**/*.c")
+        r.add("inc", "default_message.h", "force_include")
     })
 })
 root.book("app", fun(b){

@@ -127,10 +127,7 @@ namespace cook { namespace presenter {
 
             auto structure_n = doc.node("structure");
 
-            for (const auto &p: lib.root().book_per_name())
-            {
-                write_book_recursive_(structure_n, p.second);
-            }
+            write_book_recursive_(structure_n, lib.root());
 
             MSS_END();
         }

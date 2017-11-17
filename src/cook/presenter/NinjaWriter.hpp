@@ -167,7 +167,7 @@ namespace cook { namespace presenter {
                         };
                         dag.each_out(&recipe, add_ip_for_deps);
                         os_ << std::endl;
-                        os_ << "    force_includes = " << std::endl;
+                        os_ << "    force_includes = " << compiler_->prepare_force_includes(recipe.force_includes()) << std::endl;
                         os_ << "    library_paths = " << std::endl;
                         os_ << "    libraries = " << std::endl;
                     }

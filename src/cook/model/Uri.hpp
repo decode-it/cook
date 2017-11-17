@@ -18,7 +18,7 @@ namespace cook { namespace model {
         Uri(const std::string &uri)
         {
             gubg::Strange strange(uri);
-            strange.pop_if('/');
+            absolute_ = strange.pop_if('/');
             std::string part;
             while (strange.pop_until(part, '/'))
                 add_path_part(part);
@@ -27,9 +27,21 @@ namespace cook { namespace model {
 
         void clear() {*this = Uri{};}
 
+        bool absolute() const {return absolute_;}
+
         void add_path_part(const std::string &part) {path_.push_back(part);}
         void set_name(const std::string &name) {name_ = name;}
         const std::string &name() const {return name_;}
+
+        size_t path_size() const {return path_.size();}
+        void resize_path(size_t size) {path_.resize(size);}
+
+        void append(const Uri &rhs)
+        {
+            for (const auto &part: rhs.path_)
+                path_.push_back(part);
+            name_ = rhs.name_;
+        }
 
         template <typename Ftor>
         void each_path_part(Ftor ftor) const
@@ -47,7 +59,7 @@ namespace cook { namespace model {
 
         void stream(std::ostream &os, char root, char path_sep) const
         {
-            add_separator_(os, root);
+            add_separator_(os, (absolute_ ? root : '\0'));
             for (unsigned int ix = 0; ix < path_.size(); ++ix)
             {
                 os << path_[ix];
@@ -73,6 +85,8 @@ namespace cook { namespace model {
                 return;
             os << ch;
         }
+
+        bool absolute_ = true;
         Path path_;
         std::string name_;
     };

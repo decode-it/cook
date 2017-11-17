@@ -12,12 +12,10 @@ namespace cook {
     public:
         Presenter(Model &model, View &view): model_(model), view_(view)
         {
-            view_.log() << "Cook is starting" << std::endl;
             view_.inject(static_cast<presenter::Interface*>(this));
         }
         ~Presenter()
         {
-            view_.log() << "Cook is stopping" << std::endl;
         }
 
     protected:

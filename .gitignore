@@ -1,6 +1,7 @@
 *.exe
 *.obj
 *.obj.d
+*.a
 makefile
 .gubg/
 .bcook/

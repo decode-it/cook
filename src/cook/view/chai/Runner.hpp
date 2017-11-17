@@ -85,6 +85,13 @@ namespace cook { namespace view { namespace chai {
         {
             std::cout << "Book " << uri_.str('/','/') << std::endl;
         }
+        void chai_display_name(const std::string &dn)
+        {
+            info_.logger.log(Info) << info_.indent() << ">> Setting display name to " << dn << std::endl;
+            const Strings args = {uri_.str(), dn};
+            info_.presenter.set("model.book.display_name", args);
+            info_.logger.log(Info) << info_.indent() << "<< Setting display name to " << dn << std::endl;
+        }
         void chai_book(const std::string &name, std::function<void(Book &)> callback)
         {
             info_.logger.log(Info) << info_.indent() << ">> Book " << name << std::endl;
@@ -136,6 +143,9 @@ namespace cook { namespace view { namespace chai {
             logger_.log(Info) << runner_info_.indent() << ">> Script " << script_fn << std::endl;
             runner_info_.script_stack.push_back(script_fn);
             presenter_.set("script.filename", script_fn.string());
+            if (runner_info_.script_stack.size() == 1)
+                //Needed to get the script filename for the root node, as this is never created
+                presenter_.set("model.book.create", "/");
 
             std::ostream *os = nullptr;
             try { chai_engine_.eval_file(script_fn); }
@@ -175,6 +185,7 @@ namespace cook { namespace view { namespace chai {
             chai.add(chaiscript::user_type<Book>(), "Book");
             chai.add(chaiscript::constructor<Book(const Book &)>(), "Book");
             chai.add_global(chaiscript::var(root_book_), "root");
+            chai.add(chaiscript::fun(&Book::chai_display_name), "display_name");
             chai.add(chaiscript::fun(&Book::chai_print), "print");
             chai.add(chaiscript::fun(&Book::chai_book), "book");
             chai.add(chaiscript::fun(&Book::chai_recipe_3), "recipe");

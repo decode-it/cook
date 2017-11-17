@@ -14,12 +14,9 @@ namespace cook { namespace model {
         using RecipePerName = std::map<std::string, Recipe>;
         using ScriptFns = std::vector<std::filesystem::path>;
 
-        Book() {}
-        Book(std::string name): name_(name) {}
-
         std::string uri_hr() const {return uri_.str();}
 
-        const std::string &name() const {return name_;}
+        std::string name() const {return uri_.last_path();}
         std::string display_name() const
         {
             if (display_name_.empty())
@@ -41,15 +38,18 @@ namespace cook { namespace model {
         Book &goc_book(const std::string &name)
         {
             auto &book = book_per_name_[name];
-            book.name_ = name;
+            book.uri_ = uri_;
+            book.uri_.add_path_part(name);
             return book;
         }
 
         Recipe *create_recipe(const std::string &name)
         {
-            if (recipe_per_name_.count(name) > 0)
+            auto p = recipe_per_name_.emplace(name, uri_);
+            if (!p.second)
+                //Recipe already exists
                 return nullptr;
-            auto &recipe = recipe_per_name_[name];
+            auto &recipe = p.first->second;
             recipe.set_name(name);
             return &recipe;
         }
@@ -67,12 +67,11 @@ namespace cook { namespace model {
         RecipePerName &recipe_per_name() {return recipe_per_name_;}
         void stream(std::ostream &os) const
         {
-            os << "name: " << name_ << ", nr books: " << book_per_name_.size() << ", nr recipes: " << recipe_per_name_.size() << std::endl;
+            os << "name: " << name() << ", nr books: " << book_per_name_.size() << ", nr recipes: " << recipe_per_name_.size() << std::endl;
         }
 
     private:
         Uri uri_;
-        std::string name_;
         std::string display_name_;
         ScriptFns script_fns_;
         BookPerName book_per_name_;

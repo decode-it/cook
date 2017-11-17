@@ -5,6 +5,7 @@
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Uri.hpp"
 #include "gubg/network/DAG.hpp"
+#include "gubg/OnlyOnce.hpp"
 
 namespace cook { namespace model { 
 
@@ -17,8 +18,13 @@ namespace cook { namespace model {
     inline void uri(std::ostream &os, const Path &path, const Recipe *recipe = nullptr)
     {
         Uri u;
+        gubg::OnlyOnce skip_root;
         for (auto ptr: path)
+        {
+            if (skip_root())
+                continue;
             u.add_path_part(ptr->name());
+        }
         if (recipe)
             u.set_name(recipe->name());
         u.stream(os);
@@ -26,57 +32,91 @@ namespace cook { namespace model {
 
     class Library
     {
+    private:
+        using RecipeIndex = std::map<std::string, Recipe*>;
     public:
         Library() { }
 
-        bool get(RecipeDAG &dag, const std::string &rn)
+        bool resolve()
         {
-            MSS_BEGIN(bool);
-            dag.clear();
-            std::ostringstream oss;
-            std::map<std::string, Recipe*> recipe_per_uri;
-            auto setup_uris = [&](const BookPath &path, Recipe *recipe){
+            MSS_BEGIN(bool, "");
+            const auto recipe_index = create_recipe_index_();
+            auto src_recipe = [&](Recipe &recipe)
+            {
                 MSS_BEGIN(bool);
-
-                if (!recipe) MSS_RETURN_OK();
-
-                recipe->set_path(path);
-                recipe_per_uri[recipe->uri_hr()] = recipe;
-                //We add the version _without_ root as well to make the matching more user-friendly
-                recipe_per_uri[recipe->uri_hr(false)] = recipe;
-
+                auto resolve_dst = [&](const std::string &uri_str, Recipe *&dst)
+                {
+                    MSS_BEGIN(bool);
+                    const Uri uri{uri_str};
+                    if (uri.absolute())
+                    {
+                        auto p = recipe_index.find(uri_str);
+                        MSS(p != recipe_index.end());
+                        dst = p->second;
+                    }
+                    else
+                    {
+                        auto left = recipe.uri();
+                        for (int size = left.path_size(); size >= 0; --size)
+                        {
+                            left.resize_path(size);
+                            left.append(uri);
+                            L(C(size)C(left));
+                            auto p = recipe_index.find(left.str());
+                            if (p != recipe_index.end())
+                            {
+                                dst = p->second;
+                                MSS_RETURN_OK();
+                            }
+                        }
+                        MSS(false, std::cout << "Error: Could not resolve " << uri_str << " for " << recipe.uri_hr() << std::endl);
+                    }
+                    MSS_END();
+                };
+                MSS(recipe.each_dependency(resolve_dst));
                 MSS_END();
             };
+            MSS(each([&](const BookPath &path, Recipe *recipe){
+                        if (!recipe) return true;
+                        return src_recipe(*recipe);
+                        }));
+            MSS_END();
+        }
+
+        bool get(RecipeDAG &dag, const std::string &target_uri)
+        {
+            MSS_BEGIN(bool, "");
+
+            Recipe *target_recipe = nullptr;
+
+            dag.clear();
             auto add_to_dag = [&](const BookPath &path, Recipe *recipe){
-                MSS_BEGIN(bool);
+                MSS_BEGIN(bool, "");
 
                 if (!recipe) MSS_RETURN_OK();
 
                 MSS(dag.add_vertex(recipe, false));
 
-                auto add_edge = [&](const std::string &rn)
+                if (target_uri == recipe->uri_hr(true) || target_uri == recipe->uri_hr(false))
+                    target_recipe = recipe;
+
+                auto add_edge = [&](const std::string &dst_rn, Recipe *dst_recipe)
                 {
                     MSS_BEGIN(bool);
-                    auto to = recipe_per_uri[rn];
-                    std::cout << C(recipe->uri_hr())C(to)C(rn) << std::endl;
-                    MSS(!!to, std::cout << "Error: Could not find dependency " << rn << std::endl);
-                    MSS(dag.add_edge(recipe, to), (std::cout << "Error: Failed to add edge from " << recipe->uri_hr() << " to " << to->uri_hr() << std::endl, dag.stream(std::cout, [](const Recipe &r){return r.uri_hr();})));
+                    MSS(!!dst_recipe, std::cout << "Error: Dependency " << dst_rn << " was not resolved" << std::endl);
+                    MSS(dag.add_edge(recipe, dst_recipe), (std::cout << "Error: Failed to add edge from " << recipe->uri_hr() << " to " << dst_recipe->uri_hr() << std::endl, dag.stream(std::cout, [](const Recipe &r){return r.uri_hr();})));
                     MSS_END();
                 };
                 MSS(recipe->each_dependency(add_edge));
 
                 MSS_END();
             };
-            {
-                bool ok = true;
-                each([&](const BookPath &path, Recipe *recipe){ ok = ok && setup_uris(path, recipe); return true; });
-                each([&](const BookPath &path, Recipe *recipe){ ok = ok && add_to_dag(path, recipe); return true; });
-                MSS(ok);
-            }
+            MSS(each([&](const BookPath &path, Recipe *recipe){ return add_to_dag(path, recipe); }));
 
-            if (!rn.empty())
+            if (!target_uri.empty())
             {
-                MSS(dag.remove_unreachables(recipe_per_uri[rn]));
+                MSS(!!target_recipe, std::cout << "Error: Could not find target recipe \"" << target_uri << "\"" << std::endl);
+                MSS(dag.remove_unreachables(target_recipe));
             }
 
             auto distribute = [&](Recipe &from, const Recipe &to){ return from.merge(to); };
@@ -145,6 +185,17 @@ namespace cook { namespace model {
         }
 
     private:
+        RecipeIndex create_recipe_index_()
+        {
+            RecipeIndex index;
+            auto add_recipe_to_index = [&](const BookPath &path, Recipe *recipe){
+                if (recipe)
+                    index[recipe->uri_hr()] = recipe;
+                return true;
+            };
+            each([&](const BookPath &path, Recipe *recipe){ return add_recipe_to_index(path, recipe); });
+            return index;
+        }
         template <typename Ftor, typename Path>
         static bool each_(Ftor ftor, Path &path)
         {
@@ -163,7 +214,7 @@ namespace cook { namespace model {
             MSS_END();
         }
 
-        Book root_book_{"ROOT_BOOK"};
+        Book root_book_;
     };
 
 } } 

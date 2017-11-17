@@ -10,17 +10,24 @@ namespace cook { namespace view {
     class Logger
     {
     public:
+        void set_verbose(unsigned int v)
+        {
+            verbose_ = v;
+        }
         std::ostream &log(LogType lt)
         {
             auto &os = std::cout;
             switch (lt)
             {
                 case Info:
-                    return dev_null_;
+                    if (verbose_ <= 1)
+                        return dev_null_;
                     os << "Info: ";
                     break;
                 case Message:
-                    /* return dev_null_; */
+                    if (verbose_ <= 0)
+                        return dev_null_;
+                    os << "Message: ";
                     break;
                 case Error: os << "Error: "; break;
             }
@@ -30,6 +37,7 @@ namespace cook { namespace view {
 
     private:
         std::ofstream dev_null_;
+        unsigned int verbose_ = 0;
     };
 
 } } 

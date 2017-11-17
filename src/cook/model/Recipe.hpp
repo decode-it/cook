@@ -37,8 +37,9 @@ namespace cook { namespace model {
 
     struct File
     {
-        std::filesystem::path dir;
         std::filesystem::path path;
+        std::filesystem::path dir;
+        std::filesystem::path rel;
         FileType type = FileType::Unknown;
         std::string language;
         Owner::Type owner = Owner::Nobody;
@@ -68,34 +69,23 @@ namespace cook { namespace model {
             std::filesystem::path filename;
         };
 
+        Recipe(const Uri &book_uri): uri_(book_uri) {}
+
         void set_name(const std::string &name)
         {
-            name_ = name;
+            uri_.set_name(name);
         }
-        const std::string &name() const {return name_;}
+        std::string name() const {return uri_.name();}
 
         const std::string &type() const {return type_;}
 
         const Uri &uri() const {return uri_;}
         std::string uri_hr(bool add_root = true) const {return uri_.str((add_root ? '/' : '\0'), '/');}
-        template <typename Path>
-        void set_path(const Path &path)
-        {
-            uri_.clear();
-            gubg::OnlyOnce skip_root;
-            for (auto book_ptr: path)
-            {
-                if (!skip_root())
-                    uri_.add_path_part(book_ptr->name());
-            }
-            uri_.set_name(name());
-            update_output_();
-        }
 
         std::string display_name() const
         {
             if (display_name_.empty())
-                return uri_hr();
+                return name();
             return display_name_;
         }
 
@@ -119,15 +109,18 @@ namespace cook { namespace model {
             }
             else if (key == "working_directory") { wd_ = value; }
             else if (key == "script_filename") { script_fn_ = value; }
-            else if (key == "depends_on") { deps_.insert(value); }
-            else if (key == "display_name") { display_name_ = value; }
+            else if (key == "depends_on") { deps_.emplace(value, nullptr); }
+            else if (key == "display_name")
+            {
+                display_name_ = value;
+                update_output_();
+            }
             else if (key == "library") { add_library(value, Owner::External); }
             MSS_END();
         }
 
         void add(std::string p_dir, const std::string &pattern, const std::string &option)
         {
-            S("");L(C(pattern));
             if (p_dir.empty())
                 p_dir = ".";
 
@@ -141,6 +134,22 @@ namespace cook { namespace model {
                 file.owner = Owner::Me;
                 file.dir = dir;
                 file.path = fp;
+                {
+                    file.rel.clear();
+                    //We follow both dir and fp from root to file. As soon as they start to differ,
+                    //we are in the relative part
+                    auto dir_it = dir.begin();
+                    auto dir_end = dir.end();
+                    for (const auto &part: fp)
+                    {
+                        if (dir_it != dir_end && part == *dir_it)
+                        {
+                            ++dir_it;
+                            continue;
+                        }
+                        file.rel /= part;
+                    }
+                }
                 const auto ext = fp.extension();
                 if (false) {}
                 else if (ext == ".c")   {file.type = FileType::Source; file.language = "c";}
@@ -173,7 +182,8 @@ namespace cook { namespace model {
         bool merge(const Recipe &src)
         {
             MSS_BEGIN(bool);
-            for (const auto &info: libraries_)
+
+            for (const auto &info: src.libraries_)
             {
                 Owner::Type owner = Owner::Nobody;
                 switch (info.owner)
@@ -185,8 +195,10 @@ namespace cook { namespace model {
                 }
                 add_library(info.name, info.owner);
             }
+
             for (const auto &path: library_paths_)
                 add_library_path(path);
+
             if (src.type().empty())
             {
                 for (auto p: src.file_per_path_)
@@ -200,6 +212,7 @@ namespace cook { namespace model {
                 add_library(src.output().filename.string(), Owner::Me);
                 add_library_path("./");
             }
+
             MSS_END();
         }
 
@@ -220,7 +233,8 @@ namespace cook { namespace model {
             toolchain::Libraries libs;
             for (const auto &info: libraries_)
                 if (info.owner & owner)
-                    libs.push_back(info.name);
+                    //We push_front() to have the correct order (gcc is sensitive to this)
+                    libs.push_front(info.name);
             return libs;
         }
         toolchain::Libraries libraries(int owner) const {return libraries((Owner::Type)owner);}
@@ -230,9 +244,9 @@ namespace cook { namespace model {
         bool each_dependency(Ftor ftor)
         {
             MSS_BEGIN(bool);
-            for (const auto &rn: deps_)
+            for (auto &p: deps_)
             {
-                MSS(ftor(rn));
+                MSS(ftor(p.first, p.second));
             }
             MSS_END();
         }
@@ -258,6 +272,24 @@ namespace cook { namespace model {
             return ips;
         }
 
+        toolchain::ForceIncludes force_includes() const
+        {
+            S("");
+            toolchain::ForceIncludes fis;
+            for (const auto &p: file_per_path_)
+            {
+                const auto &file = p.second;
+                switch (file.type)
+                {
+                    case FileType::ForceInclude:
+                        L(C(file.rel));
+                        fis.push_back(file.rel);
+                        break;
+                }
+            }
+            return fis;
+        }
+
         using Defines = std::map<std::string, std::string>;
         Defines defines() const
         {
@@ -267,14 +299,19 @@ namespace cook { namespace model {
 
         void stream(std::ostream &os) const
         {
-            os << "Recipe " << name_ << ", uri: " << uri_hr() << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
+            os << "Recipe " << name() << ", uri: " << uri_hr() << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
             for (const auto &p: file_per_path_)
             {
                 os << "\tFile: "; p.second.stream(os); os << std::endl;
             }
-            for (const auto &dep: deps_)
+            for (const auto &p: deps_)
             {
-                os << "\tDep: " << dep << std::endl;
+                os << "\tDep: " << p.first << " => ";
+                if (!p.second)
+                    os << "<unresolved recipe>";
+                else
+                    os << (p.second->uri());
+                os << std::endl;
             }
         }
 
@@ -285,17 +322,16 @@ namespace cook { namespace model {
             else if (type_ == "executable")
                 output_.filename = uri().str('\0', '.');
             else if (type_ == "library")
-                output_.filename = uri().last_path();
+                output_.filename = display_name();
         }
 
-        std::string name_;
-        std::string display_name_;
         Uri uri_;
+        std::string display_name_;
         std::string type_;
         std::filesystem::path wd_;
         std::filesystem::path script_fn_;
         FilePerPath file_per_path_;
-        std::set<std::string> deps_;
+        std::map<std::string, Recipe *> deps_;
         Output output_;
         Libraries libraries_;
         LibraryPaths library_paths_;

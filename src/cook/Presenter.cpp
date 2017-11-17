@@ -20,11 +20,9 @@ namespace cook {
         else if (key.pop_if("toolchain.arch")) { model_.toolchain.set_arch(value); }
         else if (key.pop_if("model."))
         {
-            if (false) {}
-            else if (key.pop_if("book."))
+            if (key.pop_if("book."))
             {
-                if (false) {}
-                else if (key.pop_if("create"))
+                if (key.pop_if("create"))
                 {
                     auto book = model_.library.goc_book(value);
                     MSS(!!book, view_.log(Error) << "Could not goc book " << value << std::endl);
@@ -39,19 +37,9 @@ namespace cook {
         }
         else if (key.pop_if("action."))
         {
-            if (false) {}
-            else if (key.pop_if("print."))
+            if (key.pop_if("generate."))
             {
-                if (false) {}
-                else if (key.pop_if("help"))
-                    view_.log(Message) << model_.help_message << std::endl;
-                else if (key.pop_if("books"))
-                    model_.library.stream(view_.log(Message));
-            }
-            else if (key.pop_if("generate."))
-            {
-                if (false) {}
-                else if (key.pop_if("ninja"))
+                if (key.pop_if("ninja"))
                 {
                     model::RecipeDAG dag;
                     const auto rn = value;
@@ -97,14 +85,26 @@ namespace cook {
 
         gubg::Strange key(p_key);
 
-        if (false) {}
-        else if (key.pop_if("model."))
+        if (key.pop_if("model."))
         {
-            if (false) {}
+            if (key.pop_if("book."))
+            {
+                MSS(args.size() >= 1, view_.log(Error) << "At least the uri should be given" << std::endl);
+                const auto &uri = args[0];
+                auto book = model_.library.goc_book(uri);
+                MSS(!!book, view_.log(Error) << "Book " << uri << " does not exists or could not be created" << std::endl); 
+                if (false) {}
+                else if (key.pop_if("display_name"))
+                {
+                    MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for setting the display name" << std::endl);
+                    const auto dn = args[1];
+                    MSS(book->set("display_name", dn), view_.log(Error) << "Failed to set the display name to " << dn << std::endl); 
+                }
+                else { MSS(false, view_.log(Error) << "Unknown operation " << key << " on book" << std::endl); }
+            }
             else if (key.pop_if("recipe."))
             {
-                if (false) {}
-                else if (key.pop_if("create"))
+                if (key.pop_if("create"))
                 {
                     MSS(args.size() >= 3, view_.log(Error) << "Not enough arguments for creating a recipe" << std::endl);
                     const auto &uri = args[0];
@@ -168,17 +168,17 @@ namespace cook {
 
         gubg::Strange key(p_key);
 
-        if (false) {}
+        if (key.pop_if("runner.done"))
+        {
+            MSS(model_.library.resolve(), view_.log(Error) << "Failed to resolve the dependencies in the library" << std::endl);
+        }
         else if (key.pop_if("action."))
         {
-            if (false) {}
-            else if (key.pop_if("print."))
+            if (key.pop_if("print."))
             {
                 if (false) {}
-                else if (key.pop_if("help"))
-                    view_.log(Message) << model_.help_message << std::endl;
-                else if (key.pop_if("books"))
-                    model_.library.stream(view_.log(Message));
+                else if (key.pop_if("help"))  view_.log(Message) << model_.help_message << std::endl;
+                else if (key.pop_if("books")) model_.library.stream(view_.log(Message));
             }
             else
             {

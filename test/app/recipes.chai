@@ -1,13 +1,18 @@
 include("func/func.chai")
 
 auto bb
+root.display_name("ROOT")
 root.book("app", fun[bb](b){
     bb = b
     b.print()
-    b.recipe("exe", "executable", fun(r){
-        r.display_name("my test application")
+    b.recipe("main", "library", fun(r){
+        r.display_name("main_library")
         r.add("main.cpp")
         r.depends_on("/func/lib")
+    })
+    b.recipe("exe", "executable", fun(r){
+        r.display_name("my test application")
+        r.depends_on("main")
     })
     b.recipe("unused", "executable", fun(r){
         r.add("main.cpp")

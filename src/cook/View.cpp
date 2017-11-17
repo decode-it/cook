@@ -12,6 +12,10 @@ namespace cook {
         view::Options options;
         MSS(options.parse(argc, argv));
 
+        logger_.set_verbose(options.verbose);
+
+        log() << "Cook is starting" << std::endl;
+
         MSS(presenter_.set("help.message", options.help_message));
         MSS(presenter_.set("env.build_dir", options.build_dir));
         MSS(presenter_.set("toolchain.config", options.config));
@@ -21,8 +25,10 @@ namespace cook {
 
         view::chai::Runner chai_runner(presenter_, logger_);
         MSS(chai_runner.execute(options.input_fod));
+        MSS(presenter_.set("runner.done"));
 
-        /* MSS(presenter_.set("action.print.books")); */
+        if (options.verbose >= 2)
+            MSS(presenter_.set("action.print.books"));
 
         if (false) {}
         else if (options.generate == "build.ninja")
@@ -31,6 +37,8 @@ namespace cook {
             MSS(presenter_.set("action.generate.details", options.uri));
         else if (options.generate == "structure.tree" || options.generate == "recipes.tree")
             MSS(presenter_.set("action.generate.structure", options.uri));
+
+        log() << "Cook is stopping" << std::endl;
 
         MSS_END();
     }

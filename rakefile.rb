@@ -86,7 +86,7 @@ desc "Clean"
 task :clean do
     rm(FileList.new("**/*.obj"))
     rm(FileList.new("*.exe"))
-    rm_rf(".bcook.*")
+    rm_rf(".bcook")
     Rake::Task["bcook:clean"].invoke
 end
 
@@ -117,14 +117,17 @@ end
 desc "Test"
 task :test do
     Rake::Task["bcook:build"].invoke
-    case :structure
-    when :ninja
-        sh "./bcook.exe -f test/app /app/exe"
-        sh "cat build.ninja"
-        sh "ninja"
-    when :details
-        sh "./bcook.exe -f test/app -g details.tree /app/exe"
-    when :structure
-        sh "./bcook.exe -f test/app -g recipes.tree"
+    test_cases = [:ninja, :details, :structure]
+    test_cases.each do |test_case|
+        case test_case
+        when :ninja
+            sh "./bcook.exe -f test/app /app/exe"
+            sh "cat build.ninja"
+            sh "ninja"
+        when :details
+            sh "./bcook.exe -f test/app -g details.tree /app/exe"
+        when :structure
+            sh "./bcook.exe -f test/app -g recipes.tree -V"
+        end
     end
 end
