@@ -51,7 +51,7 @@ namespace cook { namespace model {
                     if (uri.absolute())
                     {
                         auto p = recipe_index.find(uri_str);
-                        MSS(p != recipe_index.end());
+                        MSS(p != recipe_index.end(), std::cout << "Error: Could not resolve absolute " << uri_str << " for " << recipe.uri_hr() << std::endl);
                         dst = p->second;
                     }
                     else
@@ -69,7 +69,7 @@ namespace cook { namespace model {
                                 MSS_RETURN_OK();
                             }
                         }
-                        MSS(false, std::cout << "Error: Could not resolve " << uri_str << " for " << recipe.uri_hr() << std::endl);
+                        MSS(false, std::cout << "Error: Could not resolve relative " << uri_str << " for " << recipe.uri_hr() << std::endl);
                     }
                     MSS_END();
                 };

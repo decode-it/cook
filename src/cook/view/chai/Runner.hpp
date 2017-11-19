@@ -155,7 +155,7 @@ namespace cook { namespace view { namespace chai {
             }
             catch (const chaiscript::exception::eval_error &exc)
             {
-                os = &logger_.log(Error); *os << "Could not run " << script_fn << ": " << exc.what() << std::endl;
+                os = &logger_.log(Error); *os << "Could not run " << script_fn << ": " << exc.pretty_print() << std::endl;
             }
             if (!!os)
             {
