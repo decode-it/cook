@@ -45,7 +45,7 @@ namespace cook {
                     const auto rn = value;
                     MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
                     {
-                        std::ofstream fo("build.ninja");
+                        std::ofstream fo(model_.env.build_dir() / "build.ninja");
                         presenter::NinjaWriter nw(fo);
                         MSS(nw.write(model_.env, model_.toolchain, dag));
                     }
@@ -177,7 +177,7 @@ namespace cook {
             if (key.pop_if("print."))
             {
                 if (false) {}
-                else if (key.pop_if("help"))  view_.log(Message) << model_.help_message << std::endl;
+                else if (key.pop_if("help"))  view_.log(Always) << model_.help_message << std::endl;
                 else if (key.pop_if("books")) model_.library.stream(view_.log(Message));
             }
             else

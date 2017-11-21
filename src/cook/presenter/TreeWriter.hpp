@@ -38,6 +38,7 @@ namespace cook { namespace presenter {
             //Properties
             {
                 recipe_n.attr("uri", recipe.uri_hr());
+                recipe_n.attr("tag", recipe.display_name());
                 recipe_n.attr("display_name", recipe.display_name());
 
                 if (details)
@@ -79,7 +80,7 @@ namespace cook { namespace presenter {
             MSS_BEGIN(bool);
             auto book_n = node.node("book");
             book_n.attr("uri", book.uri_hr());
-            book_n.attr("name", book.name());
+            /* book_n.attr("name", book.name()); */
             book_n.attr("display_name", book.display_name());
 
             for (const auto &fn: book.script_filenames())

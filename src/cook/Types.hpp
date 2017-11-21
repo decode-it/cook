@@ -8,7 +8,7 @@ namespace cook {
 
     enum LogType
     {
-        Message, Info, Error,
+        Message, Info, Error, Always,
     };
 
     using Strings = std::vector<std::string>;

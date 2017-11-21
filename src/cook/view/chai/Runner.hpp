@@ -22,7 +22,13 @@ namespace cook { namespace view { namespace chai {
 
         std::string indent() const {return std::string(script_stack.size()*2, ' ');}
         std::filesystem::path current_script() const { return script_stack.back(); }
-        std::filesystem::path working_directory() const { return std::filesystem::current_path() / current_script().parent_path(); }
+        std::filesystem::path working_directory() const
+        {
+            auto fn = current_script().parent_path();
+            if (fn.is_relative())
+                fn = std::filesystem::current_path() / fn;
+            return fn;
+        }
     };
 
     class Recipe

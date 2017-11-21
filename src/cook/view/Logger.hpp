@@ -30,6 +30,7 @@ namespace cook { namespace view {
                     os << "Message: ";
                     break;
                 case Error: os << "Error: "; break;
+                case Always: break;
             }
             return os;
         }
