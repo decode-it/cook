@@ -21,7 +21,10 @@ namespace cook {
         MSS(presenter_.set("toolchain.config", options.config));
         MSS(presenter_.set("toolchain.arch", options.arch));
         if (options.print_help)
+        {
             MSS(presenter_.set("action.print.help"));
+            MSS_RETURN_OK();
+        }
 
         view::chai::Runner chai_runner(presenter_, logger_);
         MSS(chai_runner.execute(options.input_fod));
