@@ -45,7 +45,8 @@ namespace cook {
                     const auto rn = value;
                     MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
                     {
-                        std::ofstream fo(model_.env.build_dir() / "build.ninja");
+                        /* std::ofstream fo(model_.env.build_dir() / "build.ninja"); */
+                        std::ofstream fo("build.ninja");
                         presenter::NinjaWriter nw(fo);
                         MSS(nw.write(model_.env, model_.toolchain, dag));
                     }
