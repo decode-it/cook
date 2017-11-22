@@ -1,6 +1,6 @@
 #include "cook/Presenter.hpp"
 #include "cook/presenter/NinjaWriter.hpp"
-#include "cook/presenter/TreeWriter.hpp"
+#include "cook/presenter/NaftWriter.hpp"
 #include "gubg/Strange.hpp"
 
 namespace cook { 
@@ -58,14 +58,14 @@ namespace cook {
                     const auto rn = value;
                     MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
                     {
-                        presenter::TreeWriter tw(std::cout);
-                        MSS(tw.write_details(dag, model_.env.build_dir()));
+                        presenter::NaftWriter nw(std::cout);
+                        MSS(nw.write_details(dag, model_.env.build_dir()));
                     }
                 }
                 else if (key.pop_if("structure"))
                 {
-                    presenter::TreeWriter tw(std::cout);
-                    MSS(tw.write_structure(model_.library));
+                    presenter::NaftWriter nw(std::cout);
+                    MSS(nw.write_structure(model_.library));
                 }
             }
             else

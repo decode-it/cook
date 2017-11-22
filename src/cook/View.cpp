@@ -37,9 +37,9 @@ namespace cook {
         if (false) {}
         else if (options.generate == "build.ninja")
             MSS(presenter_.set("action.generate.ninja", options.uri));
-        else if (options.generate == "details.tree")
+        else if (options.generate == "details.naft")
             MSS(presenter_.set("action.generate.details", options.uri));
-        else if (options.generate == "structure.tree" || options.generate == "recipes.tree")
+        else if (options.generate == "structure.naft" || options.generate == "recipes.naft")
             MSS(presenter_.set("action.generate.structure", options.uri));
 
         log() << "Cook is stopping" << std::endl;

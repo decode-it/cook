@@ -1,14 +1,14 @@
-#ifndef HEADER_cook_presenter_TreeWriter_hpp_ALREADY_INCLUDED
-#define HEADER_cook_presenter_TreeWriter_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_presenter_NaftWriter_hpp_ALREADY_INCLUDED
+#define HEADER_cook_presenter_NaftWriter_hpp_ALREADY_INCLUDED
 
-#include "gubg/tree/Document.hpp"
+#include "gubg/naft/Document.hpp"
 
 namespace cook { namespace presenter { 
 
-    class TreeWriter
+    class NaftWriter
     {
     public:
-        TreeWriter(std::ostream &os): os_(os) { }
+        NaftWriter(std::ostream &os): os_(os) { }
 
         bool write_details(const model::RecipeDAG &dag, const std::filesystem::path &build_dir)
         {
