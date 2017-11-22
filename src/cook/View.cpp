@@ -18,6 +18,7 @@ namespace cook {
 
         MSS(presenter_.set("help.message", options.help_message));
         MSS(presenter_.set("env.build_dir", options.build_dir));
+        MSS(presenter_.set("toolchain.name", options.toolchain));
         MSS(presenter_.set("toolchain.config", options.config));
         MSS(presenter_.set("toolchain.arch", options.arch));
         if (options.print_help)

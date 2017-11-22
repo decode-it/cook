@@ -16,6 +16,7 @@ namespace cook {
         else if (key.pop_if("script.filename")) { script_fn_ = value; }
         else if (key.pop_if("help.message")) { model_.help_message = value; }
         else if (key.pop_if("env.build_dir")) { model_.env.set_build_dir(value); }
+        else if (key.pop_if("toolchain.name")) { model_.toolchain.set_name(value); }
         else if (key.pop_if("toolchain.config")) { model_.toolchain.set_config(value); }
         else if (key.pop_if("toolchain.arch")) { model_.toolchain.set_arch(value); }
         else if (key.pop_if("model."))

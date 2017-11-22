@@ -17,7 +17,8 @@ namespace cook { namespace view {
         };
 
         std::string config = "release";
-        std::string arch = "";
+        std::string arch;
+        std::string toolchain;
         bool print_help = false;
         std::string help_message;
         unsigned int verbose = 0;
@@ -43,6 +44,7 @@ namespace cook { namespace view {
             opt.add_switch('C', "--clean", "Clean-up temporary build results. Runs cook in Existing mode.",         [&](){clean = true;                             mode_ |= Existing; });
             opt.add_mandatory('c', "--config", "Configuration: [release|debug]. Runs cook in Existing mode.",       [&](std::string str){config = str;              mode_ |= Existing; });
             opt.add_mandatory('a', "--arch", "Architecture: [x32|x64|uno]. Runs cook in Existing mode.",            [&](std::string str){arch = str;                mode_ |= Existing; });
+            opt.add_mandatory('t', "--toolchain", "Toolchain: [gcc|msvc]. Runs cook in Existing mode.",             [&](std::string str){toolchain = str;           mode_ |= Existing; });
             opt.add_switch('n', "--no-build", "Only generate the build.ninja file. Runs cook in Existing mode.",    [&](){do_build = false;                         mode_ |= Existing; });
             opt.add_mandatory('b', "--build-dir", "Specify the build directory. Runs cook in Existing mode.",       [&](std::string str){build_dir = str;           mode_ |= Existing; });
             opt.add_switch('A', "--target-all", "Build all targets. Runs cook in Existing mode.",                   [&](){ build_all = true;                        mode_ |= Existing; });
@@ -68,7 +70,7 @@ namespace cook { namespace view {
                 }
 
                 str << opt.help();
-                str << "cook version 1.0.0";
+                str << "cook version 1.0.1";
                 help_message = str.str();
             }
 

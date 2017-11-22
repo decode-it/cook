@@ -25,27 +25,43 @@ namespace cook { namespace model { namespace toolchain {
             path /= std::filesystem::path(config_.config);
         }
 
+        void set_name(const std::string &name) { config_.name = name; }
         void set_config(const std::string &config) { config_.config = config; }
         void set_arch(const std::string &arch) { config_.arch = arch; }
 
         bool get_info(Compiler::Ptr &compiler, Linker::Ptr &linker, Archiver::Ptr &archiver) const
         {
             MSS_BEGIN(bool);
+
+            auto name = config_.name;
+            if (name.empty())
+            {
+#ifdef _MSC_VER
+                name = "msvc";
+#else
+                name = "gcc";
+#endif
+            }
+
             if (false) {}
             else if (config_.arch == "uno")
             {
             }
             else 
             {
-#ifdef _MSC_VER
-                compiler.reset(new toolchain::msvc::Compiler(config_));
-                linker.reset(new toolchain::msvc::Linker(config_));
-                archiver.reset(new toolchain::msvc::Archiver(config_));
-#else
-                compiler.reset(new toolchain::gcc::Compiler(config_));
-                linker.reset(new toolchain::gcc::Linker(config_));
-                archiver.reset(new toolchain::gcc::Archiver(config_));
-#endif
+                if (false) {}
+                else if (name == "msvc")
+                {
+                    compiler.reset(new toolchain::msvc::Compiler(config_));
+                    linker.reset(new toolchain::msvc::Linker(config_));
+                    archiver.reset(new toolchain::msvc::Archiver(config_));
+                }
+                else if (name == "gcc")
+                {
+                    compiler.reset(new toolchain::gcc::Compiler(config_));
+                    linker.reset(new toolchain::gcc::Linker(config_));
+                    archiver.reset(new toolchain::gcc::Archiver(config_));
+                }
             }
             MSS_END();
         }
