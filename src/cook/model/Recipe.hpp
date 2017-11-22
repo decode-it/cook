@@ -67,6 +67,7 @@ namespace cook { namespace model {
         struct Output
         {
             std::filesystem::path filename;
+            std::string name;
         };
 
         Recipe(const Uri &book_uri): uri_(book_uri) {}
@@ -107,7 +108,11 @@ namespace cook { namespace model {
                 }
                 else MSS(false, type_.clear());
             }
-            else if (key == "working_directory") { wd_ = value; }
+            else if (key == "working_directory")
+            {
+                wd_ = value;
+                update_output_();
+            }
             else if (key == "script_filename") { script_fn_ = value; }
             else if (key == "depends_on") { deps_.emplace(value, nullptr); }
             else if (key == "display_name")
@@ -209,7 +214,7 @@ namespace cook { namespace model {
             }
             else if (src.type() == "library")
             {
-                add_library(src.output().filename.string(), Owner::Me);
+                add_library(src.output().name, Owner::Me);
                 add_library_path("./");
             }
 
@@ -320,9 +325,13 @@ namespace cook { namespace model {
         {
             if (false) {}
             else if (type_ == "executable")
-                output_.filename = uri().str('\0', '.');
+            {
+                output_.filename = wd_ / uri().str('\0', '.');
+            }
             else if (type_ == "library")
-                output_.filename = display_name();
+            {
+                output_.name = display_name();
+            }
         }
 
         Uri uri_;

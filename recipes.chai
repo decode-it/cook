@@ -4,10 +4,10 @@ root.book("cook", fun(b) {
         r.add("src", "**.cpp")
         
         r.add("gubg.std/src", "gubg/*.hpp")
-        r.add("gubg.std/src", "gubg/OptionParser.cpp")
         
         r.add("gubg.io/src", "gubg/**.hpp")
         r.add("gubg.io/src", "gubg/Strange.cpp")
+        r.add("gubg.io/src", "gubg/OptionParser.cpp")
 
         r.add("gubg.algo/src", "gubg/**.hpp")
         
