@@ -111,7 +111,7 @@ namespace cook { namespace presenter {
                 << "  command = " << archiver_->cmd_template(astubs) << std::endl;
 
                 model::toolchain::Flags flags;
-                os_ << "aflags = " << linker_->prepare_flags(flags) << std::endl;
+                os_ << "aflags = " << archiver_->prepare_flags(flags) << std::endl;
 
                 os_ << std::endl;
             }

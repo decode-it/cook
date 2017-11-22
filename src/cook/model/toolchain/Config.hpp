@@ -8,7 +8,7 @@ namespace cook { namespace model { namespace toolchain {
     struct Config
     {
         std::string name;
-        std::string arch = "x32";
+        std::string arch;
         std::string config;
     };
 

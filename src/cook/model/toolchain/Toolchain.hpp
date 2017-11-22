@@ -33,40 +33,49 @@ namespace cook { namespace model { namespace toolchain {
         {
             MSS_BEGIN(bool);
 
-            auto name = config_.name;
-            if (name.empty())
-            {
-#ifdef _MSC_VER
-                name = "msvc";
-#else
-                name = "gcc";
-#endif
-            }
+            Config config;
+            MSS(complete_(config));
 
             if (false) {}
-            else if (config_.arch == "uno")
+            else if (config.arch == "uno")
             {
             }
             else 
             {
                 if (false) {}
-                else if (name == "msvc")
+                else if (config.name == "msvc")
                 {
-                    compiler.reset(new toolchain::msvc::Compiler(config_));
-                    linker.reset(new toolchain::msvc::Linker(config_));
-                    archiver.reset(new toolchain::msvc::Archiver(config_));
+                    compiler.reset(new toolchain::msvc::Compiler(config));
+                    linker.reset(new toolchain::msvc::Linker(config));
+                    archiver.reset(new toolchain::msvc::Archiver(config));
                 }
-                else if (name == "gcc")
+                else if (config.name == "gcc")
                 {
-                    compiler.reset(new toolchain::gcc::Compiler(config_));
-                    linker.reset(new toolchain::gcc::Linker(config_));
-                    archiver.reset(new toolchain::gcc::Archiver(config_));
+                    compiler.reset(new toolchain::gcc::Compiler(config));
+                    linker.reset(new toolchain::gcc::Linker(config));
+                    archiver.reset(new toolchain::gcc::Archiver(config));
                 }
             }
             MSS_END();
         }
 
     private:
+        bool complete_(Config &config) const
+        {
+            MSS_BEGIN(bool);
+            config = config_;
+            if (config.name.empty())
+            {
+#ifdef _MSC_VER
+                config.name = "msvc";
+#else
+                config.name = "gcc";
+#endif
+            }
+            if (config.arch.empty())
+                config.arch = "x32";
+            MSS_END();
+        }
         toolchain::Config config_;
     };
 
