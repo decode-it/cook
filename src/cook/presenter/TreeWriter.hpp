@@ -29,7 +29,7 @@ namespace cook { namespace presenter {
         }
 
     private:
-        bool write_recipe_(gubg::tree::Node &node, const model::Recipe &recipe, bool details)
+        bool write_recipe_(gubg::naft::Node &node, const model::Recipe &recipe, bool details)
         {
             MSS_BEGIN(bool);
 
@@ -75,7 +75,7 @@ namespace cook { namespace presenter {
             MSS_END();
         };
 
-        bool write_book_recursive_(gubg::tree::Node &node, const model::Book &book)
+        bool write_book_recursive_(gubg::naft::Node &node, const model::Book &book)
         {
             MSS_BEGIN(bool);
             auto book_n = node.node("book");
@@ -105,7 +105,7 @@ namespace cook { namespace presenter {
         {
             MSS_BEGIN(bool);
 
-            gubg::tree::Document doc(os_);
+            gubg::naft::Document doc(os_);
 
             auto details_n = doc.node("details");
             auto wrapper = [&](const std::filesystem::path & p)
@@ -124,7 +124,7 @@ namespace cook { namespace presenter {
         bool write_structure_(const model::Library &lib)
         {
             MSS_BEGIN(bool);
-            gubg::tree::Document doc(os_);
+            gubg::naft::Document doc(os_);
 
             auto structure_n = doc.node("structure");
 
