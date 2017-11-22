@@ -48,7 +48,7 @@ namespace cook { namespace view {
             opt.add_switch('n', "--no-build", "Only generate the build.ninja file. Runs cook in Existing mode.",    [&](){do_build = false;                         mode_ |= Existing; });
             opt.add_mandatory('b', "--build-dir", "Specify the build directory. Runs cook in Existing mode.",       [&](std::string str){build_dir = str;           mode_ |= Existing; });
             opt.add_switch('A', "--target-all", "Build all targets. Runs cook in Existing mode.",                   [&](){ build_all = true;                        mode_ |= Existing; });
-            opt.add_mandatory('g', "--generate", "Generate output as build.ninja|recipes.naft|details.naft",        [&](std::string str){generate = str;            mode_ |= Existing; });
+            opt.add_mandatory('g', "--generate", "Generate output as build.ninja|structure.naft|details.naft",      [&](std::string str){generate = str;            mode_ |= Existing; });
             opt.add_mandatory('p', "--project", "Create new project with <name>.Runs cook in New mode.",            [&](std::string str){project_name = str;        mode_ |= New; });
 
             auto args = gubg::OptionParser::create_args(argc, argv);

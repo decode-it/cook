@@ -125,9 +125,9 @@ task :test do
             sh "cat build.ninja"
             sh "ninja"
         when :details
-            sh "./bcook.exe -f test/app -g details.tree /app/exe"
+            sh "./bcook.exe -f test/app -g details.naft /app/exe"
         when :structure
-            sh "./bcook.exe -f test/app -g recipes.tree -V"
+            sh "./bcook.exe -f test/app -g structure.naft -V"
         end
     end
 end
