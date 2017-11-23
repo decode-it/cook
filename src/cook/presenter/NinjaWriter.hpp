@@ -159,7 +159,6 @@ namespace cook { namespace presenter {
                     {
                         const auto obj_fn = object_fn(file);
                         os_ << "build " << obj_fn << ": " << compile_rule(file) << " " << source_fn(file) << std::endl;
-                        os_ << "    defines = " << std::endl;
                         os_ << "    include_paths = $" << local_name(recipe, "include_paths");
                         auto add_ip_for_deps = [&](const model::Recipe &d){
                             os_ << " $" << local_name(d, "include_paths");
