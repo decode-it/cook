@@ -17,6 +17,18 @@ namespace cook { namespace model { namespace toolchain {
             else if (arch == "x32") { flags.push_back("-m32"); }
             else if (arch == "x64") { flags.push_back("-m64"); }
         }
+        inline void add_config(Flags &flags, Defines &defines, const std::string &config)
+        {
+            if (false) {}
+            else if (config == "release")
+            {
+                defines.push_back("NDEBUG");
+            }
+            else if (config == "debug")
+            {
+                flags.push_back("-g");
+            }
+        }
 
         class Compiler: public toolchain::Compiler
         {
@@ -29,13 +41,14 @@ namespace cook { namespace model { namespace toolchain {
                     cli_c = "avr-gcc";
                     cli_cpp = "avr-g++ -std=c++17";
                     cli_asm = "avr-as";
-                    flags.push_back("-flto");
-                    defines.push_back("-DARDUINO=10610");
-                    defines.push_back("-DARDUINO_ARCH_AVR");
-                    defines.push_back("-DARDUINO_AVR_UNO");
-                    defines.push_back("-DF_CPU=16000000L");
+                    flags_.push_back("-flto");
+                    defines_.push_back("-DARDUINO=10610");
+                    defines_.push_back("-DARDUINO_ARCH_AVR");
+                    defines_.push_back("-DARDUINO_AVR_UNO");
+                    defines_.push_back("-DF_CPU=16000000L");
                 }
-                add_arch(flags, config_.arch);
+                add_arch(flags_, config_.arch);
+                add_config(flags_, defines_, config_.config);
             }
 
             std::string cmd_template(std::string language, const TemplateStubs &stubs) const override
@@ -56,18 +69,20 @@ namespace cook { namespace model { namespace toolchain {
                 }
                 return oss_.str();
             }
-            std::string prepare_flags(const Flags &p_flags) const override
+            std::string prepare_flags(const Flags &flags) const override
             {
                 oss_.str("");
-                for (auto flag: flags)
+                for (auto flag: flags_)
                     oss_ << " " << flag;
-                for (auto flag: p_flags)
+                for (auto flag: flags)
                     oss_ << " " << flag;
                 return oss_.str();
             }
             std::string prepare_defines(const Defines &defines) const override
             {
                 oss_.str("");
+                for (auto def: defines_)
+                    oss_ << " -D" << def;
                 for (auto def: defines)
                     oss_ << " -D" << def;
                 return oss_.str();
@@ -93,8 +108,8 @@ namespace cook { namespace model { namespace toolchain {
             std::string cli_c = "gcc";
             std::string cli_cpp = "g++ -std=c++17";
             std::string cli_asm = "as";
-            Flags flags;
-            Defines defines;
+            Flags flags_;
+            Defines defines_;
         };
 
         class Linker: public toolchain::Linker
@@ -106,9 +121,9 @@ namespace cook { namespace model { namespace toolchain {
                 else if (config_.arch == "uno")
                 {
                     cli = "avr-g++ -std=c++17";
-                    flags.push_back("-flto");
+                    flags_.push_back("-flto");
                 }
-                add_arch(flags, config_.arch);
+                add_arch(flags_, config_.arch);
             }
 
             std::string cmd_template(const TemplateStubs &stubs) const override
@@ -124,12 +139,12 @@ namespace cook { namespace model { namespace toolchain {
                     oss_ << " " << obj;
                 return oss_.str();
             }
-            std::string prepare_flags(const Flags &p_flags) const override
+            std::string prepare_flags(const Flags &flags) const override
             {
                 oss_.str("");
-                for (auto flag: flags)
+                for (auto flag: flags_)
                     oss_ << " " << flag;
-                for (auto flag: p_flags)
+                for (auto flag: flags)
                     oss_ << " " << flag;
                 return oss_.str();
             }
@@ -152,7 +167,7 @@ namespace cook { namespace model { namespace toolchain {
             mutable std::ostringstream oss_;
             const Config config_;
             std::string cli = "g++ -std=c++17";
-            Flags flags;
+            Flags flags_;
         };
 
         class Archiver: public toolchain::Archiver
@@ -163,7 +178,7 @@ namespace cook { namespace model { namespace toolchain {
                 if (false) {}
                 else if (config_.arch == "uno")
                 {
-                    flags.push_back("-flto");
+                    flags_.push_back("-flto");
                 }
             }
 
@@ -186,9 +201,11 @@ namespace cook { namespace model { namespace toolchain {
                     oss_ << " " << obj;
                 return oss_.str();
             }
-            std::string prepare_flags(const Flags &p_flags) const override
+            std::string prepare_flags(const Flags &flags) const override
             {
                 oss_.str("");
+                for (auto flag: flags_)
+                    oss_ << " " << flag;
                 for (auto flag: flags)
                     oss_ << " " << flag;
                 return oss_.str();
@@ -198,7 +215,7 @@ namespace cook { namespace model { namespace toolchain {
             mutable std::ostringstream oss_;
             const Config config_;
             std::string cli;
-            Flags flags;
+            Flags flags_;
         };
 
     } 

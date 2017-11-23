@@ -74,6 +74,8 @@ namespace cook { namespace model { namespace toolchain {
             }
             if (config.arch.empty())
                 config.arch = "x32";
+            if (config.config.empty())
+                config.config = "release";
             MSS_END();
         }
         toolchain::Config config_;
