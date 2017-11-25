@@ -279,7 +279,6 @@ namespace cook { namespace model {
 
         toolchain::ForceIncludes force_includes() const
         {
-            S("");
             toolchain::ForceIncludes fis;
             for (const auto &p: file_per_path_)
             {
@@ -287,7 +286,6 @@ namespace cook { namespace model {
                 switch (file.type)
                 {
                     case FileType::ForceInclude:
-                        L(C(file.rel));
                         fis.push_back(file.rel);
                         break;
                 }

@@ -85,13 +85,13 @@ namespace cook { namespace model {
 
         bool get(RecipeDAG &dag, const std::string &target_uri)
         {
-            MSS_BEGIN(bool, "");
+            MSS_BEGIN(bool);
 
             Recipe *target_recipe = nullptr;
 
             dag.clear();
             auto add_to_dag = [&](const BookPath &path, Recipe *recipe){
-                MSS_BEGIN(bool, "");
+                MSS_BEGIN(bool);
 
                 if (!recipe) MSS_RETURN_OK();
 
@@ -103,6 +103,7 @@ namespace cook { namespace model {
                 auto add_edge = [&](const std::string &dst_rn, Recipe *dst_recipe)
                 {
                     MSS_BEGIN(bool);
+                    L("Adding edge from " << recipe->uri_hr() << " to " << dst_rn);
                     MSS(!!dst_recipe, std::cout << "Error: Dependency " << dst_rn << " was not resolved" << std::endl);
                     MSS(dag.add_edge(recipe, dst_recipe), (std::cout << "Error: Failed to add edge from " << recipe->uri_hr() << " to " << dst_recipe->uri_hr() << std::endl, dag.stream(std::cout, [](const Recipe &r){return r.uri_hr();})));
                     MSS_END();
