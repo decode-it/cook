@@ -286,7 +286,7 @@ namespace cook { namespace model {
                 switch (file.type)
                 {
                     case FileType::ForceInclude:
-                        fis.push_back(file.rel);
+                        fis.push_back(file.rel.string());
                         break;
                 }
             }
