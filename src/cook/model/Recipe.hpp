@@ -216,6 +216,19 @@ namespace cook { namespace model {
             {
                 add_library(src.output().name, Owner::Me);
                 add_library_path("./");
+                for (auto p: src.file_per_path_)
+                {
+                    const auto &file = p.second;
+                    switch (file.type)
+                    {
+                        case FileType::Header:
+                        case FileType::ForceInclude:
+                            //We only take-over headers to have the correct include paths
+                            p.second.owner = Owner::Deps;
+                            file_per_path_.insert(p);
+                            break;
+                    }
+                }
             }
 
             MSS_END();
@@ -256,19 +269,20 @@ namespace cook { namespace model {
             MSS_END();
         }
 
-        toolchain::IncludePaths include_paths() const
+        toolchain::IncludePaths include_paths(Owner::Type owner = Owner::Me) const
         {
             std::set<std::filesystem::path> ips_set;
             for (const auto &p: file_per_path_)
             {
                 const auto &file = p.second;
-                switch (file.type)
-                {
-                    case FileType::Header:
-                    case FileType::ForceInclude:
-                        ips_set.insert(file.dir);
-                        break;
-                }
+                if (file.owner & owner)
+                    switch (file.type)
+                    {
+                        case FileType::Header:
+                        case FileType::ForceInclude:
+                            ips_set.insert(file.dir);
+                            break;
+                    }
             }
             toolchain::IncludePaths ips{ips_set.size()};
             ips.resize(0);

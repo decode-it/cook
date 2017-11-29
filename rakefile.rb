@@ -118,6 +118,7 @@ desc "Test"
 task :test do
     Rake::Task["bcook:build"].invoke
     test_cases = [:ninja, :details, :structure]
+    # test_cases = [:structure]
     test_cases.each do |test_case|
         case test_case
         when :ninja

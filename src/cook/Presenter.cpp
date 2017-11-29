@@ -64,6 +64,10 @@ namespace cook {
                 }
                 else if (key.pop_if("structure"))
                 {
+                    model::RecipeDAG dag;
+                    //We currently do not use the dag when writing the structure, but we still need to execute this
+                    //to make sure all recipes are propely merged according to the dependency structure.
+                    MSS(model_.library.get(dag, ""), view_.log(Error) << "Could not extract the DAG" << std::endl);
                     presenter::NaftWriter nw(std::cout);
                     MSS(nw.write_structure(model_.library));
                 }
