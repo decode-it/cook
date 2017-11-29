@@ -153,12 +153,17 @@ namespace cook { namespace presenter {
                 MSS_BEGIN(bool);
                 os_ << std::endl;
                 os_ << "# >> Recipe " << recipe.uri_hr() << std::endl;
-                os_ << local_name(recipe, "include_paths") << " = " << compiler_->prepare_include_paths(recipe.include_paths()) << std::endl;
+#if 0
+                os_ << local_name(recipe, "include_paths") << " = " << compiler_->prepare_include_paths(recipe.include_paths(model::Owner::Anybody)) << std::endl;
+#endif
                 auto write_compile = [&](const auto &file){
                     if (file.type == model::FileType::Source)
                     {
                         const auto obj_fn = object_fn(file);
                         os_ << "build " << obj_fn << ": " << compile_rule(file) << " " << source_fn(file) << std::endl;
+#if 1
+                        os_ << "    include_paths = " << compiler_->prepare_include_paths(recipe.include_paths(model::Owner::Anybody)) << std::endl;
+#else
                         os_ << "    include_paths = $" << local_name(recipe, "include_paths");
                         auto add_ip_for_deps = [&](const model::Recipe &d){
                             os_ << " $" << local_name(d, "include_paths");
@@ -166,6 +171,7 @@ namespace cook { namespace presenter {
                         };
                         dag.each_out(&recipe, add_ip_for_deps);
                         os_ << std::endl;
+#endif
                         os_ << "    force_includes = " << compiler_->prepare_force_includes(recipe.force_includes()) << std::endl;
                         os_ << "    library_paths = " << std::endl;
                         os_ << "    libraries = " << std::endl;
