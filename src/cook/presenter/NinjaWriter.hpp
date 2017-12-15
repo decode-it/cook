@@ -2,6 +2,7 @@
 #define HEADER_cook_presenter_NinjaWriter_hpp_ALREADY_INCLUDED
 
 #include "cook/model/toolchain/Toolchain.hpp"
+#include "cook/model/Recipe.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/string_algo/substitute.hpp"
 #include "gubg/mss.hpp"

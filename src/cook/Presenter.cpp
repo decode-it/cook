@@ -146,6 +146,12 @@ namespace cook {
                         const auto dn = args[1];
                         MSS(recipe->set("display_name", dn), view_.log(Error) << "Failed to set the display name to " << dn << std::endl); 
                     }
+                    else if (key.pop_if("library_path"))
+                    {
+                        MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for adding a library path" << std::endl);
+                        const auto name = args[1];
+                        MSS(recipe->set("library_path", name), view_.log(Error) << "Failed to add library " << name << std::endl);
+                    }
                     else if (key.pop_if("library"))
                     {
                         MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for adding a library" << std::endl);

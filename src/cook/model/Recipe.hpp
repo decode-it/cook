@@ -121,6 +121,7 @@ namespace cook { namespace model {
                 update_output_();
             }
             else if (key == "library") { add_library(value, Owner::External); }
+            else if (key == "library_path") { add_library_path(value); }
             MSS_END();
         }
 
