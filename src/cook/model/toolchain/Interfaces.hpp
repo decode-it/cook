@@ -71,7 +71,7 @@ namespace cook { namespace model { namespace toolchain {
 
         virtual std::string prepare_library(const Library &name) const = 0;
         virtual std::string prepare_objects(const ObjectFiles &) const = 0;
-        virtual std::string prepare_flags(const Flags &) const = 0;
+        virtual std::string prepare_flags(const Flags &) const = 0;        
     };
 
 } } } 

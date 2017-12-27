@@ -343,7 +343,7 @@ namespace cook { namespace model {
             }
             else if (type_ == "library")
             {
-                output_.name = display_name();
+                output_.name = uri_hr(false);
             }
         }
 

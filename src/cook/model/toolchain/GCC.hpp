@@ -3,6 +3,7 @@
 
 #include "cook/model/toolchain/Interfaces.hpp"
 #include "cook/model/toolchain/Config.hpp"
+#include "cook/model/toolchain/Convert.hpp"
 #include <sstream>
 #include <iostream>
 #include <cassert>
@@ -159,7 +160,7 @@ namespace cook { namespace model { namespace toolchain {
             {
                 oss_.str("");
                 for (auto lib: libraries)
-                    oss_ << " -l" << lib;
+                    oss_ << " -l" << convert_uri(lib);
                 return oss_.str();
             }
 
@@ -191,7 +192,7 @@ namespace cook { namespace model { namespace toolchain {
             std::string prepare_library(const Library &name) const override
             {
                 oss_.str("");
-                oss_ << "lib" << name << ".a";
+                oss_ << "lib" << convert_uri(name) << ".a";
                 return oss_.str();
             }
             std::string prepare_objects(const ObjectFiles &objects) const override
