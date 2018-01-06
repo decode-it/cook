@@ -24,6 +24,7 @@ namespace cook { namespace model { namespace toolchain {
             else if (config == "release")
             {
                 defines.push_back("NDEBUG");
+                flags.push_back("-O3");
             }
             else if (config == "debug")
             {
