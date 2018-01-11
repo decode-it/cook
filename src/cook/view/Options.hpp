@@ -28,6 +28,7 @@ namespace cook { namespace view {
         bool build_all = false;
         std::string project_name;
         std::string build_dir = ".cook/";
+        std::string output_dir = "./";
         std::string input_fod = "recipes.chai";
         std::string generate;
 
@@ -47,6 +48,7 @@ namespace cook { namespace view {
             opt.add_mandatory('t', "--toolchain", "Toolchain: [gcc|msvc]. Runs cook in Existing mode.",             [&](std::string str){toolchain = str;           mode_ |= Existing; });
             opt.add_switch('n', "--no-build", "Only generate the build.ninja file. Runs cook in Existing mode.",    [&](){do_build = false;                         mode_ |= Existing; });
             opt.add_mandatory('b', "--build-dir", "Specify the build directory. Runs cook in Existing mode.",       [&](std::string str){build_dir = str;           mode_ |= Existing; });
+            opt.add_mandatory('o', "--output-dir", "Specify the output directory. Runs cook in Existing mode.",       [&](std::string str){output_dir = str;           mode_ |= Existing; });
             opt.add_switch('A', "--target-all", "Build all targets. Runs cook in Existing mode.",                   [&](){ build_all = true;                        mode_ |= Existing; });
             opt.add_mandatory('g', "--generate", "Generate output as build.ninja|structure.naft|details.naft",      [&](std::string str){generate = str;            mode_ |= Existing; });
             opt.add_mandatory('p', "--project", "Create new project with <name>.Runs cook in New mode.",            [&](std::string str){project_name = str;        mode_ |= New; });

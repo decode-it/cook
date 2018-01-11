@@ -15,7 +15,8 @@ namespace cook {
         if (false) {}
         else if (key.pop_if("script.filename")) { script_fn_ = value; }
         else if (key.pop_if("help.message")) { model_.help_message = value; }
-        else if (key.pop_if("env.build_dir")) { model_.env.set_build_dir(value); }
+        else if (key.pop_if("env.dir.build")) { model_.env.set_dir("build", value); }
+        else if (key.pop_if("env.dir.output")) { model_.env.set_dir("output", value); }
         else if (key.pop_if("toolchain.name")) { model_.toolchain.set_name(value); }
         else if (key.pop_if("toolchain.config")) { model_.toolchain.set_config(value); }
         else if (key.pop_if("toolchain.arch")) { model_.toolchain.set_arch(value); }
@@ -46,8 +47,7 @@ namespace cook {
                     const auto rn = value;
                     MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
                     {
-                        /* std::ofstream fo(model_.env.build_dir() / "build.ninja"); */
-                        std::ofstream fo("build.ninja");
+                        std::ofstream fo(model_.env.dir("output") / "build.ninja");
                         presenter::NinjaWriter nw(fo);
                         MSS(nw.write(model_.env, model_.toolchain, dag));
                     }
@@ -59,7 +59,7 @@ namespace cook {
                     MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
                     {
                         presenter::NaftWriter nw(std::cout);
-                        MSS(nw.write_details(dag, model_.env.build_dir()));
+                        MSS(nw.write_details(dag, model_.env.dir("build")));
                     }
                 }
                 else if (key.pop_if("structure"))
@@ -121,6 +121,7 @@ namespace cook {
                     MSS(recipe->set("type", type), view_.log(Error) << "Unknown type " << type << " already exists" << std::endl); 
                     const auto &wd = args[2];
                     MSS(recipe->set("working_directory", wd), view_.log(Error) << "Failed to set the working directory" << std::endl); 
+                    MSS(recipe->set("output_directory", model_.env.dir("output")), view_.log(Error) << "Failed to set the output directory" << std::endl); 
                 }
                 else
                 {

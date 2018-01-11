@@ -30,7 +30,7 @@ namespace cook { namespace presenter {
             MSS_BEGIN(bool);
             os_ << std::endl;
             os_ << "# >> Environment" << std::endl;
-            os_ << "builddir = " << env.build_dir().string() << std::endl;
+            os_ << "builddir = " << env.dir("build").string() << std::endl;
             os_ << "# << Environment" << std::endl;
             MSS_END();
         }

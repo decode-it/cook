@@ -113,7 +113,12 @@ namespace cook { namespace model {
                 wd_ = value;
                 update_output_();
             }
-            else if (key == "script_filename") { script_fn_ = value; }
+            else if (key == "output_directory")
+            {
+                output_dir_ = value;
+                update_output_();
+            }
+             else if (key == "script_filename") { script_fn_ = value; }
             else if (key == "depends_on") { deps_.emplace(value, nullptr); }
             else if (key == "display_name")
             {
@@ -317,7 +322,7 @@ namespace cook { namespace model {
 
         void stream(std::ostream &os) const
         {
-            os << "Recipe " << name() << ", uri: " << uri_hr() << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
+            os << "Recipe " << name() << ", uri: " << uri_hr() << ", type: " << type_ << ", working directory: " << wd_ << ", output directory: " << output_dir_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
             for (const auto &p: file_per_path_)
             {
                 os << "\tFile: "; p.second.stream(os); os << std::endl;
@@ -339,7 +344,7 @@ namespace cook { namespace model {
             if (false) {}
             else if (type_ == "executable")
             {
-                output_.filename = wd_ / uri().str('\0', '.');
+                output_.filename = output_dir_ / uri().str('\0', '.');
             }
             else if (type_ == "library")
             {
@@ -351,6 +356,7 @@ namespace cook { namespace model {
         std::string display_name_;
         std::string type_;
         std::filesystem::path wd_;
+        std::filesystem::path output_dir_;
         std::filesystem::path script_fn_;
         FilePerPath file_per_path_;
         std::map<std::string, Recipe *> deps_;
