@@ -130,6 +130,55 @@ namespace cook { namespace model {
             MSS_END();
         }
 
+        bool add_file(std::string p_dir, const std::string & abs_filename, const std::string &option)
+        {
+            MSS_BEGIN(bool);
+
+            std::filesystem::path fn = abs_filename;
+            MSS(std::filesystem::exists(fn));
+
+            File & f = file_per_path_[fn];
+            f.path = fn;
+
+            // get the directory
+            f.dir = p_dir.empty() ? "." : p_dir;
+            if (f.dir.is_relative())
+                f.dir = wd_ / f.dir;
+
+            f.rel.clear();
+            //We follow both dir and fp from root to file. As soon as they start to differ,
+            //we are in the relative part
+            {
+                auto dir_it = f.dir.begin();
+                auto dir_end = f.dir.end();
+                for (const auto &part: f.path)
+                {
+                    if (dir_it != dir_end && part == *dir_it)
+                    {
+                        ++dir_it;
+                        continue;
+                    }
+                    f.rel /= part;
+                }
+            }
+
+            f.owner = Owner::Me;
+            const auto ext = f.rel.extension();
+            if (false) {}
+            else if (ext == ".c")   { f.type = FileType::Source; f.language = "c"; }
+            else if (ext == ".h")   { f.type = FileType::Header; f.language = "c"; }
+            else if (ext == ".cpp") { f.type = FileType::Source; f.language = "c++"; }
+            else if (ext == ".hpp") { f.type = FileType::Header; f.language = "c++"; }
+            else if (ext == ".asm") { f.type = FileType::Source; f.language = "asm"; }
+
+            if (option.empty()) {}
+            else if (option == "header")        { f.type = FileType::Header; }
+            else if (option == "source")        { f.type = FileType::Source; }
+            else if (option == "force_include") { f.type = FileType::ForceInclude; }
+
+            MSS_END();
+        }
+
         void add(std::string p_dir, const std::string &pattern, const std::string &option)
         {
             if (p_dir.empty())
@@ -139,42 +188,13 @@ namespace cook { namespace model {
             if (dir.is_relative())
                 dir = wd_ / dir;
 
-            auto add_file = [&](const std::filesystem::path &fp)
+            auto add_file_wrapper = [&](const std::filesystem::path &fp)
             {
-                auto &file = file_per_path_[fp];
-                file.owner = Owner::Me;
-                file.dir = dir;
-                file.path = fp;
-                {
-                    file.rel.clear();
-                    //We follow both dir and fp from root to file. As soon as they start to differ,
-                    //we are in the relative part
-                    auto dir_it = dir.begin();
-                    auto dir_end = dir.end();
-                    for (const auto &part: fp)
-                    {
-                        if (dir_it != dir_end && part == *dir_it)
-                        {
-                            ++dir_it;
-                            continue;
-                        }
-                        file.rel /= part;
-                    }
-                }
-                const auto ext = fp.extension();
-                if (false) {}
-                else if (ext == ".c")   {file.type = FileType::Source; file.language = "c";}
-                else if (ext == ".h")   {file.type = FileType::Header; file.language = "c";}
-                else if (ext == ".cpp") {file.type = FileType::Source; file.language = "c++";}
-                else if (ext == ".hpp") {file.type = FileType::Header; file.language = "c++";}
-                else if (ext == ".asm") {file.type = FileType::Source; file.language = "asm";}
-
-                if (option.empty()) {}
-                else if (option == "header") {file.type = FileType::Header;}
-                else if (option == "source") {file.type = FileType::Source;}
-                else if (option == "force_include") {file.type = FileType::ForceInclude;}
+                const bool ok = add_file(p_dir, fp, option);
+                assert(ok);
+//                else if (option == "force_include") {file.type = FileType::ForceInclude;}
             };
-            gubg::file::each_glob(pattern, add_file, dir);
+            gubg::file::each_glob(pattern, add_file_wrapper, dir);
         }
 
         void add_library(const std::string &lib, Owner::Type owner)
