@@ -2,6 +2,7 @@
 #define HEADER_cook_presenter_NaftWriter_hpp_ALREADY_INCLUDED
 
 #include "gubg/naft/Document.hpp"
+#include "gubg/mss.hpp"
 
 namespace cook { namespace presenter { 
 
