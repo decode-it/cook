@@ -135,6 +135,11 @@ namespace cook {
                         MSS(args.size() >= 4, view_.log(Error) << "Not enough arguments for adding files to a recipe" << std::endl);
                         recipe->add(args[1], args[2], args[3]);
                     }
+                    else if (key.pop_if("add_file"))
+                    {
+                        MSS(args.size() == 4, view_.log(Error) << "Not enough arguments for adding a file to a recipe" << std::endl);
+                        MSS(recipe->add_file(args[1], args[2], args[3]), view_.log(Error) << "Unable to add the file " << args[2] << " to recipe " << args[1] << std::endl);
+                    }
                     else if (key.pop_if("depends_on"))
                     {
                         MSS(args.size() >= 2, view_.log(Error) << "Not enough arguments for specifying a dependency" << std::endl);
