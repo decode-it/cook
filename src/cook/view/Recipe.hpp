@@ -1,8 +1,7 @@
-#ifndef HEADER_cook_view_chai_Recipe_hpp_ALREADY_INCLUDED
-#define HEADER_cook_view_chai_Recipe_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_view_Recipe_hpp_ALREADY_INCLUDED
+#define HEADER_cook_view_Recipe_hpp_ALREADY_INCLUDED
 
-#include "cook/view/chai/RunnerInfo.hpp"
-#include "cook/view/chai/Engine.hpp"
+#include "cook/view/RunnerInfo.hpp"
 #include "cook/view/Logger.hpp"
 #include "cook/presenter/Interface.hpp"
 #include "cook/model/Uri.hpp"
@@ -11,7 +10,7 @@
 #include <functional>
 #include <iostream>
 
-namespace cook { namespace view { namespace chai {
+namespace cook { namespace view {
 
     class Recipe
     {
@@ -71,6 +70,6 @@ namespace cook { namespace view { namespace chai {
         model::Uri uri_;
     };
 
-} } }
+} }
 
 #endif
