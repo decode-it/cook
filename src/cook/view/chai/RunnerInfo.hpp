@@ -6,6 +6,7 @@
 #include "cook/model/Uri.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <vector>
+#include <chaiscript/chaiscript.hpp>
 
 namespace cook { namespace view { namespace chai { 
 
@@ -26,6 +27,15 @@ namespace cook { namespace view { namespace chai {
             if (fn.is_relative())
                 fn = std::filesystem::current_path() / fn;
             return fn;
+        }
+        void notify_error(const std::string & error_msg)
+        {
+            throw chaiscript::exception::eval_error(error_msg);
+        }
+
+        void notify_warning(const std::string & warning_msg)
+        {
+            std::cout << warning_msg << std::endl;
         }
     };
 

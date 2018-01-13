@@ -49,7 +49,7 @@ namespace cook { namespace view { namespace chai {
             if (!info_.presenter.set("model.recipe.create", args))
             {
                 const std::string & error_msg = gubg::stream([&](auto & oss) { oss << "Recipe \"" << uri << "\" already exists"; });
-                throw chaiscript::exception::eval_error(error_msg);
+                info_.notify_error(error_msg);
             }
             Recipe recipe{info_, uri};
             callback(recipe);

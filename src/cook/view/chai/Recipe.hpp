@@ -30,7 +30,7 @@ namespace cook { namespace view { namespace chai {
             if (!info_.presenter.set("model.recipe.add", args))
             {
                 const std::string & error_msg = gubg::stream([&](auto & oss) { oss << "Could not add files to recipe " << uri_; });
-                throw chaiscript::exception::eval_error(error_msg);
+                info_.notify_error(error_msg);
             }
             info_.logger.log(Info) << info_.indent() << "<< Add files from " << dir << " // " << pattern << " as " << option << std::endl;
         }
