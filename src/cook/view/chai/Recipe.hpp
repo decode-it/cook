@@ -6,6 +6,7 @@
 #include "cook/view/Logger.hpp"
 #include "cook/presenter/Interface.hpp"
 #include "cook/model/Uri.hpp"
+#include "gubg/stream.hpp"
 #include <vector>
 #include <functional>
 #include <iostream>
@@ -28,8 +29,8 @@ namespace cook { namespace view { namespace chai {
             const Strings args = {uri_.str(), dir, pattern, option};
             if (!info_.presenter.set("model.recipe.add", args))
             {
-                std::ostringstream oss; oss << "Could not add files";
-                throw chaiscript::exception::eval_error(oss.str());
+                const std::string & error_msg = gubg::stream([&](auto & oss) { oss << "Could not add files to recipe " << uri_; });
+                throw chaiscript::exception::eval_error(error_msg);
             }
             info_.logger.log(Info) << info_.indent() << "<< Add files from " << dir << " // " << pattern << " as " << option << std::endl;
         }

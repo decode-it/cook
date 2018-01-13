@@ -7,6 +7,7 @@
 #include "cook/view/Logger.hpp"
 #include "cook/presenter/Interface.hpp"
 #include "cook/model/Uri.hpp"
+#include "gubg/stream.hpp"
 #include <functional>
 #include <iostream>
 
@@ -47,8 +48,8 @@ namespace cook { namespace view { namespace chai {
             const Strings args = {uri.str(), type, info_.working_directory().string()};
             if (!info_.presenter.set("model.recipe.create", args))
             {
-                std::ostringstream oss; oss << "Recipe \"" << uri << "\" already exists";
-                throw chaiscript::exception::eval_error(oss.str());
+                const std::string & error_msg = gubg::stream([&](auto & oss) { oss << "Recipe \"" << uri << "\" already exists"; });
+                throw chaiscript::exception::eval_error(error_msg);
             }
             Recipe recipe{info_, uri};
             callback(recipe);
