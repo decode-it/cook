@@ -94,6 +94,20 @@ namespace cook { namespace model {
 
         const Output &output() const {return output_;}
 
+        bool get(const std::string & key, std::string & result) const
+        {
+            MSS_BEGIN(bool);
+
+            if (false) {}
+            else if (key == "working_directory")
+            {
+                result = wd_.string();
+            }
+            else { MSS(false); }
+
+            MSS_END();
+        }
+
         bool set(const std::string &key, const std::string &value)
         {
             MSS_BEGIN(bool);
@@ -127,6 +141,7 @@ namespace cook { namespace model {
             }
             else if (key == "library") { add_library(value, Owner::External); }
             else if (key == "library_path") { add_library_path(value); }
+            else { MSS(false); }
             MSS_END();
         }
 
@@ -192,7 +207,6 @@ namespace cook { namespace model {
             {
                 const bool ok = add_file(p_dir, fp, option);
                 assert(ok);
-//                else if (option == "force_include") {file.type = FileType::ForceInclude;}
             };
             gubg::file::each_glob(pattern, add_file_wrapper, dir);
         }

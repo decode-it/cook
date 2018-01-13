@@ -2,6 +2,7 @@
 #define HEADER_cook_view_File_hpp_ALREADY_INCLUDED
 
 #include <string>
+#include "gubg/std/filesystem.hpp"
 
 namespace cook { namespace view {
 
@@ -28,17 +29,19 @@ inline std::string to_string(FileType ft)
 struct File
 {
 public:
-    File(const std::string & dir, const std::string & rel)
+    File(const std::filesystem::path & dir, const std::filesystem::path & rel)
         : dir_(dir), rel_(rel), type(Unknown) {}
 
-    const std::string & dir() const { return dir_; }
-    const std::string & rel() const { return rel_; }
+    std::string dir() const { return dir_.string(); }
+    std::string relative() const { return rel_.string(); }
+    std::string filename() const { return rel_.filename(); }
+    std::string extension() const { return rel_.extension(); }
 
     FileType type;
 
 private:
-    std::string dir_;
-    std::string rel_;
+    std::filesystem::path dir_;
+    std::filesystem::path rel_;
 };
 
 

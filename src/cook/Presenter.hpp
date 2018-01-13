@@ -22,6 +22,9 @@ namespace cook {
         bool set(const std::string &key, const std::string &value) override;
         bool set(const std::string &key, const Strings &value) override;
         bool set(const std::string &key) override;
+        bool get(const std::string &key, std::string & result) const override;
+        bool get(const std::string &key, const Strings & args, std::string & result) const override;
+
 
     private:
         bool receive_(const std::string &key, const std::string &value);

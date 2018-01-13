@@ -15,7 +15,12 @@ root.book("app", fun[bb](b){
         r.depends_on("main")
     })
     b.recipe("unused", "executable", fun(r){
-        r.add("main.cpp")
+        r.add(".", fun(b) { 
+            
+            auto add = (b.extension() == ".c" || b.extension() == ".cpp")           
+            print("The functor will add file ${b.relative()}: ${add}")
+            return add
+        })
     })
     b.book("ut", fun(b){
         b.print()

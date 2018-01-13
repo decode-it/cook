@@ -2,6 +2,7 @@
 #include "cook/view/chai/Engine.hpp"
 #include "cook/view/chai/RunnerInfo.hpp"
 #include "cook/view/chai/Book.hpp"
+#include "cook/view/chai/File.hpp"
 #include "cook/view/chai/Recipe.hpp"
 #include "cook/view/Book.hpp"
 #include "cook/model/Uri.hpp"
@@ -90,7 +91,8 @@ void Runner::setup_chai_functions_()
 
     chai.add(chaiscript::fun(&Runner::chai_include, this), "include");
 
-    chai.add(book_module());
+    chai.add(file_module());
+    chai.add(book_module());    
     chai.add(recipe_module());
 
     chai.add_global(chaiscript::var(d.root_book_), "root");

@@ -11,6 +11,9 @@ ModulePtr recipe_module()
     m->add(chaiscript::user_type<Recipe>(), "Recipe");
     m->add(chaiscript::constructor<Recipe(const Recipe &)>(), "Recipe");
     m->add(chaiscript::fun(&Recipe::print), "print");
+    m->add(chaiscript::fun(&Recipe::add_select_3), "add");
+    m->add(chaiscript::fun(&Recipe::add_select_2), "add");
+    m->add(chaiscript::fun(&Recipe::add_select_1), "add");
     m->add(chaiscript::fun(&Recipe::add_3), "add");
     m->add(chaiscript::fun(&Recipe::add_2), "add");
     m->add(chaiscript::fun(&Recipe::add_1), "add");

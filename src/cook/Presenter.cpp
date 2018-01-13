@@ -210,4 +210,46 @@ namespace cook {
         MSS_END();
     }
 
+    bool Presenter::get(const std::string & p_key, std::string & result) const
+    {
+        MSS_BEGIN(bool);
+        view_.log(Info) << "Received request: " << p_key << std::endl;
+        gubg::Strange key(p_key);
+
+        if (false) {}
+        else { MSS(false, view_.log(Error) << "Unknown request key " << key << std::endl); }
+
+        MSS_END();
+    }
+    bool Presenter::get(const std::string & p_key, const Strings & args, std::string & result) const
+    {
+        MSS_BEGIN(bool);
+        view_.log(Info) << "Received request: " << p_key << std::endl;
+        gubg::Strange key(p_key);
+
+        if (false) {}
+        if (key.pop_if("model."))
+        {
+            if (key.pop_if("recipe."))
+            {
+                MSS(args.size() >= 1, view_.log(Error) << "At least the uri should be given" << std::endl);
+                const auto &uri = args[0];
+                auto recipe = model_.library.get_recipe(uri);
+                MSS(!!recipe, view_.log(Error) << "Recipe " << uri << " does not exists" << std::endl);
+                if (false) {}
+                else
+                {
+                    MSS(args.size() == 1, view_.log(Error) << "To much arguments for requesting " << key.str() << std::endl);
+                    MSS(recipe->get(key.str(), result), view_.log(Error) << "Unable to request" << key.str() << std::endl);
+                }
+            }
+            else { MSS(false, view_.log(Error) << "Unknown model target " << key << std::endl); }
+
+        }
+        else { MSS(false, view_.log(Error) << "Unknown request key " << key << std::endl); }
+
+
+        MSS_END();
+    }
+
 } 
