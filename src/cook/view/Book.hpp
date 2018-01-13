@@ -18,18 +18,18 @@ namespace cook { namespace view {
         Book(RunnerInfo &info): info_(info) {}
         Book(RunnerInfo &info, model::Uri uri): info_(info), uri_(uri) {}
 
-        void chai_print() const
+        void print() const
         {
             std::cout << "Book " << uri_.str('/','/') << std::endl;
         }
-        void chai_display_name(const std::string &dn)
+        void display_name(const std::string &dn)
         {
             info_.logger.log(Info) << info_.indent() << ">> Setting display name to " << dn << std::endl;
             const Strings args = {uri_.str(), dn};
             info_.presenter.set("model.book.display_name", args);
             info_.logger.log(Info) << info_.indent() << "<< Setting display name to " << dn << std::endl;
         }
-        void chai_book(const std::string &name, std::function<void(Book &)> callback)
+        void book(const std::string &name, std::function<void(Book &)> callback)
         {
             info_.logger.log(Info) << info_.indent() << ">> Book " << name << std::endl;
             model::Uri uri = uri_;
@@ -39,7 +39,7 @@ namespace cook { namespace view {
             callback(book);
             info_.logger.log(Info) << info_.indent() << "<< Book " << name << std::endl;
         }
-        void chai_recipe_3(const std::string &name, const std::string &type, std::function<void(Recipe &)> callback)
+        void recipe_3(const std::string &name, const std::string &type, std::function<void(Recipe &)> callback)
         {
             info_.logger.log(Info) << info_.indent() << ">> Recipe " << name << " for type \"" << type << "\"" << std::endl;
             model::Uri uri = uri_;
@@ -54,7 +54,7 @@ namespace cook { namespace view {
             callback(recipe);
             info_.logger.log(Info) << info_.indent() << "<< Recipe " << name << " for type \"" << type << "\"" << std::endl;
         }
-        void chai_recipe_2(const std::string &name, std::function<void(Recipe &)> callback) { chai_recipe_3(name, "", callback); }
+        void recipe_2(const std::string &name, std::function<void(Recipe &)> callback) { recipe_3(name, "", callback); }
 
     private:
         RunnerInfo &info_;
