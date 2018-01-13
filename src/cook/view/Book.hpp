@@ -24,24 +24,24 @@ namespace cook { namespace view {
         }
         void display_name(const std::string &dn)
         {
-            info_.logger.log(Info) << info_.indent() << ">> Setting display name to " << dn << std::endl;
+            auto l = info_.log_object(Info, [&](auto & str) { str << "Setting display name to " << dn; });
             const Strings args = {uri_.str(), dn};
             info_.presenter.set("model.book.display_name", args);
-            info_.logger.log(Info) << info_.indent() << "<< Setting display name to " << dn << std::endl;
         }
         void book(const std::string &name, std::function<void(Book &)> callback)
         {
-            info_.logger.log(Info) << info_.indent() << ">> Book " << name << std::endl;
+            auto l = info_.log_object(Info, [&](auto & str) {str << "Book " << name; });
+
             model::Uri uri = uri_;
             uri.add_path_part(name);
             info_.presenter.set("model.book.create", uri.str());
             Book book{info_, uri};
             callback(book);
-            info_.logger.log(Info) << info_.indent() << "<< Book " << name << std::endl;
         }
         void recipe_3(const std::string &name, const std::string &type, std::function<void(Recipe &)> callback)
         {
-            info_.logger.log(Info) << info_.indent() << ">> Recipe " << name << " for type \"" << type << "\"" << std::endl;
+            auto l = info_.log_object(Info, [&](auto & str) { str << "Recipe " << name << " for type \"" << type << "\""; });
+
             model::Uri uri = uri_;
             uri.set_name(name);
             const Strings args = {uri.str(), type, info_.working_directory().string()};
@@ -52,7 +52,6 @@ namespace cook { namespace view {
             }
             Recipe recipe{info_, uri};
             callback(recipe);
-            info_.logger.log(Info) << info_.indent() << "<< Recipe " << name << " for type \"" << type << "\"" << std::endl;
         }
         void recipe_2(const std::string &name, std::function<void(Recipe &)> callback) { recipe_3(name, "", callback); }
 

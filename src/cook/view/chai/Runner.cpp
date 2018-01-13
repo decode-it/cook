@@ -79,6 +79,8 @@ bool Runner::execute(const std::string &file_or_dir)
     d.logger_.log(Info) << d.runner_info_.indent() << "<< Script " << script_fn << (d.execute_ok_ ? " (OK)" : " (KO)") << std::endl;
 
     MSS(d.execute_ok_);
+
+    MSS_END();
 }
 
 void Runner::setup_chai_functions_()
