@@ -55,6 +55,13 @@ namespace cook { namespace model { namespace toolchain {
                     oss_ << " -D" << def;
                 return oss_.str();
             }
+            std::string create_define(const std::string & name, const std::string & value) const override
+            {
+                if (value.empty())
+                    return name;
+                else
+                    return name + "=" + value;
+            }
             std::string prepare_include_paths(const IncludePaths &include_paths) const override
             {
                 oss_.str("");

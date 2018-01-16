@@ -71,8 +71,7 @@ namespace cook { namespace presenter {
 
                 model::toolchain::Flags flags;
                 os_ << "cflags = " << compiler_->prepare_flags(flags) << std::endl;
-                model::toolchain::Defines defines;
-                os_ << "defines = " << compiler_->prepare_defines(defines) << std::endl;
+
 
                 os_ << std::endl;
             }
@@ -176,6 +175,11 @@ namespace cook { namespace presenter {
                         os_ << "    force_includes = " << compiler_->prepare_force_includes(recipe.force_includes()) << std::endl;
                         os_ << "    library_paths = " << std::endl;
                         os_ << "    libraries = " << std::endl;
+
+                        model::toolchain::Defines defines;
+                        for(const auto & p : recipe.defines())
+                            defines.push_back(compiler_->create_define(p.first, p.second));
+                        os_ << "    defines = " << compiler_->prepare_defines(defines) << std::endl;
                     }
                     return true;
                 };

@@ -32,6 +32,7 @@ namespace cook { namespace model { namespace toolchain {
         virtual std::string prepare_defines(const Defines &) const = 0;
         virtual std::string prepare_include_paths(const IncludePaths &) const = 0;
         virtual std::string prepare_force_includes(const ForceIncludes &) const = 0;
+        virtual std::string create_define(const std::string & name, const std::string & value) const = 0;
     };
 
     class Linker
