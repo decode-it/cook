@@ -6,8 +6,31 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <functional>
 
 namespace cook { namespace model { namespace toolchain { 
+
+    class Command
+    {
+    public:
+        virtual ~Command() {}
+        virtual void add_string(std::string) = 0;
+        virtual void add_variable(std::string) = 0;
+        virtual std::string add_depfile() = 0;
+    private:
+    };
+
+    class Generator
+    {
+    public:
+        using Ptr = std::shared_ptr<Generator>;
+
+        virtual ~Interface() {}
+        virtual void create(Command &) const = 0;
+        virtual std::map<std::string, std::string> prepare(std::map<std::string, std::vector<std::string>>) const = 0;
+    private:
+    };
+
 
     class Compiler
     {
