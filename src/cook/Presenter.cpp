@@ -140,7 +140,7 @@ namespace cook {
                         MSS(args.size() == 4, view_.log(Error) << "Not enough arguments for adding a file to a recipe" << std::endl);
                         MSS(recipe->add_file(args[1], args[2], args[3]), view_.log(Error) << "Unable to add the file " << args[2] << " to recipe " << args[0] << std::endl);
                     }
-                    else if (key.pop_if("macro"))
+                    else if (key.pop_if("define"))
                     {
                         model::Overwrite overwrite;
 
@@ -148,16 +148,16 @@ namespace cook {
                         {
                         case 3:
                             MSS(model::from_string(overwrite, args[2]));
-                            MSS(recipe->add_define(args[1], overwrite), view_.log(Error) << "Unable to add the macro" << args[1] << " to recipe " << args[0] << std::endl);
+                            MSS(recipe->add_define(args[1], overwrite), view_.log(Error) << "Unable to add the define" << args[1] << " to recipe " << args[0] << std::endl);
                             break;
 
                         case 4:
                             MSS(model::from_string(overwrite, args[3]));
-                            MSS(recipe->add_define(args[1], args[2], overwrite), view_.log(Error) << "Unable to add the macro" << args[1] << " to recipe " << args[0] << std::endl);
+                            MSS(recipe->add_define(args[1], args[2], overwrite), view_.log(Error) << "Unable to add the define" << args[1] << " to recipe " << args[0] << std::endl);
                             break;
 
                         default:
-                            MSS(false, view_.log(Error) << "Not the correct number of arguments for adding a macro to a recipe" << std::endl);
+                            MSS(false, view_.log(Error) << "Not the correct number of arguments for adding a define to a recipe" << std::endl);
                         }
                     }
                     else if (key.pop_if("depends_on"))

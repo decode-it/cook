@@ -122,10 +122,10 @@ public:
     }
     void define_3(const std::string & macro, const std::string & value, Overwrite overwrite)
     {
-        auto l = info_.log_object(Info, [&](auto & str) { str << "Adding macro " << macro << " with value " << value << " (overwrite=" << hr(overwrite) << ")"; });
+        auto l = info_.log_object(Info, [&](auto & str) { str << "Adding define " << macro << " with value " << value << " (overwrite=" << hr(overwrite) << ")"; });
 
         const Strings args = {uri_.str(), macro, value, hr(overwrite) };
-        info_.presenter.set("model.recipe.macro", args);
+        info_.presenter.set("model.recipe.define", args);
     }
     void library(const std::string &name)
     {
