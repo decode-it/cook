@@ -148,12 +148,12 @@ namespace cook {
                         {
                         case 3:
                             MSS(model::from_string(overwrite, args[2]));
-                            MSS(recipe->add_macro(args[1], overwrite), view_.log(Error) << "Unable to add the macro" << args[1] << " to recipe " << args[0] << std::endl);
+                            MSS(recipe->add_define(args[1], overwrite), view_.log(Error) << "Unable to add the macro" << args[1] << " to recipe " << args[0] << std::endl);
                             break;
 
                         case 4:
                             MSS(model::from_string(overwrite, args[3]));
-                            MSS(recipe->add_macro(args[1], args[2], overwrite), view_.log(Error) << "Unable to add the macro" << args[1] << " to recipe " << args[0] << std::endl);
+                            MSS(recipe->add_define(args[1], args[2], overwrite), view_.log(Error) << "Unable to add the macro" << args[1] << " to recipe " << args[0] << std::endl);
                             break;
 
                         default:

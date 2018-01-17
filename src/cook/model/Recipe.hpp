@@ -262,7 +262,7 @@ public:
             add_library_path(path);
 
         for (const auto & macro: src.defines_)
-            MSS(add_macro(macro.first, macro.second, Overwrite::IfSame));
+            MSS(add_define(macro.first, macro.second, Overwrite::IfSame));
 
 
             if (src.type().empty())
@@ -374,14 +374,14 @@ public:
         return defines_;
     }
 
-    bool add_macro(const std::string & macro, Overwrite overwrite)
+    bool add_define(const std::string & macro, Overwrite overwrite)
     {
         MSS_BEGIN(bool);
-        MSS(add_macro(macro, "", overwrite));
+        MSS(add_define(macro, "", overwrite));
         MSS_END();
     }
 
-    bool add_macro(const std::string & macro, const std::string & value, Overwrite overwrite)
+    bool add_define(const std::string & macro, const std::string & value, Overwrite overwrite)
     {
         MSS_BEGIN(bool);
 
