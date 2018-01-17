@@ -11,6 +11,7 @@ build .bcook/cook/view/chai/File.obj: compile src/cook/view/chai/File.cpp
 build .bcook/cook/view/chai/Recipe.obj: compile src/cook/view/chai/Recipe.cpp
 build .bcook/cook/view/chai/Runner.obj: compile src/cook/view/chai/Runner.cpp
 build .bcook/cook/view/chai/RunnerInfo.obj: compile src/cook/view/chai/RunnerInfo.cpp
+build .bcook/cook/view/chai/Util.obj: compile src/cook/view/chai/Util.cpp
 
 
 build .bcook/cook/Presenter.obj: compile src/cook/Presenter.cpp
@@ -27,6 +28,7 @@ build bcook.exe: link $
     .bcook/cook/view/chai/Recipe.obj $
     .bcook/cook/view/chai/Runner.obj $
     .bcook/cook/view/chai/RunnerInfo.obj $
+    .bcook/cook/view/chai/Util.obj $
     .bcook/cook/Presenter.obj $
     .bcook/gubg/Strange.obj $
     .bcook/gubg/OptionParser.obj

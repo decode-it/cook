@@ -4,6 +4,7 @@
 #include "cook/view/chai/Book.hpp"
 #include "cook/view/chai/File.hpp"
 #include "cook/view/chai/Recipe.hpp"
+#include "cook/view/chai/Util.hpp"
 #include "cook/view/Book.hpp"
 #include "cook/model/Uri.hpp"
 #include "gubg/mss.hpp"
@@ -12,12 +13,12 @@ namespace cook { namespace view { namespace chai {
 
 struct Runner::D
 {
-    D(presenter::Interface * presenter, Logger &logger)
+    D(Presenter * presenter, Logger &logger)
         : presenter_(presenter),
           logger_(logger)
     {
     }
-    presenter::Interface * presenter_;
+    Presenter * presenter_;
     Logger &logger_;
     RunnerInfo runner_info_{presenter_, logger_};
     Book root_book_{runner_info_};
@@ -27,7 +28,7 @@ struct Runner::D
     bool execute_ok_ = true;
 };
 
-Runner::Runner(presenter::Interface *presenter, Logger &logger)
+Runner::Runner(Presenter *presenter, Logger &logger)
     : d_(new D(presenter, logger))
 {
     setup_chai_functions_();
@@ -42,6 +43,8 @@ bool Runner::execute(const std::string &file_or_dir)
 {
     MSS_BEGIN(bool);
 
+    using C = presenter::Command;
+
     D & d = *d_;
 
     if (!d.execute_ok_)
@@ -53,10 +56,12 @@ bool Runner::execute(const std::string &file_or_dir)
     const auto script_fn = expand_(file_or_dir);
     d.logger_.log(Info) << d.runner_info_.indent() << ">> Script " << script_fn << std::endl;
     d.runner_info_.script_stack.push_back(script_fn);
-    d.presenter_->set("script.filename", script_fn.string());
+
+    d.presenter_->set({C::script, C::filename}, as_any(script_fn.string()));
+
     if (d.runner_info_.script_stack.size() == 1)
         //Needed to get the script filename for the root node, as this is never created
-        d.presenter_->set("model.book.create", "/");
+        d.presenter_->set({C::model, C::book, C::create}, as_any<std::string>("/"));
 
     std::ostream *os = nullptr;
     try { d.chai_engine_.eval_file(script_fn); }
@@ -76,7 +81,12 @@ bool Runner::execute(const std::string &file_or_dir)
     }
 
     d.runner_info_.script_stack.pop_back();
-    d.presenter_->set("script.filename", (d.runner_info_.script_stack.empty() ? std::string{} : d.runner_info_.script_stack.back().string()));
+
+    {
+        const auto & args = as_any((d.runner_info_.script_stack.empty() ? std::string{} : d.runner_info_.script_stack.back().string()));
+        d.presenter_->set({C::script, C::filename}, args);
+    }
+
     d.logger_.log(Info) << d.runner_info_.indent() << "<< Script " << script_fn << (d.execute_ok_ ? " (OK)" : " (KO)") << std::endl;
 
     MSS(d.execute_ok_);
@@ -94,6 +104,8 @@ void Runner::setup_chai_functions_()
     chai.add(file_module());
     chai.add(book_module());    
     chai.add(recipe_module());
+
+    chai.add(util_module());
 
     chai.add_global(chaiscript::var(d.root_book_), "root");
 }

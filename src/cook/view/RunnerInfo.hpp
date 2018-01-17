@@ -2,7 +2,7 @@
 #define HEADER_cook_view_RunnerInfo_hpp_ALREADY_INCLUDED
 
 #include "cook/view/Logger.hpp"
-#include "cook/presenter/Interface.hpp"
+#include "cook/Presenter.hpp"
 #include "cook/model/Uri.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/stream.hpp"
@@ -38,10 +38,10 @@ namespace cook { namespace view {
     {
         using ScriptStack = std::vector<std::filesystem::path>;
         ScriptStack script_stack;
-        presenter::Interface * presenter;
+        Presenter * presenter;
         Logger &logger;
 
-        RunnerInfo(presenter::Interface * presenter, Logger &logger): presenter(presenter), logger(logger) {}
+        RunnerInfo(Presenter * presenter, Logger &logger): presenter(presenter), logger(logger) {}
         virtual ~RunnerInfo() {}
 
         template <typename OSSFunctor>

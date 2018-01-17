@@ -3,6 +3,7 @@
 
 #include "cook/model/Uri.hpp"
 #include "cook/model/toolchain/Types.hpp"
+#include "cook/Types.hpp"
 #include "gubg/file/System.hpp"
 #include "gubg/macro/capture.hpp"
 #include "gubg/OnlyOnce.hpp"
@@ -15,47 +16,15 @@ namespace cook { namespace model {
 
 class Book;
 
-enum class Overwrite {Never, IfSame, Always };
-
-inline bool from_string(Overwrite & value, std::string str)
-{
-    if (false) {}
-#define T_CASE(NAME, STR) else if (str == str) { value = Overwrite::NAME; }
-    T_CASE(Never, "never")
-    T_CASE(IfSame, "if_same")
-    T_CASE(Always, "always")
-    else
-        return false;
-
-    return true;
-}
-
-enum class FileType {Unknown, Source, Header, ForceInclude};
-inline std::ostream &operator<<(std::ostream &os, FileType ft)
-{
-    switch (ft)
-    {
-#define L_CASE(name, str) case FileType::name: os << str; break
-    L_CASE(Unknown, "unknown");
-    L_CASE(Source, "source");
-    L_CASE(Header, "header");
-    L_CASE(ForceInclude, "force_include");
-#undef L_CASE
-    }
-    return os;
-}
-
 struct Owner
 {
     enum Type {Nobody = 0x00, Me = 0x01, Deps = 0x02, External = 0x04, Anybody = 0x07};
 };
 
-struct File
+struct File : public cook::File
 {
     std::filesystem::path path;
-    std::filesystem::path dir;
-    std::filesystem::path rel;
-    FileType type = FileType::Unknown;
+
     std::string language;
     Owner::Type owner = Owner::Nobody;
 
@@ -123,110 +92,103 @@ public:
         MSS_END();
     }
 
-    bool set(const std::string &key, const std::string &value)
+    bool set_type(const std::string &value)
     {
         MSS_BEGIN(bool);
-        if (false) { }
-        else if (key == "type")
+        type_ = value;
+        if (value.empty()) {}
+        else if (value == "executable" || value == "library")
         {
-            type_ = value;
-            if (value.empty()) {}
-            else if (value == "executable" || value == "library")
-            {
-                update_output_();
-            }
-            else MSS(false, type_.clear());
-        }
-        else if (key == "working_directory")
-        {
-            wd_ = value;
             update_output_();
         }
-        else if (key == "output_directory")
-        {
-            output_dir_ = value;
-            update_output_();
-        }
-        else if (key == "script_filename") { script_fn_ = value; }
-        else if (key == "depends_on") { deps_.emplace(value, nullptr); }
-        else if (key == "display_name")
-        {
-            display_name_ = value;
-            update_output_();
-        }
-        else if (key == "library") { add_library(value, Owner::External); }
-        else if (key == "library_path") { add_library_path(value); }
-        else { MSS(false); }
-        MSS_END();
-    }
-
-    bool add_file(std::string p_dir, const std::string & abs_filename, const std::string &option)
-    {
-        MSS_BEGIN(bool);
-
-        std::filesystem::path fn = abs_filename;
-        MSS(std::filesystem::exists(fn));
-
-        File & f = file_per_path_[fn];
-        f.path = fn;
-
-        // get the directory
-        f.dir = p_dir.empty() ? "." : p_dir;
-        if (f.dir.is_relative())
-            f.dir = wd_ / f.dir;
-
-        f.rel.clear();
-        //We follow both dir and fp from root to file. As soon as they start to differ,
-        //we are in the relative part
-        {
-            auto dir_it = f.dir.begin();
-            auto dir_end = f.dir.end();
-            for (const auto &part: f.path)
-            {
-                if (dir_it != dir_end && part == *dir_it)
-                {
-                    ++dir_it;
-                    continue;
-                }
-                f.rel /= part;
-            }
-        }
-
-        f.owner = Owner::Me;
-        const auto ext = f.rel.extension();
-        if (false) {}
-        else if (ext == ".c")   { f.type = FileType::Source; f.language = "c"; }
-        else if (ext == ".h")   { f.type = FileType::Header; f.language = "c"; }
-        else if (ext == ".cpp") { f.type = FileType::Source; f.language = "c++"; }
-        else if (ext == ".hpp") { f.type = FileType::Header; f.language = "c++"; }
-        else if (ext == ".asm") { f.type = FileType::Source; f.language = "asm"; }
-
-        if (option.empty()) {}
-        else if (option == "header")        { f.type = FileType::Header; }
-        else if (option == "source")        { f.type = FileType::Source; }
-        else if (option == "force_include") { f.type = FileType::ForceInclude; }
+        else
+            MSS(false, type_.clear());
 
         MSS_END();
     }
 
-    void add(std::string p_dir, const std::string &pattern, const std::string &option)
+    void set_working_directory(const std::string &value)
     {
-        if (p_dir.empty())
-            p_dir = ".";
+        wd_ = value;
+        update_output_();
+    }
 
-        std::filesystem::path dir = p_dir;
+    void set_output_directory(const std::string &value)
+    {
+        output_dir_ = value;
+        update_output_();
+    }
+
+    void set_script_filename(const std::string &value)
+    {
+        script_fn_ = value;
+    }
+
+    void set_dependency(const std::string &value)
+    {
+        deps_.emplace(value, nullptr);
+    }
+    void set_display_name(const std::string &value)
+    {
+        display_name_ = value;
+        update_output_();
+    }
+
+    void add(const std::string & p_dir, const std::string & pattern, FileType default_filetype, const FileFilterPredicate & filter)
+    {
+        std::filesystem::path dir = (p_dir.empty() ? "." : p_dir);
         if (dir.is_relative())
             dir = wd_ / dir;
 
-        auto add_file_wrapper = [&](const std::filesystem::path &fp)
+        auto add_file_wrapper = [&](const std::filesystem::path &fn)
         {
-            const bool ok = add_file(p_dir, fp, option);
-            assert(ok);
+            File f;
+            f.path = fn;
+
+            // get the directory
+            f.dir = p_dir.empty() ? "." : p_dir;
+            if (f.dir.is_relative())
+                f.dir = wd_ / f.dir;
+
+            f.rel.clear();
+            //We follow both dir and fp from root to file. As soon as they start to differ,
+            //we are in the relative part
+            {
+                auto dir_it = f.dir.begin();
+                auto dir_end = f.dir.end();
+                for (const auto &part: f.path)
+                {
+                    if (dir_it != dir_end && part == *dir_it)
+                    {
+                        ++dir_it;
+                        continue;
+                    }
+                    f.rel /= part;
+                }
+            }
+
+            f.owner = Owner::Me;
+
+
+            const auto ext = f.rel.extension();
+            if (false) {}
+            else if (ext == ".c")   { f.type = FileType::Source; f.language = "c"; }
+            else if (ext == ".h")   { f.type = FileType::Header; f.language = "c"; }
+            else if (ext == ".cpp") { f.type = FileType::Source; f.language = "c++"; }
+            else if (ext == ".hpp") { f.type = FileType::Header; f.language = "c++"; }
+            else if (ext == ".asm") { f.type = FileType::Source; f.language = "asm"; }
+
+            if (default_filetype != Unknown)
+                f.type = default_filetype;
+
+            if (!filter || filter(f))
+                file_per_path_[fn] = std::move(f);
+
         };
         gubg::file::each_glob(pattern, add_file_wrapper, dir);
     }
 
-    void add_library(const std::string &lib, Owner::Type owner)
+    void add_library(const std::string &lib, Owner::Type owner = Owner::Me)
     {
         if (std::find_if(RANGE(libraries_), [&](const auto &info){return lib == info.name;}) != libraries_.end())
             return;
@@ -283,7 +245,7 @@ public:
                     switch (file.type)
                     {
                     case FileType::Header:
-                    case FileType::ForceInclude:
+                    case FileType::Force_Include:
                         //We only take-over headers to have the correct include paths
                         p.second.owner = Owner::Deps;
                         file_per_path_.insert(p);
@@ -340,7 +302,7 @@ public:
                 switch (file.type)
                 {
                 case FileType::Header:
-                case FileType::ForceInclude:
+                case FileType::Force_Include:
                     ips_set.insert(file.dir);
                     break;
                 }
@@ -360,7 +322,7 @@ public:
             const auto &file = p.second;
             switch (file.type)
             {
-            case FileType::ForceInclude:
+            case FileType::Force_Include:
                 fis.push_back(file.rel.string());
                 break;
             }

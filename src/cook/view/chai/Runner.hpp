@@ -2,7 +2,7 @@
 #define HEADER_cook_view_chai_Runner_hpp_ALREADY_INCLUDED
 
 #include "cook/view/Logger.hpp"
-#include "cook/presenter/Interface.hpp"
+#include "cook/Presenter.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <vector>
 #include <functional>
@@ -15,7 +15,7 @@ namespace cook { namespace view { namespace chai {
         struct D;
 
     public:
-        Runner(presenter::Interface * presenter, Logger &logger);
+        Runner(Presenter * presenter, Logger &logger);
 
         ~Runner();
 

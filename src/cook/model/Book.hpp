@@ -24,13 +24,14 @@ namespace cook { namespace model {
             return display_name_;
         }
 
-        bool set(const std::string &key, const std::string &value)
+        void set_display_name(const std::string &value)
         {
-            MSS_BEGIN(bool);
-            if (false) {}
-            else if (key == "display_name") {display_name_ = value;}
-            else if (key == "script_filename") {script_fns_.push_back(value);}
-            MSS_END();
+            display_name_ = value;
+        }
+
+        void set_script_filename(const std::string &value)
+        {
+            script_fns_.push_back(value);
         }
 
         const ScriptFns &script_filenames() const {return script_fns_;}

@@ -3,6 +3,7 @@
 
 #include "cook/model/toolchain/Toolchain.hpp"
 #include "cook/model/Recipe.hpp"
+#include "cook/Types.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/string_algo/substitute.hpp"
 #include "gubg/mss.hpp"
@@ -157,7 +158,7 @@ namespace cook { namespace presenter {
                 os_ << local_name(recipe, "include_paths") << " = " << compiler_->prepare_include_paths(recipe.include_paths(model::Owner::Anybody)) << std::endl;
 #endif
                 auto write_compile = [&](const auto &file){
-                    if (file.type == model::FileType::Source)
+                    if (file.type == FileType::Source)
                     {
                         const auto obj_fn = object_fn(file);
                         os_ << "build " << obj_fn << ": " << compile_rule(file) << " " << source_fn(file) << std::endl;
@@ -189,7 +190,7 @@ namespace cook { namespace presenter {
                 {
                     os_ << "build " << recipe.output().filename.string() << ": link ";
                     auto add_object = [&](const auto &f){
-                        if (f.type == model::FileType::Source)
+                        if (f.type == FileType::Source)
                             os_ << "$\n    " << object_fn(f) << " ";
                         return true;
                     };
@@ -213,7 +214,7 @@ namespace cook { namespace presenter {
                 {
                     os_ << "build " << archiver_->prepare_library(recipe.output().name) << ": archive ";
                     auto add_object = [&](const auto &f){
-                        if (f.type == model::FileType::Source)
+                        if (f.type == FileType::Source)
                             os_ << "$\n    " << object_fn(f) << " ";
                         return true;
                     };
