@@ -188,7 +188,7 @@ public:
         gubg::file::each_glob(pattern, add_file_wrapper, dir);
     }
 
-    void add_library(const std::string &lib, Owner::Type owner = Owner::Me)
+    void add_library(const std::string &lib, Owner::Type owner = Owner::External)
     {
         if (std::find_if(RANGE(libraries_), [&](const auto &info){return lib == info.name;}) != libraries_.end())
             return;
