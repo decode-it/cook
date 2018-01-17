@@ -26,7 +26,7 @@ namespace cook { namespace view {
         {
             auto l = info_.log_object(Info, [&](auto & str) { str << "Setting display name to " << dn; });
             const Strings args = {uri_.str(), dn};
-            info_.presenter.set("model.book.display_name", args);
+            info_.presenter->set("model.book.display_name", args);
         }
         void book(const std::string &name, std::function<void(Book &)> callback)
         {
@@ -34,7 +34,7 @@ namespace cook { namespace view {
 
             model::Uri uri = uri_;
             uri.add_path_part(name);
-            info_.presenter.set("model.book.create", uri.str());
+            info_.presenter->set("model.book.create", uri.str());
             Book book{info_, uri};
             callback(book);
         }
@@ -45,7 +45,7 @@ namespace cook { namespace view {
             model::Uri uri = uri_;
             uri.set_name(name);
             const Strings args = {uri.str(), type, info_.working_directory().string()};
-            if (!info_.presenter.set("model.recipe.create", args))
+            if (!info_.presenter->set("model.recipe.create", args))
             {
                 const std::string & error_msg = gubg::stream([&](auto & oss) { oss << "Recipe \"" << uri << "\" already exists"; });
                 info_.notify_error(error_msg);

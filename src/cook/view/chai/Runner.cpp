@@ -12,12 +12,12 @@ namespace cook { namespace view { namespace chai {
 
 struct Runner::D
 {
-    D(presenter::Reference presenter, Logger &logger)
+    D(presenter::Interface * presenter, Logger &logger)
         : presenter_(presenter),
           logger_(logger)
     {
     }
-    presenter::Reference presenter_;
+    presenter::Interface * presenter_;
     Logger &logger_;
     RunnerInfo runner_info_{presenter_, logger_};
     Book root_book_{runner_info_};
@@ -27,7 +27,7 @@ struct Runner::D
     bool execute_ok_ = true;
 };
 
-Runner::Runner(presenter::Reference presenter, Logger &logger)
+Runner::Runner(presenter::Interface *presenter, Logger &logger)
     : d_(new D(presenter, logger))
 {
     setup_chai_functions_();
@@ -53,10 +53,10 @@ bool Runner::execute(const std::string &file_or_dir)
     const auto script_fn = expand_(file_or_dir);
     d.logger_.log(Info) << d.runner_info_.indent() << ">> Script " << script_fn << std::endl;
     d.runner_info_.script_stack.push_back(script_fn);
-    d.presenter_.set("script.filename", script_fn.string());
+    d.presenter_->set("script.filename", script_fn.string());
     if (d.runner_info_.script_stack.size() == 1)
         //Needed to get the script filename for the root node, as this is never created
-        d.presenter_.set("model.book.create", "/");
+        d.presenter_->set("model.book.create", "/");
 
     std::ostream *os = nullptr;
     try { d.chai_engine_.eval_file(script_fn); }
@@ -76,7 +76,7 @@ bool Runner::execute(const std::string &file_or_dir)
     }
 
     d.runner_info_.script_stack.pop_back();
-    d.presenter_.set("script.filename", (d.runner_info_.script_stack.empty() ? std::string{} : d.runner_info_.script_stack.back().string()));
+    d.presenter_->set("script.filename", (d.runner_info_.script_stack.empty() ? std::string{} : d.runner_info_.script_stack.back().string()));
     d.logger_.log(Info) << d.runner_info_.indent() << "<< Script " << script_fn << (d.execute_ok_ ? " (OK)" : " (KO)") << std::endl;
 
     MSS(d.execute_ok_);

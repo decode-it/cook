@@ -10,12 +10,7 @@ namespace cook {
     class View
     {
     public:
-        void inject(presenter::Interface *itf) {presenter_.inject(itf);}
-
-        //key-value message to the presenter
-        bool send(const std::string &key, const std::string &value);
-        bool send(const std::string &key, const Strings &value);
-        bool send(const std::string &key);
+        void inject(presenter::Interface *itf) { presenter_ = itf; }
 
         std::ostream &log(){return logger_.log();}
         std::ostream &log(LogType lt){return logger_.log(lt);}
@@ -23,7 +18,7 @@ namespace cook {
         bool process_cli(int argc, const char **argv);
 
     private:
-        presenter::Reference presenter_;
+        presenter::Interface * presenter_;
         view::Logger logger_;
     };
 

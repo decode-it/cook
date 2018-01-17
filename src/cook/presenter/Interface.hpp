@@ -19,21 +19,6 @@ namespace cook { namespace presenter {
         virtual bool get(const std::string &key, const Strings & args, std::string & result) const = 0;
     };
 
-    class Reference
-    {
-    public:
-        void inject(Interface *itf) {itf_ = itf;}
-
-        bool set(const std::string &key, const std::string &value) { return !!itf_ && itf_->set(key, value); }
-        bool set(const std::string &key, const Strings &value) { return !!itf_ && itf_->set(key, value); }
-        bool set(const std::string &key) { return !!itf_ && itf_->set(key); }
-        bool get(const std::string &key, std::string & result) const { return !!itf_ && itf_->get(key, result); }
-        bool get(const std::string &key, const Strings & args, std::string & result) const { return !!itf_ && itf_->get(key, args, result); }
-
-    private:
-        Interface *itf_ = nullptr;
-    };
-
 } } 
 
 #endif

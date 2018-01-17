@@ -50,7 +50,7 @@ public:
         {
             const Strings args = { uri_.str() };
             std::string wd;
-            if (!info_.presenter.get("model.recipe.working_directory", args, wd))
+            if (!info_.presenter->get("model.recipe.working_directory", args, wd))
             {
                 const std::string & error_msg = gubg::stream([&](auto & oss) { oss << "Could not request the working directory for recipe " << uri_; });
                 info_.notify_error(error_msg);
@@ -81,7 +81,7 @@ public:
             if (!functor || functor(f))
             {
                 const Strings args = { uri_.str(), dir, rel.string(), to_string(f.type) };
-                if (!info_.presenter.set("model.recipe.add_file", args))
+                if (!info_.presenter->set("model.recipe.add_file", args))
                 {
                     const std::string & error_msg = gubg::stream([&](auto & oss) { oss << "Could not add file to recipe " << uri_; });
                     info_.notify_error(error_msg);
@@ -103,14 +103,14 @@ public:
         auto l = info_.log_object(Info, [&](auto & str) { str << "Adding dependency on " << rn; });
 
         const Strings args = {uri_.str(), rn};
-        info_.presenter.set("model.recipe.depends_on", args);
+        info_.presenter->set("model.recipe.depends_on", args);
     }
     void display_name(const std::string &dn)
     {
         auto l = info_.log_object(Info, [&](auto & str) { str << "Setting display name to " << dn; });
 
         const Strings args = {uri_.str(), dn};
-        info_.presenter.set("model.recipe.display_name", args);
+        info_.presenter->set("model.recipe.display_name", args);
     }
     void define_K_1(const std::string & key)
     {
@@ -129,14 +129,14 @@ public:
         auto l = info_.log_object(Info, [&](auto & str) { str << "Adding define " << key << " with value " << value << " (overwrite=" << hr(overwrite) << ")"; });
 
         const Strings args = {uri_.str(), key, value, hr(overwrite) };
-        info_.presenter.set("model.recipe.define", args);
+        info_.presenter->set("model.recipe.define", args);
     }
     void library(const std::string &name)
     {
         auto l = info_.log_object(Info, [&](auto & str) { str << "Adding library " << name; });
 
         const Strings args = {uri_.str(), name};
-        info_.presenter.set("model.recipe.library", args);
+        info_.presenter->set("model.recipe.library", args);
     }
 
     void library_path(const std::string & name)
@@ -144,7 +144,7 @@ public:
         auto l = info_.log_object(Info, [&](auto & str) { str << "Adding library path " << name; });
 
         const Strings args = {uri_.str(), name};
-        info_.presenter.set("model.recipe.library_path", args);
+        info_.presenter->set("model.recipe.library_path", args);
     }
 
 private:

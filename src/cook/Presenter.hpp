@@ -10,10 +10,12 @@ namespace cook {
     class Presenter: public presenter::Interface
     {
     public:
-        Presenter(Model &model, View &view): model_(model), view_(view)
+        Presenter(Model &model, View &view)
+            : model_(model), view_(view)
         {
             view_.inject(static_cast<presenter::Interface*>(this));
         }
+
         ~Presenter()
         {
         }
@@ -25,12 +27,7 @@ namespace cook {
         bool get(const std::string &key, std::string & result) const override;
         bool get(const std::string &key, const Strings & args, std::string & result) const override;
 
-
     private:
-        bool receive_(const std::string &key, const std::string &value);
-        bool receive_(const std::string &key, const Strings &value);
-        bool receive_(const std::string &key);
-
         Model &model_;
         View &view_;
         std::string script_fn_;

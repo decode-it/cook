@@ -7,7 +7,7 @@ namespace cook { namespace view { namespace chai {
 
     struct RunnerInfo : public cook::view::RunnerInfo
     {
-        RunnerInfo(presenter::Reference presenter, Logger &logger) : cook::view::RunnerInfo(presenter, logger) {}
+        RunnerInfo(presenter::Interface * presenter, Logger &logger) : cook::view::RunnerInfo(presenter, logger) {}
 
         void notify_error(const std::string & error_msg) override;
         void notify_warning(const std::string & warning_msg) override;

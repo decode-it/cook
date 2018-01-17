@@ -15,7 +15,7 @@ namespace cook { namespace view { namespace chai {
         struct D;
 
     public:
-        Runner(presenter::Reference presenter, Logger &logger);
+        Runner(presenter::Interface * presenter, Logger &logger);
 
         ~Runner();
 

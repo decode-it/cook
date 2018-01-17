@@ -38,10 +38,10 @@ namespace cook { namespace view {
     {
         using ScriptStack = std::vector<std::filesystem::path>;
         ScriptStack script_stack;
-        presenter::Reference presenter;
+        presenter::Interface * presenter;
         Logger &logger;
 
-        RunnerInfo(presenter::Reference presenter, Logger &logger): presenter(presenter), logger(logger) {}
+        RunnerInfo(presenter::Interface * presenter, Logger &logger): presenter(presenter), logger(logger) {}
         virtual ~RunnerInfo() {}
 
         template <typename OSSFunctor>

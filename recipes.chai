@@ -18,3 +18,5 @@ root.book("cook", fun(b) {
         r.library("stdc++fs")
     })
 })
+
+root.display_name("cook")
