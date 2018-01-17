@@ -112,19 +112,23 @@ public:
         const Strings args = {uri_.str(), dn};
         info_.presenter.set("model.recipe.display_name", args);
     }
-    void define_1(const std::string & macro)
+    void define_K_1(const std::string & key)
     {
-        define_3(macro,  "", Overwrite::Never);
+        define_KV_3(key,  "", Overwrite::Never);
     }
-    void define_2(const std::string & macro, Overwrite overwrite)
+    void define_KV_2(const std::string & key, const std::string & value)
     {
-        define_3(macro,  "", overwrite);
+        define_KV_3(key,  value, Overwrite::Never);
     }
-    void define_3(const std::string & macro, const std::string & value, Overwrite overwrite)
+    void define_K_2(const std::string & key, Overwrite overwrite)
     {
-        auto l = info_.log_object(Info, [&](auto & str) { str << "Adding define " << macro << " with value " << value << " (overwrite=" << hr(overwrite) << ")"; });
+        define_KV_3(key,  "", overwrite);
+    }
+    void define_KV_3(const std::string & key, const std::string & value, Overwrite overwrite)
+    {
+        auto l = info_.log_object(Info, [&](auto & str) { str << "Adding define " << key << " with value " << value << " (overwrite=" << hr(overwrite) << ")"; });
 
-        const Strings args = {uri_.str(), macro, value, hr(overwrite) };
+        const Strings args = {uri_.str(), key, value, hr(overwrite) };
         info_.presenter.set("model.recipe.define", args);
     }
     void library(const std::string &name)
