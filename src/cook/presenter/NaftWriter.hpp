@@ -61,7 +61,6 @@ namespace cook { namespace presenter {
                 for (const auto &ip: recipe.include_paths(model::Owner::Anybody))
                     recipe_n.node("include_path").attr("path", ip);
 
-#if 0
                 for (const auto &p: recipe.defines())
                 {
                     const auto &name = p.first;
@@ -72,7 +71,6 @@ namespace cook { namespace presenter {
                     if (!value.empty())
                         def_n.attr("value", value);
                 }
-#endif
             }
 
             MSS_END();
