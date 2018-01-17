@@ -25,9 +25,9 @@ ModulePtr recipe_module()
     m->add(chaiscript::fun(&Recipe::display_name), "display_name");
     m->add(chaiscript::fun(&Recipe::library), "library");
     m->add(chaiscript::fun(&Recipe::library_path), "library_path");
-    m->add(chaiscript::fun(&Recipe::macro_1), "define");
-    m->add(chaiscript::fun(&Recipe::macro_2), "define");
-    m->add(chaiscript::fun(&Recipe::macro_3), "define");
+    m->add(chaiscript::fun(&Recipe::define_1), "define");
+    m->add(chaiscript::fun(&Recipe::define_2), "define");
+    m->add(chaiscript::fun(&Recipe::define_3), "define");
 
     return m;
 }

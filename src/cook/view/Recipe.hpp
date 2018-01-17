@@ -112,15 +112,15 @@ public:
         const Strings args = {uri_.str(), dn};
         info_.presenter.set("model.recipe.display_name", args);
     }
-    void macro_1(const std::string & macro)
+    void define_1(const std::string & macro)
     {
-        macro_3(macro,  "", Overwrite::Never);
+        define_3(macro,  "", Overwrite::Never);
     }
-    void macro_2(const std::string & macro, Overwrite overwrite)
+    void define_2(const std::string & macro, Overwrite overwrite)
     {
-        macro_3(macro,  "", overwrite);
+        define_3(macro,  "", overwrite);
     }
-    void macro_3(const std::string & macro, const std::string & value, Overwrite overwrite)
+    void define_3(const std::string & macro, const std::string & value, Overwrite overwrite)
     {
         auto l = info_.log_object(Info, [&](auto & str) { str << "Adding macro " << macro << " with value " << value << " (overwrite=" << hr(overwrite) << ")"; });
 
