@@ -201,14 +201,21 @@ namespace cook { namespace model {
         static bool each_(Ftor ftor, Path &path)
         {
             MSS_BEGIN(bool);
-            for (auto &p: path.back()->book_per_name())
+
+            MSS(!path.empty());
+            auto * book = path.back();
+
+            // add the current path
+            MSS(ftor(path, nullptr));
+
+            // add all the recipes at this path
+            for (auto &p: book->recipe_per_name())
+                MSS(ftor(path, &p.second));
+
+            // visit the subbooks
+            for (auto &p: book->book_per_name())
             {
                 path.push_back(&p.second);
-                MSS(ftor(path, nullptr));
-                for (auto &p: p.second.recipe_per_name())
-                {
-                    MSS(ftor(path, &p.second));
-                }
                 MSS(each_(ftor, path));
                 path.pop_back();
             }

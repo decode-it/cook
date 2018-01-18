@@ -81,6 +81,17 @@ public:
         const auto & args = as_any(uri_.str(), name);
         info_.presenter->set({C::model, C::recipe, C::library_path}, args);
     }
+    void include_path_1(const std::string & name)
+    {
+        include_path_2(name, Propagation::Local);
+    }
+    void include_path_2(const std::string & name, Propagation propagation)
+    {
+        auto l = info_.log_object(Info, [&](auto & str) { str << "Adding include path " << name << " (" << propagation << ")"; });
+
+        const auto & args = as_any(uri_.str(), name, propagation);
+        info_.presenter->set({C::model, C::recipe, C::include_path}, args);
+    }
 
 private:
     RunnerInfo &info_;

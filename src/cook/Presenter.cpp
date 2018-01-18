@@ -163,6 +163,12 @@ bool Presenter::set(const Keys & c_key, const Values &values)
                     SAFE_CAST_VALUE(1, std::string, name);
                     recipe->add_library(name);
                 }
+                else if (pop_if(key, C::include_path))
+                {
+                    SAFE_CAST_VALUE(1, std::string, name);
+                    SAFE_CAST_VALUE(2, Propagation, propagation);
+                    recipe->add_include_path(name, propagation);
+                }
                 else UNKNOWN_KEY
             }
 

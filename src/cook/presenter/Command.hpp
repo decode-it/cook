@@ -34,6 +34,7 @@ enum class Command
     depends_on,
     library,
     library_path,
+    include_path,
     print,
     books,
     runner,

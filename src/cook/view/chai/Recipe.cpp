@@ -12,6 +12,9 @@ ModulePtr recipe_module()
     m->add_global_const(chaiscript::const_var(Overwrite::Never), "overwrite_never");
     m->add_global_const(chaiscript::const_var(Overwrite::IfSame), "overwrite_if_same");
 
+    m->add_global_const(chaiscript::const_var(Propagation::Local), "propagate_local");
+    m->add_global_const(chaiscript::const_var(Propagation::Global), "propagate_global");
+
     m->add(chaiscript::user_type<Recipe>(), "Recipe");
     m->add(chaiscript::constructor<Recipe(const Recipe &)>(), "Recipe");
     m->add(chaiscript::fun(&Recipe::print), "print");
@@ -29,6 +32,9 @@ ModulePtr recipe_module()
     m->add(chaiscript::fun(&Recipe::define_K_2), "define");
     m->add(chaiscript::fun(&Recipe::define_KV_2), "define");
     m->add(chaiscript::fun(&Recipe::define_KV_3), "define");
+
+    m->add(chaiscript::fun(&Recipe::include_path_1), "include_path");
+    m->add(chaiscript::fun(&Recipe::include_path_2), "include_path");
 
 
     return m;

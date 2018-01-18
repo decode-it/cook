@@ -44,6 +44,7 @@ struct LibraryInfo
 };
 using Libraries = std::vector<LibraryInfo>;
 using LibraryPaths = model::toolchain::LibraryPaths;
+using IncludePaths = std::map<std::string, Propagation>;
 
 class Recipe
 {
@@ -226,6 +227,10 @@ public:
         for (const auto & macro: src.defines_)
             MSS(add_define(macro.first, macro.second, Overwrite::IfSame));
 
+        for(const auto & p : src.include_paths_)
+            if (p.second == Propagation::Global)
+                add_include_path(p.first, p.second);
+
 
             if (src.type().empty())
             {
@@ -307,6 +312,10 @@ public:
                     break;
                 }
         }
+
+        for(const auto & p : include_paths_)
+            ips_set.insert(p.first);
+
         toolchain::IncludePaths ips{ips_set.size()};
         ips.resize(0);
         for (const auto &ip: ips_set)
@@ -362,6 +371,15 @@ public:
         MSS_END();
     }
 
+    void add_include_path(const std::string & path, Propagation propagation)
+    {
+        std::filesystem::path dir = path.empty() ? "." : path;
+        if (dir.is_relative())
+            dir = wd_/dir;
+
+        include_paths_[dir.string()] = propagation;
+    }
+
 
     void stream(std::ostream &os) const
     {
@@ -407,6 +425,7 @@ private:
     Output output_;
     Libraries libraries_;
     LibraryPaths library_paths_;
+    IncludePaths include_paths_;
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Recipe &r)

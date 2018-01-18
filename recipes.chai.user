@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.5.0, 2018-01-17T19:49:46. -->
+<!-- Written by QtCreator 4.5.0, 2018-01-18T10:59:07. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -236,11 +236,11 @@
      <value type="int">13</value>
      <value type="int">14</value>
     </valuelist>
-    <value type="QString" key="CookProjectManager.CookRunConfiguration.Arguments">-V -g build.ninja -f recipes.chai -b build -c debug -n app/exe</value>
+    <value type="QString" key="CookProjectManager.CookRunConfiguration.Arguments">-V -g structure.naft -f recipes.chai -b build -c debug -n</value>
     <value type="QString" key="CookProjectManager.CookRunConfiguration.DisplayName">/cook/exe (exe)</value>
     <value type="QString" key="CookProjectManager.CookRunConfiguration.Executable">/home/tfannes/programming/cook/cook.exe</value>
     <value type="QString" key="CookProjectManager.CookRunConfiguration.Uri">/cook/exe</value>
-    <value type="QString" key="CookProjectManager.CookRunConfiguration.UserWorkingDirectory">/home/tfannes/programming/cook/test/app</value>
+    <value type="QString" key="CookProjectManager.CookRunConfiguration.UserWorkingDirectory">/home/tfannes/programming/mips</value>
     <value type="QString" key="CookProjectManager.CookRunConfiguration.UserWorkingDirectory.default">/home/tfannes/programming/cook</value>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
