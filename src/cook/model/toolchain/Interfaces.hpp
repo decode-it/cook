@@ -5,6 +5,7 @@
 #include "cook/model/toolchain/Types.hpp"
 #include <string>
 #include <vector>
+#include <map>
 #include <memory>
 #include <functional>
 
@@ -25,7 +26,7 @@ namespace cook { namespace model { namespace toolchain {
     public:
         using Ptr = std::shared_ptr<Generator>;
 
-        virtual ~Interface() {}
+        virtual ~Generator() {}
         virtual void create(Command &) const = 0;
         virtual std::map<std::string, std::string> prepare(std::map<std::string, std::vector<std::string>>) const = 0;
     private:
