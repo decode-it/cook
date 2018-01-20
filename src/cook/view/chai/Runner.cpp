@@ -42,7 +42,6 @@ Runner::~Runner()
 bool Runner::process(const std::list<std::string> & input_files)
 {
     MSS_BEGIN(bool);
-    MSS(!input_files.empty());
 
     // set the project directory
     {
@@ -52,9 +51,11 @@ bool Runner::process(const std::list<std::string> & input_files)
         MSS(d.presenter_->set( {C::env, C::dir, C::project}, as_any(d.project_path_.string()) ));
     }
 
-    // process each supplied file
-    for (const auto & file : input_files)
-        MSS(execute_(file));
+    if (input_files.empty())
+        MSS(execute_(""));
+    else
+        for (const auto & file : input_files)
+            MSS(execute_(file));
 
     MSS_END();
 }

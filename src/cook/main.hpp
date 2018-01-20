@@ -19,19 +19,10 @@ namespace cook {
     {
         MSS_BEGIN(ReturnCode);
 
-	std::cout << std::filesystem::current_path() << std::endl;
-
         Model model;
         View view;
         Presenter presenter(model, view);
         view.inject(&presenter);
-
-//        {
-//            using C = cook::presenter::Command;
-//            std::tuple<std::string, std::string> tp("a", "b");
-//            MSS(presenter.set (cook::presenter::Commands { C::model, C::book, C::display_name}, tp));
-//        }
-
         MSS(view.process_cli(argc, argv));
         
         MSS_END();
