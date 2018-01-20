@@ -77,21 +77,7 @@ public:
 
     std::filesystem::path script_filename() const {return script_fn_;}
 
-    const Output &output() const {return output_;}
-
-    bool get(const std::string & key, std::string & result) const
-    {
-        MSS_BEGIN(bool);
-
-        if (false) {}
-        else if (key == "working_directory")
-        {
-            result = wd_.string();
-        }
-        else { MSS(false); }
-
-        MSS_END();
-    }
+    const Output &output() const { return output_; }
 
     bool set_type(const std::string &value)
     {
@@ -111,13 +97,6 @@ public:
     void set_working_directory(const std::string &value)
     {
         wd_ = value;
-        update_output_();
-    }
-
-    void set_output_directory(const std::string &value)
-    {
-        output_dir_ = value;
-        update_output_();
     }
 
     void set_script_filename(const std::string &value)
@@ -297,7 +276,7 @@ public:
         MSS_END();
     }
 
-    toolchain::IncludePaths include_paths(Owner::Type owner = Owner::Me) const
+    std::set<std::filesystem::path> include_paths(Owner::Type owner = Owner::Me) const
     {
         std::set<std::filesystem::path> ips_set;
         for (const auto &p: file_per_path_)
@@ -316,11 +295,7 @@ public:
         for(const auto & p : include_paths_)
             ips_set.insert(p.first);
 
-        toolchain::IncludePaths ips{ips_set.size()};
-        ips.resize(0);
-        for (const auto &ip: ips_set)
-            ips.push_back(ip.string());
-        return ips;
+        return ips_set;
     }
 
     toolchain::ForceIncludes force_includes() const
@@ -383,7 +358,7 @@ public:
 
     void stream(std::ostream &os) const
     {
-        os << "Recipe " << name() << ", uri: " << uri_hr() << ", type: " << type_ << ", working directory: " << wd_ << ", output directory: " << output_dir_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
+        os << "Recipe " << name() << ", uri: " << uri_hr() << ", type: " << type_ << ", working directory: " << wd_ << ", nr files: " << file_per_path_.size() << ", nr deps: " << deps_.size() << std::endl;
         for (const auto &p: file_per_path_)
         {
             os << "\tFile: "; p.second.stream(os); os << std::endl;
@@ -405,7 +380,7 @@ private:
         if (false) {}
         else if (type_ == "executable")
         {
-            output_.filename = output_dir_ / uri().str('\0', '.');
+            output_.filename = uri().str('\0', '.');
         }
         else if (type_ == "library")
         {
@@ -417,7 +392,6 @@ private:
     std::string display_name_;
     std::string type_;
     std::filesystem::path wd_;
-    std::filesystem::path output_dir_;
     std::filesystem::path script_fn_;
     FilePerPath file_per_path_;
     std::map<std::string, Recipe *> deps_;

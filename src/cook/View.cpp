@@ -20,7 +20,7 @@ namespace cook {
         log() << "Cook is starting" << std::endl;
 
         MSS(presenter_->set( {C::help, C::message },           as_any(options.help_message) ));
-        MSS(presenter_->set( {C::env, C::dir, C::build },      as_any(options.build_dir) ));
+        MSS(presenter_->set( {C::env, C::dir, C::temp },       as_any(options.temp_build_dir) ));
         MSS(presenter_->set( {C::env, C::dir, C::output },     as_any(options.output_dir) ));
         MSS(presenter_->set( {C::toolchain, C::name},          as_any(options.toolchain) ));
         MSS(presenter_->set( {C::toolchain, C::config},        as_any(options.config) ));
@@ -32,7 +32,8 @@ namespace cook {
         }
 
         view::chai::Runner chai_runner(presenter_, logger_);
-        MSS(chai_runner.execute(options.input_fod));
+        MSS(chai_runner.process(options.input_files));
+
         MSS(presenter_->set( {C::runner, C::done} ));
 
         if (options.verbose >= 2)

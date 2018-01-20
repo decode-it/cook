@@ -22,8 +22,9 @@ struct Runner::D
     Logger &logger_;
     RunnerInfo runner_info_{presenter_, logger_};
     Book root_book_{runner_info_};
-
     Engine chai_engine_;
+
+    std::filesystem::path project_path_;
 
     bool execute_ok_ = true;
 };
@@ -36,10 +37,29 @@ Runner::Runner(Presenter *presenter, Logger &logger)
 
 Runner::~Runner()
 {
-
 }
 
-bool Runner::execute(const std::string &file_or_dir)
+bool Runner::process(const std::list<std::string> & input_files)
+{
+    MSS_BEGIN(bool);
+    MSS(!input_files.empty());
+
+    // set the project directory
+    {
+        using C = presenter::Command;
+        D & d = *d_;
+        d.project_path_ = std::filesystem::current_path();
+        MSS(d.presenter_->set( {C::env, C::dir, C::project}, as_any(d.project_path_.string()) ));
+    }
+
+    // process each supplied file
+    for (const auto & file : input_files)
+        MSS(execute_(file));
+
+    MSS_END();
+}
+
+bool Runner::execute_(const std::string &file_or_dir)
 {
     MSS_BEGIN(bool);
 
@@ -64,7 +84,10 @@ bool Runner::execute(const std::string &file_or_dir)
         d.presenter_->set({C::model, C::book, C::create}, as_any<std::string>("/"));
 
     std::ostream *os = nullptr;
-    try { d.chai_engine_.eval_file(script_fn); }
+    try
+    {
+        d.chai_engine_.eval_file(script_fn);
+    }
     catch (const chaiscript::exception::file_not_found_error &exc)
     {
         os = &d.logger_.log(Error); *os << "Could not find " << script_fn << ": " << exc.what() << std::endl;

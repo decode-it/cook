@@ -13,7 +13,9 @@ enum class Command
     message,
     env,
     dir,
-    build,
+    project,
+    recipe,
+    temp,
     output,
     toolchain,
     name,
@@ -21,7 +23,6 @@ enum class Command
     arch,
     model,
     book,
-    recipe,
     create,
     add,
     define,
@@ -53,7 +54,7 @@ inline std::string hr(Command c)
         LC(message);
         LC(env);
         LC(dir);
-        LC(build);
+        LC(temp);
         LC(output);
         LC(toolchain);
         LC(name);

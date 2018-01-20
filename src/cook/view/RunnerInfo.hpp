@@ -38,6 +38,7 @@ namespace cook { namespace view {
     {
         using ScriptStack = std::vector<std::filesystem::path>;
         ScriptStack script_stack;
+
         Presenter * presenter;
         Logger &logger;
 
@@ -50,15 +51,9 @@ namespace cook { namespace view {
             return LogObject<OSSFunctor>(logger.log(type), script_stack.size()*2, std::forward<OSSFunctor>(functor));
         }
 
-        std::string indent() const {return std::string(script_stack.size()*2, ' ');}
-        std::filesystem::path current_script() const { return script_stack.back(); }
-        std::filesystem::path working_directory() const
-        {
-            auto fn = current_script().parent_path();
-            if (fn.is_relative())
-                fn = std::filesystem::current_path() / fn;
-            return fn;
-        }
+        std::string indent() const { return std::string(script_stack.size()*2, ' '); }
+        std::filesystem::path current_script() const        { return script_stack.back(); }
+        std::filesystem::path working_directory() const     { return current_script().parent_path(); }
 
         virtual void notify_error(const std::string & error_msg) = 0;
         virtual void notify_warning(const std::string & warning_msg) = 0;

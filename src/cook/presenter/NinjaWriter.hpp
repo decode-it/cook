@@ -3,6 +3,8 @@
 
 #include "cook/model/toolchain/Toolchain.hpp"
 #include "cook/model/Recipe.hpp"
+#include "cook/model/Env.hpp"
+#include "cook/model/Library.hpp"
 #include "cook/Types.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/string_algo/substitute.hpp"
@@ -21,7 +23,7 @@ namespace cook { namespace presenter {
             MSS_BEGIN(bool);
             MSS(write_(env));
             MSS(write_(toolchain));
-            MSS(write_(dag));
+            MSS(write_(env, dag));
             MSS_END();
         }
 
@@ -32,6 +34,7 @@ namespace cook { namespace presenter {
             os_ << std::endl;
             os_ << "# >> Environment" << std::endl;
             os_ << "builddir = " << env.dir("build").string() << std::endl;
+            os_ << "projectdir = " << gubg::filesystem::get_relative_to(env.output_dir(), env.project_dir()).string() << std::endl;
             os_ << "# << Environment" << std::endl;
             MSS_END();
         }
@@ -126,9 +129,10 @@ namespace cook { namespace presenter {
             gubg::string_algo::substitute<std::string>(esc, orig, ":", "$:");
             return esc;
         }
-        bool write_(const model::RecipeDAG &dag)
+        bool write_(const model::Env & env, const model::RecipeDAG &dag)
         {
             MSS_BEGIN(bool);
+
             std::ostringstream oss;
             auto object_fn = [&](const auto &file){
                 oss.str("");
@@ -142,8 +146,14 @@ namespace cook { namespace presenter {
                 else if (file.language == "asm") return "compile_asm";
                 return "";
             };
-            auto source_fn = [](const auto &file){
-                return escape_(file.path.string());
+
+            auto proj_path = [](const auto & p)
+            {
+                return p.is_absolute() ? p : "${projectdir}" / p;
+            };
+            auto source_fn = [&](const auto &file)
+            {
+                return escape_(proj_path(file.path).string());
             };
             auto local_name = [&](const model::Recipe &r, const char *name){
                 oss.str("");
@@ -157,13 +167,17 @@ namespace cook { namespace presenter {
 #if 0
                 os_ << local_name(recipe, "include_paths") << " = " << compiler_->prepare_include_paths(recipe.include_paths(model::Owner::Anybody)) << std::endl;
 #endif
-                auto write_compile = [&](const auto &file){
+                auto write_compile = [&](const auto &file)
+                {
                     if (file.type == FileType::Source)
                     {
                         const auto obj_fn = object_fn(file);
                         os_ << "build " << obj_fn << ": " << compile_rule(file) << " " << source_fn(file) << std::endl;
 #if 1
-                        os_ << "    include_paths = " << compiler_->prepare_include_paths(recipe.include_paths(model::Owner::Anybody)) << std::endl;
+                        auto ips = recipe.include_paths(model::Owner::Anybody);
+                        model::toolchain::IncludePaths paths(ips.size());
+                        std::transform(ips.begin(), ips.end(), paths.begin(), [&](const auto & p) { return proj_path(p).string(); });
+                        os_ << "    include_paths = " << compiler_->prepare_include_paths(paths) << std::endl;
 #else
                         os_ << "    include_paths = $" << local_name(recipe, "include_paths");
                         auto add_ip_for_deps = [&](const model::Recipe &d){

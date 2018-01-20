@@ -19,6 +19,8 @@ namespace cook {
     {
         MSS_BEGIN(ReturnCode);
 
+	std::cout << std::filesystem::current_path() << std::endl;
+
         Model model;
         View view;
         Presenter presenter(model, view);

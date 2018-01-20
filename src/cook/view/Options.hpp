@@ -3,6 +3,7 @@
 
 #include "gubg/OptionParser.hpp"
 #include "gubg/mss.hpp"
+#include "gubg/std/filesystem.hpp"
 
 namespace cook { namespace view { 
 
@@ -27,9 +28,9 @@ namespace cook { namespace view {
         std::string uri;
         bool build_all = false;
         std::string project_name;
-        std::string build_dir = ".cook/";
-        std::string output_dir = "./";
-        std::string input_fod = "recipes.chai";
+        std::string temp_build_dir = ".cook";
+        std::string output_dir = "build";
+        std::list<std::string> input_files;
         std::string generate;
 
         bool parse(int argc, const char **argv)
@@ -39,7 +40,7 @@ namespace cook { namespace view {
 
             opt.add_switch('v', "--verbose", "Verbose output",                                                      [&](){verbose = 1;});
             opt.add_switch('V', "--very-verbose", "Very verbose output",                                            [&](){verbose = 2;});
-            opt.add_mandatory('f', "--input", "Specify the input file/directory",                                   [&](std::string str){input_fod = str; });
+            opt.add_mandatory('f', "--input-file", "Specify the input file",                                        [&](std::string str){input_files.push_back(str); });
 
             opt.add_switch('h', "--help", "Print this help. Runs cook in Help mode.",                               [&](){print_help = true;                        mode_ |= Help; });
             opt.add_switch('C', "--clean", "Clean-up temporary build results. Runs cook in Existing mode.",         [&](){clean = true;                             mode_ |= Existing; });
@@ -47,8 +48,8 @@ namespace cook { namespace view {
             opt.add_mandatory('a', "--arch", "Architecture: [x32|x64|uno]. Runs cook in Existing mode.",            [&](std::string str){arch = str;                mode_ |= Existing; });
             opt.add_mandatory('t', "--toolchain", "Toolchain: [gcc|msvc]. Runs cook in Existing mode.",             [&](std::string str){toolchain = str;           mode_ |= Existing; });
             opt.add_switch('n', "--no-build", "Only generate the build.ninja file. Runs cook in Existing mode.",    [&](){do_build = false;                         mode_ |= Existing; });
-            opt.add_mandatory('b', "--build-dir", "Specify the build directory. Runs cook in Existing mode.",       [&](std::string str){build_dir = str;           mode_ |= Existing; });
-            opt.add_mandatory('o', "--output-dir", "Specify the output directory. Runs cook in Existing mode.",       [&](std::string str){output_dir = str;           mode_ |= Existing; });
+            opt.add_mandatory('i', "--intermediary-build-dir", "Specify the intermediary build result directory. Runs cook in Existing mode.",       [&](std::string str){temp_build_dir = str;           mode_ |= Existing; });
+            opt.add_mandatory('o', "--output-dir", "Specify the output directory. Runs cook in Existing mode.",     [&](std::string str){output_dir = str;           mode_ |= Existing; });
             opt.add_switch('A', "--target-all", "Build all targets. Runs cook in Existing mode.",                   [&](){ build_all = true;                        mode_ |= Existing; });
             opt.add_mandatory('g', "--generate", "Generate output as build.ninja|structure.naft|details.naft",      [&](std::string str){generate = str;            mode_ |= Existing; });
             opt.add_mandatory('p', "--project", "Create new project with <name>.Runs cook in New mode.",            [&](std::string str){project_name = str;        mode_ |= New; });

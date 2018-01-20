@@ -16,15 +16,15 @@ namespace cook { namespace view { namespace chai {
 
     public:
         Runner(Presenter * presenter, Logger &logger);
-
         ~Runner();
 
-        bool execute(const std::string &file_or_dir);
+        bool process(const std::list<std::string> & input_files);
 
         //Functions called from chaiscript
-        void chai_include(const std::string &file_or_dir) {execute(file_or_dir);}
+        void chai_include(const std::string &file_or_dir) { execute_(file_or_dir); }
 
     private:
+        bool execute_(const std::string &file_or_dir);
         void setup_chai_functions_();
         std::filesystem::path expand_(const std::string &file_or_dir);
 

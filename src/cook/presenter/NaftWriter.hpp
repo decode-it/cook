@@ -1,6 +1,8 @@
 #ifndef HEADER_cook_presenter_NaftWriter_hpp_ALREADY_INCLUDED
 #define HEADER_cook_presenter_NaftWriter_hpp_ALREADY_INCLUDED
 
+#include "cook/model/Env.hpp"
+#include "cook/model/Library.hpp"
 #include "gubg/naft/Document.hpp"
 #include "gubg/mss.hpp"
 
@@ -11,28 +13,33 @@ namespace cook { namespace presenter {
     public:
         NaftWriter(std::ostream &os): os_(os) { }
 
-        bool write_details(const model::RecipeDAG &dag, const std::filesystem::path &build_dir)
+        bool write_details(const model::Env &env, const model::RecipeDAG &dag)
         {
             MSS_BEGIN(bool);
             os_ << ">> Details" << std::endl;
-            MSS(write_details_(dag, build_dir));
+            MSS(write_details_(env, dag));
             os_ << "<< Details" << std::endl;
             MSS_END();
         }
 
-        bool write_structure(const model::Library &lib)
+        bool write_structure(const model::Env &env, const model::Library &lib)
         {
             MSS_BEGIN(bool);
             os_ << ">> Static structure" << std::endl;
-            MSS(write_structure_(lib));
+            MSS(write_structure_(env, lib));
             os_ << "<< Static structure" << std::endl;
             MSS_END();
         }
 
     private:
-        bool write_recipe_(gubg::naft::Node &node, const model::Recipe &recipe, bool details)
+        bool write_recipe_(gubg::naft::Node &node, const model::Env &env, const model::Recipe &recipe, bool details)
         {
             MSS_BEGIN(bool);
+
+            auto add_project = [&](const auto & p)
+            {
+                return gubg::filesystem::combine(env.project_dir(), p);
+            };
 
             auto recipe_n = node.node("recipe");
 
@@ -44,22 +51,23 @@ namespace cook { namespace presenter {
 
                 if (details)
                 {
-                    recipe_n.attr("script", recipe.script_filename().string());
+                    recipe_n.attr("script", add_project(recipe.script_filename()).string());
                     recipe_n.attr("type", recipe.type());
-                    recipe_n.attr("build_target", recipe.output().filename.string());
+
+                    recipe_n.attr("build_target",  (recipe.output().filename.empty() ? "" : gubg::filesystem::combine(env.output_dir(), recipe.output().filename).string() ));
                 }
             }
 
             if (details)
             {
                 auto add_file = [&](const auto &file){
-                    recipe_n.node("file").attr("type", file.type).attr("path", file.path.string());
+                    recipe_n.node("file").attr("type", file.type).attr("path", add_project(file.path).string());
                     return true;
                 };
                 MSS(recipe.each_file(add_file, model::Owner::Me));
 
                 for (const auto &ip: recipe.include_paths(model::Owner::Anybody))
-                    recipe_n.node("include_path").attr("path", ip);
+                    recipe_n.node("include_path").attr("path", add_project(ip).string());
 
                 for (const auto &p: recipe.defines())
                 {
@@ -76,60 +84,51 @@ namespace cook { namespace presenter {
             MSS_END();
         };
 
-        bool write_book_recursive_(gubg::naft::Node &node, const model::Book &book)
+        bool write_book_recursive_(gubg::naft::Node &node, const model::Env &env, const model::Book &book)
         {
             MSS_BEGIN(bool);
             auto book_n = node.node("book");
             book_n.attr("uri", book.uri_hr());
-            /* book_n.attr("name", book.name()); */
             book_n.attr("display_name", book.display_name());
 
             for (const auto &fn: book.script_filenames())
             {
-                book_n.node("script").attr("path", fn.string());
+                book_n.node("script").attr("path", gubg::filesystem::combine(env.project_dir(), fn).string());
             }
 
             for (const auto &p: book.recipe_per_name())
             {
-                MSS(write_recipe_(book_n, p.second, true));
+                MSS(write_recipe_(book_n, env, p.second, true));
             }
 
             for (const auto &p: book.book_per_name())
             {
-                MSS(write_book_recursive_(book_n, p.second));
+                MSS(write_book_recursive_(book_n, env, p.second));
             }
 
             MSS_END();
         }
 
-        bool write_details_(const model::RecipeDAG &dag, const std::filesystem::path &build_dir)
+        bool write_details_(const model::Env &env, const model::RecipeDAG &dag)
         {
             MSS_BEGIN(bool);
 
             gubg::naft::Document doc(os_);
 
             auto details_n = doc.node("details");
-            auto wrapper = [&](const std::filesystem::path & p)
-            {
-                if(p.is_absolute())
-                    return p;
-                else
-                    return build_dir/p;
-            };
-
-            auto write_recipe = [&](const auto &recipe){return write_recipe_(details_n, recipe, false);};
+            auto write_recipe = [&](const auto &recipe) { return write_recipe_(details_n, env, recipe, false); };
             MSS(dag.each_vertex<gubg::network::Direction::Backward>(write_recipe));
 
             MSS_END();
         }
-        bool write_structure_(const model::Library &lib)
+        bool write_structure_(const model::Env &env, const model::Library &lib)
         {
             MSS_BEGIN(bool);
             gubg::naft::Document doc(os_);
 
             auto structure_n = doc.node("structure");
 
-            write_book_recursive_(structure_n, lib.root());
+            write_book_recursive_(structure_n, env, lib.root());
 
             MSS_END();
         }

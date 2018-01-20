@@ -10,20 +10,43 @@ namespace cook { namespace model {
     class Env
     {
     public:
-        void set_dir(std::string name, std::string dir) {dirs_[name] = dir;}
+        Env()
+            : project_dir_(""),
+              act_output_dir_("output"),
+              act_temp_dir_("build")
+        {
+            reset_dirs_();
+        }
+
+        void set_project_dir(const std::string & dir)  { project_dir_ = dir; reset_dirs_(); }
+        void set_temp_dir(const std::string & dir)     { act_temp_dir_ = dir; reset_dirs_(); }
+        void set_output_dir(const std::string & dir)   { act_output_dir_ = dir; reset_dirs_(); }
+
         const std::filesystem::path dir(const std::string &name) const
-	{
-		auto it = dirs_.find(name);
-		if (it == dirs_.end())
-			//Default is local dir
-			return "./";
-		return it->second;
-	}
+        {
+            if (false) {}
+            else if (name == "recipe") { return project_dir_; }
+            else if (name == "output") { return output_dir_; }
+            else if (name == "build") { return temp_dir_; }
+            else return ".";
+        }
+
+        const std::filesystem::path & output_dir() const    { return output_dir_; }
+        const std::filesystem::path project_dir() const     { return project_dir_; }
+        const std::filesystem::path temp_dir() const        { return temp_dir_; }
 
     private:
-	using Name = std::string;
-	using Dir = std::string;
-	std::map<Name, Dir> dirs_;
+        void reset_dirs_()
+        {
+            output_dir_ = gubg::filesystem::combine(project_dir_, act_output_dir_);
+            temp_dir_ = gubg::filesystem::combine(project_dir_, act_temp_dir_);
+        }
+
+        std::filesystem::path project_dir_;
+        std::filesystem::path output_dir_;
+        std::filesystem::path temp_dir_;
+        std::filesystem::path act_temp_dir_;
+        std::filesystem::path act_output_dir_;
     };
 
 } } 

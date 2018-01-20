@@ -29,9 +29,10 @@ template <typename It, typename ... cmds> bool pop_if(gubg::Range<It> & key, C c
     auto rng = key;
     rng.pop_front();
 
-    if (pop_if(rng, commands...))
-        key = rng;
+    if (!pop_if(rng, commands...))
+        return false;
 
+    key = rng;
     return true;
 }
 
@@ -65,8 +66,9 @@ bool Presenter::set(const Keys & c_key, const Values &values)
     if (false) {}
     else if (pop_if(key, C::script, C::filename ))      { SAFE_CAST_VALUE(0, std::string, fn); script_fn_ = fn; }
     else if (pop_if(key, C::help, C::message ))         { SAFE_CAST_VALUE(0, std::string, msg); model_.help_message = msg; }
-    else if (pop_if(key, C::env, C::dir, C::build ))    { SAFE_CAST_VALUE(0, std::string, path); model_.env.set_dir("build", path); }
-    else if (pop_if(key, C::env, C::dir, C::output ))   { SAFE_CAST_VALUE(0, std::string, path); model_.env.set_dir("output", path); }
+    else if (pop_if(key, C::env, C::dir, C::project ))    { SAFE_CAST_VALUE(0, std::string, path); model_.env.set_project_dir(path); }
+    else if (pop_if(key, C::env, C::dir, C::temp ))    { SAFE_CAST_VALUE(0, std::string, path); model_.env.set_temp_dir(path); }
+    else if (pop_if(key, C::env, C::dir, C::output ))   { SAFE_CAST_VALUE(0, std::string, path); model_.env.set_output_dir(path); }
     else if (pop_if(key, C::toolchain ))
     {
         SAFE_CAST_VALUE(0, std::string, value);
@@ -111,7 +113,6 @@ bool Presenter::set(const Keys & c_key, const Values &values)
                 recipe->set_script_filename(script_fn_);
                 recipe->set_type(type);
                 recipe->set_working_directory(wd);
-                recipe->set_output_directory(model_.env.dir("output"));
             }
             else
             {
@@ -187,7 +188,15 @@ bool Presenter::set(const Keys & c_key, const Values &values)
                 model::RecipeDAG dag;
                 MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
                 {
-                    std::ofstream fo(model_.env.dir("output") / "build.ninja");
+                    // create the output path
+                    std::filesystem::path output = model_.env.output_dir();
+                    if (!std::filesystem::exists(output))
+                        MSS(std::filesystem::create_directories(output), view_.log(Error) << "Unable to create directory'" << output.string() << "'" << std::endl);
+
+                    output /= "build.ninja";
+                    std::ofstream fo(output.string());
+                    MSS(fo.good(), view_.log(Error) << "Unable to open file '" << output.string() << "'" << std::endl);
+
                     presenter::NinjaWriter nw(fo);
                     MSS(nw.write(model_.env, model_.toolchain, dag));
                 }
@@ -199,7 +208,7 @@ bool Presenter::set(const Keys & c_key, const Values &values)
                 MSS(model_.library.get(dag, rn), view_.log(Error) << "Could not extract the DAG for " << rn << std::endl);
                 {
                     presenter::NaftWriter nw(std::cout);
-                    MSS(nw.write_details(dag, model_.env.dir("build")));
+                    MSS(nw.write_details(model_.env, dag));
                 }
             }
             else if (pop_if(key, C::structure))
@@ -209,7 +218,7 @@ bool Presenter::set(const Keys & c_key, const Values &values)
                 //to make sure all recipes are propely merged according to the dependency structure.
                 MSS(model_.library.get(dag, ""), view_.log(Error) << "Could not extract the DAG" << std::endl);
                 presenter::NaftWriter nw(std::cout);
-                MSS(nw.write_structure(model_.library));
+                MSS(nw.write_structure(model_.env, model_.library));
             }
             else UNKNOWN_KEY
         }
