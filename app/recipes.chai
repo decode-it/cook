@@ -1,0 +1,5 @@
+auto langs = ["chai"]
+
+for_each(langs, fun(l) {
+    include(l)
+})

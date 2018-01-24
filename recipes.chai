@@ -1,22 +1,5 @@
-root.book("cook", fun(b) {
-    b.recipe("exe", "executable", fun(r) {
-        r.add("src", "**/*.hpp")
-        r.add("src", "**.cpp")
-        
-        r.add("gubg.std/src", "gubg/*.hpp")
-        
-        r.add("gubg.io/src", "gubg/**.hpp")
-        r.add("gubg.io/src", "gubg/Strange.cpp")
-        r.add("gubg.io/src", "gubg/OptionParser.cpp")
+auto gubg = ["std", "io", "math", "algo", "chaiscript"]
+for_each(gubg, fun(g) { include("gubg.${g}") })
 
-        r.add("gubg.algo/src", "gubg/**.hpp")
-        
-        r.add("gubg.chaiscript/extern/ChaiScript/include", "**.hpp")       
-        
-        r.library("dl")
-        r.library("pthread")
-        r.library("stdc++fs")
-    })
-})
-
-root.display_name("cook")
+include("func")
+include("app")

@@ -1,0 +1,13 @@
+root.book("cook", fun(b) {
+    b.recipe("func", fun(r) {
+        r.add("src", "**/*.hpp")
+        r.add("src", "**.cpp")
+
+
+        for_each(["std", "io", "math", "algo"], fun[r](g) {r.depends_on("gubg/${g}/func")})
+        
+        r.library("dl")
+        r.library("pthread")
+        r.library("stdc++fs")
+    })
+})

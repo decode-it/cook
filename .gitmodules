@@ -18,3 +18,7 @@
 	path = gubg.algo
 	url = https://github.com/gfannes/gubg.algo
 	branch = master
+[submodule "gubg.math"]
+	path = gubg.math
+	url = https://github.com/gfannes/gubg.math
+	branch = master
