@@ -10,3 +10,5 @@ makefile
 .ninja_log
 test.ninja
 build.ninja
+build
+recipes.chai.user
