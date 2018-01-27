@@ -1,0 +1,22 @@
+root.book("cook/lib", fun(b) {
+
+    b.recipe("itf", fun(r) {
+        r.add("inc", "**/*.h")
+    })
+
+    b.recipe("func", fun(r) {
+        r.add("src", "**/*.[hc](pp)?")
+
+        for_each(["std", "io", "math", "algo"], fun[r](g) {r.depends_on("gubg/${g}/func")})
+        r.depends_on("itf")
+        
+        r.library("dl")
+        r.library("pthread")
+        r.library("stdc++fs")
+    })
+
+    b.recipe("api", "library", fun(r) {
+        r.depends_on("itf")
+        r.depends_on("func")
+    })
+})

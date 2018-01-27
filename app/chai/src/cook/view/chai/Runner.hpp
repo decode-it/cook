@@ -2,11 +2,11 @@
 #define HEADER_cook_view_chai_Runner_hpp_ALREADY_INCLUDED
 
 #include "cook/view/Logger.hpp"
-#include "cook/Presenter.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <vector>
 #include <functional>
 #include <memory>
+#include <list>
 
 namespace cook { namespace view { namespace chai { 
 
@@ -15,7 +15,7 @@ namespace cook { namespace view { namespace chai {
         struct D;
 
     public:
-        Runner(Presenter * presenter, Logger &logger);
+        Runner(cook_Handle_t api , Logger &logger);
         ~Runner();
 
         bool process(const std::list<std::string> & input_files);

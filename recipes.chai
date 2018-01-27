@@ -1,5 +1,5 @@
 auto gubg = ["std", "io", "math", "algo", "chaiscript"]
 for_each(gubg, fun(g) { include("gubg.${g}") })
 
-include("func")
+include("lib")
 include("app")

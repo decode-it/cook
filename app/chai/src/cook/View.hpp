@@ -1,26 +1,27 @@
 #ifndef HEADER_cook_View_hpp_ALREADY_INCLUDED
 #define HEADER_cook_View_hpp_ALREADY_INCLUDED
 
-#include "cook/view/Interface.hpp"
+#include "cook/Logger.hpp"
+#include "cook/view/Logger.hpp"
 #include <iostream>
 
 namespace cook { 
 
 struct Presenter;
 
-    class View : public view::Interface
+    class View
     {
     public:
-        void inject(Presenter *itf) { presenter_ = itf; }
+        cook::Logger logger() { return cook::Logger(&view::log_callback, &logger_); }
 
-        std::ostream &log() override            { return logger_.log(); }
-        std::ostream &log(LogType lt) override  { return logger_.log(lt); }
+        std::ostream &log()                             { return logger_.log(); }
+        std::ostream &log(cook_NotificationType_t lt)   { return logger_.log(lt); }
 
-        bool process_cli(int argc, const char **argv);
+        bool process_cli(cook_Handle_t api, int argc, const char **argv);
 
-    private:
-        Presenter * presenter_;
         view::Logger logger_;
+
+
     };
 
 } 
