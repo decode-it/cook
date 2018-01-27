@@ -1,34 +1,49 @@
 defines = -DNDEBUG
 #defines = 
-include_paths = -I src -I gubg.std/src -I gubg.io/src -I gubg.algo/src -I gubg.chaiscript/extern/ChaiScript/include
+include_paths = -I app/chai/src -I gubg.algo/src -I gubg.chaiscript/extern/ChaiScript/include -I gubg.io/src -I gubg.math/src -I gubg.std/src -I lib/inc -I lib/src
 
-build .bcook/main.obj: compile src/main.cpp
-
-build .bcook/cook/View.obj: compile src/cook/View.cpp
-build .bcook/cook/view/chai/Book.obj: compile src/cook/view/chai/Book.cpp
-build .bcook/cook/view/chai/Engine.obj: compile src/cook/view/chai/Engine.cpp
-build .bcook/cook/view/chai/File.obj: compile src/cook/view/chai/File.cpp
-build .bcook/cook/view/chai/Recipe.obj: compile src/cook/view/chai/Recipe.cpp
-build .bcook/cook/view/chai/Runner.obj: compile src/cook/view/chai/Runner.cpp
-build .bcook/cook/view/chai/RunnerInfo.obj: compile src/cook/view/chai/RunnerInfo.cpp
-build .bcook/cook/view/chai/Util.obj: compile src/cook/view/chai/Util.cpp
-
-
-build .bcook/cook/Presenter.obj: compile src/cook/Presenter.cpp
-
-build .bcook/gubg/Strange.obj: compile gubg.io/src/gubg/Strange.cpp
-build .bcook/gubg/OptionParser.obj: compile gubg.io/src/gubg/OptionParser.cpp
+build .bcook/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
+build .bcook/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
+build .bcook/lib/src/cook/API.cpp.obj: compile lib/src/cook/API.cpp
+build .bcook/lib/src/cook/Logger.cpp.obj: compile lib/src/cook/Logger.cpp
+build .bcook/lib/src/cook/api/Book.cpp.obj: compile lib/src/cook/api/Book.cpp
+build .bcook/lib/src/cook/api/Element.cpp.obj: compile lib/src/cook/api/Element.cpp
+build .bcook/lib/src/cook/api/File.cpp.obj: compile lib/src/cook/api/File.cpp
+build .bcook/lib/src/cook/api/GeneratorManager.cpp.obj: compile lib/src/cook/api/GeneratorManager.cpp
+build .bcook/lib/src/cook/api/Recipe.cpp.obj: compile lib/src/cook/api/Recipe.cpp
+build .bcook/lib/src/cook/generator/Manager.cpp.obj: compile lib/src/cook/generator/Manager.cpp
+build .bcook/app/chai/src/cook/View.cpp.obj: compile app/chai/src/cook/View.cpp
+build .bcook/app/chai/src/cook/view/chai/Book.cpp.obj: compile app/chai/src/cook/view/chai/Book.cpp
+build .bcook/app/chai/src/cook/view/chai/Engine.cpp.obj: compile app/chai/src/cook/view/chai/Engine.cpp
+build .bcook/app/chai/src/cook/view/chai/File.cpp.obj: compile app/chai/src/cook/view/chai/File.cpp
+build .bcook/app/chai/src/cook/view/chai/Flags.cpp.obj: compile app/chai/src/cook/view/chai/Flags.cpp
+build .bcook/app/chai/src/cook/view/chai/Recipe.cpp.obj: compile app/chai/src/cook/view/chai/Recipe.cpp
+build .bcook/app/chai/src/cook/view/chai/Runner.cpp.obj: compile app/chai/src/cook/view/chai/Runner.cpp
+build .bcook/app/chai/src/cook/view/chai/RunnerInfo.cpp.obj: compile app/chai/src/cook/view/chai/RunnerInfo.cpp
+build .bcook/app/chai/src/cook/view/chai/Util.cpp.obj: compile app/chai/src/cook/view/chai/Util.cpp
+build .bcook/app/chai/src/main.cpp.obj: compile app/chai/src/main.cpp
 
 build bcook.exe: link $
-    .bcook/main.obj $
-    .bcook/cook/View.obj $
-    .bcook/cook/view/chai/Book.obj $
-    .bcook/cook/view/chai/Engine.obj $
-    .bcook/cook/view/chai/File.obj $
-    .bcook/cook/view/chai/Recipe.obj $
-    .bcook/cook/view/chai/Runner.obj $
-    .bcook/cook/view/chai/RunnerInfo.obj $
-    .bcook/cook/view/chai/Util.obj $
-    .bcook/cook/Presenter.obj $
-    .bcook/gubg/Strange.obj $
-    .bcook/gubg/OptionParser.obj
+    .bcook/gubg.io/src/gubg/OptionParser.cpp.obj $
+    .bcook/gubg.io/src/gubg/Strange.cpp.obj $
+    .bcook/lib/src/cook/API.cpp.obj $
+    .bcook/lib/src/cook/Logger.cpp.obj $
+    .bcook/lib/src/cook/api/Book.cpp.obj $
+    .bcook/lib/src/cook/api/Element.cpp.obj $
+    .bcook/lib/src/cook/api/File.cpp.obj $
+    .bcook/lib/src/cook/api/GeneratorManager.cpp.obj $
+    .bcook/lib/src/cook/api/Recipe.cpp.obj $
+    .bcook/lib/src/cook/generator/Manager.cpp.obj $
+    .bcook/app/chai/src/cook/View.cpp.obj $
+    .bcook/app/chai/src/cook/view/chai/Book.cpp.obj $
+    .bcook/app/chai/src/cook/view/chai/Engine.cpp.obj $
+    .bcook/app/chai/src/cook/view/chai/File.cpp.obj $
+    .bcook/app/chai/src/cook/view/chai/Flags.cpp.obj $
+    .bcook/app/chai/src/cook/view/chai/Recipe.cpp.obj $
+    .bcook/app/chai/src/cook/view/chai/Runner.cpp.obj $
+    .bcook/app/chai/src/cook/view/chai/RunnerInfo.cpp.obj $
+    .bcook/app/chai/src/cook/view/chai/Util.cpp.obj $
+    .bcook/app/chai/src/main.cpp.obj 
+    library_paths =  -L./
+    libraries = -lstdc++fs -lpthread -ldl
+
