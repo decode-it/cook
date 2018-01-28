@@ -51,8 +51,12 @@ namespace cook { namespace model { namespace toolchain {
             std::string prepare_defines(const Defines &defines) const override
             {
                 oss_.str("");
+                auto stream = [&](const auto & p) { oss_ << " -D" << p.first << "=" << p.second; };
+
+
                 for (auto def: defines)
-                    oss_ << " -D" << def;
+                    stream(def);
+
                 return oss_.str();
             }
             std::string create_define(const std::string & name, const std::string & value) const override

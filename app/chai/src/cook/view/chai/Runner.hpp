@@ -1,6 +1,7 @@
 #ifndef HEADER_cook_view_chai_Runner_hpp_ALREADY_INCLUDED
 #define HEADER_cook_view_chai_Runner_hpp_ALREADY_INCLUDED
 
+#include "cook/Handle.h"
 #include "cook/view/Logger.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <vector>

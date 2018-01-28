@@ -14,7 +14,7 @@ namespace cook { namespace model { namespace toolchain {
     using Library = std::string;
 
     using Flags = std::vector<std::string>;
-    using Defines = std::vector<std::string>;
+    using Defines = std::vector<std::pair<std::string, std::string>>;
     using IncludePaths = std::vector<std::string>;
     using ForceIncludes = std::vector<std::string>;
     using ObjectFiles = std::vector<std::string>;

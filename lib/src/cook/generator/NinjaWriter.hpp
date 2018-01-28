@@ -2,12 +2,11 @@
 #define HEADER_cook_generator_NinjaWriter_hpp_ALREADY_INCLUDED
 
 #include "cook/generator/Interface.hpp"
-
+#include "cook/model/object/File.hpp"
 #include "cook/model/toolchain/Toolchain.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Env.hpp"
 #include "cook/model/Library.hpp"
-#include "cook/Types.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/string_algo/substitute.hpp"
 #include "gubg/mss.hpp"
@@ -35,8 +34,18 @@ private:
         MSS_BEGIN(bool);
         os_ << std::endl;
         os_ << "# >> Environment" << std::endl;
-        os_ << "builddir = " << gubg::filesystem::get_relative_to(env.output_dir(), env.temp_dir()).string() << std::endl;
-        os_ << "projectdir = " << gubg::filesystem::get_relative_to(env.output_dir(), env.project_dir()).string() << std::endl;
+
+        std::filesystem::path temp_dir = env.temp_dir();
+        std::filesystem::path proj_dir = env.project_dir();
+
+        if (env.try_relative())
+        {
+            temp_dir = gubg::filesystem::get_relative_to(env.output_dir(), temp_dir);
+            proj_dir = gubg::filesystem::get_relative_to(env.output_dir(), proj_dir);
+        }
+
+        os_ << "builddir = " << temp_dir.string() << std::endl;
+        os_ << "projectdir = " << proj_dir.string() << std::endl;
         os_ << "# << Environment" << std::endl;
         MSS_END();
     }
@@ -136,9 +145,10 @@ private:
         MSS_BEGIN(bool);
 
         std::ostringstream oss;
-        auto object_fn = [&](const auto &file){
+        auto object_fn = [&](const auto &f)
+        {
             oss.str("");
-            oss << "${builddir}" << std::filesystem::path::preferred_separator << file.path.relative_path().string() << ".obj";
+            oss << "${builddir}" << std::filesystem::path::preferred_separator << f.path.relative_path().string() << ".obj";
             return escape_(oss.str());
         };
         auto compile_rule = [](const auto &file){
@@ -169,12 +179,12 @@ private:
 #if 0
             os_ << local_name(recipe, "include_paths") << " = " << compiler_->prepare_include_paths(recipe.include_paths(model::Owner::Anybody)) << std::endl;
 #endif
-            auto write_compile = [&](const auto &file)
+            auto write_compile = [&](const auto & f)
             {
-                if (file.type == cook_FileType_Source)
+                if (f.file_type == cook_FileType_Source)
                 {
-                    const auto obj_fn = object_fn(file);
-                    os_ << "build " << obj_fn << ": " << compile_rule(file) << " " << source_fn(file) << std::endl;
+                    const auto obj_fn = object_fn(f);
+                    os_ << "build " << obj_fn << ": " << compile_rule(f) << " " << source_fn(f) << std::endl;
 #if 1
                     auto ips = recipe.include_paths(model::Owner::Anybody);
                     model::toolchain::IncludePaths paths(ips.size());
@@ -193,9 +203,7 @@ private:
                     os_ << "    library_paths = " << std::endl;
                     os_ << "    libraries = " << std::endl;
 
-                    model::toolchain::Defines defines;
-                    for(const auto & p : recipe.defines())
-                        defines.push_back(compiler_->create_define(p.first, p.second));
+                    model::toolchain::Defines defines = recipe.defines();
                     os_ << "    defines = " << compiler_->prepare_defines(defines) << std::endl;
                 }
                 return true;
@@ -205,9 +213,12 @@ private:
             else if (recipe.type() == "executable")
             {
                 os_ << "build " << recipe.output().filename.string() << ": link ";
-                auto add_object = [&](const auto &f){
-                    if (f.type == cook_FileType_Source)
+
+                auto add_object = [&](const auto &f)
+                {
+                    if (f.file_type == cook_FileType_Source)
                         os_ << "$\n    " << object_fn(f) << " ";
+
                     return true;
                 };
                 MSS(recipe.each_file(add_object, model::Owner::Anybody));
@@ -229,8 +240,10 @@ private:
             else if (recipe.type() == "library")
             {
                 os_ << "build " << archiver_->prepare_library(recipe.output().name) << ": archive ";
-                auto add_object = [&](const auto &f){
-                    if (f.type == cook_FileType_Source)
+
+                auto add_object = [&](const auto & f)
+                {
+                    if (f.file_type == cook_FileType_Source)
                         os_ << "$\n    " << object_fn(f) << " ";
                     return true;
                 };

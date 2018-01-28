@@ -2,7 +2,6 @@
 #define HEADER_cook_view_Logger_hpp_ALREADY_INCLUDED
 
 #include "cook/Notification.h"
-#include "cook/Types.hpp"
 #include <iostream>
 #include <fstream>
 

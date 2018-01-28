@@ -52,8 +52,14 @@ bool View::process_cli(cook_Handle_t api, int argc, const char **argv)
         else if (options.generate == "structure.naft")
             generation = cook_api_GenerationType_Naft;
 
-        const char * argv[] = { options.uri.c_str() };
-        MSS(cook_api_GeneratorManager_generate(mgr, generation, 1, argv) == COOK_TRUE);
+        if (options.uri.empty())
+            MSS(cook_api_GeneratorManager_generate(mgr, generation, 0, nullptr) == COOK_TRUE);
+        else
+        {
+            const char * argv[] = { options.uri.c_str() };
+            MSS(cook_api_GeneratorManager_generate(mgr, generation, 1, argv) == COOK_TRUE);
+        }
+
     }
 
 

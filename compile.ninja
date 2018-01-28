@@ -11,6 +11,10 @@ build .bcook/lib/src/cook/api/Element.cpp.obj: compile lib/src/cook/api/Element.
 build .bcook/lib/src/cook/api/File.cpp.obj: compile lib/src/cook/api/File.cpp
 build .bcook/lib/src/cook/api/GeneratorManager.cpp.obj: compile lib/src/cook/api/GeneratorManager.cpp
 build .bcook/lib/src/cook/api/Recipe.cpp.obj: compile lib/src/cook/api/Recipe.cpp
+build .bcook/lib/src/cook/model/Recipe.cpp.obj: compile lib/src/cook/model/Recipe.cpp
+build .bcook/lib/src/cook/model/object/Define.cpp.obj: compile lib/src/cook/model/object/Define.cpp
+build .bcook/lib/src/cook/model/object/File.cpp.obj: compile lib/src/cook/model/object/File.cpp
+build .bcook/lib/src/cook/model/object/Path.cpp.obj: compile lib/src/cook/model/object/Path.cpp
 build .bcook/lib/src/cook/generator/Manager.cpp.obj: compile lib/src/cook/generator/Manager.cpp
 build .bcook/app/chai/src/cook/View.cpp.obj: compile app/chai/src/cook/View.cpp
 build .bcook/app/chai/src/cook/view/chai/Book.cpp.obj: compile app/chai/src/cook/view/chai/Book.cpp
@@ -33,6 +37,10 @@ build bcook.exe: link $
     .bcook/lib/src/cook/api/File.cpp.obj $
     .bcook/lib/src/cook/api/GeneratorManager.cpp.obj $
     .bcook/lib/src/cook/api/Recipe.cpp.obj $
+    .bcook/lib/src/cook/model/Recipe.cpp.obj $
+    .bcook/lib/src/cook/model/object/Path.cpp.obj $
+    .bcook/lib/src/cook/model/object/File.cpp.obj $
+    .bcook/lib/src/cook/model/object/Define.cpp.obj $
     .bcook/lib/src/cook/generator/Manager.cpp.obj $
     .bcook/app/chai/src/cook/View.cpp.obj $
     .bcook/app/chai/src/cook/view/chai/Book.cpp.obj $

@@ -26,6 +26,8 @@ namespace cook { namespace model {
         const std::filesystem::path project_dir() const     { return project_dir_; }
         const std::filesystem::path temp_dir() const        { return temp_dir_; }
 
+        bool try_relative() const { return act_output_dir_.is_relative();  }
+
     private:
         void reset_dirs_()
         {

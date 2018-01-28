@@ -2,6 +2,7 @@
 #define HEADER_cook_generator_NaftWriter_hpp_ALREADY_INCLUDED
 
 #include "cook/generator/Interface.hpp"
+#include "cook/model/object/File.hpp"
 
 #include "cook/model/Env.hpp"
 #include "cook/model/Library.hpp"
@@ -50,6 +51,7 @@ private:
             recipe_n.attr("uri", recipe.uri_hr());
             recipe_n.attr("tag", recipe.display_name());
             recipe_n.attr("display_name", recipe.display_name());
+            recipe_n.attr("path", add_project(recipe.working_directory()).string());
 
             if (details)
             {
@@ -60,8 +62,9 @@ private:
 
         if (details)
         {
-            auto add_file = [&](const auto &file){
-                recipe_n.node("file").attr("type", file.type).attr("path", add_project(file.path).string());
+            auto add_file = [&](const auto &f)
+            {
+                recipe_n.node("file").attr("type", f.file_type).attr("path", add_project(f.path).string());
                 return true;
             };
             MSS(recipe.each_file(add_file, model::Owner::Me));
@@ -127,6 +130,7 @@ private:
         gubg::naft::Document doc(os_);
 
         auto structure_n = doc.node("structure");
+        structure_n.attr("path", env.project_dir().string());
 
         write_book_recursive_(structure_n, env, lib.root());
 

@@ -11,7 +11,11 @@ namespace cook {
 
 using FileFilterPredicate = std::function<bool (File &)>;
 
-enum class Propagation { Local, Global };
+enum class Propagation
+{
+    Local = 0,
+    Global = 1,
+};
 inline std::ostream & operator<<(std::ostream & str, Propagation propagation)
 {
     switch (propagation)

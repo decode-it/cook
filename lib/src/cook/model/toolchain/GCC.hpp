@@ -23,7 +23,7 @@ namespace cook { namespace model { namespace toolchain {
             if (false) {}
             else if (config == "release")
             {
-                defines.push_back("NDEBUG");
+                defines.push_back(std::make_pair("NDEBUG", ""));
                 flags.push_back("-O3");
             }
             else if (config == "debug")
@@ -44,10 +44,10 @@ namespace cook { namespace model { namespace toolchain {
                     cli_cpp = "avr-g++ -std=c++17";
                     cli_asm = "avr-as";
                     flags_.push_back("-flto");
-                    defines_.push_back("-DARDUINO=10610");
-                    defines_.push_back("-DARDUINO_ARCH_AVR");
-                    defines_.push_back("-DARDUINO_AVR_UNO");
-                    defines_.push_back("-DF_CPU=16000000L");
+                    defines_.push_back(std::make_pair("ARDUINO", "10610"));
+                    defines_.push_back(std::make_pair("ARDUINO_ARCH_AVR", ""));
+                    defines_.push_back(std::make_pair("ARDUINO_AVR_UNO", ""));
+                    defines_.push_back(std::make_pair("F_CPU", "16000000L"));
                 }
                 add_arch(flags_, config_.arch);
                 add_config(flags_, defines_, config_.config);
@@ -83,10 +83,16 @@ namespace cook { namespace model { namespace toolchain {
             std::string prepare_defines(const Defines &defines) const override
             {
                 oss_.str("");
+                auto stream = [&](const auto & p)
+                {
+                    oss_ << " -D" << p.first << "=" << p.second;
+                };
+
                 for (auto def: defines_)
-                    oss_ << " -D" << def;
+                    stream(def);
                 for (auto def: defines)
-                    oss_ << " -D" << def;
+                    stream(def);
+
                 return oss_.str();
             }
 

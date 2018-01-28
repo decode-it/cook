@@ -10,6 +10,8 @@ namespace cook {
 struct File
 {
     cook_FileType_t type = cook_FileType_Unknown;
+    cook_Propagation_t propagation = cook_Propagation_Default;
+
     cook_Flags_t flags = {};
     std::filesystem::path dir;
     std::filesystem::path rel;
