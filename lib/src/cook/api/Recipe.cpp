@@ -65,7 +65,8 @@ void cook_api_Recipe_add_define(cook_api_Element_t element, const char * name, c
 
 void cook_api_Recipe_add_library(cook_api_Element_t element, const char * name, cook_Flags_t flags)
 {
-    get_recipe(element).add_library(name);
+    auto propagation = tr_propagation(flags, cook::Propagation::Local);
+    get_recipe(element).add_library(name, propagation);
 }
 
 void cook_api_Recipe_add_library_path(cook_api_Element_t element, const char * path, cook_Flags_t flags)

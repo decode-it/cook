@@ -66,10 +66,15 @@ public:
         auto l = info_.log_object(cook_NotificationType_Info, [&](auto & str) { str << "Adding define " << key << " with value " << value << " (" << flags << ")"; });
         cook_api_Recipe_add_define(recipe_, key.c_str(), value.c_str(), flags);
     }
-    void library(const std::string &name)
+    void library_2(const std::string &name, cook_Flags_t propagation)
     {
         auto l = info_.log_object(cook_NotificationType_Info, [&](auto & str) { str << "Adding library " << name; });
-        cook_api_Recipe_add_library(recipe_, name.c_str(), {});
+        cook_api_Recipe_add_library(recipe_, name.c_str(), propagation);
+    }
+
+    void library_1(const std::string &name)
+    {
+        library_2(name, {});
     }
 
     void library_path(const std::string & name)

@@ -19,7 +19,8 @@ ModulePtr recipe_module()
     m->add(chaiscript::fun(&Recipe::add_1), "add");
     m->add(chaiscript::fun(&Recipe::depends_on), "depends_on");
     m->add(chaiscript::fun(&Recipe::display_name), "display_name");
-    m->add(chaiscript::fun(&Recipe::library), "library");
+    m->add(chaiscript::fun(&Recipe::library_1), "library");
+    m->add(chaiscript::fun(&Recipe::library_2), "library");
     m->add(chaiscript::fun(&Recipe::library_path), "library_path");
     m->add(chaiscript::fun(&Recipe::define_K_1), "define");
     m->add(chaiscript::fun(&Recipe::define_K_2), "define");

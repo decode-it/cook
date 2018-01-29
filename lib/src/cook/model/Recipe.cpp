@@ -139,13 +139,13 @@ void Recipe::add(const std::string & p_dir, const std::string & pattern, cook_Fl
             {
                 switch(f.propagation)
                 {
-                    case cook_Propagation_Default:
-                    case cook_Propagation_Public:
-                        add_include_path_(f.dir, Propagation::Global);
-                        break;
-                    default:
-                        add_include_path_(f.dir, Propagation::Local);
-                        break;
+                case cook_Propagation_Default:
+                case cook_Propagation_Public:
+                    add_include_path_(f.dir, Propagation::Global);
+                    break;
+                default:
+                    add_include_path_(f.dir, Propagation::Local);
+                    break;
                 }
             }
 
@@ -179,10 +179,12 @@ void Recipe::add(const std::string & p_dir, const std::string & pattern, cook_Fl
     gubg::file::each_glob(pattern, add_file_wrapper, dir);
 }
 
-void Recipe::add_library(const std::string &lib, Owner::Type owner)
+void Recipe::add_library(const std::string &lib, Propagation propagation, Owner::Type owner)
 {
     object::Path p = object::Path(object::Type::Library, lib);
     p.owner = owner;
+    p.propagation = (propagation == Propagation::Global ? cook_Propagation_Public : cook_Propagation_Private);
+
     paths_.insert(p, cook_Overwrite_IfSame);
 }
 void Recipe::add_library_path(const std::filesystem::path &path)
@@ -197,22 +199,20 @@ bool Recipe::merge(const Recipe &src)
 {
     MSS_BEGIN(bool);
 
-    src.paths_.each(object::Type::Library, [&](object::Path p)
+    src.paths_.each(object::Type::Library, [&](const object::Path & p)
     {
         if (p.propagation == cook_Propagation_Public)
         {
-            switch(p.owner)
+            if (p.owner == Owner::Me)
             {
-                case Owner::Deps:
-                case Owner::Me:
-                    p.owner = Owner::Deps;
-                    break;
-
-                default:
-                    return;
+                object::Path dep_p = p;
+                dep_p.owner = Owner::Deps;
+                paths_.insert(object::Type::Library, dep_p, cook_Overwrite_Always);
             }
-
-            paths_.insert(object::Type::Library, p, cook_Overwrite_Always);
+            else
+            {
+                paths_.insert(object::Type::Library, p, cook_Overwrite_Always);
+            }
         }
     });
 
@@ -246,7 +246,7 @@ bool Recipe::merge(const Recipe &src)
     }
     else if (src.type() == "library")
     {
-        add_library(src.output().name, Owner::Me);
+        add_library(src.output().name, Propagation::Global, Owner::Me);
         add_library_path("./");
     }
 
@@ -259,7 +259,7 @@ toolchain::Libraries Recipe::libraries(Owner::Type owner) const
 
     paths_.each(object::Type::Library, [&](const object::Path & p)
     {
-        if (!(p.owner & owner))
+        if (p.owner & owner)
             libs.push_front(p.path);
     });
 
@@ -317,8 +317,8 @@ bool Recipe::add_define_(const object::Define & define, Overwrite overwrite)
     cook_Overwrite_t ov = cook_Overwrite_IfSame;
     switch(overwrite)
     {
-        case Overwrite::Always: ov = cook_Overwrite_Always; break;
-        case Overwrite::Never: ov = cook_Overwrite_Never; break;
+    case Overwrite::Always: ov = cook_Overwrite_Always; break;
+    case Overwrite::Never: ov = cook_Overwrite_Never; break;
     }
     return defines_.insert(define, ov);
 }

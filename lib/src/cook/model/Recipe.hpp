@@ -66,7 +66,7 @@ public:
     void set_display_name(const std::string &value);
     void add(const std::string & p_dir, const std::string & pattern, cook_Flags_t default_flags, const FileFilterPredicate & filter);
 
-    void add_library(const std::string &lib, Owner::Type owner = Owner::External);
+    void add_library(const std::string &lib, Propagation propagation = Propagation::Local, Owner::Type owner = Owner::External);
     void add_library_path(const std::filesystem::path &path);
 
     bool merge(const Recipe &src);
