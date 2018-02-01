@@ -9,21 +9,21 @@ namespace  {
 
 #define HAS_FLAG(value, flag) ((value & flag) == flag)
 
-cook::Overwrite tr_overwrite(cook_Flags_t flags, cook::Overwrite default_value = cook::Overwrite::IfSame)
+cook_Overwrite_t tr_overwrite(cook_Flags_t flags, cook_Overwrite_t default_value)
 {
     if (false) {}
-    else if (HAS_FLAG(flags, cook_Flags_Overwrite_Never))   return cook::Overwrite::Never;
-    else if (HAS_FLAG(flags, cook_Flags_Overwrite_IfSame))  return cook::Overwrite::IfSame;
-    else if (HAS_FLAG(flags, cook_Flags_Overwrite_Always))  return cook::Overwrite::Always;
+    else if (HAS_FLAG(flags, cook_Flags_Overwrite_Never))   return cook_Overwrite_Never;
+    else if (HAS_FLAG(flags, cook_Flags_Overwrite_IfSame))  return cook_Overwrite_IfSame;
+    else if (HAS_FLAG(flags, cook_Flags_Overwrite_Always))  return cook_Overwrite_Always;
     else
         return default_value;
 }
 
-cook::Propagation tr_propagation(cook_Flags_t flags, cook::Propagation default_value = cook::Propagation::Local)
+cook_Propagation_t tr_propagation(cook_Flags_t flags, cook_Propagation_t default_value)
 {
     if (false) {}
-    else if (HAS_FLAG(flags, cook_Flags_Propagation_Public)) return cook::Propagation::Global;
-    else if (HAS_FLAG(flags, cook_Flags_Propagation_Private)) return cook::Propagation::Local;
+    else if (HAS_FLAG(flags, cook_Flags_Propagation_Public)) return cook_Propagation_Public;
+    else if (HAS_FLAG(flags, cook_Flags_Propagation_Private)) return cook_Propagation_Private;
     else
         return default_value;
 }
@@ -56,7 +56,8 @@ const char * cook_api_Recipe_get_display_name(cook_api_Element_t element)
 void cook_api_Recipe_add_define(cook_api_Element_t element, const char * name, const char * value, cook_Flags_t flags)
 {
     auto & recipe = get_recipe(element);
-    auto overwrite = tr_overwrite(flags, cook::Overwrite::IfSame);
+    auto overwrite = tr_overwrite(flags, cook_Overwrite_IfSame);
+
     if (value)
         recipe.add_define(name, value, overwrite);
     else
@@ -65,17 +66,18 @@ void cook_api_Recipe_add_define(cook_api_Element_t element, const char * name, c
 
 void cook_api_Recipe_add_library(cook_api_Element_t element, const char * name, cook_Flags_t flags)
 {
-    auto propagation = tr_propagation(flags, cook::Propagation::Local);
+    auto propagation = tr_propagation(flags, cook_Propagation_Private);
     get_recipe(element).add_library(name, propagation);
 }
 
 void cook_api_Recipe_add_library_path(cook_api_Element_t element, const char * path, cook_Flags_t flags)
 {
-    get_recipe(element).add_library_path(path);
+    auto propagation = tr_propagation(flags, cook_Propagation_Private);
+    get_recipe(element).add_library_path(path, propagation);
 }
 
 void cook_api_Recipe_add_include_path(cook_api_Element_t element, const char * path, cook_Flags_t flags)
 {
-    auto propagation = tr_propagation(flags, cook::Propagation::Local);
+    auto propagation = tr_propagation(flags, cook_Propagation_Private);
     get_recipe(element).add_include_path(path, propagation);
 }

@@ -141,10 +141,10 @@ void Recipe::add(const std::string & p_dir, const std::string & pattern, cook_Fl
                 {
                 case cook_Propagation_Default:
                 case cook_Propagation_Public:
-                    add_include_path_(f.dir, Propagation::Global);
+                    add_include_path_(f.dir, cook_Propagation_Public);
                     break;
                 default:
-                    add_include_path_(f.dir, Propagation::Local);
+                    add_include_path_(f.dir, cook_Propagation_Private);
                     break;
                 }
             }
@@ -179,17 +179,18 @@ void Recipe::add(const std::string & p_dir, const std::string & pattern, cook_Fl
     gubg::file::each_glob(pattern, add_file_wrapper, dir);
 }
 
-void Recipe::add_library(const std::string &lib, Propagation propagation, Owner::Type owner)
+void Recipe::add_library(const std::string &lib, cook_Propagation_t propagation, Owner::Type owner)
 {
     object::Path p = object::Path(object::Type::Library, lib);
     p.owner = owner;
-    p.propagation = (propagation == Propagation::Global ? cook_Propagation_Public : cook_Propagation_Private);
+    p.propagation = propagation;
 
     paths_.insert(p, cook_Overwrite_IfSame);
 }
-void Recipe::add_library_path(const std::filesystem::path &path)
+void Recipe::add_library_path(const std::filesystem::path &path, cook_Propagation_t propagation)
 {
     object::Path p = object::Path(object::Type::LibraryPath, path);
+    p.propagation = propagation;
     paths_.insert(p, cook_Overwrite_Always);
 }
 
@@ -246,7 +247,7 @@ bool Recipe::merge(const Recipe &src)
     }
     else if (src.type() == "library")
     {
-        add_library(src.output().name, Propagation::Global, Owner::Me);
+        add_library(src.output().name, cook_Propagation_Public, Owner::Me);
         add_library_path("./");
     }
 
@@ -302,28 +303,22 @@ toolchain::Defines Recipe::defines() const
     return defs;
 }
 
-bool Recipe::add_define(const std::string & macro, Overwrite overwrite)
+bool Recipe::add_define(const std::string & macro, cook_Overwrite_t overwrite)
 {
     return add_define_(object::Define(macro), overwrite);
 }
 
-bool Recipe::add_define(const std::string & macro, const std::string & value, Overwrite overwrite)
+bool Recipe::add_define(const std::string & macro, const std::string & value, cook_Overwrite_t overwrite)
 {
     return add_define_(object::Define(macro, value), overwrite);
 }
 
-bool Recipe::add_define_(const object::Define & define, Overwrite overwrite)
+bool Recipe::add_define_(const object::Define & define, cook_Overwrite_t overwrite)
 {
-    cook_Overwrite_t ov = cook_Overwrite_IfSame;
-    switch(overwrite)
-    {
-    case Overwrite::Always: ov = cook_Overwrite_Always; break;
-    case Overwrite::Never: ov = cook_Overwrite_Never; break;
-    }
-    return defines_.insert(define, ov);
+    return defines_.insert(define, overwrite);
 }
 
-void Recipe::add_include_path(const std::string & path, Propagation propagation)
+void Recipe::add_include_path(const std::string & path, cook_Propagation_t propagation)
 {
     std::filesystem::path dir = path.empty() ? "." : path;
     if (dir.is_relative())
@@ -351,25 +346,21 @@ void Recipe::stream(std::ostream &os) const
     }
 }
 
-void Recipe::add_include_path_(const std::string & path, Propagation propagation)
+void Recipe::add_include_path_(const std::string & path, cook_Propagation_t propagation)
 {
     // do we have this include path ?
     object::Path * p = paths_.get(object::Type::IncludePath, path);
 
     // find out the propagation
-    cook_Propagation_t prop = cook_Propagation_Private;
-    if (propagation == Propagation::Global)
-        prop = cook_Propagation_Public;
-
     if (p)
     {
-        p->propagation = std::max(p->propagation, prop);
+        p->propagation = std::max(p->propagation, propagation);
     }
     else
     {
         object::Path p = object::Path(object::Type::IncludePath, path);
         p.owner = Owner::External;
-        p.propagation = prop;
+        p.propagation = propagation;
         paths_.insert(p, cook_Overwrite_Always);
     }
 }

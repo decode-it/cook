@@ -66,8 +66,7 @@ public:
     void set_display_name(const std::string &value);
     void add(const std::string & p_dir, const std::string & pattern, cook_Flags_t default_flags, const FileFilterPredicate & filter);
 
-    void add_library(const std::string &lib, Propagation propagation = Propagation::Local, Owner::Type owner = Owner::External);
-    void add_library_path(const std::filesystem::path &path);
+
 
     bool merge(const Recipe &src);
 
@@ -101,15 +100,18 @@ public:
 
     using Defines = std::map<std::string, std::string>;
     toolchain::Defines defines() const;
-    bool add_define(const std::string & macro, Overwrite overwrite);
-    bool add_define(const std::string & macro, const std::string & value, Overwrite overwrite);
-    void add_include_path(const std::string & path, Propagation propagation);
+    bool add_define(const std::string & macro, cook_Overwrite_t overwrite);
+    bool add_define(const std::string & macro, const std::string & value, cook_Overwrite_t overwrite);
+
+    void add_include_path(const std::string & path, cook_Propagation_t propagation= cook_Propagation_Private);
+    void add_library(const std::string &lib, cook_Propagation_t propagation = cook_Propagation_Private, Owner::Type owner = Owner::External);
+    void add_library_path(const std::filesystem::path &path, cook_Propagation_t propagation = cook_Propagation_Private);
 
     void stream(std::ostream &os) const;
 
 private:
-    void add_include_path_(const std::string & path, Propagation propagation);
-    bool add_define_(const object::Define & define, Overwrite overwrite);
+    void add_include_path_(const std::string & path, cook_Propagation_t propagation);
+    bool add_define_(const object::Define & define, cook_Overwrite_t overwrite);
     void update_output_();
 
     Uri uri_;
