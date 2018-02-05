@@ -2,27 +2,24 @@
 #define HEADER_cook_View_hpp_ALREADY_INCLUDED
 
 #include "cook/Logger.hpp"
+#include "cook/Handle.h"
 #include "cook/view/Logger.hpp"
 #include <iostream>
 
 namespace cook { 
 
-struct Presenter;
+class View
+{
+public:
+    cook::Logger logger() { return cook::Logger(&view::log_callback, &logger_); }
 
-    class View
-    {
-    public:
-        cook::Logger logger() { return cook::Logger(&view::log_callback, &logger_); }
+    std::ostream &log()                             { return logger_.log(); }
+    std::ostream &log(cook_NotificationType_t lt)   { return logger_.log(lt); }
 
-        std::ostream &log()                             { return logger_.log(); }
-        std::ostream &log(cook_NotificationType_t lt)   { return logger_.log(lt); }
+    bool process_cli(cook_Handle_t api, int argc, const char **argv);
 
-        bool process_cli(cook_Handle_t api, int argc, const char **argv);
-
-        view::Logger logger_;
-
-
-    };
+    view::Logger logger_;
+};
 
 } 
 

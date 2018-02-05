@@ -1,4 +1,4 @@
-#include "cook/view/chai/Recipe.hpp"
+#include "cook/chai/Recipe.hpp"
 #include "cook/view/Recipe.hpp"
 #include "chaiscript/chaiscript.hpp"
 

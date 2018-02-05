@@ -1,7 +1,7 @@
 #include "cook/api/GeneratorManager.h"
 #include "cook/View.hpp"
 #include "cook/view/Options.hpp"
-#include "cook/view/chai/Runner.hpp"
+#include "cook/chai/Runner.hpp"
 #include "gubg/mss.hpp"
 
 #include "cook/API.h"

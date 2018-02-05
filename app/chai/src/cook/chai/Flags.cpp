@@ -1,4 +1,4 @@
-#include "cook/view/chai/Flags.hpp"
+#include "cook/chai/Flags.hpp"
 #include "cook/Flags.h"
 #include "chaiscript/chaiscript.hpp"
 

@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_view_chai_RunnerInfo_hpp_ALREADY_INCLUDED
-#define HEADER_cook_view_chai_RunnerInfo_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_chai_RunnerInfo_hpp_ALREADY_INCLUDED
+#define HEADER_cook_chai_RunnerInfo_hpp_ALREADY_INCLUDED
 
 #include "cook/view/RunnerInfo.hpp"
 

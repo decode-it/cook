@@ -1,4 +1,4 @@
-#include "cook/view/chai/Util.hpp"
+#include "cook/chai/Util.hpp"
 #include "chaiscript/chaiscript.hpp"
 
 namespace cook { namespace view { namespace chai {
