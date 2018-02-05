@@ -3,16 +3,16 @@
 
 #include "cook/view/RunnerInfo.hpp"
 
-namespace cook { namespace view { namespace chai { 
+namespace cook { namespace chai {
 
     struct RunnerInfo : public cook::view::RunnerInfo
     {
-        RunnerInfo(Logger &logger) : cook::view::RunnerInfo(logger) {}
+        RunnerInfo(view::Logger &logger) : cook::view::RunnerInfo(logger) {}
 
         void notify_error(const std::string & error_msg) override;
         void notify_warning(const std::string & warning_msg) override;
     };
 
-} } } 
+} }
 
 #endif

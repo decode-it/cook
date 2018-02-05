@@ -1,12 +1,12 @@
 #ifndef HEADER_cook_chai_Util_hpp_ALREADY_INCLUDED
 #define HEADER_cook_chai_Util_hpp_ALREADY_INCLUDED
 
-#include "gubg/chai/Module.hpp"
+#include "gubg/chai/ModuleFwd.hpp"
 
-namespace cook { namespace view { namespace chai {
+namespace cook { namespace chai {
 
-ModulePtr util_module();
+gubg::chai::ModulePtr util_module();
 
-} } }
+} }
 
 #endif

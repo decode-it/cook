@@ -36,7 +36,7 @@ bool View::process_cli(cook_Handle_t api, int argc, const char **argv)
         MSS_RETURN_OK();
     }
 
-    view::chai::Runner chai_runner(api, logger_);
+    chai::Runner chai_runner(api, logger_);
     MSS(chai_runner.process(input_files));
 
     MSS(cook_API_resolve(api) == COOK_TRUE);

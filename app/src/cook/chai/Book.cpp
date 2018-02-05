@@ -1,12 +1,14 @@
 #include "cook/chai/Book.hpp"
 #include "cook/view/Book.hpp"
-#include "chaiscript/chaiscript.hpp"
+#include "gubg/chai/Module.hpp"
 
-namespace cook { namespace view { namespace chai {
+namespace cook { namespace chai {
 
-ModulePtr book_module()
+gubg::chai::ModulePtr book_module()
 {
-    ModulePtr m(new chaiscript::Module());
+    using Book = cook::view::Book;
+
+    gubg::chai::ModulePtr m(new chaiscript::Module());
 
     //user_type and constructor are added to make the books copyable in chaiscript.
     m->add(chaiscript::user_type<Book>(), "Book");
@@ -20,4 +22,4 @@ ModulePtr book_module()
     return m;
 }
 
-} } }
+} }

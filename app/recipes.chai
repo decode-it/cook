@@ -1,7 +1,6 @@
 root.recipe("cook/exe", "executable", fun(r) {
     r.depends_on("lib/api")
     r.depends_on("gubg/chaiscript/func")
-    r.depends_on("chai/func")
     r.add("src", "**.[hc]pp")
 
     r.library("dl")

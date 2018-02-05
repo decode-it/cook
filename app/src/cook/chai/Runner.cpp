@@ -11,11 +11,11 @@
 #include "cook/API.h"
 #include "gubg/mss.hpp"
 
-namespace cook { namespace view { namespace chai {
+namespace cook { namespace chai {
 
 struct Runner::D
 {
-    D(cook_Handle_t api, Logger &logger)
+    D(cook_Handle_t api, view::Logger &logger)
         : api_(api),
           logger_(logger),
           runner_info_(logger),
@@ -24,9 +24,9 @@ struct Runner::D
     }
 
     cook_Handle_t api_;
-    Logger &logger_;
+    view::Logger &logger_;
     RunnerInfo runner_info_;
-    Book root_book_;
+    view::Book root_book_;
     Engine chai_engine_;
 
     std::filesystem::path project_path_;
@@ -34,7 +34,7 @@ struct Runner::D
     bool execute_ok_ = true;
 };
 
-Runner::Runner(cook_Handle_t api, Logger &logger)
+Runner::Runner(cook_Handle_t api, view::Logger &logger)
     : d_(new D(api, logger))
 {
     setup_chai_functions_();
@@ -144,4 +144,4 @@ std::filesystem::path Runner::expand_(const std::string &file_or_dir)
     return script_fn;
 }
 
-} } }
+} }

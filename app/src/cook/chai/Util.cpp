@@ -1,15 +1,15 @@
 #include "cook/chai/Util.hpp"
-#include "chaiscript/chaiscript.hpp"
+#include "gubg/chai/Module.hpp"
 
-namespace cook { namespace view { namespace chai {
+namespace cook { namespace chai {
 
-ModulePtr util_module()
+gubg::chai::ModulePtr util_module()
 {
-    ModulePtr m(new chaiscript::Module());
+    gubg::chai::ModulePtr m(new chaiscript::Module());
 
     return m;
 }
 
-} } }
+} }
 
 

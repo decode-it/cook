@@ -1,12 +1,14 @@
 #include "cook/chai/Recipe.hpp"
 #include "cook/view/Recipe.hpp"
-#include "chaiscript/chaiscript.hpp"
+#include "gubg/chai/Module.hpp"
 
-namespace cook { namespace view { namespace chai {
+namespace cook { namespace chai {
 
-ModulePtr recipe_module()
+gubg::chai::ModulePtr recipe_module()
 {
-    ModulePtr m(new chaiscript::Module());
+    using Recipe = cook::view::Recipe;
+
+    gubg::chai::ModulePtr m(new chaiscript::Module());
 
     m->add(chaiscript::user_type<Recipe>(), "Recipe");
     m->add(chaiscript::constructor<Recipe(const Recipe &)>(), "Recipe");
@@ -34,4 +36,4 @@ ModulePtr recipe_module()
     return m;
 }
 
-} } }
+} }

@@ -1,12 +1,15 @@
 #include "cook/chai/File.hpp"
 #include "cook/view/File.hpp"
-#include "chaiscript/chaiscript.hpp"
+#include "gubg/chai/Module.hpp"
 
-namespace cook { namespace view { namespace chai {
+namespace cook { namespace chai {
 
-ModulePtr file_module()
+gubg::chai::ModulePtr file_module()
 {
-    ModulePtr m(new chaiscript::Module());
+    using Path = cook::view::Path;
+    using File = cook::view::File;
+
+    gubg::chai::ModulePtr m(new chaiscript::Module());
 
     chaiscript::utility::add_class<cook_FileType_t>(*m,
           "FileType",
@@ -29,4 +32,4 @@ ModulePtr file_module()
     return m;
 }
 
-} } }
+} }

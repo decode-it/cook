@@ -1,12 +1,12 @@
 #include "cook/chai/Flags.hpp"
 #include "cook/Flags.h"
-#include "chaiscript/chaiscript.hpp"
+#include "gubg/chai/Module.hpp"
 
-namespace cook { namespace view { namespace chai {
+namespace cook { namespace chai {
 
-ModulePtr flags_module()
+gubg::chai::ModulePtr flags_module()
 {
-    ModulePtr m(new chaiscript::Module());
+    gubg::chai::ModulePtr m(new chaiscript::Module());
 
     chaiscript::utility::add_class<cook_Flags_t>(*m,
      "Flags",
@@ -20,4 +20,4 @@ ModulePtr flags_module()
     return m;
 }
 
-} } }
+} }

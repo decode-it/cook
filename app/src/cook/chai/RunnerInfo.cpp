@@ -1,7 +1,7 @@
 #include "cook/chai/RunnerInfo.hpp"
-#include "chaiscript/chaiscript.hpp"
+#include "gubg/chai/Module.hpp"
 
-namespace cook { namespace view { namespace chai {
+namespace cook { namespace chai {
 
     void RunnerInfo::notify_error(const std::string & error_msg)
     {
@@ -13,4 +13,4 @@ namespace cook { namespace view { namespace chai {
         std::cout << warning_msg << std::endl;
     }
 
-} } }
+} }

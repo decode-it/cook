@@ -2,7 +2,7 @@
 #include "chaiscript/chaiscript_stdlib.hpp"
 #include <memory>
 
-namespace cook { namespace view { namespace chai { 
+namespace cook { namespace chai {
 
     using Parser = chaiscript::parser::ChaiScript_Parser<chaiscript::eval::Noop_Tracer, chaiscript::optimizer::Optimizer_Default>;
 
@@ -15,4 +15,4 @@ namespace cook { namespace view { namespace chai {
         engine_.eval_file(fn.string());
     }
 
-} } } 
+} }

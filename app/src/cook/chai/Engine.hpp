@@ -4,7 +4,7 @@
 #include "gubg/std/filesystem.hpp"
 #include "chaiscript/chaiscript.hpp"
 
-namespace cook { namespace view { namespace chai { 
+namespace cook { namespace chai {
 
     class Engine
     {
@@ -21,6 +21,6 @@ namespace cook { namespace view { namespace chai {
             Raw engine_;
     };
 
-} } } 
+} }
 
 #endif

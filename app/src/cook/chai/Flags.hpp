@@ -1,13 +1,13 @@
 #ifndef HEADER_cook_chai_Flags_hpp_ALREADY_INCLUDED
 #define HEADER_cook_chai_Flags_hpp_ALREADY_INCLUDED
 
-#include "gubg/chai/Module.hpp"
+#include "gubg/chai/ModuleFwd.hpp"
 
-namespace cook { namespace view { namespace chai {
+namespace cook { namespace chai {
 
-ModulePtr flags_module();
+gubg::chai::ModulePtr flags_module();
 
-} } }
+} }
 
 
 #endif

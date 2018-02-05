@@ -9,14 +9,14 @@
 #include <memory>
 #include <list>
 
-namespace cook { namespace view { namespace chai { 
+namespace cook { namespace chai {
 
     class Runner
     {
         struct D;
 
     public:
-        Runner(cook_Handle_t api , Logger &logger);
+        Runner(cook_Handle_t api , view::Logger &logger);
         ~Runner();
 
         bool process(const std::list<std::string> & input_files);
@@ -32,6 +32,6 @@ namespace cook { namespace view { namespace chai {
         std::unique_ptr<D> d_;
     };
 
-} } } 
+} }
 
 #endif

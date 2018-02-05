@@ -31,9 +31,9 @@ namespace cook { namespace view {
                     os << "Message: ";
                     break;
 
-                case cook_NotificationType_Error: os << "Error: "; break;
+                case cook_NotificationType_Error:   os << "Error: "; break;
                 case cook_NotificationType_Warning: os << "Error: "; break;
-                case cook_NotificationType_Fatal: os << "Error: "; break;
+                case cook_NotificationType_Fatal:   os << "Error: "; break;
                 case cook_NotificationType_Always: break;
             }
             return os;
