@@ -1,5 +1,10 @@
-auto langs = ["chai"]
+root.recipe("cook/exe", "executable", fun(r) {
+    r.depends_on("lib/api")
+    r.depends_on("gubg/chaiscript/func")
+    r.depends_on("chai/func")
+    r.add("src", "**.[hc]pp")
 
-for_each(langs, fun(l) {
-    include(l)
+    r.library("dl")
+    r.library("pthread")
+    r.library("stdc++fs")
 })
