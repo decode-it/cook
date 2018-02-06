@@ -1,0 +1,10 @@
+[documentation]{
+    [static site generators]{
+        [mdbook](url:https://rust-lang-nursery.github.io/mdBook/)
+        [jekyll]
+    }
+    [UML tools]{
+        [UMLGraph](url:https://www.spinellis.gr/umlgraph)
+        [CodeDependencyVisualizer](url:https://github.com/gklingler/CodeDependencyVisualizer)
+    }
+}
