@@ -1,9 +1,0 @@
-root.recipe("cook/exe", "executable", fun(r) {
-    r.depends_on("lib/api")
-    r.depends_on("gubg/chaiscript/func")
-    r.add("src", "**.[hc]pp")
-
-    r.library("dl")
-    r.library("pthread")
-    r.library("stdc++fs")
-})
