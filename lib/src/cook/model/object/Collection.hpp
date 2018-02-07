@@ -63,7 +63,7 @@ public:
         {
             auto lst_it = elements_.find(t);
             if(lst_it == elements_.end())
-                break;
+                continue;
 
             const ObjectList & lst = lst_it->second;
             for(const T & p : lst)

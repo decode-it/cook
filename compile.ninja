@@ -1,6 +1,6 @@
 defines = -DNDEBUG
 #defines = 
-include_paths = -I app/chai/src -I gubg.algo/src -I gubg.chaiscript/extern/ChaiScript/include -I gubg.io/src -I gubg.math/src -I gubg.std/src -I lib/inc -I lib/src
+include_paths = -I app/src -I gubg.algo/src -I gubg.chaiscript/extern/ChaiScript/include -I gubg.io/src -I gubg.math/src -I gubg.std/src -I gubg.chaiscript/src -I lib/inc -I lib/src
 
 build .bcook/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
 build .bcook/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
@@ -16,16 +16,16 @@ build .bcook/lib/src/cook/model/object/Define.cpp.obj: compile lib/src/cook/mode
 build .bcook/lib/src/cook/model/object/File.cpp.obj: compile lib/src/cook/model/object/File.cpp
 build .bcook/lib/src/cook/model/object/Path.cpp.obj: compile lib/src/cook/model/object/Path.cpp
 build .bcook/lib/src/cook/generator/Manager.cpp.obj: compile lib/src/cook/generator/Manager.cpp
-build .bcook/app/chai/src/cook/View.cpp.obj: compile app/chai/src/cook/View.cpp
-build .bcook/app/chai/src/cook/view/chai/Book.cpp.obj: compile app/chai/src/cook/view/chai/Book.cpp
-build .bcook/app/chai/src/cook/view/chai/Engine.cpp.obj: compile app/chai/src/cook/view/chai/Engine.cpp
-build .bcook/app/chai/src/cook/view/chai/File.cpp.obj: compile app/chai/src/cook/view/chai/File.cpp
-build .bcook/app/chai/src/cook/view/chai/Flags.cpp.obj: compile app/chai/src/cook/view/chai/Flags.cpp
-build .bcook/app/chai/src/cook/view/chai/Recipe.cpp.obj: compile app/chai/src/cook/view/chai/Recipe.cpp
-build .bcook/app/chai/src/cook/view/chai/Runner.cpp.obj: compile app/chai/src/cook/view/chai/Runner.cpp
-build .bcook/app/chai/src/cook/view/chai/RunnerInfo.cpp.obj: compile app/chai/src/cook/view/chai/RunnerInfo.cpp
-build .bcook/app/chai/src/cook/view/chai/Util.cpp.obj: compile app/chai/src/cook/view/chai/Util.cpp
-build .bcook/app/chai/src/main.cpp.obj: compile app/chai/src/main.cpp
+build .bcook/app/src/cook/View.cpp.obj: compile app/src/cook/View.cpp
+build .bcook/app/src/cook/chai/Book.cpp.obj: compile app/src/cook/chai/Book.cpp
+build .bcook/app/src/cook/chai/Engine.cpp.obj: compile app/src/cook/chai/Engine.cpp
+build .bcook/app/src/cook/chai/File.cpp.obj: compile app/src/cook/chai/File.cpp
+build .bcook/app/src/cook/chai/Flags.cpp.obj: compile app/src/cook/chai/Flags.cpp
+build .bcook/app/src/cook/chai/Recipe.cpp.obj: compile app/src/cook/chai/Recipe.cpp
+build .bcook/app/src/cook/chai/Runner.cpp.obj: compile app/src/cook/chai/Runner.cpp
+build .bcook/app/src/cook/chai/RunnerInfo.cpp.obj: compile app/src/cook/chai/RunnerInfo.cpp
+build .bcook/app/src/cook/chai/Util.cpp.obj: compile app/src/cook/chai/Util.cpp
+build .bcook/app/src/main.cpp.obj: compile app/src/main.cpp
 
 build bcook.exe: link $
     .bcook/gubg.io/src/gubg/OptionParser.cpp.obj $
@@ -42,16 +42,16 @@ build bcook.exe: link $
     .bcook/lib/src/cook/model/object/File.cpp.obj $
     .bcook/lib/src/cook/model/object/Define.cpp.obj $
     .bcook/lib/src/cook/generator/Manager.cpp.obj $
-    .bcook/app/chai/src/cook/View.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Book.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Engine.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/File.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Flags.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Recipe.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Runner.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/RunnerInfo.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Util.cpp.obj $
-    .bcook/app/chai/src/main.cpp.obj 
+    .bcook/app/src/cook/View.cpp.obj $
+    .bcook/app/src/cook/chai/Book.cpp.obj $
+    .bcook/app/src/cook/chai/Engine.cpp.obj $
+    .bcook/app/src/cook/chai/File.cpp.obj $
+    .bcook/app/src/cook/chai/Flags.cpp.obj $
+    .bcook/app/src/cook/chai/Recipe.cpp.obj $
+    .bcook/app/src/cook/chai/Runner.cpp.obj $
+    .bcook/app/src/cook/chai/RunnerInfo.cpp.obj $
+    .bcook/app/src/cook/chai/Util.cpp.obj $
+    .bcook/app/src/main.cpp.obj 
     library_paths =  -L./
     libraries = -lstdc++fs -lpthread -ldl
 
