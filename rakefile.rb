@@ -104,8 +104,31 @@ task :install, [:bin] => "build" do |task, args|
     end
 end
 
-desc "Create the documentation"
-task :doc do
+namespace :doc do
+    mdbook_exe = nil
+    task :setup do
+        mdbook_exe = File.join(ENV["HOME"], ".cargo", "bin", "mdbook")
+        if !File.exists?(mdbook_exe)
+            sh "yaourt rustup"
+            sh "rustup install stable"
+            sh "rustup default stable"
+            sh "cargo install mdbook"
+        end
+    end
+    desc "Manual documentation"
+    task :manual => :setup do
+        Dir.chdir("doc/manual") do
+            sh(mdbook_exe, "serve")
+        end
+    end
+    desc "Desgin documentation"
+    task :design => :setup do
+        Dir.chdir("doc/design") do
+            sh(mdbook_exe, "serve")
+        end
+    end
+end
+task :old_doc do
     Dir.chdir("doc") do
         %w[abc complex].each do |name|
             sh "dot -T png -o #{name}.png #{name}.dot"
