@@ -3,17 +3,10 @@
 
 namespace {
 
-cook::Result make_result(cook::result::Type t)
-{
-    return cook::Result ( t, cook::result::Unknown, 0 );
-}
-
 template <typename T> T mss_result_to_T(cook::result::Type t)
 {
     MSS_BEGIN(T);
-
-    MSS(make_result(t));
-
+    MSS(cook::Result(t, cook::result::Unknown, 0) );
     MSS_END();
 }
 

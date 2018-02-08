@@ -65,6 +65,11 @@ private:
     int value_;
 };
 
+template <typename T>
+Result make_error_result(result::Category category, T code) { return Result(result::Error, category, code); }
+template <typename T>
+Result make_warning_result(result::Category category, T code) { return Result(result::Warning, category, code); }
+
 }
 
 
