@@ -57,9 +57,9 @@ TEST_CASE("mss and error code test", "[ut][mss][error_code]")
 
         SECTION("success")
         {
-            SECTION("bool")   { r = mss_T_to_result(true); }
-            SECTION("int")    { r = mss_T_to_result(0); }
-            SECTION("RC")     { r = mss_T_to_result(OK); }
+            SECTION("bool")   { r = mss_T_to_result(true);  }
+            SECTION("int")    { r = mss_T_to_result(0);     }
+            SECTION("RC")     { r = mss_T_to_result(OK);    }
         }
 
         SECTION("failure")
@@ -68,9 +68,11 @@ TEST_CASE("mss and error code test", "[ut][mss][error_code]")
             type = cook::result::Error;
             category = cook::result::Unknown;
 
-            SECTION("bool")     { r = mss_T_to_result(false);   value = static_cast<int>(false); }
-            SECTION("int")      { r = mss_T_to_result(5);       value = static_cast<int>(5);     }
-            SECTION("RC")       { r = mss_T_to_result(Error);   value = static_cast<int>(Error); }
+            auto set_failure_value = [&](auto val) { r = mss_T_to_result(val); value = static_cast<int>(val); };
+
+            SECTION("bool")     { set_failure_value(false); }
+            SECTION("int")      { set_failure_value(5);     }
+            SECTION("RC")       { set_failure_value(Error); }
         }
 
         REQUIRE(r == conversion);
