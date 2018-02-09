@@ -21,9 +21,10 @@ Recipe : wd
 Properties *-- Property
 Properties : type
 
-Property : order
 Property : key()
 Property : value()
+Property : order
+Property : propagation
 
 Files *-- File
 Files : type
