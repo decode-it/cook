@@ -2,19 +2,24 @@
 class Book
 class Recipe
 class UserData
-class Collection
-
-class Object
+class Collection  << (T, orchid) <T> >>
+class Properties 
+class Files
+Interface Object
 class Property
 class File
+
+Properties --|> Collection
+Files --|> Collection
 
 
 Book *-- Book
 Book *-- Recipe
-Book *-- Collection
+Book *-- Properties
 Book : uri
 
-Recipe *-- Collection
+Recipe *-- Properties
+Recipe *-- Files
 Recipe *-- "1" UserData
 Recipe : uri
 Recipe : wd
@@ -29,9 +34,10 @@ Object <|-- Property
 Object <|-- File
 
 
+Properties --> Property
 Property : value()
 
+Files --> File
 File : dir
 File : rel
-
 @enduml
