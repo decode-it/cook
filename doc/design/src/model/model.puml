@@ -1,32 +1,35 @@
 @startuml
 class Book
 class Recipe
-class Properties
+class Collection
+class Object
 class Property
-class Files
 class File
 class UserData
 
 Book *-- Book
 Book *-- Recipe
-Book *-- Properties
+Book *-- Collection
 Book : uri
 
-Recipe *-- Files
-Recipe *-- Properties
+Recipe *-- Collection
 Recipe *-- "1" UserData
 Recipe : uri
 Recipe : wd
 
-Properties *-- Property
-Properties : type
+Collection *-- Object
+Collection : type
 
-Property : key()
+Object : key()
+Object : order
+Object : propagation
+
+
+Property --|> Object
 Property : value()
-Property : order
-Property : propagation
 
-Files *-- File
-Files : type
+File --|> Object
+File : dir
+File : rel
 
 @enduml
