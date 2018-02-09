@@ -1,0 +1,17 @@
+@startuml
+class Book
+class Recipe
+class Properties
+class Property
+class Files
+class File
+
+Book *-- Book
+Book *-- Recipe
+Book *-- Properties
+Recipe *-- Files
+Recipe *-- Properties
+Properties *-- Property
+Files *-- File
+
+@enduml
