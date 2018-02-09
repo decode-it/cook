@@ -3,11 +3,12 @@ class Book
 class Recipe
 class UserData
 class Collection  << (T, orchid) <T> >>
+class Object
 class Properties 
-class Files
-class Object << (T, orchid) <T> >>
 class Property
+class Files
 class File
+
 
 Properties --|> Collection
 Files --|> Collection
@@ -40,4 +41,6 @@ Property : value()
 Files --> File
 File : dir
 File : rel
+
+note "Collection is a template class\nFiles and Properties are its instantiation \nwith respectively File and Propery as parameter" as N
 @enduml
