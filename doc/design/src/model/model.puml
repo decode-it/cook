@@ -1,11 +1,13 @@
 @startuml
 class Book
 class Recipe
+class UserData
 class Collection
+
 class Object
 class Property
 class File
-class UserData
+
 
 Book *-- Book
 Book *-- Recipe
@@ -23,12 +25,12 @@ Collection : type
 Object : key()
 Object : order
 Object : propagation
+Object <|-- Property
+Object <|-- File
 
 
-Property --|> Object
 Property : value()
 
-File --|> Object
 File : dir
 File : rel
 
