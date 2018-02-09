@@ -5,13 +5,27 @@ class Properties
 class Property
 class Files
 class File
+class UserData
 
 Book *-- Book
 Book *-- Recipe
 Book *-- Properties
+Book : uri
+
 Recipe *-- Files
 Recipe *-- Properties
+Recipe *-- "1" UserData
+Recipe : uri
+Recipe : wd
+
 Properties *-- Property
+Properties : type
+
+Property : order
+Property : key()
+Property : value()
+
 Files *-- File
+Files : type
 
 @enduml
