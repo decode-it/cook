@@ -5,7 +5,7 @@ class UserData
 class Collection  << (T, orchid) <T> >>
 class Properties 
 class Files
-Interface Object
+class Object << (T, orchid) <T> >>
 class Property
 class File
 
