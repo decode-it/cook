@@ -1,7 +1,7 @@
 root.book("cook/lib", fun(b) {
   	b.recipe("func", "library", fun(r) {
 		r.add("src", "**.[hc]pp")
-		for_each(["std"], fun[r](d) { r.depends_on("gubg/${d}/func") })
+		for_each(["std", "io"], fun[r](d) { r.depends_on("gubg/${d}/func") })
 	})
 
 	b.recipe("ut", "executable", fun(r) {

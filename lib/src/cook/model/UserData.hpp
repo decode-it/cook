@@ -1,4 +1,16 @@
-#ifndef USERDATA_HPP
-#define USERDATA_HPP
+#ifndef HEADER_cook_model_UserData_hpp_ALREADY_INCLUDED
+#define HEADER_cook_model_UserData_hpp_ALREADY_INCLUDED
 
-#endif // USERDATA_HPP
+#include <any>
+
+namespace cook { namespace model {
+
+class UserData
+{
+private:
+    
+};
+
+} }
+
+#endif

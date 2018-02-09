@@ -70,7 +70,7 @@ TEST_CASE("mss and error code test", "[ut][mss][error_code]")
 
         REQUIRE(r == conversion);
         REQUIRE(r.type() == type);
-        if (!r)
+        if (!r) 
             REQUIRE(r.value<int>() == value);
     }
 }
