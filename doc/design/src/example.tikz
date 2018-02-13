@@ -9,9 +9,9 @@
 \tikzstyle{node}=[ellipse, draw, minimum width=2cm, minimum height=1cm]
 
 \node[node] (a) at (0,0) {a};
-\node[node] (b) at (-2,-2) {b};
-\node[node] (c) at (0,-4) {c};
-\node[node] (d) at (-4, -6) {d};
+\node[node] (b) at (-4,-2) {b};
+\node[node] (c) at (-1,-4) {c};
+\node[node] (d) at (-5, -6) {d};
 
 \draw[dep] (a) edge[bend left] (b);
 \draw[dep] (a) edge[bend left] (c);

@@ -17,7 +17,7 @@ Properties are categorized based on their Type and Language. At the time of writ
     * C++
     * asm
 
-All properties have a similar base interface:
+All properties have a similar base interface, which can be defined implicit or explicit:
  * type()
  * language()
  * order(): The index within all properties with same type and language
