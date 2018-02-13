@@ -1,4 +1,17 @@
-#ifndef BASICRECIPE_HPP
-#define BASICRECIPE_HPP
+#ifndef HEADER_cook_model_BasicRecipe_hpp_ALREADY_INCLUDED
+#define HEADER_cook_model_BasicRecipe_hpp_ALREADY_INCLUDED
 
-#endif // BASICRECIPE_HPP
+#include "cook/model/KeyValueProperty.hpp"
+#include "cook/model/File.hpp"
+#include "cook/model/PropertySet.hpp"
+
+namespace cook { namespace model {
+
+class BasicRecipe
+{
+public:
+};
+
+} }
+
+#endif

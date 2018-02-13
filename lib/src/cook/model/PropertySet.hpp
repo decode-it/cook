@@ -10,6 +10,28 @@
 
 namespace cook { namespace model {
 
+struct PropertySetKey
+{
+    PropertySetKey()
+        : language(Language::Undefined), type(Type::Undefined)
+    {
+    }
+
+    PropertySetKey(Language language, Type type)
+        : language(language), type(type)
+    {
+    }
+
+
+    Language language;
+    Type type;
+};
+
+bool operator<(const PropertySetKey & lhs, const PropertySetKey & rhs)
+{
+    return lhs.language < rhs.language || (lhs.language == rhs.language && lhs.type < rhs.type);
+}
+
 template <typename Property>
 class PropertySet
 {
@@ -20,13 +42,13 @@ public:
     using const_iterator = typename PropertyContainer::const_iterator;
 
     explicit PropertySet(Language language, Type type)
-        : language_(language),
-          type_(type)
+        : key_(language, type)
     {
     }
 
-    Language language() const   { return language_; }
-    Type type() const           { return type_; }
+    const PropertySetKey & key() const { return key_; }
+    Language language() const   { return key_.language; }
+    Type type() const           { return key_.type; }
 
     std::pair<const_iterator, bool> insert(const Property & property)
     {
@@ -69,8 +91,30 @@ private:
     }
 
     std::vector<Property> properties_;
-    Language language_;
-    Type type_;
+    PropertySetKey key_;
+};
+
+struct PropertySetComparator
+{
+    using is_transparent = void;
+
+    template <typename T>
+    bool operator()(const PropertySet<T> & lhs, const PropertySet<T> & rhs) const
+    {
+        return lhs.key() < rhs.key();
+    }
+
+    template <typename T>
+    bool operator()(const PropertySet<T> & lhs, const PropertySetKey & rhs) const
+    {
+        return lhs.key() < rhs;
+    }
+
+    template <typename T>
+    bool operator()(const PropertySetKey & lhs, const PropertySet<T> & rhs) const
+    {
+        return lhs < rhs.key();
+    }
 };
 
 } }
