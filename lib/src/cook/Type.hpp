@@ -5,6 +5,7 @@ namespace cook {
 
 enum class Type
 {
+    Undefined,
     Source,
     Header,
     ForceInclude,

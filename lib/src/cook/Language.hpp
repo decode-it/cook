@@ -5,6 +5,7 @@ namespace cook {
 
 enum class Language
 {
+    Undefined,
     C,
     CXX,
     ASM,

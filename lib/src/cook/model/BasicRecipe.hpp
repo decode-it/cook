@@ -1,0 +1,4 @@
+#ifndef BASICRECIPE_HPP
+#define BASICRECIPE_HPP
+
+#endif // BASICRECIPE_HPP
