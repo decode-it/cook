@@ -1,6 +1,12 @@
 #include "cook/model/Recipe.hpp"
 
-Recipe::Recipe()
+namespace cook { namespace model {
+
+Recipe::Recipe(const Uri & uri)
+    : uri_(uri)
 {
 
 }
+
+} }
+
