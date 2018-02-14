@@ -3,10 +3,11 @@
 
 namespace {
 
-template <typename T> T mss_result_to_T(cook::result::Type t)
+template <typename T> T mss_result_to_T(cook::MessageType t)
 {
     MSS_BEGIN(T);
-    MSS(cook::Result(t, cook::result::Unknown, 0) );
+
+    MSS(cook::Result() << cook::Message(t) );
     MSS_END();
 }
 
@@ -26,14 +27,142 @@ enum ReturnCode
 
 template <typename T> void test_result_to_T()
 {
-    REQUIRE(mss_result_to_T<T>(cook::result::Success) == gubg::mss::detail::Traits<T>::Ok());
-    REQUIRE(mss_result_to_T<T>(cook::result::Warning) == gubg::mss::detail::Traits<T>::Ok());
-    REQUIRE(mss_result_to_T<T>(cook::result::Success) != gubg::mss::detail::Traits<T>::Error());
+    REQUIRE(mss_result_to_T<T>(cook::MessageType::Success) == gubg::mss::detail::Traits<T>::Ok());
+    REQUIRE(mss_result_to_T<T>(cook::MessageType::Warning) == gubg::mss::detail::Traits<T>::Ok());
+    REQUIRE(mss_result_to_T<T>(cook::MessageType::Success) != gubg::mss::detail::Traits<T>::Error());
 }
+
+struct Scenario
+{
+    std::list<cook::Message> messages;
+    bool succesful = true;
+    unsigned int expected_value = 1;
+    unsigned int count = 0;
+
+    const static unsigned int SUCCESS_MULTIPLIER = 2;
+    const static unsigned int WARNING_MULTIPLIER = 3;
+    const static unsigned int ERROR_MULTIPLIER = 5;
+
+
+    void add(cook::MessageType type, unsigned int & calculated_value)
+    {
+        switch(type)
+        {
+            case cook::MessageType::Success:
+                expected_value *= SUCCESS_MULTIPLIER;
+                messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= SUCCESS_MULTIPLIER; } ));
+                break;
+
+            case cook::MessageType::Warning:
+                expected_value *= WARNING_MULTIPLIER;
+                messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= WARNING_MULTIPLIER; } ));
+                break;
+
+            case cook::MessageType::Error:
+                expected_value *= ERROR_MULTIPLIER;
+                messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= ERROR_MULTIPLIER; } ));
+                break;
+        }
+    }
+};
 
 }
 
-TEST_CASE("mss and error code test", "[ut][mss][error_code]")
+TEST_CASE("Result functionality", "[ut][result]")
+{
+    // histogram to keep track
+    unsigned int multiply_result = 1;
+    unsigned int message_count = 0;
+
+    Scenario scn;
+
+    SECTION("positive")
+    {
+        scn.succesful = true;
+
+        SECTION("no message") {}
+        SECTION("warning")
+        {
+            scn.add(cook::MessageType::Warning, multiply_result);
+            scn.count = 1;
+        }
+        SECTION("success")
+        {
+            scn.add(cook::MessageType::Success, multiply_result);
+            scn.count = 1;
+        }
+        SECTION("combination")
+        {
+            scn.add(cook::MessageType::Success, multiply_result);
+            scn.add(cook::MessageType::Warning, multiply_result);
+            scn.add(cook::MessageType::Success, multiply_result);
+            scn.count = 3;
+        }
+    }
+
+    SECTION("failure")
+    {
+        scn.succesful = false;
+
+        SECTION("single failure")
+        {
+            scn.add(cook::MessageType::Error, multiply_result);
+            scn.count = 1;
+        }
+
+        SECTION("multiple failures")
+        {
+            scn.add(cook::MessageType::Error, multiply_result);
+            scn.add(cook::MessageType::Error, multiply_result);
+            scn.add(cook::MessageType::Error, multiply_result);
+            scn.count = 3;
+        }
+
+        SECTION("warning + failure")
+        {
+            scn.add(cook::MessageType::Warning, multiply_result);
+            scn.add(cook::MessageType::Error, multiply_result);
+            scn.count = 2;
+        }
+        SECTION("failure + success")
+        {
+            scn.add(cook::MessageType::Error, multiply_result);
+            scn.add(cook::MessageType::Success, multiply_result);
+            scn.count = 2;
+        }
+        SECTION("combination with failure")
+        {
+            scn.add(cook::MessageType::Success, multiply_result);
+            scn.add(cook::MessageType::Error, multiply_result);
+            scn.add(cook::MessageType::Warning, multiply_result);
+            scn.add(cook::MessageType::Success, multiply_result);
+            scn.add(cook::MessageType::Error, multiply_result);
+            scn.count = 5;
+        }
+    }
+
+    {
+        cook::Result res;
+        for(const auto & p : scn.messages)
+            res = res << p;
+
+        REQUIRE(res == scn.succesful);
+
+        // visit all the messages
+        {
+            unsigned int counted = 0;
+            res.each_message([&](cook::MessageType type, cook::Message::Reporter reporter)
+            {
+                ++counted;
+                REQUIRE(reporter);
+                reporter(std::cout);
+            });
+            REQUIRE(counted == scn.count);
+        }
+    }
+}
+
+TEST_CASE("mss and error code test", "[ut][mss][result]")
 {
     SECTION("result to bool")       { test_result_to_T<bool>(); }
     SECTION("result to int")        { test_result_to_T<int>(); }
@@ -41,9 +170,6 @@ TEST_CASE("mss and error code test", "[ut][mss][error_code]")
 
     SECTION("T to result")
     {
-        cook::result::Type type = cook::result::Success;
-        cook::result::Category category = cook::result::None;
-        int value = 0;
         bool conversion = true;
 
         cook::Result r;
@@ -58,19 +184,12 @@ TEST_CASE("mss and error code test", "[ut][mss][error_code]")
         SECTION("failure")
         {
             conversion = false;
-            type = cook::result::Error;
-            category = cook::result::Unknown;
 
-            auto set_failure_value = [&](auto val) { r = mss_T_to_result(val); value = static_cast<int>(val); };
-
-            SECTION("bool")     { set_failure_value(false); }
-            SECTION("int")      { set_failure_value(5);     }
-            SECTION("RC")       { set_failure_value(Error); }
+            SECTION("bool")     { r = mss_T_to_result(false); }
+            SECTION("int")      { r = mss_T_to_result(5);     }
+            SECTION("RC")       { r = mss_T_to_result(Error); }
         }
 
         REQUIRE(r == conversion);
-        REQUIRE(r.type() == type);
-        if (!r) 
-            REQUIRE(r.value<int>() == value);
     }
 }

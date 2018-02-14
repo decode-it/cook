@@ -1,74 +1,47 @@
 #ifndef HEADER_cook_Result_hpp_ALREADY_INCLUDED
 #define HEADER_cook_Result_hpp_ALREADY_INCLUDED
 
+#include "cook/Message.hpp"
+#include <list>
+
 namespace cook {
-
-namespace result {
-
-enum Type
-{
-    Success,
-    Warning,
-    Error,
-};
-
-enum Category
-{
-    None,
-    Unknown
-};
-
-}
 
 struct Result
 {
     Result()
-        : type_(result::Success),
-          category_(result::None),
-          value_(0)
+        : type_(MessageType::Undefined)
     {
     }
 
-    template <typename Src> Result(result::Type type, result::Category category, Src value)
-        : type_(type),
-          category_(category),
-          value_(static_cast<int>(value))
+    bool test_flag(MessageType flag) const
     {
+        return (type_ & flag) == flag;
     }
 
     operator bool() const
     {
-        switch(type_)
-        {
-            case result::Success:
-            case result::Warning:
-                return true;
-            default:
-                return false;
-        }
+        const MessageType succeed_flags = MessageType::Success | MessageType::Warning;
+        return (type_ & (~succeed_flags)) == MessageType{};
     }
 
-    bool operator==(const Result & rhs) const
+    Result & operator<<(const Message & message)
     {
-        return type_ == rhs.type_
-                && category_ == rhs.category_
-                && value_ == rhs.value_;
+        type_ |= message.type;
+        messages_.push_back(message);
+        return *this;
     }
 
-    result::Type type() const { return type_; }
-    result::Category category() const { return category_; }
-    template <typename Src> Src value() const { return static_cast<Src>(value_); }
+    template <typename Fctr>
+    void each_message(Fctr && fctr) const
+    {
+        for(const auto & message : messages_)
+            fctr(message.type, message.reporter);
+    }
 
 private:
-    result::Type type_;
-    result::Category category_;
-    int value_;
+    MessageType type_;
+    std::list<Message> messages_;
 };
-
-template <typename T>
-Result make_error_result(result::Category category, T code) { return Result(result::Error, category, code); }
-template <typename T>
-Result make_warning_result(result::Category category, T code) { return Result(result::Warning, category, code); }
 
 }
 
@@ -82,10 +55,13 @@ template <> bool is_ok(cook::Result c) { return c; }
 
 namespace detail {
 
-// translating a bool to result
+// translating an error of type Src to Result
 template <typename Src> struct ErrorValue<cook::Result, Src>
 {
-    static cook::Result error_value(Src src){return cook::Result(cook::result::Error, cook::result::Unknown, src); }
+    static cook::Result error_value(Src src)
+    {
+        return cook::Result() << cook::Message(cook::MessageType::Error, [=](auto & os) { os << "Unknown error value: " << src; });
+    }
 };
 
 template <> struct ErrorValue<cook::Result, cook::Result>
@@ -95,7 +71,10 @@ template <> struct ErrorValue<cook::Result, cook::Result>
 
 }
 
-template <> cook::Result ok_value<cook::Result>() { return cook::Result(); }
+template <> cook::Result ok_value<cook::Result>()
+{
+    return cook::Result() << cook::Message(cook::MessageType::Success);
+}
 
 } }
 
