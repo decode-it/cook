@@ -157,4 +157,14 @@ std::string Uri::string(const char sep) const
     return result;
 }
 
+bool Uri::has_name() const
+{
+    return !name_.empty();
+}
+
+void Uri::set_absolute(bool is_absolute)
+{
+    absolute_ = is_absolute;
+}
+
 } }

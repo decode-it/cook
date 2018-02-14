@@ -22,18 +22,22 @@ public:
     static std::pair<Uri, bool> recipe_uri(const std::string & uri_str);
     static std::pair<Uri, bool> book_uri(const std::string & uri_str);
 
-    void clear_name();
     void clear();
 
     bool add_path_part(const std::string & path);
-    bool set_name(const std::string & name);
-
+    gubg::Range<iterator> path() const;
     bool pop_back(std::string & part);
     bool pop_back();
 
-    gubg::Range<iterator> path() const;
-    std::string string(const char sep = separator) const;
+    bool set_name(const std::string & name);
+    bool has_name() const;
+    void clear_name();
+
     bool absolute() const;
+    void set_absolute(bool is_absolute);
+
+    std::string string(const char sep = separator) const;
+
 
 private:
     bool add_path_part_(const std::string & part);
