@@ -1,13 +1,13 @@
 #include "catch.hpp"
-#include "cook/model/PropertySet.hpp"
-#include "cook/model/Property.hpp"
+#include "cook/model/property/Collection.hpp"
+#include "cook/model/property/Interface.hpp"
 
 namespace {
 
-struct Property : public cook::model::Property<std::string>
+struct Property : public cook::model::property::Interface<std::string>
 {
     Property(const std::string &key, unsigned int id)
-        : cook::model::Property<std::string>(key, nullptr),
+        : cook::model::property::Interface<std::string>(key, nullptr),
           id_(id)
     {
     }
@@ -19,7 +19,7 @@ struct Property : public cook::model::Property<std::string>
 private:
     unsigned int id_;
 };
-using PropertySet = cook::model::PropertySet<Property>;
+using Properties = cook::model::property::Collection<Property>;
 
 
 
@@ -100,7 +100,7 @@ TEST_CASE("PropertySet", "[ut][propertySet]")
 
     // process the scenario
     {
-        PropertySet properties(cook::Language::UserDefined, cook::Type::UserDefined);
+        Properties properties;
 
         // add the initial properties
         for(const auto & property : scn.initial_properties)

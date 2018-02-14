@@ -11,8 +11,35 @@ enum class MessageType
     Undefined = 0x00,
     Success = 0x01,
     Warning = 0x02,
-    Error = 0x04
+    Info = 0x04,
+    Error = 0x08,
+    InternalError = 0x016,
 };
+
+inline MessageType operator&(MessageType lhs, MessageType rhs)
+{
+    return static_cast<MessageType>(static_cast<int>(lhs) & static_cast<int>(rhs));
+}
+inline MessageType operator|(MessageType lhs, MessageType rhs)
+{
+    return static_cast<MessageType>(static_cast<int>(lhs) | static_cast<int>(rhs));
+}
+inline MessageType & operator|=(MessageType & lhs, MessageType rhs)
+{
+    lhs = lhs | rhs;
+    return lhs;
+}
+inline MessageType & operator&=(MessageType & lhs, MessageType rhs)
+{
+    lhs = lhs & rhs;
+    return lhs;
+}
+inline MessageType operator~(MessageType rhs)
+{
+    return static_cast<MessageType>(~static_cast<int>(rhs));
+}
+
+
 
 struct Message
 {
@@ -31,28 +58,11 @@ struct Message
     Reporter reporter;
 };
 
-MessageType operator&(MessageType lhs, MessageType rhs)
-{
-    return static_cast<MessageType>(static_cast<int>(lhs) & static_cast<int>(rhs));
-}
-MessageType operator|(MessageType lhs, MessageType rhs)
-{
-    return static_cast<MessageType>(static_cast<int>(lhs) | static_cast<int>(rhs));
-}
-MessageType & operator|=(MessageType & lhs, MessageType rhs)
-{
-    lhs = lhs | rhs;
-    return lhs;
-}
-MessageType & operator&=(MessageType & lhs, MessageType rhs)
-{
-    lhs = lhs & rhs;
-    return lhs;
-}
-MessageType operator~(MessageType rhs)
-{
-    return static_cast<MessageType>(~static_cast<int>(rhs));
-}
+inline Message make_error_message(Message::Reporter reporter = Message::Reporter())             { return Message(MessageType::Error,            reporter); }
+inline Message make_internal_error_message(Message::Reporter reporter = Message::Reporter())    { return Message(MessageType::InternalError,    reporter); }
+inline Message make_warning_message(Message::Reporter reporter = Message::Reporter())           { return Message(MessageType::Warning,          reporter); }
+inline Message make_info_message(Message::Reporter reporter = Message::Reporter())              { return Message(MessageType::Info,             reporter); }
+inline Message make_success()                                                                   { return Message(MessageType::Success); }
 
 }
 

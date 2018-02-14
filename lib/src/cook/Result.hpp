@@ -20,7 +20,7 @@ struct Result
 
     operator bool() const
     {
-        const MessageType succeed_flags = MessageType::Success | MessageType::Warning;
+        const MessageType succeed_flags = MessageType::Success | MessageType::Warning | MessageType::Info;
         return (type_ & (~succeed_flags)) == MessageType{};
     }
 
@@ -51,7 +51,7 @@ private:
 namespace gubg { namespace mss {
 
 // translation from result to bool
-template <> bool is_ok(cook::Result c) { return c; }
+template <> inline bool is_ok(cook::Result c) { return c; }
 
 namespace detail {
 
@@ -71,7 +71,7 @@ template <> struct ErrorValue<cook::Result, cook::Result>
 
 }
 
-template <> cook::Result ok_value<cook::Result>()
+template <> inline cook::Result ok_value<cook::Result>()
 {
     return cook::Result() << cook::Message(cook::MessageType::Success);
 }

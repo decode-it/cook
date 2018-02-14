@@ -29,7 +29,8 @@ template <typename T> void test_result_to_T()
 {
     REQUIRE(mss_result_to_T<T>(cook::MessageType::Success) == gubg::mss::detail::Traits<T>::Ok());
     REQUIRE(mss_result_to_T<T>(cook::MessageType::Warning) == gubg::mss::detail::Traits<T>::Ok());
-    REQUIRE(mss_result_to_T<T>(cook::MessageType::Success) != gubg::mss::detail::Traits<T>::Error());
+    REQUIRE(mss_result_to_T<T>(cook::MessageType::Error) == gubg::mss::detail::Traits<T>::Error());
+    REQUIRE(mss_result_to_T<T>(cook::MessageType::InternalError) == gubg::mss::detail::Traits<T>::Error());
 }
 
 struct Scenario
