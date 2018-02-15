@@ -11,13 +11,14 @@ namespace cook { namespace model {
 class Snapshot
 {
 public:
-    bool add_property(const property::PropertiesKey & key, const property::File & file)             { return file_properties_.add(key, file); }
-    bool add_property(const property::PropertiesKey & key, const property::KeyValue & key_value)    { return key_value_properties_.add(key, key_value); }
+    Snapshot(const Uri & uri);
 
-    const Uri & uri() const         { return uri_; }
-    Uri & uri()                     { return uri_; }
+    bool add_property(const property::PropertiesKey & key, const property::File & file);
+    bool add_property(const property::PropertiesKey & key, const property::KeyValue & key_value);
+
+    const Uri & uri() const;
     bool set_uri(const Uri & uri);
-    const std::filesystem::path & working_directory() const { return wd_; }
+    const std::filesystem::path & working_directory() const;
 
 private:
     property::Properties<property::File> file_properties_;

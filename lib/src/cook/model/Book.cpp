@@ -46,6 +46,10 @@ Recipe & Book::goc_recipe(const Part & part)
     return *(it->second);
 }
 
+const Uri & Book::uri() const
+{
+    return uri_;
+}
 
 } }
 

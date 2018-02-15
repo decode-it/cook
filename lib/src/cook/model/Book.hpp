@@ -16,9 +16,11 @@ public:
 
     Book & goc_book(const Part & part);
     Recipe & goc_recipe(const Part & part);
+    const Uri & uri() const;
 
 private:
     Book(const Uri & uri);
+
     Book(const Book &) = delete;
     Book & operator=(const Book &) = delete;
     Book(Book &&) = default;

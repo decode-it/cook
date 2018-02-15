@@ -3,9 +3,9 @@
 namespace cook { namespace model {
 
 Recipe::Recipe(const Uri & uri)
-    : uri_(uri)
+    : Snapshot(uri),
+      post_(uri)
 {
-
 }
 
 } }
