@@ -155,3 +155,9 @@ task :test do
         end
     end
 end
+
+desc "Build and run the unit tests"
+task :ut do
+    sh("ninja -f #{ninja_fn} -v unit_tests.exe")
+    sh("./unit_tests.exe -a -d yes")
+end
