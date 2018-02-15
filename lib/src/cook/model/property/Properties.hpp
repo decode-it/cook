@@ -2,43 +2,20 @@
 #define HEADER_cook_model_property_Properties_hpp_ALREADY_INCLUDED
 
 #include "cook/model/property/Collection.hpp"
-#include "cook/Language.hpp"
-#include "cook/Type.hpp"
+#include "cook/model/property/PropertiesKey.hpp"
 #include <map>
 
 namespace cook { namespace model { namespace property {
 
-struct PropertiesKey
-{
-    PropertiesKey()
-        : language(Language::Undefined), type(Type::Undefined)
-    {
-    }
-
-    PropertiesKey(Language language, Type type)
-        : language(language), type(type)
-    {
-    }
-
-
-    Language language;
-    Type type;
-};
-
-bool operator<(const PropertiesKey & lhs, const PropertiesKey & rhs)
-{
-    return lhs.language < rhs.language || (lhs.language == rhs.language && lhs.type < rhs.type);
-}
-
-template <typename Property>
+template <typename Interface>
 struct Properties
 {
-    bool add(const PropertiesKey & key, const Property & property)
+    bool add(const PropertiesKey & key, const Interface & property)
     {
         MSS_BEGIN(bool);
 
         // add if necessary
-        Collection<Property> & collection = properties_[key];
+        Collection<Interface> & collection = properties_[key];
         auto it = collection.find(property.key());
 
         // new, just add
@@ -53,7 +30,7 @@ struct Properties
 
 
 private:
-    std::map<PropertiesKey, Collection<Property>> properties_;
+    std::map<PropertiesKey, Collection<Interface>> properties_;
 };
 
 } } }

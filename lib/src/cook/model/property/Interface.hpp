@@ -19,10 +19,10 @@ class Interface
 public:
     using key_type = KeyType;
 
-    explicit Interface(const KeyType & key, Recipe * owner)
+    explicit Interface(const KeyType & key)
         : key_(key),
           propagation_(Propagation::Private),
-          owner_(owner),
+          owner_(nullptr),
           overwrite_(Overwrite::Never)
     {
     }
@@ -33,6 +33,7 @@ public:
     Overwrite overwrite() const                     { return overwrite_; }
     void set_propagation(Propagation propagation)   { propagation_ = propagation; }
     void set_overwrite(Overwrite overwrite)         { overwrite_ = overwrite; }
+    void set_owner(Recipe * owner)                  { owner_ = owner; }
 
 protected:
     bool equal_(const Interface<KeyType> & rhs) const

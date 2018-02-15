@@ -9,8 +9,8 @@ namespace cook { namespace model { namespace property {
 class File : public Interface<std::filesystem::path>
 {
 public:
-    File(const std::filesystem::path & dir, const std::filesystem::path & rel, Recipe * owner)
-        : Interface<std::filesystem::path>(dir/rel, owner),
+    File(const std::filesystem::path & dir, const std::filesystem::path & rel)
+        : Interface<std::filesystem::path>(dir/rel),
           dir_(dir),
           rel_(rel)
     {

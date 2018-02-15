@@ -7,7 +7,7 @@ namespace {
 struct Property : public cook::model::property::Interface<std::string>
 {
     Property(const std::string &key, unsigned int id)
-        : cook::model::property::Interface<std::string>(key, nullptr),
+        : cook::model::property::Interface<std::string>(key),
           id_(id)
     {
     }

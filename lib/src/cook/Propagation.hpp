@@ -5,8 +5,8 @@ namespace cook {
 
 enum class Propagation
 {
+    Private,
     Public,
-    Private
 };
 
 }

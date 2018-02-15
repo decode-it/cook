@@ -10,13 +10,13 @@ namespace cook { namespace model { namespace property {
 class KeyValue : public Interface<std::string>
 {
 public:
-    explicit KeyValue(const std::string & key, Recipe * owner)
-        : Interface<std::string>(key, owner)
+    explicit KeyValue(const std::string & key)
+        : Interface<std::string>(key)
     {
     }
 
-    explicit KeyValue(const std::string & key, const std::string & value, Recipe * owner)
-        : Interface<std::string>(key, owner),
+    explicit KeyValue(const std::string & key, const std::string & value)
+        : Interface<std::string>(key),
           value_(value)
     {
     }
