@@ -6,17 +6,31 @@ cook_include_paths  = -I lib/src $gubg_include_paths
 chai_include_paths  = -I gubg.chaiscript/extern/ChaiScript/include
 catch_include_paths = -I gubg.std/extern/catch/single_include
 
-#[output](script:$gubg_fns=%w[gubg.io/src/gubg/OptionParser.cpp gubg.io/src/gubg/Strange.cpp]){
+#[output](script:
+#$gubg_fns=%w[gubg.io/src/gubg/OptionParser.cpp gubg.io/src/gubg/Strange.cpp]
+#$cook_fns=FileList.new("lib/src/**/*.cpp").to_a
+#$cook_test_fns=FileList.new("lib/test/**/*_tests.cpp").to_a
+#){
 #}
 
-#[output](script:$gubg_fns.each{|fn|output.puts("build .bcook/#{fn}.obj: compile #{fn}");output.puts("    include_paths = $gubg_include_paths")}){
+#[output](script:
+#$gubg_fns.each do |fn|
+#  output.puts("build .bcook/#{fn}.obj: compile #{fn}")
+#  output.puts("    include_paths = $gubg_include_paths")
+#end
+#){
 build .bcook/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
     include_paths = $gubg_include_paths
 build .bcook/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
     include_paths = $gubg_include_paths
 #}
     
-#[output](script:FileList.new("lib/src/**/*.cpp").each{|fn|output.puts("build .bcook/#{fn}.obj: compile #{fn}");output.puts("    include_paths = $cook_include_paths")}){
+#[output](script:
+#$cook_fns.each do |fn|
+#  output.puts("build .bcook/#{fn}.obj: compile #{fn}")
+#  output.puts("    include_paths = $cook_include_paths")
+#end
+#){
 build .bcook/lib/src/cook/model/Book.cpp.obj: compile lib/src/cook/model/Book.cpp
     include_paths = $cook_include_paths
 build .bcook/lib/src/cook/model/Recipe.cpp.obj: compile lib/src/cook/model/Recipe.cpp
@@ -33,7 +47,12 @@ build .bcook/lib/src/cook/rules/Resolver.cpp.obj: compile lib/src/cook/rules/Res
 
 build .bcook/gubg.std/src/catch_runner.cpp.obj: compile gubg.std/src/catch_runner.cpp
     include_paths = $catch_include_paths
-#[output](script:FileList.new("lib/test/**/*_tests.cpp").each{|fn|output.puts("build .bcook/#{fn}.obj: compile #{fn}");output.puts("    include_paths = $cook_include_paths $catch_include_paths")}){
+#[output](script:
+#$cook_test_fns.each do |fn|
+#  output.puts("build .bcook/#{fn}.obj: compile #{fn}")
+#  output.puts("    include_paths = $cook_include_paths $catch_include_paths")
+#end
+#){
 build .bcook/lib/test/src/cook/Result_tests.cpp.obj: compile lib/test/src/cook/Result_tests.cpp
     include_paths = $cook_include_paths $catch_include_paths
 build .bcook/lib/test/src/cook/model/Globber_tests.cpp.obj: compile lib/test/src/cook/model/Globber_tests.cpp
@@ -44,14 +63,26 @@ build .bcook/lib/test/src/cook/property/PropertyCollection_tests.cpp.obj: compil
     include_paths = $cook_include_paths $catch_include_paths
 #}
 
-#[output](script:output.puts("build libgubg.a: archive $");$gubg_fns.each{|fn|output.puts("    .bcook/#{fn}.obj $")};output.puts){
+#[output](script:
+#output.puts("build libgubg.a: archive $")
+#$gubg_fns.each do |fn|
+#  output.puts("    .bcook/#{fn}.obj $")
+#end
+#output.puts
+#){
 build libgubg.a: archive $
     .bcook/gubg.io/src/gubg/OptionParser.cpp.obj $
     .bcook/gubg.io/src/gubg/Strange.cpp.obj $
 
 #}
 
-#[output](script:output.puts("build libbcook.a: archive $");FileList.new("lib/src/**/*.cpp").each{|fn|output.puts("    .bcook/#{fn}.obj $")};output.puts){
+#[output](script:
+#output.puts("build libbcook.a: archive $")
+#$cook_fns.each do |fn|
+#  output.puts("    .bcook/#{fn}.obj $")
+#end
+#output.puts
+#){
 build libbcook.a: archive $
     .bcook/lib/src/cook/model/Book.cpp.obj $
     .bcook/lib/src/cook/model/Recipe.cpp.obj $
@@ -62,7 +93,13 @@ build libbcook.a: archive $
 
 #}
 
-#[output](script:output.puts("build unit_tests.exe: link .bcook/gubg.std/src/catch_runner.cpp.obj $");FileList.new("lib/test/**/*_tests.cpp").each{|fn|output.puts("    .bcook/#{fn}.obj $")};output.puts("    | libbcook.a libgubg.a")){
+#[output](script:
+#output.puts("build unit_tests.exe: link .bcook/gubg.std/src/catch_runner.cpp.obj $")
+#$cook_test_fns.each do |fn|
+#  output.puts("    .bcook/#{fn}.obj $")
+#end
+#output.puts("    | libbcook.a libgubg.a")
+#){
 build unit_tests.exe: link .bcook/gubg.std/src/catch_runner.cpp.obj $
     .bcook/lib/test/src/cook/Result_tests.cpp.obj $
     .bcook/lib/test/src/cook/model/Globber_tests.cpp.obj $
