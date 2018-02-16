@@ -17,10 +17,10 @@ public:
     bool resolve_file(LanguageTypePair &key, property::File &file) const override;
     bool add_file(model::Recipe & recipe, const LanguageTypePair & key, const property::File & file) const override;
 
+    static std::optional<Type> type_from_extension(const std::string & extension, Type type = Type::Undefined);
+
 private:
     bool add_additional_path_(model::Recipe & recipe, const property::File & file, Type type, Propagation propagation) const;
-
-    static std::optional<Type> type_from_extension(const std::string & extension, Type type = Type::Undefined);
 
     static std::set<std::string> source_extensions_;
     static std::set<std::string> header_extensions_;

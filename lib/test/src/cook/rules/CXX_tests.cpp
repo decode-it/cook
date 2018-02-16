@@ -1,52 +1,124 @@
 #include "catch.hpp"
 #include "cook/rules/CXX.hpp"
 #include "cook/model/Recipe.hpp"
+using namespace cook;
+
+TEST_CASE("cook::rules::CXX::type_from_extension tests", "[ut][rules][CXX][type_from_extension]")
+{
+    struct Scn
+    {
+        std::string extension;
+        Type type = Type::Undefined;
+    };
+    Scn scn;
+
+    struct Should
+    {
+        bool be_valid = false;
+        Type type = Type::Undefined;
+    };
+    Should should;
+
+    SECTION("positive")
+    {
+        should.be_valid = true;
+
+        SECTION("type not known upfront")
+        {
+            SECTION("source")
+            {
+                should.type = Type::Source;
+                SECTION(".cpp") { scn.extension = ".cpp"; }
+                SECTION(".cxx") { scn.extension = ".cxx"; }
+                SECTION(".CPP") { scn.extension = ".CPP"; }
+                SECTION(".CXX") { scn.extension = ".CXX"; }
+            }
+            SECTION("header")
+            {
+                should.type = Type::Header;
+                SECTION(".hpp") { scn.extension = ".hpp"; }
+                SECTION(".hxx") { scn.extension = ".hxx"; }
+                SECTION(".HPP") { scn.extension = ".HPP"; }
+                SECTION(".HXX") { scn.extension = ".HXX"; }
+            }
+            SECTION("object")
+            {
+                should.type = Type::Object;
+                SECTION(".o") { scn.extension = ".o"; }
+                SECTION(".a") { scn.extension = ".a"; }
+                SECTION(".lib") { scn.extension = ".lib"; }
+            }
+        }
+        SECTION("type already known upfront")
+        {
+            scn.type = Type::Source;
+            should.type = scn.type;
+        }
+
+        REQUIRE(should.type != Type::Undefined);
+    }
+    SECTION("negative")
+    {
+        should.be_valid = false;
+
+        SECTION("default") { }
+        SECTION("unknown type") { scn.extension = ".unkown"; }
+    }
+
+    auto result = rules::CXX::type_from_extension(scn.extension, scn.type);
+
+    REQUIRE(!!result == should.be_valid);
+    if (should.be_valid)
+    {
+        REQUIRE(*result == should.type);
+    }
+}
 
 namespace  {
 
-struct Scenario
-{
-    std::filesystem::path file_to_create;
+    struct Scenario
+    {
+        std::filesystem::path file_to_create;
 
-    std::filesystem::path rel;
-    cook::LanguageTypePair key;
+        std::filesystem::path rel;
+        LanguageTypePair key;
 
-    bool accepts = false;
+        bool accepts = false;
 
-    struct {
-        std::optional<cook::Language> language;
-        std::optional<cook::Type> type;
-        std::optional<cook::Overwrite> overwrite;
-        std::optional<cook::Propagation> propagation;
-    } resolved;
+        struct {
+            std::optional<Language> language;
+            std::optional<Type> type;
+            std::optional<Overwrite> overwrite;
+            std::optional<Propagation> propagation;
+        } resolved;
 
-    unsigned int num_added_files = 0;
+        unsigned int num_added_files = 0;
 
-    std::function<void (const cook::model::Recipe &)> additional_check;
-};
+        std::function<void (const model::Recipe &)> additional_check;
+    };
 
 }
 
-TEST_CASE("CXX glob rules tests", "[ut][glob][cxx]")
+TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
 {
-    cook::rules::CXX cxx;
-    REQUIRE(cxx.language() == cook::Language::CXX);
+    rules::CXX cxx;
+    REQUIRE(cxx.language() == Language::CXX);
 
     Scenario scn;
 
     SECTION("accepts")
     {
         scn.accepts = true;
-        scn.resolved.language = cook::Language::CXX;
+        scn.resolved.language = Language::CXX;
 
         SECTION("source file")
         {
             SECTION(".cpp") { scn.file_to_create = "test.cpp"; }
             SECTION(".cxx") { scn.file_to_create = "test.cxx"; }
 
-            scn.resolved.type = cook::Type::Source;
-            scn.resolved.overwrite = cook::Overwrite::Never;
-            scn.resolved.propagation = cook::Propagation::Private;
+            scn.resolved.type = Type::Source;
+            scn.resolved.overwrite = Overwrite::Never;
+            scn.resolved.propagation = Propagation::Private;
             scn.num_added_files = 1;
         }
 
@@ -55,16 +127,16 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][cxx]")
             SECTION(".hpp") { scn.file_to_create = "test.hpp"; }
             SECTION(".hxx") { scn.file_to_create = "test.hxx"; }
 
-            scn.resolved.type = cook::Type::Header;
-            scn.resolved.overwrite = cook::Overwrite::Never;
-            scn.resolved.propagation = cook::Propagation::Private;
+            scn.resolved.type = Type::Header;
+            scn.resolved.overwrite = Overwrite::Never;
+            scn.resolved.propagation = Propagation::Private;
             scn.num_added_files = 2;
 
-            scn.additional_check = [](const cook::model::Recipe & recipe) {
-                auto ptr = recipe.pre().find((cook::LanguageTypePair(cook::Language::CXX, cook::Type::IncludePath)), "./");
+            scn.additional_check = [](const model::Recipe & recipe) {
+                auto ptr = recipe.pre().find((LanguageTypePair(Language::CXX, Type::IncludePath)), "./");
 
                 REQUIRE(ptr);
-                REQUIRE(ptr->propagation() == cook::Propagation::Public);
+                REQUIRE(ptr->propagation() == Propagation::Public);
             };
         }
 
@@ -72,16 +144,16 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][cxx]")
         {
             SECTION(".o") { scn.file_to_create = "test.o"; }
 
-            scn.resolved.type = cook::Type::Object;
-            scn.resolved.overwrite = cook::Overwrite::Never;
-            scn.resolved.propagation = cook::Propagation::Private;
+            scn.resolved.type = Type::Object;
+            scn.resolved.overwrite = Overwrite::Never;
+            scn.resolved.propagation = Propagation::Private;
             scn.num_added_files = 2;
 
-            scn.additional_check = [](const cook::model::Recipe & recipe) {
-                auto ptr = recipe.pre().find((cook::LanguageTypePair(cook::Language::CXX, cook::Type::LibraryPath)), "./");
+            scn.additional_check = [](const model::Recipe & recipe) {
+                auto ptr = recipe.pre().find((LanguageTypePair(Language::CXX, Type::LibraryPath)), "./");
 
                 REQUIRE(ptr);
-                REQUIRE(ptr->propagation() == cook::Propagation::Private);
+                REQUIRE(ptr->propagation() == Propagation::Private);
             };
         }
 
@@ -99,14 +171,14 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][cxx]")
         std::ofstream ofs(str.c_str());
 
     // create the recipe
-    auto p = cook::model::Uri::recipe_uri("test");
+    auto p = model::Uri::recipe_uri("test");
     REQUIRE(p.second);
-    cook::model::Recipe recipe(p.first);
+    model::Recipe recipe(p.first);
 
     {
         // check the accept function
-        cook::LanguageTypePair key = scn.key;
-        cook::property::File file("./", scn.rel);
+        LanguageTypePair key = scn.key;
+        property::File file("./", scn.rel);
 
         bool does_accept = cxx.accepts_file(key, file);
         REQUIRE(does_accept == scn.accepts);
@@ -127,8 +199,8 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][cxx]")
             {
                 unsigned int count = 0;
                 REQUIRE(recipe.each_file([&](const auto & key, const auto & file){
-                    ++count; return true;
-                }));
+                            ++count; return true;
+                            }));
 
                 REQUIRE(count == scn.num_added_files);
             }
