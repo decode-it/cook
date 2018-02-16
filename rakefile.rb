@@ -58,9 +58,11 @@ namespace :b0 do
     end
 
     desc "bootstrap-level0: Build and run the unit tests"
-    task :ut do
+    task :ut, [:filter] do |t,args|
+        filter = args[:filter] || "ut"
+        filter = filter.split(":").map{|e|"[#{e}]"}*""
         sh("ninja -f #{b0_ninja_fn} -v b0-unit_tests.exe")
-        sh("./b0-unit_tests.exe -a -d yes")
+        sh("./b0-unit_tests.exe -a -d yes #{filter}")
     end
 
     desc "bootstrap-level0: Build b0-cook.exe"
