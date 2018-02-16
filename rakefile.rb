@@ -42,52 +42,67 @@ end
 
 task :update => :uth
 
-namespace :gubg do
-    task :proper do
-        rm_rf gubg_dir
-    end
-    task :prepare do
-        GUBG::each_submod do |info|
-            sh "rake prepare"
+#Bootstrap level 0: uses manually updated ninja scripts
+namespace :b0 do
+    def b0_ninja_fn()
+        case GUBG::os
+        when :linux then "gcc.ninja"
+        when :windows then "msvc.ninja"
         end
     end
-    desc "Build and install gubg"
-    task :run => :prepare do
-        GUBG::each_submod do |info|
-            sh "rake run"
-        end
-    end
-end
 
-def ninja_fn()
-    case GUBG::os
-    when :linux then "gcc.ninja"
-    when :windows then "msvc.ninja"
+    desc "bootstrap-level0: Update the ninja scripts (depends on gubg.build)"
+    task :update do
+        require("gubg/build/expand_templates")
+        GUBG::Build::expand_templates("compile.ninja")
     end
-end
 
-namespace :bcook do
-    desc "Build bcook.exe"
+    desc "bootstrap-level0: Build and run the unit tests"
+    task :ut do
+        sh("ninja -f #{b0_ninja_fn} -v b0-unit_tests.exe")
+        sh("./b0-unit_tests.exe -a -d yes")
+    end
+
+    desc "bootstrap-level0: Build b0-cook.exe"
     task :build do
-        sh("ninja -f #{ninja_fn} -v")
+        sh("ninja -f #{b0_ninja_fn} -v")
     end
-    desc "Clean"
+
+    desc "bootstrap-level0: Clean"
     task :clean do
-        sh("ninja -f #{ninja_fn} -t clean")
+        sh("ninja -f #{b0_ninja_fn} -t clean")
+    end
+end
+#Bootstrap level 1: uses output from bootstrap level 0
+namespace :b1 do
+    desc "bootstrap-level1: Build and run the unit tests"
+    task :ut do
+        sh("ninja -f #{b0_ninja_fn} -v unit_tests.exe")
+        sh("./unit_tests.exe -a -d yes")
+    end
+
+    desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
+    task :build => "b0:build" do
+        sh "./b0-cook.exe"
+        sh "ninja -v"
+    end
+
+    desc "bootstrap-level1: Clean"
+    task :clean do
     end
 end
 
 desc "Build cook.exe"
-task :build => "bcook:build" do
-    cp "bcook.exe", "cook.exe"
+task :build => "b1:build" do
+    cp "b1-cook.exe", "cook.exe"
 end
 
 desc "Clean"
 task :clean do
     rm(FileList.new("**/*.obj"))
     rm(FileList.new("*.exe"))
-    rm_rf(".bcook")
-    Rake::Task["bcook:clean"].invoke
+    Rake::Task["b0:clean"].invoke
+    Rake::Task["b1:clean"].invoke
 end
 
 desc "Install"
@@ -139,27 +154,19 @@ end
 
 desc "Test"
 task :test do
-    Rake::Task["bcook:build"].invoke
+    Rake::Task["b0:build"].invoke
     test_cases = [:ninja, :details, :structure]
     # test_cases = [:structure]
     test_cases.each do |test_case|
         case test_case
         when :ninja
-            sh "./bcook.exe -f test/app /app/exe"
+            sh "./b0-cook.exe -f test/app /app/exe"
             sh "cat build.ninja"
             sh "ninja"
         when :details
-            sh "./bcook.exe -f test/app -g details.naft /app/exe"
+            sh "./b0-cook.exe -f test/app -g details.naft /app/exe"
         when :structure
-            sh "./bcook.exe -f test/app -g structure.naft -V"
+            sh "./b0-cook.exe -f test/app -g structure.naft -V"
         end
     end
-end
-
-desc "Build and run the unit tests"
-task :ut do
-    require("gubg/build/expand_templates")
-    GUBG::Build::expand_templates("compile.ninja")
-    sh("ninja -f #{ninja_fn} -v unit_tests.exe")
-    sh("./unit_tests.exe -a -d yes")
 end
