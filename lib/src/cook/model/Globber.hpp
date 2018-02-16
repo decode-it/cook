@@ -1,8 +1,8 @@
 #ifndef HEADER_cook_model_Globber_hpp_ALREADY_INCLUDED
 #define HEADER_cook_model_Globber_hpp_ALREADY_INCLUDED
 
-#include "cook/model/property/File.hpp"
-#include "cook/model/property/PropertiesKey.hpp"
+#include "cook/property/File.hpp"
+#include "cook/LanguageTypePair.hpp"
 #include "cook/Propagation.hpp"
 #include "cook/Overwrite.hpp"
 #include "cook/Language.hpp"
@@ -26,7 +26,7 @@ struct Globber
 
     std::optional<Propagation> propagation;
     std::optional<Overwrite> overwrite;
-    std::function<bool (property::PropertiesKey &, property::File &)> filter_and_adaptor;
+    std::function<bool (LanguageTypePair &, property::File &)> filter_and_adaptor;
 
     template <typename Resolver, typename Adder>
     bool process(const std::filesystem::path & wd, Resolver && resolve, Adder && add) const
@@ -47,7 +47,7 @@ struct Globber
 
             // resolve this file type
             property::File file(f_dir, f_rel);
-            property::PropertiesKey key(language, type);
+            LanguageTypePair key(language, type);
 
             resolve(key, file);
 

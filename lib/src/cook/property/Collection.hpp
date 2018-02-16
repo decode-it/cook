@@ -1,12 +1,12 @@
-#ifndef HEADER_cook_model_property_Collection_hpp_ALREADY_INCLUDED
-#define HEADER_cook_model_property_Collection_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_property_Collection_hpp_ALREADY_INCLUDED
+#define HEADER_cook_property_Collection_hpp_ALREADY_INCLUDED
 
-#include "cook/model/property/Interface.hpp"
+#include "cook/property/Interface.hpp"
 #include "gubg/Range.hpp"
 #include <vector>
 #include <algorithm>
 
-namespace cook { namespace model { namespace property {
+namespace cook { namespace property {
 
 template <typename Property>
 class Collection
@@ -63,6 +63,6 @@ private:
 };
 
 
-} } }
+} }
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_model_property_Interface_hpp_ALREADY_INCLUDED
-#define HEADER_cook_model_property_Interface_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_property_Interface_hpp_ALREADY_INCLUDED
+#define HEADER_cook_property_Interface_hpp_ALREADY_INCLUDED
 
 #include "cook/Propagation.hpp"
 #include "cook/Overwrite.hpp"
@@ -9,6 +9,8 @@
 namespace cook { namespace model {
 
 class Recipe;
+
+}
 
 namespace property {
 
@@ -28,12 +30,12 @@ public:
     }
 
     const KeyType & key() const                     { return key_; }
-    Recipe * owner() const                          { return owner_; }
+    model::Recipe * owner() const                   { return owner_; }
     Propagation propagation() const                 { return propagation_; }
     Overwrite overwrite() const                     { return overwrite_; }
     void set_propagation(Propagation propagation)   { propagation_ = propagation; }
     void set_overwrite(Overwrite overwrite)         { overwrite_ = overwrite; }
-    void set_owner(Recipe * owner)                  { owner_ = owner; }
+    void set_owner(model::Recipe * owner)           { owner_ = owner; }
 
 protected:
     bool equal_(const Interface<KeyType> & rhs) const
@@ -78,10 +80,10 @@ protected:
 private:
     KeyType key_;
     Propagation propagation_;
-    Recipe * owner_;
+    model::Recipe * owner_;
     Overwrite overwrite_;
 };
 
-} } }
+} }
 
 #endif

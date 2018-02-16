@@ -1,9 +1,9 @@
 #ifndef HEADER_cook_model_Snapshot_hpp_ALREADY_INCLUDED
 #define HEADER_cook_model_Snapshot_hpp_ALREADY_INCLUDED
 
-#include "cook/model/property/Properties.hpp"
-#include "cook/model/property/File.hpp"
-#include "cook/model/property/KeyValue.hpp"
+#include "cook/property/Properties.hpp"
+#include "cook/property/File.hpp"
+#include "cook/property/KeyValue.hpp"
 #include "cook/model/Uri.hpp"
 
 namespace cook { namespace model {
@@ -13,8 +13,8 @@ class Snapshot
 public:
     Snapshot(const Uri & uri);
 
-    bool add_property(const property::PropertiesKey & key, const property::File & file);
-    bool add_property(const property::PropertiesKey & key, const property::KeyValue & key_value);
+    bool add_property(const LanguageTypePair & key, const property::File & file);
+    bool add_property(const LanguageTypePair & key, const property::KeyValue & key_value);
 
     const Uri & uri() const;
     bool set_uri(const Uri & uri);

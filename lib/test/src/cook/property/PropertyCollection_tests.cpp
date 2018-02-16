@@ -1,13 +1,13 @@
 #include "catch.hpp"
-#include "cook/model/property/Collection.hpp"
-#include "cook/model/property/Interface.hpp"
+#include "cook/property/Collection.hpp"
+#include "cook/property/Interface.hpp"
 
 namespace {
 
-struct Property : public cook::model::property::Interface<std::string>
+struct Property : public cook::property::Interface<std::string>
 {
     Property(const std::string &key, unsigned int id)
-        : cook::model::property::Interface<std::string>(key),
+        : cook::property::Interface<std::string>(key),
           id_(id)
     {
     }
@@ -19,7 +19,7 @@ struct Property : public cook::model::property::Interface<std::string>
 private:
     unsigned int id_;
 };
-using Properties = cook::model::property::Collection<Property>;
+using Properties = cook::property::Collection<Property>;
 
 
 

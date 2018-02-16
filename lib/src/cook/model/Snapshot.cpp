@@ -8,12 +8,12 @@ Snapshot::Snapshot(const Uri & uri)
 
 }
 
-bool Snapshot::add_property(const property::PropertiesKey & key, const property::File & file)
+bool Snapshot::add_property(const LanguageTypePair &key, const property::File & file)
 {
     return file_properties_.add(key, file);
 }
 
-bool Snapshot::add_property(const property::PropertiesKey & key, const property::KeyValue & key_value)
+bool Snapshot::add_property(const LanguageTypePair &key, const property::KeyValue & key_value)
 {
     return key_value_properties_.add(key, key_value);
 }

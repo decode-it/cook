@@ -1,16 +1,16 @@
-#ifndef HEADER_cook_model_property_Properties_hpp_ALREADY_INCLUDED
-#define HEADER_cook_model_property_Properties_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_property_Properties_hpp_ALREADY_INCLUDED
+#define HEADER_cook_property_Properties_hpp_ALREADY_INCLUDED
 
-#include "cook/model/property/Collection.hpp"
-#include "cook/model/property/PropertiesKey.hpp"
+#include "cook/property/Collection.hpp"
+#include "cook/LanguageTypePair.hpp"
 #include <map>
 
-namespace cook { namespace model { namespace property {
+namespace cook { namespace property {
 
 template <typename Interface>
 struct Properties
 {
-    bool add(const PropertiesKey & key, const Interface & property)
+    bool add(const LanguageTypePair & key, const Interface & property)
     {
         MSS_BEGIN(bool);
 
@@ -30,9 +30,9 @@ struct Properties
 
 
 private:
-    std::map<PropertiesKey, Collection<Interface>> properties_;
+    std::map<LanguageTypePair, Collection<Interface>> properties_;
 };
 
-} } }
+} }
 
 #endif

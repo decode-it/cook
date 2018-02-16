@@ -1,10 +1,10 @@
-#ifndef HEADER_cook_model_property_File_hpp_ALREADY_INCLUDED
-#define HEADER_cook_model_property_File_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_property_File_hpp_ALREADY_INCLUDED
+#define HEADER_cook_property_File_hpp_ALREADY_INCLUDED
 
-#include "cook/model/property/Interface.hpp"
+#include "cook/property/Interface.hpp"
 #include "gubg/std/filesystem.hpp"
 
-namespace cook { namespace model { namespace property {
+namespace cook { namespace property {
 
 class File : public Interface<std::filesystem::path>
 {
@@ -43,6 +43,6 @@ private:
     std::filesystem::path rel_;
 };
 
-} } }
+} }
 
 #endif

@@ -18,6 +18,7 @@ public:
     const Snapshot & post() const   { return post_; }
 
     void add_globber(const Globber & globbing) { globbings_.push_back(globbing); }
+    void resolve_globbings();
 
 private:
     Recipe(const Recipe &) = delete;

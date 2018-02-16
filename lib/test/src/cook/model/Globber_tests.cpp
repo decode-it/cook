@@ -137,7 +137,7 @@ TEST_CASE("globber tests", "[ut][globber]")
 
         const static cook::Language my_own_language = cook::Language::UserDefined;
 
-        auto resolver = [&](cook::model::property::PropertiesKey & key, cook::model::property::File & f)
+        auto resolver = [&](cook::LanguageTypePair & key, cook::property::File & f)
         {
             // overwrite the key if not set
             if (key.language == cook::Language::Undefined)
@@ -155,7 +155,7 @@ TEST_CASE("globber tests", "[ut][globber]")
         };
 
         std::set<std::string> files;
-        auto adder = [&](const cook::model::property::PropertiesKey & key, const cook::model::property::File & f)
+        auto adder = [&](const cook::LanguageTypePair & key, const cook::property::File & f)
         {
             // assert correct propagation
             if (key.language == my_own_language)

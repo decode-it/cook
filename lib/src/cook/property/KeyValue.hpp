@@ -1,11 +1,11 @@
-#ifndef HEADER_cook_model_property_KeyValue_hpp_ALREADY_INCLUDED
-#define HEADER_cook_model_property_KeyValue_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_property_KeyValue_hpp_ALREADY_INCLUDED
+#define HEADER_cook_property_KeyValue_hpp_ALREADY_INCLUDED
 
-#include "cook/model/property/Interface.hpp"
+#include "cook/property/Interface.hpp"
 #include <string>
 #include <optional>
 
-namespace cook { namespace model { namespace property {
+namespace cook { namespace property {
 
 class KeyValue : public Interface<std::string>
 {
@@ -46,6 +46,6 @@ private:
     std::optional<std::string> value_;
 };
 
-} } }
+} }
 
 #endif
