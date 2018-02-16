@@ -17,14 +17,14 @@ inline std::ostream & operator<<(std::ostream & str, Overwrite overwrite)
 
     switch(overwrite)
     {
-#define L_CASE(NAME, VALUE) case Overwrite::NAME: str << "overwrite=" << VALUE; return str;
-        L_CASE(Never, "never");
-        L_CASE(IfSame, "if_same");
-        L_CASE(Always, "always");
+#define L_CASE(NAME) case Overwrite::NAME: str << #NAME; return str
+        L_CASE(Never);
+        L_CASE(IfSame);
+        L_CASE(Always);
 #undef L_CASE
 
         default:
-            str << "overwrite=unknown";
+            str << "unknown";
     }
 
 

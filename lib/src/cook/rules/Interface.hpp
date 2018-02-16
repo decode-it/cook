@@ -5,7 +5,13 @@
 #include "cook/property/File.hpp"
 #include "gubg/std/filesystem.hpp"
 
-namespace cook { namespace rules {
+namespace cook { namespace model {
+
+class Recipe;
+
+}
+
+namespace rules {
 
 class Interface
 {
@@ -13,7 +19,9 @@ public:
     virtual ~Interface(){}
 
     virtual Language language() const = 0;
-    virtual bool adapt(LanguageTypePair & key, property::File & file) const = 0;
+    virtual bool accepts_file(const LanguageTypePair & key, const property::File & file) const = 0;
+    virtual bool resolve_file(LanguageTypePair & key, property::File & file) const = 0;
+    virtual bool add_file(model::Recipe & recipe, const LanguageTypePair & key, const property::File & file) const = 0;
 };
 
 

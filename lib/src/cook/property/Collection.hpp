@@ -18,11 +18,11 @@ public:
     using const_iterator = typename Container::const_iterator;
     using iterator = typename Container::iterator;
 
-    std::pair<const_iterator, bool> insert(const Property & property)
+    std::pair<iterator, bool> insert(const Property & property)
     {
         return insert_(property);
     }
-    std::pair<const_iterator, bool> insert(Property && property)
+    std::pair<iterator, bool> insert(Property && property)
     {
         return insert_(std::move(property));
     }
@@ -45,9 +45,9 @@ private:
     }
 
     template <typename AProperty>
-    std::pair<const_iterator, bool> insert_(AProperty && property)
+    std::pair<iterator, bool> insert_(AProperty && property)
     {
-        const_iterator it = find_(gubg::make_range(properties_), property.key());
+        iterator it = find_(gubg::make_range(properties_), property.key());
 
         // already present ?
         if (it != end())

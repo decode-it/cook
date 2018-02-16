@@ -11,10 +11,15 @@ namespace cook { namespace model {
 class Snapshot
 {
 public:
+    using FileIterator = property::Collection<property::File>::iterator;
+
     Snapshot(const Uri & uri);
 
-    bool add_property(const LanguageTypePair & key, const property::File & file);
-    bool add_property(const LanguageTypePair & key, const property::KeyValue & key_value);
+    bool insert_or_merge(const LanguageTypePair & key, const property::File & file);
+    bool insert_or_merge(const LanguageTypePair & key, const property::KeyValue & key_value);
+
+    std::pair<FileIterator, bool> insert(const LanguageTypePair & collection_key, const property::File & property);
+
 
     const Uri & uri() const;
     bool set_uri(const Uri & uri);
