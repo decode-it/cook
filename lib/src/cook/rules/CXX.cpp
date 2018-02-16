@@ -20,24 +20,22 @@ Language CXX::language() const
 
 bool CXX::accepts_file(const LanguageTypePair & key, const property::File & file) const
 {
-    // language is either correct or undefined
-    if (false) {}
-    // accept everything for which the language is already defined
-    else if (key.language == cxx())
-        return true;
-    else if (key.language != Language::Undefined)
-        return false;
+    MSS_BEGIN(bool);
 
-    // existing file with the right type of extension
-    const std::filesystem::path & fn = file.key();
+    if (key.language == language())
+        //Language is already known and matches with ours: we accept always
+        MSS_RETURN_OK();
+    
+    MSS(key.language == Language::Undefined);
+
+    //Language is not known, check if the file exists and we recognise it
     {
-        if (std::filesystem::is_regular_file(fn))
-            if (fn.has_extension())
-                if (type_from_extension(fn.extension()))
-                    return true;
-
-        return false;
+        const std::filesystem::path & fn = file.key();
+        MSS(std::filesystem::is_regular_file(fn));
+        MSS(type_from_extension(fn.extension()));
     }
+
+    MSS_END();
 }
 
 bool CXX::resolve_file(LanguageTypePair & key, property::File & file) const
