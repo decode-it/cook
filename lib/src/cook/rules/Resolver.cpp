@@ -29,6 +29,19 @@ void extract_dir(
 
 }
 
+bool Resolver::operator()(model::Recipe & recipe, LanguageTypePair & key, property::File & file) const
+{
+    MSS_BEGIN(bool);
+
+    auto accepts = [&](const Interface & interface) { return interface.accepts_file(key, file); };
+    const Interface & interface = rule_set_->find(accepts);
+
+    MSS(interface.resolve_file(key, file));
+    MSS(interface.add_file(recipe, key, file));
+
+    MSS_END();
+}
+
 bool Resolver::operator()(model::Recipe & recipe, const model::GlobInfo & globber) const
 {
     MSS_BEGIN(bool);

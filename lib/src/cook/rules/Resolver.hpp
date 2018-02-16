@@ -16,6 +16,7 @@ public:
     }
 
     bool operator()(model::Recipe & recipe, const model::GlobInfo & globber) const;
+    bool operator()(model::Recipe & recipe, LanguageTypePair & key, property::File & file) const;
 
 private:
     const RuleSet * rule_set_;
