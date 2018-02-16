@@ -17,7 +17,7 @@ struct Property : public cook::property::Interface<std::string>
     unsigned int id() const { return id_; }
 
 private:
-    unsigned int id_;
+    unsigned int id_ = 0;
 };
 using Properties = cook::property::Collection<Property>;
 
@@ -28,7 +28,7 @@ struct Scenario
     std::vector<Property> initial_properties;
     std::optional<Property> property_to_add;
 
-    bool can_add;
+    bool can_add = true;
 };
 
 
