@@ -158,6 +158,8 @@ end
 
 desc "Build and run the unit tests"
 task :ut do
+    require("gubg/build/expand_templates")
+    GUBG::Build::expand_templates("compile.ninja")
     sh("ninja -f #{ninja_fn} -v unit_tests.exe")
     sh("./unit_tests.exe -a -d yes")
 end
