@@ -3,19 +3,13 @@
 
 namespace cook { namespace rules {
 
-namespace {
-
-static Language cxx() { return Language::CXX; }
-
-}
-
 std::set<std::string> CXX::source_extensions_ = { ".cpp", ".cxx", ".CPP", ".CXX" };
 std::set<std::string> CXX::header_extensions_ = { ".hpp", ".hxx", ".HPP", ".HXX" };
 std::set<std::string> CXX::object_extensions_ = { ".o", ".a", ".lib" };
 
 Language CXX::language() const
 {
-    return cxx();
+    return Language::CXX;
 }
 
 bool CXX::accepts_file(const LanguageTypePair & key, const property::File & file) const
@@ -75,7 +69,7 @@ bool CXX::add_file(model::Recipe & recipe, const LanguageTypePair & key, const p
 {
     MSS_BEGIN(bool);
 
-    MSS(key.language == cxx());
+    MSS(key.language == language());
     MSS(recipe.insert_or_merge(key, file));
 
     switch (key.type)
@@ -102,8 +96,7 @@ bool CXX::add_additional_path_(model::Recipe & recipe, const property::File & fi
 {
     MSS_BEGIN(bool);
 
-    const LanguageTypePair key(cxx(), type);
-    auto p = recipe.insert(LanguageTypePair(cxx(), type), property::File(file.dir(), std::filesystem::path()));
+    auto p = recipe.insert(LanguageTypePair(language(), type), property::File(file.dir(), std::filesystem::path()));
 
     {
         property::File & include_path = *p.first;
