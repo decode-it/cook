@@ -5,7 +5,6 @@
 #include "cook/LanguageTypePair.hpp"
 #include "cook/property/File.hpp"
 #include <set>
-#include <optional>
 
 namespace cook { namespace rules {
 
@@ -17,7 +16,8 @@ public:
     bool resolve_file(LanguageTypePair &key, property::File &file) const override;
     bool add_file(model::Recipe & recipe, const LanguageTypePair & key, const property::File & file) const override;
 
-    static std::optional<Type> type_from_extension(const std::string & extension, Type type = Type::Undefined);
+    static bool type_from_extension(Type &dst, const std::string & extension, Type src);
+    static bool type_from_extension(const std::string & extension) {Type type = Type::Undefined; return type_from_extension(type, extension, type);}
 
 private:
     bool add_additional_path_(model::Recipe & recipe, const property::File & file, Type type, Propagation propagation) const;

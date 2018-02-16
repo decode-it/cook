@@ -50,11 +50,7 @@ bool CXX::resolve_file(LanguageTypePair & key, property::File & file) const
     // try to guess the type based on the extension
     const std::filesystem::path & fn = file.key();
     if (fn.has_extension())
-    {
-        auto p = type_from_extension(fn.extension(), key.type);
-        if (p)
-            key.type = *p;
-    }
+        type_from_extension(key.type, fn.extension(), key.type);
 
     switch (key.type)
     {
@@ -125,19 +121,27 @@ bool CXX::add_additional_path_(model::Recipe & recipe, const property::File & fi
     MSS_END();
 }
 
-std::optional<Type> CXX::type_from_extension(const std::string & extension, Type type)
+bool CXX::type_from_extension(Type &dst, const std::string & extension, Type src)
 {
-    if (false) {}
-    else if (type != Type::Undefined)
-        return type;
-    else if (source_extensions_.find(extension) != source_extensions_.end())
-        return Type::Source;
-    else if (header_extensions_.find(extension) != header_extensions_.end())
-        return Type::Header;
-    else if (object_extensions_.find(extension) != object_extensions_.end())
-        return Type::Object;
+    MSS_BEGIN(bool);
 
-    return {};
+    if (src == Type::Undefined)
+    {
+        //The type is not known yet: try to resolve it from the extension
+        if (false) {}
+        else if (source_extensions_.find(extension) != source_extensions_.end())
+            src = Type::Source;
+        else if (header_extensions_.find(extension) != header_extensions_.end())
+            src = Type::Header;
+        else if (object_extensions_.find(extension) != object_extensions_.end())
+            src = Type::Object;
+
+        MSS_Q(src != Type::Undefined);
+    }
+
+    dst = src;
+
+    MSS_END();
 }
 
 } }

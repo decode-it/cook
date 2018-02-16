@@ -14,14 +14,14 @@ TEST_CASE("cook::rules::CXX::type_from_extension tests", "[ut][rules][CXX][type_
 
     struct Should
     {
-        bool be_valid = false;
+        bool type_is_known = false;
         Type type = Type::Undefined;
     };
     Should should;
 
     SECTION("positive")
     {
-        should.be_valid = true;
+        should.type_is_known = true;
 
         SECTION("type not known upfront")
         {
@@ -53,25 +53,26 @@ TEST_CASE("cook::rules::CXX::type_from_extension tests", "[ut][rules][CXX][type_
         {
             scn.type = Type::Source;
             should.type = scn.type;
+            SECTION(".cpp") { scn.extension = ".cpp"; }
+            SECTION(".hpp") { scn.extension = ".hpp"; }
+            SECTION(".unknown") { scn.extension = ".unkown"; }
         }
 
         REQUIRE(should.type != Type::Undefined);
     }
     SECTION("negative")
     {
-        should.be_valid = false;
+        should.type_is_known = false;
 
         SECTION("default") { }
-        SECTION("unknown type") { scn.extension = ".unkown"; }
+        SECTION(".unknown") { scn.extension = ".unkown"; }
     }
 
-    auto result = rules::CXX::type_from_extension(scn.extension, scn.type);
-
-    REQUIRE(!!result == should.be_valid);
-    if (should.be_valid)
-    {
-        REQUIRE(*result == should.type);
-    }
+    Type type;
+    const auto type_is_known = rules::CXX::type_from_extension(type, scn.extension, scn.type);
+    REQUIRE(type_is_known == should.type_is_known);
+    if (type_is_known)
+        REQUIRE(type == should.type);
 }
 
 namespace  {
