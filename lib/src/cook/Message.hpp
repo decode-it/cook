@@ -13,7 +13,7 @@ enum class MessageType
     Warning = 0x02,
     Info = 0x04,
     Error = 0x08,
-    InternalError = 0x016,
+    InternalError = 0x010,
 };
 
 inline MessageType operator&(MessageType lhs, MessageType rhs)
