@@ -12,7 +12,7 @@ class CXX : public Interface
 {
 public:
     Language language() const override;
-    bool accepts(const LanguageTypePair & key, const property::File & file) const override;
+    bool adapt(LanguageTypePair & key, property::File & file) const override;
 
 
     static std::set<std::string> extensions_;

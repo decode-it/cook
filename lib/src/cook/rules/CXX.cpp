@@ -9,7 +9,7 @@ Language CXX::language() const
     return Language::CXX;
 }
 
-bool CXX::accepts(const LanguageTypePair & key, const property::File & file) const
+bool CXX::adapt(LanguageTypePair &key, property::File &file) const
 {
     const std::filesystem::path & fn = file.key();
 

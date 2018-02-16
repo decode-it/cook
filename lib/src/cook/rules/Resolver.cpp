@@ -4,11 +4,8 @@ namespace cook { namespace rules {
 
 bool Resolver::operator()(LanguageTypePair & key, property::File & file) const
 {
-    auto accepts = [&](const Interface & interface) { return interface.accepts(key, file); };
-    const Interface * ptr = rule_set_->find(accepts);
-
-    if (ptr == nullptr)
-        return false;
+    auto adapt = [&](const Interface & interface) { return interface.adapt(key, file); };
+    return rule_set_->find(adapt) != nullptr;
 }
 
 } }

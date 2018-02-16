@@ -13,7 +13,7 @@ public:
     virtual ~Interface(){}
 
     virtual Language language() const = 0;
-    virtual bool accepts(const LanguageTypePair & key, const property::File & file) const = 0;
+    virtual bool adapt(LanguageTypePair & key, property::File & file) const = 0;
 };
 
 
