@@ -43,6 +43,8 @@ build .bcook/lib/src/cook/rules/CXX.cpp.obj: compile lib/src/cook/rules/CXX.cpp
     include_paths = $cook_include_paths
 build .bcook/lib/src/cook/rules/Resolver.cpp.obj: compile lib/src/cook/rules/Resolver.cpp
     include_paths = $cook_include_paths
+build .bcook/lib/src/cook/rules/RuleSet.cpp.obj: compile lib/src/cook/rules/RuleSet.cpp
+    include_paths = $cook_include_paths
 #}
 
 build .bcook/gubg.std/src/catch_runner.cpp.obj: compile gubg.std/src/catch_runner.cpp
@@ -55,11 +57,13 @@ build .bcook/gubg.std/src/catch_runner.cpp.obj: compile gubg.std/src/catch_runne
 #){
 build .bcook/lib/test/src/cook/Result_tests.cpp.obj: compile lib/test/src/cook/Result_tests.cpp
     include_paths = $cook_include_paths $catch_include_paths
-build .bcook/lib/test/src/cook/model/Globber_tests.cpp.obj: compile lib/test/src/cook/model/Globber_tests.cpp
-    include_paths = $cook_include_paths $catch_include_paths
 build .bcook/lib/test/src/cook/model/Uri_tests.cpp.obj: compile lib/test/src/cook/model/Uri_tests.cpp
     include_paths = $cook_include_paths $catch_include_paths
 build .bcook/lib/test/src/cook/property/PropertyCollection_tests.cpp.obj: compile lib/test/src/cook/property/PropertyCollection_tests.cpp
+    include_paths = $cook_include_paths $catch_include_paths
+build .bcook/lib/test/src/cook/rules/CXX_tests.cpp.obj: compile lib/test/src/cook/rules/CXX_tests.cpp
+    include_paths = $cook_include_paths $catch_include_paths
+build .bcook/lib/test/src/cook/rules/Resolve_tests.cpp.obj: compile lib/test/src/cook/rules/Resolve_tests.cpp
     include_paths = $cook_include_paths $catch_include_paths
 #}
 
@@ -90,6 +94,7 @@ build libbcook.a: archive $
     .bcook/lib/src/cook/model/Uri.cpp.obj $
     .bcook/lib/src/cook/rules/CXX.cpp.obj $
     .bcook/lib/src/cook/rules/Resolver.cpp.obj $
+    .bcook/lib/src/cook/rules/RuleSet.cpp.obj $
 
 #}
 
@@ -102,9 +107,10 @@ build libbcook.a: archive $
 #){
 build unit_tests.exe: link .bcook/gubg.std/src/catch_runner.cpp.obj $
     .bcook/lib/test/src/cook/Result_tests.cpp.obj $
-    .bcook/lib/test/src/cook/model/Globber_tests.cpp.obj $
     .bcook/lib/test/src/cook/model/Uri_tests.cpp.obj $
     .bcook/lib/test/src/cook/property/PropertyCollection_tests.cpp.obj $
+    .bcook/lib/test/src/cook/rules/CXX_tests.cpp.obj $
+    .bcook/lib/test/src/cook/rules/Resolve_tests.cpp.obj $
     | libbcook.a libgubg.a
 #}
     library_paths =  -L./
