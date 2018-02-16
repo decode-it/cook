@@ -11,19 +11,19 @@ enum class Propagation
     Public,
 };
 
-inline std::ostream & operator<<(std::ostream & str, Propagation propagation)
+inline std::ostream & operator<<(std::ostream & os, Propagation propagation)
 {
 
     switch(propagation)
     {
-#define L_CASE(NAME) case Propagation::NAME: str << #NAME; return str
+#define L_CASE(NAME) case Propagation::NAME: os << #NAME; return os
         L_CASE(Private);
         L_CASE(Public);
 #undef L_CASE
         default:
-            str << "unknown";
+            os << "unknown";
     }
-    return str;
+    return os;
 }
 
 }

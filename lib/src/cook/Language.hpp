@@ -14,11 +14,11 @@ enum class Language
     UserDefined
 };
 
-inline std::ostream & operator<<(std::ostream & str, Language type)
+inline std::ostream & operator<<(std::ostream & os, Language type)
 {
     switch(type)
     {
-#define L_CASE(NAME) case Language::NAME: str << #NAME; return str
+#define L_CASE(NAME) case Language::NAME: os << #NAME; return os
         L_CASE(Undefined);
         L_CASE(C);
         L_CASE(CXX);
@@ -29,11 +29,11 @@ inline std::ostream & operator<<(std::ostream & str, Language type)
     }
 
     if (type >= Language::UserDefined)
-        str << "UserDefined (" << static_cast<unsigned int>(type) << ")";
+        os << "UserDefined (" << static_cast<unsigned int>(type) << ")";
     else
-        str << "unknown";
+        os << "unknown";
 
-    return str;
+    return os;
 }
 
 }

@@ -21,11 +21,11 @@ enum class Type
     UserDefined
 };
 
-inline std::ostream & operator<<(std::ostream & str, Type type)
+inline std::ostream & operator<<(std::ostream & os, Type type)
 {
     switch(type)
     {
-#define L_CASE(NAME) case Type::NAME: str << #NAME; return str
+#define L_CASE(NAME) case Type::NAME: os << #NAME; return os
         L_CASE(Undefined);
         L_CASE(Source);
         L_CASE(Header);
@@ -42,11 +42,11 @@ inline std::ostream & operator<<(std::ostream & str, Type type)
     }
 
     if (type >= Type::UserDefined)
-        str << "UserDefined (" << static_cast<unsigned int>(type) << ")";
+        os << "UserDefined (" << static_cast<unsigned int>(type) << ")";
     else
-        str << "unknown";
+        os << "unknown";
 
-    return str;
+    return os;
 }
 
 }
