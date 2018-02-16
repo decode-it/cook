@@ -1,5 +1,5 @@
-defines = -DNDEBUG
-#defines = 
+#defines = -DNDEBUG
+defines = 
 
 gubg_include_paths  = -I gubg.algo/src -I gubg.io/src -I gubg.math/src -I gubg.std/src
 cook_include_paths  = -I lib/src $gubg_include_paths

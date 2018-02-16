@@ -26,7 +26,7 @@ bool CXX::accepts_file(const LanguageTypePair & key, const property::File & file
         //Language is already known and matches with ours: we accept always
         MSS_RETURN_OK();
     
-    MSS(key.language == Language::Undefined);
+    MSS_Q(key.language == Language::Undefined);
 
     //Language is not known, check if the file exists and we recognise it
     {
@@ -42,13 +42,11 @@ bool CXX::resolve_file(LanguageTypePair & key, property::File & file) const
 {
     MSS_BEGIN(bool);
 
-    MSS(key.language == cxx() || key.language == Language::Undefined);
-    key.language = cxx();
+    MSS(key.language == language() || key.language == Language::Undefined);
+    key.language = language();
 
-    // try to guess the type based on the extension
-    const std::filesystem::path & fn = file.key();
-    if (fn.has_extension())
-        type_from_extension(key.type, fn.extension(), key.type);
+    //Deduce the type based on the extension
+    MSS(type_from_extension(key.type, file.key().extension(), key.type));
 
     switch (key.type)
     {
@@ -67,9 +65,8 @@ bool CXX::resolve_file(LanguageTypePair & key, property::File & file) const
 
         default:
             L("Undefined type " << key.type << " for CXX recipe");
+            break;
     }
-
-
 
     MSS_END();
 }

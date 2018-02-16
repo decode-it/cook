@@ -3,6 +3,7 @@
 
 #include "cook/property/Interface.hpp"
 #include "gubg/std/filesystem.hpp"
+#include <ostream>
 
 namespace cook { namespace property {
 
@@ -42,6 +43,12 @@ private:
     std::filesystem::path dir_;
     std::filesystem::path rel_;
 };
+
+inline std::ostream &operator<<(std::ostream &os, const File &file)
+{
+    os << file.dir() << " | " << file.rel();
+    return os;
+}
 
 } }
 
