@@ -18,7 +18,6 @@ Language CXX::language() const
     return cxx();
 }
 
-
 bool CXX::accepts_file(const LanguageTypePair & key, const property::File & file) const
 {
     // language is either correct or undefined
@@ -100,8 +99,6 @@ bool CXX::add_file(model::Recipe & recipe, const LanguageTypePair & key, const p
             break;
     }
 
-
-
     MSS_END();
 }
 
@@ -122,8 +119,6 @@ bool CXX::add_additional_path_(model::Recipe & recipe, const property::File & fi
 
     MSS_END();
 }
-
-
 
 std::optional<Type> CXX::type_from_extension(const std::string & extension, Type type)
 {

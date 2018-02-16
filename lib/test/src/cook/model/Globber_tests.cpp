@@ -1,5 +1,7 @@
 #include "catch.hpp"
-#include "cook/model/Globber.hpp"
+#include "cook/model/GlobInfo.hpp"
+#include "cook/model/Recipe.hpp"
+#include "cook/rules/Resolver.hpp"
 
 #define BASE_DIR "generated/"
 
@@ -49,11 +51,11 @@ bool check_if_equal(std::optional<T> t, T value, T unset_value)
 
 
 
-TEST_CASE("globber tests", "[ut][globber]")
+TEST_CASE("glob resolve tests", "[ut][glob]")
 {
     create_files();
 
-    cook::model::Globber globber;
+    cook::model::GlobInfo globber;
 
     Scenario scn;
 
@@ -137,43 +139,35 @@ TEST_CASE("globber tests", "[ut][globber]")
 
         const static cook::Language my_own_language = cook::Language::UserDefined;
 
-        auto resolver = [&](cook::LanguageTypePair & key, cook::property::File & f)
-        {
-            // overwrite the key if not set
-            if (key.language == cook::Language::Undefined)
-            {
-                REQUIRE(!scn.language);
-                key.language = my_own_language;
-            }
-            else
-            {
-                REQUIRE(scn.language);
-                REQUIRE(*scn.language == key.language);
-            }
-
-            REQUIRE(check_if_equal(scn.type, key.type, cook::Type::Undefined));
-        };
-
         std::set<std::string> files;
-        auto adder = [&](const cook::LanguageTypePair & key, const cook::property::File & f)
-        {
-            // assert correct propagation
-            if (key.language == my_own_language)
-            {
-                REQUIRE(!scn.language);
-            }
-            else
-            {
-                REQUIRE(scn.language);
-                REQUIRE(*scn.language == key.language);
-            }
-            files.insert(f.rel());
 
+        globber.filter_and_adaptor = [&](cook::LanguageTypePair & key, cook::property::File & f)
+        {
+            REQUIRE(check_if_equal(scn.language, key.language, cook::Language::Undefined));
+            REQUIRE(check_if_equal(scn.type, key.type, cook::Type::Undefined));
             REQUIRE(check_if_equal(scn.overwrite, f.overwrite(), cook::Overwrite::Never));
             REQUIRE(check_if_equal(scn.propagation, f.propagation(), cook::Propagation::Private));
+
+            files.insert(f.rel());
+
+            return true;
         };
 
-        REQUIRE(globber.process(std::filesystem::current_path(), resolver, adder));
+
+        // test the actual resolving
+        {
+            auto p = cook::model::Uri::recipe_uri("test");
+            REQUIRE(p.second);
+
+            cook::model::Recipe recipe(p.first);
+            recipe.set_working_directory(std::filesystem::current_path());
+
+            cook::rules::RuleSet ruleset;
+            cook::rules::Resolver resolver(&ruleset);
+
+            REQUIRE(resolver(recipe, globber));
+        }
+
         REQUIRE(files == scn.expected_files);
     }
 

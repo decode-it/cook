@@ -4,6 +4,7 @@
 #include "cook/rules/Interface.hpp"
 #include <memory>
 #include <map>
+#include <cassert>
 
 namespace cook { namespace rules {
 
@@ -12,22 +13,25 @@ class RuleSet
     using Ptr = std::shared_ptr<Interface>;
 
 public:
+    RuleSet();
+
     template <typename Functor>
-    const Interface * find(Functor && functor) const
+    const Interface & find(Functor && functor) const
     {
         for(auto it = priority_map_.begin(); it != priority_map_.end(); ++it)
         {
-            const Interface * ptr = it->second.get();
+            const Interface & interface = (*it->second.get());
 
-            if (functor(*ptr))
-                return ptr;
+            if (functor(interface))
+                return interface;
         }
 
-        return nullptr;
+        return *default_interface_;
     }
 
 private:
     std::multimap<unsigned int, Ptr> priority_map_;
+    Ptr default_interface_;
 };
 
 } }

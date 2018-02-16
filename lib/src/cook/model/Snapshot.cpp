@@ -44,6 +44,11 @@ const std::filesystem::path & Snapshot::working_directory() const
     return wd_;
 }
 
+void Snapshot::set_working_directory(const std::filesystem::path & wd)
+{
+    wd_ = wd;
+}
+
 
 } }
 

@@ -24,6 +24,7 @@ public:
     const Uri & uri() const;
     bool set_uri(const Uri & uri);
     const std::filesystem::path & working_directory() const;
+    void set_working_directory(const std::filesystem::path & wd);
 
 private:
     property::Properties<property::File> file_properties_;

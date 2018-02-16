@@ -2,7 +2,7 @@
 #define HEADER_cook_rules_Resolver_hpp_ALREADY_INCLUDED
 
 #include "cook/rules/RuleSet.hpp"
-#include "cook/LanguageTypePair.hpp"
+#include "cook/model/GlobInfo.hpp"
 #include "cook/property/File.hpp"
 
 namespace cook { namespace rules {
@@ -15,7 +15,7 @@ public:
     {
     }
 
-    bool operator()(LanguageTypePair & key, property::File & file) const;
+    bool operator()(model::Recipe & recipe, const model::GlobInfo & globber) const;
 
 private:
     const RuleSet * rule_set_;

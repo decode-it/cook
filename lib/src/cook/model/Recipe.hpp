@@ -3,7 +3,7 @@
 
 #include "cook/model/Snapshot.hpp"
 #include "cook/model/Uri.hpp"
-#include "cook/model/Globber.hpp"
+#include "cook/model/GlobInfo.hpp"
 
 namespace cook { namespace model {
 
@@ -17,7 +17,7 @@ public:
     const Snapshot & pre() const    { return *this; }
     const Snapshot & post() const   { return post_; }
 
-    void add_globber(const Globber & globbing) { globbings_.push_back(globbing); }
+    void add_globber(const GlobInfo & globbing) { globbings_.push_back(globbing); }
     void resolve_globbings();
 
 private:
@@ -28,7 +28,7 @@ private:
 
     Snapshot post_;
 
-    std::list<Globber> globbings_;
+    std::list<GlobInfo> globbings_;
 };
 
 } }
