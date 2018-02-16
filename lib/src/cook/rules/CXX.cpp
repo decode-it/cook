@@ -9,9 +9,9 @@ static Language cxx() { return Language::CXX; }
 
 }
 
-std::set<std::string> CXX::source_extensions_ = { "cpp", "cxx", "CPP", "CXX" };
-std::set<std::string> CXX::header_extensions_ = { "hpp", "hxx", "HPP", "HXX" };
-std::set<std::string> CXX::object_extensions_ = { "o", "a", "lib" };
+std::set<std::string> CXX::source_extensions_ = { ".cpp", ".cxx", ".CPP", ".CXX" };
+std::set<std::string> CXX::header_extensions_ = { ".hpp", ".hxx", ".HPP", ".HXX" };
+std::set<std::string> CXX::object_extensions_ = { ".o", ".a", ".lib" };
 
 Language CXX::language() const
 {
@@ -30,9 +30,14 @@ bool CXX::accepts_file(const LanguageTypePair & key, const property::File & file
 
     // existing file with the right type of extension
     const std::filesystem::path & fn = file.key();
-    return std::filesystem::is_regular_file(fn)
-            && fn.has_extension()
-            && type_from_extension(fn.extension());
+    {
+        if (std::filesystem::is_regular_file(fn))
+            if (fn.has_extension())
+                if (type_from_extension(fn.extension()))
+                    return true;
+
+        return false;
+    }
 }
 
 bool CXX::resolve_file(LanguageTypePair & key, property::File & file) const

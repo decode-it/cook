@@ -39,11 +39,19 @@ struct Properties
         return find_<const Interface>(collection_key, property_key, properties_);
     }
 
+    template <typename Functor>
+    bool each(Functor && functor) const
+    {
+        for(const auto & p : properties_)
+            for(const auto & file : p.second)
+                if (!functor(p.first, file))
+                    return false;
+
+        return true;
+    }
+
 
 private:
-
-
-
     template <typename Interface_, typename Properties_>
     Interface_ * find_(const LanguageTypePair & collection_key, const typename Interface::key_type & property_key, Properties_ & properties) const
     {

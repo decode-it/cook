@@ -20,6 +20,14 @@ public:
 
     std::pair<FileIterator, bool> insert(const LanguageTypePair & collection_key, const property::File & property);
 
+    template <typename Functor> bool each_file(Functor && functor) const
+    {
+        return file_properties_.each(std::forward<Functor>(functor));
+    }
+
+    property::File * find(const LanguageTypePair & collection_key, const typename property::File::key_type & property_key) { return file_properties_.find(collection_key, property_key); }
+    const property::File * find(const LanguageTypePair & collection_key, const typename property::File::key_type & property_key) const { return file_properties_.find(collection_key, property_key); }
+
 
     const Uri & uri() const;
     bool set_uri(const Uri & uri);

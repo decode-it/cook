@@ -31,6 +31,7 @@ struct Scenario
     std::optional<cook::Type>           type;
     std::optional<cook::Overwrite>      overwrite;
     std::optional<cook::Propagation>    propagation;
+    bool block_all_filter = false;
 };
 
 template <typename T>
@@ -126,6 +127,7 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
         SECTION("specifying type")          { scn.type = cook::Type::Source; }
         SECTION("specifying overwrite")     { scn.overwrite = cook::Overwrite::Always; }
         SECTION("specifying propagation")   { scn.propagation = cook::Propagation::Public; }
+        SECTION("blocking everything")      { scn.block_all_filter = true; scn.expected_files.clear(); }
     }
 
 
@@ -148,8 +150,10 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
             REQUIRE(check_if_equal(scn.overwrite, f.overwrite(), cook::Overwrite::Never));
             REQUIRE(check_if_equal(scn.propagation, f.propagation(), cook::Propagation::Private));
 
-            files.insert(f.rel());
+            if (scn.block_all_filter)
+                return false;
 
+            files.insert(f.rel());
             return true;
         };
 
