@@ -1,57 +1,49 @@
 defines = -DNDEBUG
 #defines = 
-include_paths = -I app/chai/src -I gubg.algo/src -I gubg.chaiscript/extern/ChaiScript/include -I gubg.io/src -I gubg.math/src -I gubg.std/src -I lib/inc -I lib/src
+
+gubg_include_paths  = -I gubg.algo/src -I gubg.io/src -I gubg.math/src -I gubg.std/src
+cook_include_paths  = -I lib/src $gubg_include_paths
+chai_include_paths  = -I gubg.chaiscript/extern/ChaiScript/include
+catch_include_paths = -I gubg.std/extern/catch/single_include
 
 build .bcook/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
+    include_paths = $gubg_include_paths
 build .bcook/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
-build .bcook/lib/src/cook/API.cpp.obj: compile lib/src/cook/API.cpp
-build .bcook/lib/src/cook/Logger.cpp.obj: compile lib/src/cook/Logger.cpp
-build .bcook/lib/src/cook/api/Book.cpp.obj: compile lib/src/cook/api/Book.cpp
-build .bcook/lib/src/cook/api/Element.cpp.obj: compile lib/src/cook/api/Element.cpp
-build .bcook/lib/src/cook/api/File.cpp.obj: compile lib/src/cook/api/File.cpp
-build .bcook/lib/src/cook/api/GeneratorManager.cpp.obj: compile lib/src/cook/api/GeneratorManager.cpp
-build .bcook/lib/src/cook/api/Recipe.cpp.obj: compile lib/src/cook/api/Recipe.cpp
-build .bcook/lib/src/cook/model/Recipe.cpp.obj: compile lib/src/cook/model/Recipe.cpp
-build .bcook/lib/src/cook/model/object/Define.cpp.obj: compile lib/src/cook/model/object/Define.cpp
-build .bcook/lib/src/cook/model/object/File.cpp.obj: compile lib/src/cook/model/object/File.cpp
-build .bcook/lib/src/cook/model/object/Path.cpp.obj: compile lib/src/cook/model/object/Path.cpp
-build .bcook/lib/src/cook/generator/Manager.cpp.obj: compile lib/src/cook/generator/Manager.cpp
-build .bcook/app/chai/src/cook/View.cpp.obj: compile app/chai/src/cook/View.cpp
-build .bcook/app/chai/src/cook/view/chai/Book.cpp.obj: compile app/chai/src/cook/view/chai/Book.cpp
-build .bcook/app/chai/src/cook/view/chai/Engine.cpp.obj: compile app/chai/src/cook/view/chai/Engine.cpp
-build .bcook/app/chai/src/cook/view/chai/File.cpp.obj: compile app/chai/src/cook/view/chai/File.cpp
-build .bcook/app/chai/src/cook/view/chai/Flags.cpp.obj: compile app/chai/src/cook/view/chai/Flags.cpp
-build .bcook/app/chai/src/cook/view/chai/Recipe.cpp.obj: compile app/chai/src/cook/view/chai/Recipe.cpp
-build .bcook/app/chai/src/cook/view/chai/Runner.cpp.obj: compile app/chai/src/cook/view/chai/Runner.cpp
-build .bcook/app/chai/src/cook/view/chai/RunnerInfo.cpp.obj: compile app/chai/src/cook/view/chai/RunnerInfo.cpp
-build .bcook/app/chai/src/cook/view/chai/Util.cpp.obj: compile app/chai/src/cook/view/chai/Util.cpp
-build .bcook/app/chai/src/main.cpp.obj: compile app/chai/src/main.cpp
+    include_paths = $gubg_include_paths
 
-build bcook.exe: link $
+build .bcook/lib/src/cook/model/Recipe.cpp.obj: compile lib/src/cook/model/Recipe.cpp
+    include_paths = $cook_include_paths
+build .bcook/lib/src/cook/model/Book.cpp.obj: compile lib/src/cook/model/Book.cpp
+    include_paths = $cook_include_paths
+build .bcook/lib/src/cook/model/Uri.cpp.obj: compile lib/src/cook/model/Uri.cpp
+    include_paths = $cook_include_paths
+build .bcook/lib/src/cook/model/Snapshot.cpp.obj: compile lib/src/cook/model/Snapshot.cpp
+    include_paths = $cook_include_paths
+
+build .bcook/gubg.std/src/catch_runner.cpp.obj: compile gubg.std/src/catch_runner.cpp
+    include_paths = $catch_include_paths
+build .bcook/lib/test/src/cook/Result_tests.cpp.obj: compile lib/test/src/cook/Result_tests.cpp
+    include_paths = $cook_include_paths $catch_include_paths
+build .bcook/lib/test/src/cook/model/Uri_tests.cpp.obj: compile lib/test/src/cook/model/Uri_tests.cpp
+    include_paths = $cook_include_paths $catch_include_paths
+build .bcook/lib/test/src/cook/model/PropertyCollection_tests.cpp.obj: compile lib/test/src/cook/model/PropertyCollection_tests.cpp
+    include_paths = $cook_include_paths $catch_include_paths
+
+build libgubg.a: archive $
     .bcook/gubg.io/src/gubg/OptionParser.cpp.obj $
     .bcook/gubg.io/src/gubg/Strange.cpp.obj $
-    .bcook/lib/src/cook/API.cpp.obj $
-    .bcook/lib/src/cook/Logger.cpp.obj $
-    .bcook/lib/src/cook/api/Book.cpp.obj $
-    .bcook/lib/src/cook/api/Element.cpp.obj $
-    .bcook/lib/src/cook/api/File.cpp.obj $
-    .bcook/lib/src/cook/api/GeneratorManager.cpp.obj $
-    .bcook/lib/src/cook/api/Recipe.cpp.obj $
-    .bcook/lib/src/cook/model/Recipe.cpp.obj $
-    .bcook/lib/src/cook/model/object/Path.cpp.obj $
-    .bcook/lib/src/cook/model/object/File.cpp.obj $
-    .bcook/lib/src/cook/model/object/Define.cpp.obj $
-    .bcook/lib/src/cook/generator/Manager.cpp.obj $
-    .bcook/app/chai/src/cook/View.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Book.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Engine.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/File.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Flags.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Recipe.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Runner.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/RunnerInfo.cpp.obj $
-    .bcook/app/chai/src/cook/view/chai/Util.cpp.obj $
-    .bcook/app/chai/src/main.cpp.obj 
-    library_paths =  -L./
-    libraries = -lstdc++fs -lpthread -ldl
 
+build libbcook.a: archive $
+    .bcook/lib/src/cook/model/Recipe.cpp.obj $
+    .bcook/lib/src/cook/model/Book.cpp.obj $
+    .bcook/lib/src/cook/model/Uri.cpp.obj $
+    .bcook/lib/src/cook/model/Snapshot.cpp.obj $
+
+build unit_tests.exe: link $
+    .bcook/gubg.std/src/catch_runner.cpp.obj $
+    .bcook/lib/test/src/cook/Result_tests.cpp.obj $
+    .bcook/lib/test/src/cook/model/Uri_tests.cpp.obj $
+    .bcook/lib/test/src/cook/model/PropertyCollection_tests.cpp.obj $
+    | libbcook.a libgubg.a
+    library_paths =  -L./
+    user_libs = -lbcook -lgubg
