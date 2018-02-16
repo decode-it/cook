@@ -5,4 +5,4 @@ rule link
 
 cflags = /nologo /EHsc
 
-subninja compile.ninja
+subninja b0-compile.ninja

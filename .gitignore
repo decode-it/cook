@@ -12,3 +12,4 @@ test.ninja
 build.ninja
 build
 recipes.chai.user
+compile_commands.json

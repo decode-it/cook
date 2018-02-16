@@ -46,15 +46,15 @@ task :update => :uth
 namespace :b0 do
     def b0_ninja_fn()
         case GUBG::os
-        when :linux then "gcc.ninja"
-        when :windows then "msvc.ninja"
+        when :linux then "b0-gcc.ninja"
+        when :windows then "b0-msvc.ninja"
         end
     end
 
     desc "bootstrap-level0: Update the ninja scripts (depends on gubg.build)"
     task :update do
         require("gubg/build/expand_templates")
-        GUBG::Build::expand_templates("compile.ninja")
+        GUBG::Build::expand_templates("b0-compile.ninja")
     end
 
     desc "bootstrap-level0: Build and run the unit tests"
@@ -71,6 +71,13 @@ namespace :b0 do
     desc "bootstrap-level0: Clean"
     task :clean do
         sh("ninja -f #{b0_ninja_fn} -t clean")
+    end
+
+    desc "bootstrap-level0: Update rtags"
+    task :rtags do
+        puts "Make sure you have \"rdm &\" running somewhere."
+        sh "ninja -f #{b0_ninja_fn} -t compdb compile > compile_commands.json"
+        sh "rc -J"
     end
 end
 #Bootstrap level 1: uses output from bootstrap level 0
@@ -101,6 +108,7 @@ desc "Clean"
 task :clean do
     rm(FileList.new("**/*.obj"))
     rm(FileList.new("*.exe"))
+    rm(FileList.new("compile_commands.json"))
     Rake::Task["b0:clean"].invoke
     Rake::Task["b1:clean"].invoke
 end

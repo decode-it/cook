@@ -12,4 +12,4 @@ aflags = crf
 
 system_libs = -ldl -lstdc++fs -lpthread
 
-subninja compile.ninja
+subninja b0-compile.ninja
