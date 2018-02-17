@@ -25,6 +25,7 @@ private:
     static std::set<std::string> source_extensions_;
     static std::set<std::string> header_extensions_;
     static std::set<std::string> object_extensions_;
+    static std::set<std::string> lib_extensions_;
 };
 
 } }

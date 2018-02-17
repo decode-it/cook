@@ -45,8 +45,16 @@ TEST_CASE("cook::rules::CXX::type_from_extension tests", "[ut][rules][CXX][type_
             {
                 should.type = Type::Object;
                 SECTION(".o") { scn.extension = ".o"; }
-                SECTION(".a") { scn.extension = ".a"; }
-                SECTION(".lib") { scn.extension = ".lib"; }
+                SECTION(".obj") { scn.extension = ".obj"; }
+            }
+
+            SECTION("library")
+            {
+                should.type = Type::Library;
+                SECTION(".a") {scn.extension = ".a"; }
+                SECTION(".so") {scn.extension = ".so"; }
+                SECTION(".lib") {scn.extension = ".lib"; }
+                SECTION(".dll") {scn.extension = ".dll"; }
             }
         }
         SECTION("type already known upfront")

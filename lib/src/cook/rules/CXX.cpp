@@ -3,9 +3,10 @@
 
 namespace cook { namespace rules {
 
-std::set<std::string> CXX::source_extensions_ = { ".cpp", ".cxx", ".CPP", ".CXX" };
-std::set<std::string> CXX::header_extensions_ = { ".hpp", ".hxx", ".HPP", ".HXX" };
-std::set<std::string> CXX::object_extensions_ = { ".o", ".a", ".lib" };
+std::set<std::string> CXX::source_extensions_   = { ".cpp", ".cxx", ".CPP", ".CXX" };
+std::set<std::string> CXX::header_extensions_   = { ".hpp", ".hxx", ".HPP", ".HXX" };
+std::set<std::string> CXX::object_extensions_   = { ".o", ".obj" };
+std::set<std::string> CXX::lib_extensions_      = { ".a", ".so", ".lib", ".dll" };
 
 Language CXX::language() const
 {
@@ -123,6 +124,8 @@ bool CXX::type_from_extension(Type &dst, const std::string & extension, Type src
             src = Type::Header;
         else if (object_extensions_.find(extension) != object_extensions_.end())
             src = Type::Object;
+        else if (lib_extensions_.find(extension) != lib_extensions_.end())
+            src = Type::Library;
 
         MSS_Q(src != Type::Undefined);
     }
