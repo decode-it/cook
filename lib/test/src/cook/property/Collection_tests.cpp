@@ -23,7 +23,7 @@ using Properties = cook::property::Collection<Property>;
 
 
 
-struct Scenario
+struct AddScenario
 {
     std::vector<Property> initial_properties;
     std::optional<Property> property_to_add;
@@ -31,12 +31,11 @@ struct Scenario
     bool can_add = true;
 };
 
-
 }
 
-TEST_CASE("PropertySet", "[ut][propertySet]")
+TEST_CASE("Property Collection addition test", "[ut][propertySet]")
 {
-    Scenario scn;
+    AddScenario scn;
 
     SECTION("no properties")
     {
@@ -166,3 +165,90 @@ TEST_CASE("PropertySet", "[ut][propertySet]")
 
     }
 }
+
+
+namespace {
+
+struct EraseScenario
+{
+    std::string key;
+    bool removed = false;
+};
+
+}
+
+TEST_CASE("Property Collection erase test", "[ut][property][collection]")
+{
+    Properties properties;
+
+    for(char ch = 'a'; ch <= 'd'; ++ch)
+        REQUIRE(properties.insert(Property(std::string(1, ch), 0)).second);
+
+    EraseScenario scn;
+
+    SECTION("unknown key")
+    {
+        scn.key = "e";
+        scn.removed = false;
+    }
+        SECTION("success")
+        {
+            scn.removed = true;
+
+            SECTION("a") { scn.key = "a"; }
+            SECTION("b") { scn.key = "b"; }
+            SECTION("c") { scn.key = "c"; }
+            SECTION("d") { scn.key = "d"; }
+        }
+
+    // erase by key
+    {
+        Properties p1 = properties;
+        std::size_t removed = p1.erase(scn.key);
+
+        REQUIRE(scn.removed == removed);
+
+        // make sure that it is actually removed
+        REQUIRE(removed + p1.size() == properties.size());
+        REQUIRE(p1.find(scn.key) == p1.end());
+
+        // try to erase again should not be possible
+        REQUIRE(p1.erase(scn.key) == 0);
+    }
+
+    // erase by iterator
+    {
+        Properties p1 = properties;
+        auto old_it = p1.find(scn.key);
+
+        bool found = (old_it  != p1.end());
+        REQUIRE( found == scn.removed );
+
+        if (found)
+        {
+
+            // remove it
+            const std::size_t before_count = std::distance(p1.begin(), old_it);
+            auto new_it = p1.erase(old_it);
+            const std::size_t after_count = std::distance(new_it, p1.end());
+
+
+            // check sizes
+            const std::size_t count = before_count + after_count;
+            REQUIRE(count == p1.size());
+            REQUIRE(p1.size() + scn.removed == properties.size());
+
+            // check order the same
+            REQUIRE(std::equal(properties.begin(), properties.begin() + before_count, p1.begin(), p1.begin() + before_count));
+            REQUIRE(std::equal(properties.end() - after_count, properties.end(), p1.end() - after_count, p1.end()));
+
+            // make sure that it is actually removed
+            REQUIRE(p1.find(scn.key) == p1.end());
+
+            // try to erase again should not be possible
+            REQUIRE(p1.erase(scn.key) == 0);
+            /// }
+        }
+    }
+}
+

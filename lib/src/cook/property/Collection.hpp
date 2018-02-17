@@ -18,14 +18,8 @@ public:
     using const_iterator = typename Container::const_iterator;
     using iterator = typename Container::iterator;
 
-    std::pair<iterator, bool> insert(const Property & property)
-    {
-        return insert_(property);
-    }
-    std::pair<iterator, bool> insert(Property && property)
-    {
-        return insert_(std::move(property));
-    }
+    std::pair<iterator, bool> insert(const Property & property) { return insert_(property); }
+    std::pair<iterator, bool> insert(Property && property)      { return insert_(std::move(property)); }
 
     const_iterator find(const key_type & key) const { return find_(gubg::make_range(properties_), key); }
     iterator find(const key_type & key)             { return find_(gubg::make_range(properties_), key); }
@@ -34,6 +28,16 @@ public:
     const_iterator end() const      { return properties_.end(); }
     iterator begin()                { return properties_.begin(); }
     iterator end()                  { return properties_.end(); }
+
+    iterator erase(iterator position)               { return properties_.erase(position); }
+    iterator erase(iterator first, iterator last)   { return properties_.erase(first, last); }
+    std::size_t erase(const key_type & key)
+    {
+        auto it = std::remove_if(properties_.begin(), properties_.end(), [&](const auto & el) { return el.key() == key; });
+        std::size_t removed = std::distance(it, properties_.end());
+        properties_.erase(it, properties_.end());
+        return removed;
+    }
 
     std::size_t size() const { return properties_.size(); }
 
