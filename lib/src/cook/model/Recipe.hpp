@@ -26,6 +26,9 @@ public:
     const Dependencies & dependencies() const;
     bool add_dependency(const std::string & dependency);
 
+    void set_type(const Type & type);
+    Type type() const;
+
 private:
     Recipe(const Recipe &) = delete;
     Recipe(Recipe &&) = delete;
@@ -35,6 +38,7 @@ private:
     Snapshot post_;
     std::list<GlobInfo> globbings_;
     Dependencies dependencies_;
+    Type type_;
 };
 
 } }
