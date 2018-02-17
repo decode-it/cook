@@ -30,7 +30,6 @@ public:
     iterator end()                  { return properties_.end(); }
 
     iterator erase(iterator position)               { return properties_.erase(position); }
-    iterator erase(iterator first, iterator last)   { return properties_.erase(first, last); }
     std::size_t erase(const key_type & key)
     {
         auto it = std::remove_if(properties_.begin(), properties_.end(), [&](const auto & el) { return el.key() == key; });
