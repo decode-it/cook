@@ -1,17 +1,17 @@
 #ifndef HEADER_cook_property_File_hpp_ALREADY_INCLUDED
 #define HEADER_cook_property_File_hpp_ALREADY_INCLUDED
 
-#include "cook/property/Interface.hpp"
+#include "cook/property/Base.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <ostream>
 
 namespace cook { namespace property {
 
-class File : public Interface<std::filesystem::path>
+class File : public Base<std::filesystem::path>
 {
 public:
     File(const std::filesystem::path & dir, const std::filesystem::path & rel)
-        : Interface<std::filesystem::path>(dir/rel),
+        : Base<std::filesystem::path>(dir/rel),
           dir_(dir),
           rel_(rel)
     {

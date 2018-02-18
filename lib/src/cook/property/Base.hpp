@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_property_Interface_hpp_ALREADY_INCLUDED
-#define HEADER_cook_property_Interface_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_property_Base_hpp_ALREADY_INCLUDED
+#define HEADER_cook_property_Base_hpp_ALREADY_INCLUDED
 
 #include "cook/Propagation.hpp"
 #include "cook/Overwrite.hpp"
@@ -16,12 +16,12 @@ namespace property {
 
 
 template <typename KeyType>
-class Interface
+class Base
 {
 public:
     using key_type = KeyType;
 
-    explicit Interface(const KeyType & key)
+    explicit Base(const KeyType & key)
         : key_(key),
           propagation_(Propagation::Private),
           owner_(nullptr),
@@ -38,15 +38,15 @@ public:
     void set_owner(model::Recipe * owner)           { owner_ = owner; }
 
 protected:
-    bool equal_(const Interface<KeyType> & rhs) const
+    bool equal_(const Base<KeyType> & rhs) const
     {
         return key_ == rhs.key_
                 && propagation_ == rhs.propagation_
                 && owner_ == rhs.owner_;
     }
 
-    template <typename Interface>
-    static bool merge_(Interface & lhs, const Interface & rhs)
+    template <typename Property>
+    static bool merge_(Property & lhs, const Property & rhs)
     {
         MSS_BEGIN(bool);
         MSS(lhs.key() == rhs.key());
