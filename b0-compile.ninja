@@ -61,7 +61,7 @@ build .b0/lib/test/src/cook/Result_tests.cpp.obj: compile lib/test/src/cook/Resu
     include_paths = $cook_include_paths $catch_include_paths
 build .b0/lib/test/src/cook/model/Uri_tests.cpp.obj: compile lib/test/src/cook/model/Uri_tests.cpp
     include_paths = $cook_include_paths $catch_include_paths
-build .b0/lib/test/src/cook/property/PropertyCollection_tests.cpp.obj: compile lib/test/src/cook/property/PropertyCollection_tests.cpp
+build .b0/lib/test/src/cook/property/Collection_tests.cpp.obj: compile lib/test/src/cook/property/Collection_tests.cpp
     include_paths = $cook_include_paths $catch_include_paths
 build .b0/lib/test/src/cook/rules/CXX_tests.cpp.obj: compile lib/test/src/cook/rules/CXX_tests.cpp
     include_paths = $cook_include_paths $catch_include_paths
@@ -111,7 +111,7 @@ build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/lib/test/src/cook/LanguageTypePair_tests.cpp.obj $
     .b0/lib/test/src/cook/Result_tests.cpp.obj $
     .b0/lib/test/src/cook/model/Uri_tests.cpp.obj $
-    .b0/lib/test/src/cook/property/PropertyCollection_tests.cpp.obj $
+    .b0/lib/test/src/cook/property/Collection_tests.cpp.obj $
     .b0/lib/test/src/cook/rules/CXX_tests.cpp.obj $
     .b0/lib/test/src/cook/rules/Resolve_tests.cpp.obj $
     | libb0-cook.a libb0-gubg.a

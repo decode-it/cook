@@ -3,19 +3,20 @@
 
 #include "cook/property/Collection.hpp"
 #include "cook/LanguageTypePair.hpp"
+#include "gubg/mss.hpp"
 #include <map>
 
 namespace cook { namespace property {
 
-template <typename Interface> class Properties
+template <typename Property> class Properties
 {
-    using PropertyMap = std::map<LanguageTypePair, Collection<Interface>>;
+    using PropertyMap = std::map<LanguageTypePair, Collection<Property>>;
 
 public:
     using iterator = typename PropertyMap::iterator;
     using const_iterator = typename PropertyMap::const_iterator;
 
-    bool insert_or_merge(const LanguageTypePair & key, const Interface & property)
+    bool insert_or_merge(const LanguageTypePair & key, const Property & property)
     {
         MSS_BEGIN(bool);
 
@@ -26,14 +27,14 @@ public:
         MSS_END();
     }
 
-    std::pair<typename Collection<Interface>::iterator, bool> insert(const LanguageTypePair & collection_key, const Interface & property)
+    std::pair<typename Collection<Property>::iterator, bool> insert(const LanguageTypePair & collection_key, const Property & property)
     {
         // add if necessary
-        Collection<Interface> & collection = properties_[collection_key];
+        Collection<Property> & collection = properties_[collection_key];
         return collection.insert(property);
     }
 
-    Collection<Interface> & operator[](const LanguageTypePair & key)
+    Collection<Property> & operator[](const LanguageTypePair & key)
     {
         return properties_[key];
     }
@@ -46,14 +47,14 @@ public:
     iterator find(const LanguageTypePair & collection_key)              { return properties_.find(collection_key); }
     const_iterator find(const LanguageTypePair & collection_key) const  { return properties_.find(collection_key); }
 
-    Interface * find(const LanguageTypePair & collection_key, const typename Interface::key_type & property_key)
+    Property * find(const LanguageTypePair & collection_key, const typename Property::key_type & property_key)
     {
-        return find_<Interface>(collection_key, property_key, properties_);
+        return find_<Property>(collection_key, property_key, properties_);
     }
 
-    const Interface * find(const LanguageTypePair & collection_key, const typename Interface::key_type & property_key) const
+    const Property * find(const LanguageTypePair & collection_key, const typename Property::key_type & property_key) const
     {
-        return find_<const Interface>(collection_key, property_key, properties_);
+        return find_<const Property>(collection_key, property_key, properties_);
     }
 
     template <typename Functor>
@@ -69,8 +70,8 @@ public:
 
 
 private:
-    template <typename Interface_, typename Properties_>
-    Interface_ * find_(const LanguageTypePair & collection_key, const typename Interface::key_type & property_key, Properties_ & properties) const
+    template <typename Property_, typename Properties_>
+    Property_ * find_(const LanguageTypePair & collection_key, const typename Property::key_type & property_key, Properties_ & properties) const
     {
         auto pit = properties.find(collection_key);
         if (pit == properties.end())

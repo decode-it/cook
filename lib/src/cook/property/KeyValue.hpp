@@ -1,22 +1,22 @@
 #ifndef HEADER_cook_property_KeyValue_hpp_ALREADY_INCLUDED
 #define HEADER_cook_property_KeyValue_hpp_ALREADY_INCLUDED
 
-#include "cook/property/Interface.hpp"
+#include "cook/property/Base.hpp"
 #include <string>
 #include <optional>
 
 namespace cook { namespace property {
 
-class KeyValue : public Interface<std::string>
+class KeyValue : public Base<std::string>
 {
 public:
     explicit KeyValue(const std::string & key)
-        : Interface<std::string>(key)
+        : Base<std::string>(key)
     {
     }
 
     explicit KeyValue(const std::string & key, const std::string & value)
-        : Interface<std::string>(key),
+        : Base<std::string>(key),
           value_(value)
     {
     }
