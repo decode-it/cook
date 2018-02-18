@@ -1,6 +1,7 @@
 #include "catch.hpp"
 #include "cook/model/GlobInfo.hpp"
 #include "cook/model/Recipe.hpp"
+#include "cook/model/Book.hpp"
 #include "cook/rules/Resolver.hpp"
 
 #define BASE_DIR "generated/"
@@ -163,7 +164,9 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
             auto p = cook::model::Uri::recipe_uri("test");
             REQUIRE(p.second);
 
-            cook::model::Recipe recipe(p.first);
+            cook::model::Book book;
+            cook::model::Recipe & recipe = book.goc_recipe(*p.first.name());
+
             recipe.set_working_directory(std::filesystem::current_path());
 
             cook::rules::RuleSet ruleset;

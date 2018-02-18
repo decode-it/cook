@@ -18,6 +18,8 @@ public:
     using const_iterator = typename Container::const_iterator;
     using iterator = typename Container::iterator;
 
+    void clear() { properties_.clear(); }
+
     std::pair<iterator, bool> insert(const Property & property) { return insert_(property); }
     std::pair<iterator, bool> insert(Property && property)      { return insert_(std::move(property)); }
 

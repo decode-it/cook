@@ -76,22 +76,27 @@ bool Uri::add_path_part_(const std::string & part)
 bool Uri::set_name(const std::string & name)
 {
     MSS_BEGIN(bool);
-    MSS(!name.empty());
 
-    name_ = name;
+    name_ = Part::make_part(name);
+    MSS(!!name_);
 
     MSS_END();
 }
 
+void Uri::set_name(const Part & name)
+{
+    name_ = name;
+}
+
 void Uri::clear_name()
 {
-    name_.clear();
+    name_.reset();
 }
 
 void Uri::clear()
 {
     path_.clear();
-    name_.clear();
+    name_.reset();
     absolute_ = false;
 }
 
@@ -140,15 +145,20 @@ std::string Uri::string(const char sep) const
         result += sep;
     }
 
-    if (!name_.empty())
-        result += name_;
+    if (name_.has_value())
+        result += name_->string();
 
     return result;
 }
 
 bool Uri::has_name() const
 {
-    return !name_.empty();
+    return name_.has_value();
+}
+
+const std::optional<Part> & Uri::name() const
+{
+    return name_;
 }
 
 void Uri::set_absolute(bool is_absolute)
@@ -162,6 +172,32 @@ Uri make_root_uri()
     uri.set_absolute(true);
 
     return uri;
+}
+
+Uri Uri::parent() const
+{
+    Uri result = *this;
+
+    if (false) {}
+    else if (result.has_name())         { result.clear_name(); }
+    else if (result.path().empty())     { result.pop_back();  }
+
+    return result;
+}
+
+std::ostream & operator<<(std::ostream & str, const Uri & uri)
+{
+    return str << uri.string();
+}
+
+bool Uri::operator==(const Uri & rhs) const
+{
+    return string() == rhs.string();
+}
+
+bool Uri::operator<(const Uri & rhs) const
+{
+    return string() < rhs.string();
 }
 
 } }

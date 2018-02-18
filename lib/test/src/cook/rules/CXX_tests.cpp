@@ -1,6 +1,8 @@
 #include "catch.hpp"
 #include "cook/rules/CXX.hpp"
 #include "cook/model/Recipe.hpp"
+#include "cook/model/Book.hpp"
+
 using namespace cook;
 
 TEST_CASE("cook::rules::CXX::type_from_extension tests", "[ut][rules][CXX][type_from_extension]")
@@ -142,7 +144,7 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
             scn.num_added_files = 2;
 
             scn.additional_check = [](const model::Recipe & recipe) {
-                auto ptr = recipe.pre().find((LanguageTypePair(Language::CXX, Type::IncludePath)), "./");
+                auto ptr = recipe.file_properties().find(LanguageTypePair(Language::CXX, Type::IncludePath), "./");
 
                 REQUIRE(ptr);
                 REQUIRE(ptr->propagation() == Propagation::Public);
@@ -159,7 +161,7 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
             scn.num_added_files = 2;
 
             scn.additional_check = [](const model::Recipe & recipe) {
-                auto ptr = recipe.pre().find((LanguageTypePair(Language::CXX, Type::LibraryPath)), "./");
+                auto ptr = recipe.file_properties().find(LanguageTypePair(Language::CXX, Type::LibraryPath), "./");
 
                 REQUIRE(ptr);
                 REQUIRE(ptr->propagation() == Propagation::Private);
@@ -182,7 +184,9 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
     // create the recipe
     auto p = model::Uri::recipe_uri("test");
     REQUIRE(p.second);
-    model::Recipe recipe(p.first);
+
+    model::Book book;
+    model::Recipe & recipe = book.goc_recipe(*p.first.name());
 
     {
         // check the accept function
@@ -207,7 +211,7 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
 
             {
                 unsigned int count = 0;
-                REQUIRE(recipe.each_file([&](const auto & key, const auto & file){
+                REQUIRE(recipe.file_properties().each([&](const auto & key, const auto & file){
                             ++count; return true;
                             }));
 
@@ -225,3 +229,5 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
         std::filesystem::remove(scn.file_to_create);
 }
 
+
+#include "cook/model/Recipe.hpp"

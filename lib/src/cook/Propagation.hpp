@@ -7,8 +7,8 @@ namespace cook {
 
 enum class Propagation
 {
-    Private,
-    Public,
+    Private = 0,
+    Public = 1,
 };
 
 inline std::ostream & operator<<(std::ostream & os, Propagation propagation)

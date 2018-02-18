@@ -18,9 +18,13 @@ public:
     Recipe & goc_recipe(const Part & part);
     const Uri & uri() const;
 
-private:
-    Book(const Uri & uri);
+    Book * find_book(const Part & part) const;
+    Recipe * find_recipe(const Part & part) const;
 
+    bool is_root() const;
+    Book * parent() const;
+
+private:
     Book(const Book &) = delete;
     Book & operator=(const Book &) = delete;
     Book(Book &&) = default;
@@ -29,7 +33,13 @@ private:
     Uri uri_;
     std::map<Part, std::shared_ptr<Book> > subbooks_;
     std::map<Part, std::shared_ptr<Recipe>> recipes_;
+    Book * parent_;
 };
+
+bool find_book(Book *& result, Book * book, const Uri & uri);
+bool find_recipe(Recipe *& result, Book * book, const Uri & uri);
+bool goc_book(Book *& result, Book * book, const Uri & uri);
+bool goc_recipe(Recipe *& result, Book * book, const Uri & uri);
 
 } }
 

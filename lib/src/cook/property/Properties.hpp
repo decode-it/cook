@@ -7,10 +7,15 @@
 
 namespace cook { namespace property {
 
-template <typename Interface>
-struct Properties
+template <typename Interface> class Properties
 {
-    bool add_or_merge(const LanguageTypePair & key, const Interface & property)
+    using PropertyMap = std::map<LanguageTypePair, Collection<Interface>>;
+
+public:
+    using iterator = typename PropertyMap::iterator;
+    using const_iterator = typename PropertyMap::const_iterator;
+
+    bool insert_or_merge(const LanguageTypePair & key, const Interface & property)
     {
         MSS_BEGIN(bool);
 
@@ -28,6 +33,18 @@ struct Properties
         return collection.insert(property);
     }
 
+    Collection<Interface> & operator[](const LanguageTypePair & key)
+    {
+        return properties_[key];
+    }
+
+    iterator begin()                { return properties_.begin(); }
+    iterator end()                  { return properties_.end(); }
+    const_iterator begin() const    { return properties_.begin(); }
+    const_iterator end() const      { return properties_.end(); }
+
+    iterator find(const LanguageTypePair & collection_key)              { return properties_.find(collection_key); }
+    const_iterator find(const LanguageTypePair & collection_key) const  { return properties_.find(collection_key); }
 
     Interface * find(const LanguageTypePair & collection_key, const typename Interface::key_type & property_key)
     {
@@ -69,7 +86,7 @@ private:
         return &*cit;
     }
 
-    std::map<LanguageTypePair, Collection<Interface>> properties_;
+    PropertyMap properties_;
 };
 
 } }

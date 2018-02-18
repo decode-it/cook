@@ -22,7 +22,6 @@ public:
     static std::optional<Part> make_part(const std::string & part);
 
     const std::string & string() const { return value_; }
-    bool empty() const { return value_.empty(); }
 
     bool operator==(const Part & rhs) const { return value_ == rhs.value_; }
     bool operator<(const Part & rhs) const { return value_ < rhs.value_; }
@@ -55,22 +54,31 @@ public:
     bool pop_back();
 
     bool set_name(const std::string & name);
+    void set_name(const Part & name);
     bool has_name() const;
     void clear_name();
+    const std::optional<Part> & name() const;
 
     bool absolute() const;
     void set_absolute(bool is_absolute);
 
     std::string string(const char sep = separator) const;
 
+    bool operator==(const Uri & rhs) const;
+    bool operator<(const Uri & rhs) const;
+
+    Uri parent() const;
+
 
 private:
     bool add_path_part_(const std::string &part);
 
     PathContainer path_;
-    std::string name_;
+    std::optional<Part> name_;
     bool absolute_;
 };
+
+std::ostream & operator<<(std::ostream & str, const Uri & uri);
 
 Uri make_root_uri();
 

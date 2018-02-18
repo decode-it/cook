@@ -11,23 +11,14 @@ namespace cook { namespace model {
 class Snapshot
 {
 public:
-    using FileIterator = property::Collection<property::File>::iterator;
-
+    using FileProperties = property::Properties<property::File>;
+    using KeyValueProperties = property::Properties<property::KeyValue>;
     Snapshot(const Uri & uri);
 
-    bool insert_or_merge(const LanguageTypePair & key, const property::File & file);
-    bool insert_or_merge(const LanguageTypePair & key, const property::KeyValue & key_value);
-
-    std::pair<FileIterator, bool> insert(const LanguageTypePair & collection_key, const property::File & property);
-
-    template <typename Functor> bool each_file(Functor && functor) const
-    {
-        return file_properties_.each(std::forward<Functor>(functor));
-    }
-
-    property::File * find(const LanguageTypePair & collection_key, const typename property::File::key_type & property_key) { return file_properties_.find(collection_key, property_key); }
-    const property::File * find(const LanguageTypePair & collection_key, const typename property::File::key_type & property_key) const { return file_properties_.find(collection_key, property_key); }
-
+    const FileProperties & file_properties() const          { return file_properties_; }
+    const KeyValueProperties & key_value_properties() const { return key_value_properties_; }
+    FileProperties & file_properties()                      { return file_properties_; }
+    KeyValueProperties & key_value_properties()             { return key_value_properties_; }
 
     const Uri & uri() const;
     bool set_uri(const Uri & uri);
@@ -35,8 +26,8 @@ public:
     void set_working_directory(const std::filesystem::path & wd);
 
 private:
-    property::Properties<property::File> file_properties_;
-    property::Properties<property::KeyValue> key_value_properties_;
+    FileProperties file_properties_;
+    KeyValueProperties key_value_properties_;
     Uri uri_;
     std::filesystem::path wd_;
 };

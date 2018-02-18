@@ -13,18 +13,20 @@ class Book;
 class Recipe : public Snapshot
 {
 public:
-    using Dependencies = std::set<std::string>;
+    using Dependency = Uri;
+    using Dependencies = std::set<Dependency>;
 
-    Recipe(const Uri & uri);
+    Recipe(Book * book, const Part & part);
 
     const Snapshot & pre() const    { return *this; }
     const Snapshot & post() const   { return post_; }
+    Book * book() const             { return book_; }
 
     void add_globber(const GlobInfo & globbing) { globbings_.push_back(globbing); }
     void resolve_globbings();
 
     const Dependencies & dependencies() const;
-    bool add_dependency(const std::string & dependency);
+    bool add_dependency(const Dependency & dependency);
 
     void set_type(const Type & type);
     Type type() const;
@@ -39,6 +41,7 @@ private:
     std::list<GlobInfo> globbings_;
     Dependencies dependencies_;
     Type type_;
+    Book * book_;
 };
 
 } }
