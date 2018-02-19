@@ -2,16 +2,15 @@
 #define HEADER_cook_chai_Recipe_hpp_ALREADY_INCLUDED
 
 #include "cook/model/Recipe.hpp"
+#include "cook/Logger.hpp"
 #include "gubg/chai/ModuleFwd.hpp"
 
 namespace cook { namespace chai {
 
-class Runner;
-
 class Recipe
 {
 public:
-    Recipe(model::Recipe * recipe, Runner * runner);
+    Recipe(model::Recipe * recipe, Logger * runner);
 
     void add(const std::string & dir, const std::string & pattern);
     void depends_on(const std::string & dependency);
@@ -23,7 +22,7 @@ public:
 
 private:
     model::Recipe * recipe_;
-    Runner * runner_;
+    Logger * logger_;
 };
 
 gubg::chai::ModulePtr recipe_module();

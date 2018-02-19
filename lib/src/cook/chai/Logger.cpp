@@ -4,11 +4,11 @@
 
 namespace cook { namespace chai {
 
-void Logger::log(MessageType type, const Logger::LogFunction & function)
+void Logger::log(LogType type, const Logger::LogFunction & function)
 {
     switch(type)
     {
-    case MessageType::Error:
+    case LogType::Error:
         throw chaiscript::exception::eval_error(gubg::stream(function));
 
     default:

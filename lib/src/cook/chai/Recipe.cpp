@@ -4,9 +4,9 @@
 
 namespace cook { namespace chai {
 
-Recipe::Recipe(model::Recipe * recipe, Runner * runner)
+Recipe::Recipe(model::Recipe * recipe, Logger *logger)
     : recipe_(recipe),
-      runner_(runner)
+      logger_(logger)
 {
 }
 
@@ -28,7 +28,7 @@ void Recipe::depends_on(const std::string & dependency)
 {
     std::pair<model::Uri, bool> p = model::Uri::recipe_uri(dependency);
     if (!p.second)
-        runner_->report_error("bad uri");
+        logger_->LOG(Error, "bad uri");
 
     recipe_->add_dependency(p.first);
 }

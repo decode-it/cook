@@ -8,7 +8,7 @@ namespace cook { namespace chai {
 class Logger : public cook::Logger
 {
 public:
-    void log(MessageType type, const LogFunction & function) override;
+    void log(LogType type, const LogFunction & function) override;
 };
 
 } }

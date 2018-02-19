@@ -5,9 +5,9 @@
 
 namespace cook { namespace chai {
 
-Book::Book(model::Book * book, Runner *runner)
+Book::Book(model::Book * book, Logger *logger)
     : book_(book),
-      runner_(runner)
+      logger_(logger)
 {
 }
 
@@ -15,13 +15,13 @@ void Book::book(const std::string & uri_str, const std::function<void (Book)> &f
 {
     std::pair<model::Uri, bool> uri = model::Uri::book_uri(uri_str);
     if (!uri.second)
-        runner_->report_error("Bad uri");
+        logger_->LOG(Error, "Bad uri");
 
     model::Book * subbook = nullptr;
     if (!model::goc_book(subbook, book_, uri.first))
-        runner_->report_error("Error");
+        logger_->LOG(Error, "Error");
 
-    functor(Book(subbook, runner_));
+    functor(Book(subbook, logger_));
 }
 
 
@@ -35,11 +35,11 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
 {
     std::pair<model::Uri, bool> uri = model::Uri::recipe_uri(uri_str);
     if (!uri.second)
-        runner_->report_error("Bad uri");
+        logger_->LOG(Error, "Bad uri");
 
     model::Recipe * recipe = nullptr;
     if (!model::goc_recipe(recipe, book_, uri.first))
-        runner_->report_error("Error");
+        logger_->LOG(Error, "Error");
 
     cook::Type type = Type::Undefined;
     if (false) {}
@@ -47,7 +47,7 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
     else if (type_str == "library") { type = Type::Library; }
 
     {
-        Recipe r(recipe, runner_);
+        Recipe r(recipe, logger_);
         r.set_type(type);
         functor(r);
     }

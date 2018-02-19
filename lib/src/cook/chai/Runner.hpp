@@ -14,7 +14,6 @@ struct Runner
     ~Runner();
 
     bool load(const std::list<std::string> & recipes);
-    void report_error(const std::string & message);
 
     const model::Book & root() const { return root_; }
 
