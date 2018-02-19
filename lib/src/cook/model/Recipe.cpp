@@ -27,11 +27,25 @@ const Recipe::Dependencies & Recipe::dependencies() const
     return dependencies_;
 }
 
+bool Recipe::resolve_dependency(const Uri & uri, Recipe * recipe)
+{
+    MSS_BEGIN(bool);
+
+    auto it = dependencies_.find(uri);
+    MSS(it != dependencies_.end());
+    MSS(it->second == nullptr);
+    it->second = recipe;
+
+    MSS_END();
+
+}
+
 bool Recipe::add_dependency(const Dependency &dependency)
 {
     MSS_BEGIN(bool);
     MSS(dependency.has_name());
-    MSS(dependencies_.insert(dependency).second);
+
+    MSS(dependencies_.emplace(dependency, nullptr).second);
     MSS_END();
 }
 

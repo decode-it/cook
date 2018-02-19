@@ -14,7 +14,7 @@ class Recipe : public Snapshot
 {
 public:
     using Dependency = Uri;
-    using Dependencies = std::set<Dependency>;
+    using Dependencies = std::map<Uri, Recipe *>;
 
     Recipe(Book * book, const Part & part);
 
@@ -27,6 +27,7 @@ public:
 
     const Dependencies & dependencies() const;
     bool add_dependency(const Dependency & dependency);
+    bool resolve_dependency(const Uri & uri, Recipe * recipe);
 
     void set_type(const Type & type);
     Type type() const;
