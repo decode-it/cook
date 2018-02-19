@@ -107,7 +107,7 @@ DependencyResolver::result_type DependencyResolver::fill_count_map_(CountMap & m
 
             // check whether resolved
             if (!dep)
-                return unresolved_dependencies;
+                return result_type::Unresolved_Dependencies;
 
             // increase the counter
             ++map[dep];
@@ -115,20 +115,20 @@ DependencyResolver::result_type DependencyResolver::fill_count_map_(CountMap & m
         }
     }
 
-    return success;
+    return result_type::Success;
 }
 
 DependencyResolver::result_type DependencyResolver::resolve(const std::list<Recipe *> & recipe_roots)
 {
     // resolve as much dependencies as possible
     if (!resolve_dependencies(root_))
-        return internal_error;
+        return result_type::Internal_Error;
 
     // fill a count map and check for unresolved dependencies
     CountMap incoming_map;
     {
         result_type res = fill_count_map_(incoming_map, recipe_roots);
-        if (res != success)
+        if (res != result_type::Success)
             return res;
     }
 
@@ -173,9 +173,9 @@ DependencyResolver::result_type DependencyResolver::topological_sort_(CountMap &
     // all edges set to zero ?
     for(auto & p : map)
         if (p.second != 0)
-            return cyclic_dependencies;
+            return result_type::Cyclic_Dependencies;
 
-    return success;
+    return result_type::Success;
 }
 
 

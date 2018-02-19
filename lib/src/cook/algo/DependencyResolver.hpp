@@ -7,19 +7,21 @@
 
 namespace cook { namespace algo {
 
+enum class DependencyResolveResult
+{
+    Success,
+    Unresolved_Dependencies,
+    Cyclic_Dependencies,
+    Internal_Error
+};
+
 struct DependencyResolver
 {
-    enum result_type
-    {
-        success,
-        unresolved_dependencies,
-        cyclic_dependencies,
-        internal_error
-    };
+    using result_type = DependencyResolveResult;
 
     DependencyResolver(model::Book * root) : root_(root) {}
 
-    result_type resolve(const std::list<model::Recipe *> & recipe_roots);
+    DependencyResolveResult resolve(const std::list<model::Recipe *> & recipe_roots);
 
     const std::vector<model::Recipe *> & topological_order() const;
     std::vector<model::Recipe *> topological_suborder(model::Recipe * subroot) const;

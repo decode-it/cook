@@ -4,6 +4,7 @@
 #include "cook/algo/DependencyResolver.hpp"
 
 using namespace cook::model;
+using result_type = cook::algo::DependencyResolveResult;
 
 namespace  {
 
@@ -28,7 +29,7 @@ bool is_topological_order(std::vector<Recipe *> & recipes)
 
 struct Scenario
 {
-    cook::algo::DependencyResolver::result_type expected_result = cook::algo::DependencyResolver::success;
+    result_type expected_result = result_type::Success;
     unsigned int total_topological_order = 0;
     unsigned int subroot_count = 0;
 };
@@ -128,7 +129,7 @@ TEST_CASE("Dependency resolving", "[ut][algo][dependency_resolving]")
         {
             recipe_a->add_dependency(make_uri("q"));
 
-            SECTION("a") { scn.expected_result = cook::algo::DependencyResolver::unresolved_dependencies; root_recipes.push_back(recipe_a); }
+            SECTION("a") { scn.expected_result = result_type::Unresolved_Dependencies; root_recipes.push_back(recipe_a); }
             SECTION("b") {scn.total_topological_order = 1; root_recipes.push_back(recipe_b); }
             SECTION("c") {scn.total_topological_order = 3; root_recipes.push_back(recipe_c); }
         }
@@ -143,9 +144,9 @@ TEST_CASE("Dependency resolving", "[ut][algo][dependency_resolving]")
         recipe_b->add_dependency(make_uri("c"));
         recipe_c->add_dependency(make_uri("a"));
 
-        SECTION("a") { scn.expected_result = cook::algo::DependencyResolver::cyclic_dependencies; root_recipes.push_back(recipe_a); }
-        SECTION("b") { scn.expected_result = cook::algo::DependencyResolver::cyclic_dependencies; root_recipes.push_back(recipe_b); }
-        SECTION("c") { scn.expected_result = cook::algo::DependencyResolver::cyclic_dependencies; root_recipes.push_back(recipe_c); }
+        SECTION("a") { scn.expected_result = result_type::Cyclic_Dependencies; root_recipes.push_back(recipe_a); }
+        SECTION("b") { scn.expected_result = result_type::Cyclic_Dependencies; root_recipes.push_back(recipe_b); }
+        SECTION("c") { scn.expected_result = result_type::Cyclic_Dependencies; root_recipes.push_back(recipe_c); }
     }
 
 
@@ -155,7 +156,7 @@ TEST_CASE("Dependency resolving", "[ut][algo][dependency_resolving]")
     auto res = resolver.resolve(root_recipes);
     REQUIRE(res == scn.expected_result);
 
-    if (res == cook::algo::DependencyResolver::success)
+    if (res == result_type::Success)
     {
         // check total topological order
         {
@@ -178,7 +179,7 @@ TEST_CASE("Dependency resolution", "[ut][algo][dependency_resolution]")
 {
     struct
     {
-        cook::algo::DependencyResolver::result_type result = cook::algo::DependencyResolver::success;
+        result_type result = result_type::Success;
         std::string dependency;
         Recipe * dep;
 
@@ -191,13 +192,13 @@ TEST_CASE("Dependency resolution", "[ut][algo][dependency_resolution]")
     SECTION("circ dependency")
     {
         wanted.dependency = "a/b/c/d/e";
-        wanted.result = cook::algo::DependencyResolver::cyclic_dependencies;
+        wanted.result = result_type::Cyclic_Dependencies;
         wanted.dep = recipe_a;
     }
 
     SECTION("relative local dependency")
     {
-        wanted.result = cook::algo::DependencyResolver::success;
+        wanted.result = result_type::Success;
 
         SECTION("same level")
         {
@@ -225,7 +226,7 @@ TEST_CASE("Dependency resolution", "[ut][algo][dependency_resolution]")
     auto res = resolver.resolve({recipe_a});
 
     REQUIRE(res == wanted.result);
-    if (res == cook::algo::DependencyResolver::success)
+    if (res == result_type::Success)
     {
         REQUIRE(recipe_a->dependencies().size() == 1);
         REQUIRE(recipe_a->dependencies().begin()->second == wanted.dep);
