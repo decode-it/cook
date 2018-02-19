@@ -10,9 +10,10 @@ DependencyGraph::DependencyGraph(Recipe *root_vertex)
 {
 }
 
-bool DependencyGraph::resolve()
+bool DependencyGraph::resolve(bool & success)
 {
     MSS_BEGIN(bool);
+    success = false;
 
     std::unordered_set<Recipe *> visited;
     network_.clear();
@@ -24,7 +25,7 @@ bool DependencyGraph::resolve()
     std::stack<Recipe *> todo;
     todo.push(root_vertex_);
 
-    // resolve all the dependencies
+    // resolve all the dependencies (if possible)
     while(!todo.empty())
     {
         Recipe * recipe = todo.top();
@@ -37,13 +38,22 @@ bool DependencyGraph::resolve()
         // process all dependencies
         for (const auto & dep : recipe->dependencies())
         {
+            const Uri & uri = dep.first;
+            MSS(uri.has_name());
+
             // try to resolve
             Recipe * dependency = nullptr;
-            MSS(resolve_dependency_(dependency, recipe, dep));
-            MSS(!!dependency, std::cout << "Unable to resolve dependency for " << recipe->uri() << " on " << dep.string());
+            if(uri.absolute())
+                dependency = resolve_absolute_dependency_(recipe->book(), uri);
+            else
+                dependency = resolve_relative_dependency_(recipe->book(), uri);
 
-            // add an edge
-            MSS(network_.add_edge(recipe, dependency));
+            // not found, signal but still continue
+            if (!dependency)
+                success = false;
+            else
+                MSS(recipe->resolve_dependency(uri, dependency));
+
             todo.push(dependency);
         }
     }
@@ -60,44 +70,35 @@ std::vector<Recipe *> DependencyGraph::topological_order()
     return result;
 }
 
-bool DependencyGraph::resolve_dependency_(Recipe *&dependency, const Recipe * recipe, const Recipe::Dependency &uri)
+Recipe * DependencyGraph::resolve_relative_dependency_(Book * book, const Uri & uri)
 {
-    MSS_BEGIN(bool);
+    // go to the root
+    assert(!!book);
+    while(book->parent() != nullptr)
+        book = book->parent();
 
-    dependency = nullptr;
+    // and try to find the recipe here
+    Recipe * result = nullptr;
+    find_recipe(result, book, uri);
+    return result;
+}
 
-
-    MSS(uri.has_name());
-    MSS(recipe->uri().absolute());
-
-    if (uri.absolute())
+Recipe * DependencyGraph::resolve_absolute_dependency_(Book * book, const Uri & uri)
+{
+    // start from book the most towards the leaf
+    while(book != nullptr)
     {
-        // go to the root
-        Book * root = recipe->book();
-        {
-            MSS(!!root);
-            while(root->parent() != nullptr)
-                root = root->parent();
-        }
+        // try to find the recipe
+        Recipe * result = nullptr;
+        find_recipe(result, book, uri);
+        if (result)
+            return result;
 
-        // and try to find the recipe here
-        MSS(find_recipe(dependency, root, uri));
-    }
-    else
-    {
-        // start from book the most towards the leaf
-        Book * book = recipe->book();
-        while(book != nullptr && dependency == nullptr)
-        {
-            // try to find the recipe
-            MSS(find_recipe(dependency, book, uri));
-
-            // and travel towards the root
-            book = book->parent();
-        }
+        // and travel towards the root
+        book = book->parent();
     }
 
-    MSS_END();
+    return nullptr;
 }
 
 } }

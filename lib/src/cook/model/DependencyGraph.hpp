@@ -13,12 +13,13 @@ public:
     using ResolvedDependencies = std::map<Recipe::Dependency, Recipe *>;
 
     explicit DependencyGraph(Recipe * root);
-    bool resolve();
+    bool resolve(bool &success);
 
     std::vector<Recipe *> topological_order();
 
 private:
-    bool resolve_dependency_(Recipe *& dependency, const Recipe * recipe, const Recipe::Dependency & uri);
+    Recipe * resolve_relative_dependency_(Book * book, const Uri & uri);
+    Recipe * resolve_absolute_dependency_(Book * book, const Uri & uri);
 
     gubg::network::DAG<Recipe> network_;
     Recipe * root_vertex_;
