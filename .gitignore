@@ -2,6 +2,9 @@
 *.obj
 *.obj.d
 *.a
+*.srctrldb
+*.srctrlbm
+*.srctrlprj
 makefile
 .gubg/
 .bcook/
@@ -13,3 +16,4 @@ build.ninja
 build
 recipes.chai.user
 compile_commands.json
+fontconfig/
