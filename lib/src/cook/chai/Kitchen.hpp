@@ -1,17 +1,17 @@
-#ifndef HEADER_cook_chai_Runner_hpp_ALREADY_INCLUDED
-#define HEADER_cook_chai_Runner_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_chai_Kitchen_hpp_ALREADY_INCLUDED
+#define HEADER_cook_chai_Kitchen_hpp_ALREADY_INCLUDED
 
-#include "cook/model/Book.hpp"
-#include "gubg/std/filesystem.hpp"
-#include <string>
-#include <stack>
+#include "cook/Kitchen.hpp"
 
 namespace cook { namespace chai {
 
-struct Runner
+struct Kitchen : public cook::Kitchen
 {
-    Runner();
-    ~Runner();
+    Kitchen();
+    virtual ~Kitchen();
+
+    bool add_variables(const std::list<Variable> & variables) override;
+    cook::Logger & logger() override;
 
     bool load(const std::list<std::string> & recipes);
 

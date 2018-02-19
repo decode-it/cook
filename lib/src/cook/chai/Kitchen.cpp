@@ -1,4 +1,4 @@
-#include "cook/chai/Runner.hpp"
+#include "cook/chai/Kitchen.hpp"
 #include "cook/chai/Book.hpp"
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/Logger.hpp"
@@ -8,7 +8,7 @@
 
 namespace cook { namespace chai {
 
-struct Runner::D
+struct Kitchen::D
 {
     using Parser = chaiscript::parser::ChaiScript_Parser<chaiscript::eval::Noop_Tracer, chaiscript::optimizer::Optimizer_Default>;
     using Engine = chaiscript::ChaiScript_Basic;
@@ -24,6 +24,16 @@ struct Runner::D
     std::stack<std::filesystem::path> scripts;
     Book root_book;
 
+    void initialize_engine_(Kitchen * kitchen)
+    {
+        auto & chai = engine;
+
+        chai.add(chaiscript::fun(&Kitchen::include_, kitchen), "include");
+        chai.add(book_module());
+        chai.add(recipe_module());
+        chai.add_global(chaiscript::var(root_book), "root");
+    }
+
     std::filesystem::path top_level_path() const
     {
         if (scripts.empty())
@@ -33,32 +43,33 @@ struct Runner::D
     }
 };
 
-Runner::Runner()
-{
-}
-
-Runner::~Runner() = default;
-
-void Runner::reset_engine_()
-{
-    d = std::make_unique<D>(&root_);
-
-    {
-        auto & chai = d->engine;
-
-        chai.add(chaiscript::fun(&Runner::include_, this), "include");
-        chai.add(book_module());
-        chai.add(recipe_module());
-        chai.add_global(chaiscript::var(d->root_book), "root");
-    }
-}
-
-
-bool Runner::load(const std::list<std::string> & recipes)
+bool Kitchen::add_variables(const std::list<Variable> & variables)
 {
     MSS_BEGIN(bool);
 
-    reset_engine_();
+    for(const auto & v : variables)
+        d->engine.add_global(chaiscript::var(v.second), v.first);
+
+    MSS_END();
+}
+
+cook::Logger & Kitchen::logger()
+{
+    return d->logger;
+}
+
+Kitchen::Kitchen()
+    : d(std::make_unique<D>(&root_))
+{
+    d->initialize_engine_(this);
+}
+
+Kitchen::~Kitchen() = default;
+
+
+bool Kitchen::load(const std::list<std::string> & recipes)
+{
+    MSS_BEGIN(bool);
 
     try
     {
@@ -75,7 +86,7 @@ bool Runner::load(const std::list<std::string> & recipes)
     MSS_END();
 }
 
-std::filesystem::path Runner::generate_file_path_(const std::string & file) const
+std::filesystem::path Kitchen::generate_file_path_(const std::string & file) const
 {
     // make the path to the file
     std::filesystem::path script_fn(file);
@@ -90,7 +101,7 @@ std::filesystem::path Runner::generate_file_path_(const std::string & file) cons
     return script_fn;
 }
 
-void Runner::include_(const std::string & file)
+void Kitchen::include_(const std::string & file)
 {
     const std::filesystem::path script_fn = generate_file_path_(file);
 

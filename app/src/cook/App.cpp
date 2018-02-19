@@ -1,5 +1,5 @@
 #include "cook/App.hpp"
-#include "cook/chai/Runner.hpp"
+#include "cook/chai/Kitchen.hpp"
 #include "gubg/mss.hpp"
 
 namespace cook {
@@ -18,7 +18,7 @@ bool App::process()
     MSS_BEGIN(bool);
 
     // process all files
-    cook::chai::Runner runner;
+    cook::chai::Kitchen runner;
     MSS(runner.load(options_.recipe_files));
 
     // resolve the root book
