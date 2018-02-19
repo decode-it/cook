@@ -17,5 +17,15 @@ bool Kitchen::register_toolchain(ToolChainPtr toolchain)
     MSS_END();
 }
 
+bool Kitchen::resolve_dependencies()
+{
+    MSS_BEGIN(bool);
+
+
+
+
+    MSS_END();
+}
+
 }
 

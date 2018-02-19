@@ -22,6 +22,8 @@ public:
     virtual bool add_variables(const std::list<Variable> & variables) = 0;
     virtual Logger & logger() = 0;
 
+    bool resolve_dependencies();
+
 private:
     std::map<std::string, ToolChainPtr> toolchains_;
     model::Book root_;
