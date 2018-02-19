@@ -6,8 +6,9 @@ namespace {
 template <typename T> T mss_result_to_T(cook::MessageType t)
 {
     MSS_BEGIN(T);
-
-    MSS(cook::Result() << cook::Message(t) );
+    cook::Result res;
+    res << cook::Message(t);
+    MSS(res);
     MSS_END();
 }
 
