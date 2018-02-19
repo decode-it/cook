@@ -10,13 +10,21 @@ enum ReturnCode
     Error = 1
 };
 
-int main(int argc, char ** argv)
+int main(int argc, const char ** argv)
 {
     MSS_BEGIN(ReturnCode);
 
+    // first parse the options
     app::Options options;
+    {
+        MSS(options.parse(argc, argv), std::cerr << options.help_message << std::endl);
 
-    MSS(options.parse(argc, argv), std::cerr << "Unable to parse the arguments" << std::endl);
+        if (options.print_help)
+        {
+            std::cout << options.help_message << std::endl;
+            MSS_RETURN_OK();
+        }
+    }
 
     App app;
     MSS(app.initialize(options), std::cerr << "Error initializing application" << std::endl);
