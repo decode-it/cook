@@ -59,25 +59,11 @@ namespace gubg { namespace mss {
     // translation from result to bool
     template <> inline bool is_ok(cook::Result c) { return c; }
 
-#if 0
-    namespace detail {
-
-        // translating an error of type Src to Result
-        template <typename Src> struct ErrorValue<cook::Result, Src>
-        {
-            static cook::Result error_value(Src src)
-            {
-                return cook::Result() << cook::Message(cook::MessageType::Error, [=](auto & os) { os << "Unknown error value: " << src; });
-            }
-        };
-
-        template <> struct ErrorValue<cook::Result, cook::Result>
-        {
-            static cook::Result error_value(cook::Result src) { return src; }
-        };
-
+    template <> inline cook::Result ok_value<cook::Result>()
+    {
+        return cook::Result() << cook::Message(cook::MessageType::Success);
     }
-#else
+
     inline void aggregate(cook::Result &dst, cook::Result src)
     {
         dst.splice(src);
@@ -85,18 +71,13 @@ namespace gubg { namespace mss {
     template <typename Src>
     void aggregate(cook::Result &dst, Src src)
     {
-        dst << cook::Message(cook::MessageType::Error, [=](auto & os) { os << "Unknown error value: " << src; });
+        if (!is_ok(src))
+            dst << cook::Message(cook::MessageType::Error, [=](auto & os) { os << "Unknown error value: " << src; });
     }
     template <typename Dst>
     void aggregate(Dst &dst, const cook::Result &src)
     {
         aggregate(dst, !!src);
-    }
-#endif
-
-    template <> inline cook::Result ok_value<cook::Result>()
-    {
-        return cook::Result() << cook::Message(cook::MessageType::Success);
     }
 
 } }
