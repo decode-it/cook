@@ -10,10 +10,11 @@ namespace  {
 std::pair<std::string, std::string> parse_key_value_pair(const std::string & str)
 {
     const std::size_t pos = str.find('=');
-    if (pos < str.size())
-        return std::make_pair(str.substr(0, pos), str.substr(pos));
+
+    if (pos < str.size()-1)
+        return std::make_pair(str.substr(0, pos), str.substr(pos+1));
     else
-        return std::make_pair(str, std::string());
+        return std::make_pair(str.substr(0, pos), std::string());
 }
 
 }
