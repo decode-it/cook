@@ -4,7 +4,7 @@ rule compile
 rule archive
     command = ar $aflags $out $in
 rule link
-    command = g++ -o $out $in $library_paths $system_libs $user_libs
+    command = g++ -o $out $in $library_paths $user_libs $system_libs
 
 cflags = 
 

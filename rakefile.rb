@@ -67,7 +67,7 @@ namespace :b0 do
 
     desc "bootstrap-level0: Build b0-cook.exe"
     task :build do
-        sh("ninja -f #{b0_ninja_fn} -v")
+        sh("ninja -f #{b0_ninja_fn} b0-cook.exe -v")
     end
 
     desc "bootstrap-level0: Clean"
