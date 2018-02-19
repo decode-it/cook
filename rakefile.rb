@@ -1,6 +1,3 @@
-gubg_dir = File.join(Dir.pwd, ".gubg")
-ENV["gubg"] = gubg_dir
-
 begin
     require_relative("gubg.build/shared.rb")
 rescue LoadError
@@ -81,6 +78,9 @@ namespace :b0 do
         sh "ninja -f #{b0_ninja_fn} -t compdb compile > compile_commands.json"
         sh "rc -J"
     end
+
+    desc "bootstrap-level0: Update rtags"
+    task :dia => [:update, :rtags, :build, :ut]
 end
 #Bootstrap level 1: uses output from bootstrap level 0
 namespace :b1 do
