@@ -2,6 +2,7 @@
 #define HEADER_cook_chai_Runner_hpp_ALREADY_INCLUDED
 
 #include "cook/model/Book.hpp"
+#include "gubg/std/filesystem.hpp"
 #include <string>
 #include <stack>
 
@@ -12,13 +13,15 @@ struct Runner
     Runner();
     ~Runner();
 
-    void load(const std::list<std::string> & recipes);
+    bool load(const std::list<std::string> & recipes);
     void report_error(const std::string & message);
 
     const model::Book & root() const { return root_; }
 
 private:
     void include_(const std::string & file);
+    void reset_engine_();
+    std::filesystem::path generate_file_path_(const std::string & file) const;
 
     struct D;
     model::Book root_;
