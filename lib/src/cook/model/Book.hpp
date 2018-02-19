@@ -24,6 +24,27 @@ public:
     bool is_root() const;
     Book * parent() const;
 
+    template <typename Functor>
+    bool each_book(Functor && f) const
+    {
+        for(const auto & p : subbooks_)
+            if (!f(p.second.get()))
+                return false;
+
+        return true;
+    }
+
+    template <typename Functor>
+    bool each_recipe(Functor && f) const
+    {
+        for(const auto & p : recipes_)
+            if (!f(p.second.get()))
+                return false;
+
+        return true;
+    }
+
+
 private:
     Book(const Book &) = delete;
     Book & operator=(const Book &) = delete;
