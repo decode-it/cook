@@ -1,6 +1,3 @@
-gubg_dir = File.join(Dir.pwd, ".gubg")
-ENV["gubg"] = gubg_dir
-
 begin
     require_relative("gubg.build/shared.rb")
 rescue LoadError
