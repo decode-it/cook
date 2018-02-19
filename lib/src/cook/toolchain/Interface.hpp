@@ -19,6 +19,8 @@ struct Step
 class Interface
 {
 public:
+    virtual std::string name() const = 0;
+
     virtual bool can_process(model::Recipe * recipe) const = 0;
     virtual std::list<Step> generate_processors(model::Recipe * recipe) = 0;
 };
