@@ -195,3 +195,71 @@ TEST_CASE("mss and error code test", "[ut][mss][result]")
         REQUIRE(r == conversion);
     }
 }
+
+namespace {
+
+struct AggregationScenario
+{
+    std::vector<cook::MessageType> types;
+    std::optional<unsigned int> first_error_position;
+};
+
+cook::Result create(cook::MessageType type)
+{
+    cook::Result res;
+    res << cook::Message(type);
+    return res;
+}
+
+cook::Result test(const AggregationScenario & scn)
+{
+    MSS_BEGIN(cook::Result);
+
+    for(unsigned int i = 0; i < scn.types.size(); ++i)
+        MSS(create(scn.types[i]), REQUIRE(scn.first_error_position); REQUIRE(*scn.first_error_position == i));
+
+    MSS_END();
+}
+
+}
+
+TEST_CASE("aggregation test", "[ut][mss][result]")
+{
+    AggregationScenario scn;
+
+    SECTION("empty") {}
+
+    SECTION("only positive message")
+    {
+        SECTION("single success")   { scn.types = {cook::MessageType::Success }; }
+        SECTION("single warning")   { scn.types = {cook::MessageType::Warning}; }
+        SECTION("single info")      { scn.types = {cook::MessageType::Info }; }
+        SECTION("combination")      { scn.types = {cook::MessageType::Info, cook::MessageType::Info, cook::MessageType::Warning, cook::MessageType::Success, cook::MessageType::Info }; }
+    }
+
+    SECTION("failure")
+    {
+        SECTION("at first")
+        {
+            scn.first_error_position = 0;
+            SECTION("error")            { scn.types = {cook::MessageType::Error}; }
+            SECTION("internal_error")   { scn.types = {cook::MessageType::InternalError}; }
+        }
+    }
+
+    cook::Result res = test(scn);
+    {
+        const bool is_valid = res;
+        const bool expected_valid = !scn.first_error_position;
+        REQUIRE(is_valid == expected_valid);
+    }
+
+    // count all the messages
+    unsigned int cnt = 0;
+    res.each_message([&cnt](auto t, const auto & rep) {++cnt; });
+
+    if (res)
+        REQUIRE(cnt == scn.types.size());
+    else
+        REQUIRE(cnt == (*scn.first_error_position + 1));
+}
