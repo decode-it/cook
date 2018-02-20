@@ -1,0 +1,15 @@
+[todo]{
+    [cook]{
+        [remove dependency on $gubg]
+        [create decent scenario test support]
+        [internal build support]{
+            [process api]{
+                [capture output to have uninterleaved output when building multi-threaded]
+                [first implementation based on std::system]
+            }
+        }
+        [cli]{
+            [add -j option to control threading]
+        }
+    }
+}

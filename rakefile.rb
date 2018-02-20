@@ -1,10 +1,11 @@
 begin
-    require_relative("gubg.build/shared.rb")
+    require_relative("gubg.build/bootstrap.rb")
 rescue LoadError
     puts("This seems to be a fresh clone: I will update all required submodules for you.")
     sh "git submodule update --init"
     retry
 end
+require("gubg/shared")
 
 task :default do
     sh "rake -T"

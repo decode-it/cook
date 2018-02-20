@@ -52,14 +52,6 @@ build .b0/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile gubg.io/src/gubg/pa
 #){
 build .b0/lib/src/cook/Kitchen.cpp.obj: compile lib/src/cook/Kitchen.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths
-build .b0/lib/src/cook/agents/DependentPropagation.cpp.obj: compile lib/src/cook/agents/DependentPropagation.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths
-build .b0/lib/src/cook/agents/IncludePath.cpp.obj: compile lib/src/cook/agents/IncludePath.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths
-build .b0/lib/src/cook/agents/LibraryPath.cpp.obj: compile lib/src/cook/agents/LibraryPath.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths
-build .b0/lib/src/cook/agents/LinkOrder.cpp.obj: compile lib/src/cook/agents/LinkOrder.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths
 build .b0/lib/src/cook/algo/DependencyResolver.cpp.obj: compile lib/src/cook/algo/DependencyResolver.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths
 build .b0/lib/src/cook/chai/Book.cpp.obj: compile lib/src/cook/chai/Book.cpp
@@ -69,6 +61,14 @@ build .b0/lib/src/cook/chai/Kitchen.cpp.obj: compile lib/src/cook/chai/Kitchen.c
 build .b0/lib/src/cook/chai/Logger.cpp.obj: compile lib/src/cook/chai/Logger.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths
 build .b0/lib/src/cook/chai/Recipe.cpp.obj: compile lib/src/cook/chai/Recipe.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths
+build .b0/lib/src/cook/chef/DependentPropagation.cpp.obj: compile lib/src/cook/chef/DependentPropagation.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths
+build .b0/lib/src/cook/chef/IncludePath.cpp.obj: compile lib/src/cook/chef/IncludePath.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths
+build .b0/lib/src/cook/chef/LibraryPath.cpp.obj: compile lib/src/cook/chef/LibraryPath.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths
+build .b0/lib/src/cook/chef/LinkOrder.cpp.obj: compile lib/src/cook/chef/LinkOrder.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths
 build .b0/lib/src/cook/model/Book.cpp.obj: compile lib/src/cook/model/Book.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths
@@ -193,9 +193,9 @@ build .b0/lib/test/src/cook/Result_tests.cpp.obj: compile lib/test/src/cook/Resu
     include_paths = $cook_lib_include_paths $catch_include_paths
 build .b0/lib/test/src/cook/algo/DependencyResolver_tests.cpp.obj: compile lib/test/src/cook/algo/DependencyResolver_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths
-build .b0/lib/test/src/cook/model/Uri_tests.cpp.obj: compile lib/test/src/cook/model/Uri_tests.cpp
+build .b0/lib/test/src/cook/ingredient/Collection_tests.cpp.obj: compile lib/test/src/cook/ingredient/Collection_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths
-build .b0/lib/test/src/cook/property/Collection_tests.cpp.obj: compile lib/test/src/cook/property/Collection_tests.cpp
+build .b0/lib/test/src/cook/model/Uri_tests.cpp.obj: compile lib/test/src/cook/model/Uri_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths
 build .b0/lib/test/src/cook/rules/CXX_tests.cpp.obj: compile lib/test/src/cook/rules/CXX_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths
@@ -248,15 +248,15 @@ build libb0-gubg.a: archive $
 #){
 build libb0-cook.a: archive $
     .b0/lib/src/cook/Kitchen.cpp.obj $
-    .b0/lib/src/cook/agents/DependentPropagation.cpp.obj $
-    .b0/lib/src/cook/agents/IncludePath.cpp.obj $
-    .b0/lib/src/cook/agents/LibraryPath.cpp.obj $
-    .b0/lib/src/cook/agents/LinkOrder.cpp.obj $
     .b0/lib/src/cook/algo/DependencyResolver.cpp.obj $
     .b0/lib/src/cook/chai/Book.cpp.obj $
     .b0/lib/src/cook/chai/Kitchen.cpp.obj $
     .b0/lib/src/cook/chai/Logger.cpp.obj $
     .b0/lib/src/cook/chai/Recipe.cpp.obj $
+    .b0/lib/src/cook/chef/DependentPropagation.cpp.obj $
+    .b0/lib/src/cook/chef/IncludePath.cpp.obj $
+    .b0/lib/src/cook/chef/LibraryPath.cpp.obj $
+    .b0/lib/src/cook/chef/LinkOrder.cpp.obj $
     .b0/lib/src/cook/model/Book.cpp.obj $
     .b0/lib/src/cook/model/Recipe.cpp.obj $
     .b0/lib/src/cook/model/Snapshot.cpp.obj $
@@ -278,8 +278,8 @@ build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/lib/test/src/cook/LanguageTypePair_tests.cpp.obj $
     .b0/lib/test/src/cook/Result_tests.cpp.obj $
     .b0/lib/test/src/cook/algo/DependencyResolver_tests.cpp.obj $
+    .b0/lib/test/src/cook/ingredient/Collection_tests.cpp.obj $
     .b0/lib/test/src/cook/model/Uri_tests.cpp.obj $
-    .b0/lib/test/src/cook/property/Collection_tests.cpp.obj $
     .b0/lib/test/src/cook/rules/CXX_tests.cpp.obj $
     .b0/lib/test/src/cook/rules/Resolve_tests.cpp.obj $
     .b0/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj $
