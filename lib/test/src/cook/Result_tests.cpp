@@ -3,70 +3,70 @@
 
 namespace {
 
-template <typename T> T mss_result_to_T(cook::MessageType t)
-{
-    MSS_BEGIN(T);
-    cook::Result res;
-    res << cook::Message(t);
-    MSS(res);
-    MSS_END();
-}
-
-template <typename T>
-cook::Result mss_T_to_result(T value)
-{
-    MSS_BEGIN(cook::Result);
-    MSS(value);
-    MSS_END();
-}
-
-enum ReturnCode
-{
-    OK = 0,
-    Error = 1,
-};
-
-template <typename T> void test_result_to_T()
-{
-    REQUIRE(mss_result_to_T<T>(cook::MessageType::Success) == gubg::mss::detail::Traits<T>::Ok());
-    REQUIRE(mss_result_to_T<T>(cook::MessageType::Warning) == gubg::mss::detail::Traits<T>::Ok());
-    REQUIRE(mss_result_to_T<T>(cook::MessageType::Error) == gubg::mss::detail::Traits<T>::Error());
-    REQUIRE(mss_result_to_T<T>(cook::MessageType::InternalError) == gubg::mss::detail::Traits<T>::Error());
-}
-
-struct Scenario
-{
-    std::list<cook::Message> messages;
-    bool succesful = true;
-    unsigned int expected_value = 1;
-    unsigned int count = 0;
-
-    const static unsigned int SUCCESS_MULTIPLIER = 2;
-    const static unsigned int WARNING_MULTIPLIER = 3;
-    const static unsigned int ERROR_MULTIPLIER = 5;
-
-
-    void add(cook::MessageType type, unsigned int & calculated_value)
+    template <typename T> T mss_result_to_T(cook::MessageType t)
     {
-        switch(type)
-        {
-            case cook::MessageType::Success:
-                expected_value *= SUCCESS_MULTIPLIER;
-                messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= SUCCESS_MULTIPLIER; } ));
-                break;
-
-            case cook::MessageType::Warning:
-                expected_value *= WARNING_MULTIPLIER;
-                messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= WARNING_MULTIPLIER; } ));
-                break;
-
-            case cook::MessageType::Error:
-                expected_value *= ERROR_MULTIPLIER;
-                messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= ERROR_MULTIPLIER; } ));
-                break;
-        }
+        MSS_BEGIN(T);
+        cook::Result res;
+        res << cook::Message(t);
+        MSS(res);
+        MSS_END();
     }
-};
+
+    template <typename T>
+    cook::Result mss_T_to_result(T value)
+    {
+        MSS_BEGIN(cook::Result);
+        MSS(value);
+        MSS_END();
+    }
+
+    enum ReturnCode
+    {
+        OK = 0,
+        Error = 1,
+    };
+
+    template <typename T> void test_result_to_T()
+    {
+        REQUIRE(mss_result_to_T<T>(cook::MessageType::Success) == gubg::mss::detail::Traits<T>::Ok());
+        REQUIRE(mss_result_to_T<T>(cook::MessageType::Warning) == gubg::mss::detail::Traits<T>::Ok());
+        REQUIRE(mss_result_to_T<T>(cook::MessageType::Error) == gubg::mss::detail::Traits<T>::Error());
+        REQUIRE(mss_result_to_T<T>(cook::MessageType::InternalError) == gubg::mss::detail::Traits<T>::Error());
+    }
+
+    struct Scenario
+    {
+        std::list<cook::Message> messages;
+        bool succesful = true;
+        unsigned int expected_value = 1;
+        unsigned int count = 0;
+
+        const static unsigned int SUCCESS_MULTIPLIER = 2;
+        const static unsigned int WARNING_MULTIPLIER = 3;
+        const static unsigned int ERROR_MULTIPLIER = 5;
+
+
+        void add(cook::MessageType type, unsigned int & calculated_value)
+        {
+            switch(type)
+            {
+                case cook::MessageType::Success:
+                    expected_value *= SUCCESS_MULTIPLIER;
+                    messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= SUCCESS_MULTIPLIER; } ));
+                    break;
+
+                case cook::MessageType::Warning:
+                    expected_value *= WARNING_MULTIPLIER;
+                    messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= WARNING_MULTIPLIER; } ));
+                    break;
+
+                case cook::MessageType::Error:
+                    expected_value *= ERROR_MULTIPLIER;
+                    messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= ERROR_MULTIPLIER; } ));
+                    break;
+            }
+        }
+    };
 
 }
 
@@ -154,11 +154,11 @@ TEST_CASE("Result functionality", "[ut][result]")
         {
             unsigned int counted = 0;
             res.each_message([&](cook::MessageType type, cook::Message::Reporter reporter)
-            {
-                ++counted;
-                REQUIRE(reporter);
-                reporter(std::cout);
-            });
+                    {
+                    ++counted;
+                    REQUIRE(reporter);
+                    reporter(std::cout);
+                    });
             REQUIRE(counted == scn.count);
         }
     }
