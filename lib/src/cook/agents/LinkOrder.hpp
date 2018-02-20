@@ -15,7 +15,7 @@ public:
     bool process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const override;
 
 private:
-    bool process_(const Context & context, model::Snapshot & snapshot, property::Collection<property::File> & libraries) const;
+    bool process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const;
 
     SelectionFunction selection_;
 };

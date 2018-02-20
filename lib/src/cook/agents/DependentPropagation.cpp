@@ -4,26 +4,26 @@ namespace cook { namespace agents {
 
 namespace  {
 
-template <typename PropertyExtractor>
-bool process_(PropertyExtractor && propertyExtractor, const DependentPropagation::SelectionFunction & selection, const Context & context, model::Snapshot & snapshot)
+template <typename IngredientExtractor>
+bool process_(IngredientExtractor && ingredient_extractor, const DependentPropagation::SelectionFunction & selection, const Context & context, model::Snapshot & snapshot)
 {
     MSS_BEGIN(bool);
 
-    auto & properties = propertyExtractor(snapshot);
-    auto merger = [&](const LanguageTypePair & key, const auto & property)
+    auto & properties = ingredient_extractor(snapshot);
+    auto merger = [&](const LanguageTypePair & key, const auto & ingredient)
     {
         MSS_BEGIN(bool);
 
-        if (property.propagation() == Propagation::Public)
+        if (ingredient.propagation() == Propagation::Public)
             if (selection && selection(key))
-                MSS(properties.insert_or_merge(key, property));
+                MSS(properties.insert_or_merge(key, ingredient));
 
         MSS_END();
     };
 
     // merge all files
     for(model::Recipe * recipe : context.dependencies)
-        MSS(propertyExtractor(*recipe).each(merger));
+        MSS(ingredient_extractor(*recipe).each(merger));
 
     MSS_END();
 }
@@ -41,12 +41,12 @@ bool DependentPropagation::process(const Context & context, model::Snapshot & sn
     MSS_BEGIN(bool);
 
     {
-        auto file_extractor = [](model::Snapshot & snapshot) -> property::Properties<property::File> & { return snapshot.file_properties(); };
+        auto file_extractor = [](model::Snapshot & snapshot) -> ingredient::Ingredients<ingredient::File> & { return snapshot.files(); };
         MSS(process_(file_extractor, selection_, context, snapshot));
     }
 
     {
-        auto key_value_extractor = [](model::Snapshot & snapshot) -> property::Properties<property::KeyValue> & { return snapshot.key_value_properties(); };
+        auto key_value_extractor = [](model::Snapshot & snapshot) -> ingredient::Ingredients<ingredient::KeyValue> & { return snapshot.key_values(); };
         MSS(process_(key_value_extractor, selection_, context, snapshot));
     }
 

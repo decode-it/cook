@@ -13,7 +13,7 @@ Language CXX::language() const
     return Language::CXX;
 }
 
-bool CXX::accepts_file(const LanguageTypePair & key, const property::File & file) const
+bool CXX::accepts_file(const LanguageTypePair & key, const ingredient::File & file) const
 {
     MSS_BEGIN(bool);
 
@@ -33,7 +33,7 @@ bool CXX::accepts_file(const LanguageTypePair & key, const property::File & file
     MSS_END();
 }
 
-bool CXX::resolve_file(LanguageTypePair & key, property::File & file) const
+bool CXX::resolve_file(LanguageTypePair & key, ingredient::File & file) const
 {
     MSS_BEGIN(bool);
 
@@ -66,12 +66,12 @@ bool CXX::resolve_file(LanguageTypePair & key, property::File & file) const
     MSS_END();
 }
 
-bool CXX::add_file(model::Recipe & recipe, const LanguageTypePair & key, const property::File & file) const
+bool CXX::add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const
 {
     MSS_BEGIN(bool);
 
     MSS(key.language == language());
-    MSS(recipe.file_properties().insert_or_merge(key, file));
+    MSS(recipe.files().insert_or_merge(key, file));
 
     switch (key.type)
     {
@@ -93,14 +93,14 @@ bool CXX::add_file(model::Recipe & recipe, const LanguageTypePair & key, const p
     MSS_END();
 }
 
-bool CXX::add_additional_path_(model::Recipe & recipe, const property::File & file, Type type, Propagation propagation) const
+bool CXX::add_additional_path_(model::Recipe & recipe, const ingredient::File & file, Type type, Propagation propagation) const
 {
     MSS_BEGIN(bool);
 
-    auto p = recipe.file_properties().insert(LanguageTypePair(language(), type), property::File(file.dir(), std::filesystem::path()));
+    auto p = recipe.files().insert(LanguageTypePair(language(), type), ingredient::File(file.dir(), std::filesystem::path()));
 
     {
-        property::File & include_path = *p.first;
+        ingredient::File & include_path = *p.first;
 
         include_path.set_owner(&recipe);
         include_path.set_overwrite(Overwrite::Always);

@@ -17,7 +17,7 @@ bool LibraryPath::process(const Context & context, model::Snapshot & snapshot, m
 
     // find all libraries
     {
-        auto find_paths = [&](const LanguageTypePair & key, const property::File & file)
+        auto find_paths = [&](const LanguageTypePair & key, const ingredient::File & file)
         {
             if (key.type == Type::Library)
                 if (selection_ && selection_(key.language))
@@ -25,7 +25,7 @@ bool LibraryPath::process(const Context & context, model::Snapshot & snapshot, m
 
             return true;
         };
-        MSS(snapshot.file_properties().each(find_paths));
+        MSS(snapshot.files().each(find_paths));
     }
 
     for(const auto & lp : library_paths)
@@ -34,8 +34,8 @@ bool LibraryPath::process(const Context & context, model::Snapshot & snapshot, m
 
         for(const LibraryPath & p : lp.second)
         {
-            auto it_p = snapshot.file_properties().insert(key, property::File(p.second, {}));
-            property::File & library_path = *it_p.first;
+            auto it_p = snapshot.files().insert(key, ingredient::File(p.second, {}));
+            ingredient::File & library_path = *it_p.first;
 
             // set the owner
             if (it_p.second)

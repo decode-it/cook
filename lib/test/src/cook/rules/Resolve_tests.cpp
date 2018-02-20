@@ -144,7 +144,7 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
 
         std::set<std::string> files;
 
-        globber.filter_and_adaptor = [&](cook::LanguageTypePair & key, cook::property::File & f)
+        globber.filter_and_adaptor = [&](cook::LanguageTypePair & key, cook::ingredient::File & f)
         {
             REQUIRE(check_if_equal(scn.language, key.language, cook::Language::Undefined));
             REQUIRE(check_if_equal(scn.type, key.type, cook::Type::Undefined));

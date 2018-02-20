@@ -35,17 +35,17 @@ void Recipe::depends_on(const std::string & dependency)
 
 void Recipe::library(const std::string & library)
 {
-    recipe_->file_properties().insert(LanguageTypePair(Language::CXX, Type::Library), property::File("", library));
+    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::Library), ingredient::File("", library));
 }
 
 void Recipe::library_path(const std::string & path)
 {
-    recipe_->file_properties().insert(LanguageTypePair(Language::CXX, Type::LibraryPath), property::File(path, ""));
+    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::LibraryPath), ingredient::File(path, ""));
 }
 
 void Recipe::include_path(const std::string & path)
 {
-    recipe_->file_properties().insert(LanguageTypePair(Language::CXX, Type::IncludePath), property::File(path, ""));
+    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::IncludePath), ingredient::File(path, ""));
 }
 
 gubg::chai::ModulePtr recipe_module()

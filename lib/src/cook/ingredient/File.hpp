@@ -1,11 +1,11 @@
-#ifndef HEADER_cook_property_File_hpp_ALREADY_INCLUDED
-#define HEADER_cook_property_File_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_ingredient_File_hpp_ALREADY_INCLUDED
+#define HEADER_cook_ingredient_File_hpp_ALREADY_INCLUDED
 
-#include "cook/property/Base.hpp"
+#include "cook/ingredient/Base.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <ostream>
 
-namespace cook { namespace property {
+namespace cook { namespace ingredient {
 
 class File : public Base<std::filesystem::path>
 {

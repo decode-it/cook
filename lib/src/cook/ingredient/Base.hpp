@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_property_Base_hpp_ALREADY_INCLUDED
-#define HEADER_cook_property_Base_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_ingredient_Base_hpp_ALREADY_INCLUDED
+#define HEADER_cook_ingredient_Base_hpp_ALREADY_INCLUDED
 
 #include "cook/Propagation.hpp"
 #include "cook/Overwrite.hpp"
@@ -12,7 +12,7 @@ class Recipe;
 
 }
 
-namespace property {
+namespace ingredient {
 
 
 template <typename KeyType>
@@ -45,8 +45,8 @@ protected:
                 && owner_ == rhs.owner_;
     }
 
-    template <typename Property>
-    static bool merge_(Property & lhs, const Property & rhs)
+    template <typename Ingredient>
+    static bool merge_(Ingredient & lhs, const Ingredient & rhs)
     {
         MSS_BEGIN(bool);
         MSS(lhs.key() == rhs.key());

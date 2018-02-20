@@ -3,7 +3,7 @@
 
 #include "cook/rules/RuleSet.hpp"
 #include "cook/model/GlobInfo.hpp"
-#include "cook/property/File.hpp"
+#include "cook/ingredient/File.hpp"
 
 namespace cook { namespace rules {
 
@@ -16,7 +16,7 @@ public:
     }
 
     bool operator()(model::Recipe & recipe, const model::GlobInfo & globber) const;
-    bool operator()(model::Recipe & recipe, LanguageTypePair & key, property::File & file) const;
+    bool operator()(model::Recipe & recipe, LanguageTypePair & key, ingredient::File & file) const;
 
 private:
     const RuleSet * rule_set_;

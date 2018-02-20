@@ -3,7 +3,7 @@
 
 #include "cook/rules/Interface.hpp"
 #include "cook/LanguageTypePair.hpp"
-#include "cook/property/File.hpp"
+#include "cook/ingredient/File.hpp"
 #include <set>
 
 namespace cook { namespace rules {
@@ -12,15 +12,15 @@ class CXX : public Interface
 {
 public:
     Language language() const override;
-    bool accepts_file(const LanguageTypePair & key, const property::File & file) const override;
-    bool resolve_file(LanguageTypePair &key, property::File &file) const override;
-    bool add_file(model::Recipe & recipe, const LanguageTypePair & key, const property::File & file) const override;
+    bool accepts_file(const LanguageTypePair & key, const ingredient::File & file) const override;
+    bool resolve_file(LanguageTypePair &key, ingredient::File &file) const override;
+    bool add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const override;
 
     static bool type_from_extension(Type &dst, const std::string & extension, Type src);
     static bool type_from_extension(const std::string & extension) {Type type = Type::Undefined; return type_from_extension(type, extension, type);}
 
 private:
-    bool add_additional_path_(model::Recipe & recipe, const property::File & file, Type type, Propagation propagation) const;
+    bool add_additional_path_(model::Recipe & recipe, const ingredient::File & file, Type type, Propagation propagation) const;
 
     static std::set<std::string> source_extensions_;
     static std::set<std::string> header_extensions_;

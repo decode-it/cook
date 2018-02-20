@@ -144,7 +144,7 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
             scn.num_added_files = 2;
 
             scn.additional_check = [](const model::Recipe & recipe) {
-                auto ptr = recipe.file_properties().find(LanguageTypePair(Language::CXX, Type::IncludePath), "./");
+                auto ptr = recipe.files().find(LanguageTypePair(Language::CXX, Type::IncludePath), "./");
 
                 REQUIRE(ptr);
                 REQUIRE(ptr->propagation() == Propagation::Public);
@@ -161,7 +161,7 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
             scn.num_added_files = 2;
 
             scn.additional_check = [](const model::Recipe & recipe) {
-                auto ptr = recipe.file_properties().find(LanguageTypePair(Language::CXX, Type::LibraryPath), "./");
+                auto ptr = recipe.files().find(LanguageTypePair(Language::CXX, Type::LibraryPath), "./");
 
                 REQUIRE(ptr);
                 REQUIRE(ptr->propagation() == Propagation::Private);
@@ -191,7 +191,7 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
     {
         // check the accept function
         LanguageTypePair key = scn.key;
-        property::File file("./", scn.rel);
+        ingredient::File file("./", scn.rel);
 
         bool does_accept = cxx.accepts_file(key, file);
         REQUIRE(does_accept == scn.accepts);
@@ -211,7 +211,7 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
 
             {
                 unsigned int count = 0;
-                REQUIRE(recipe.file_properties().each([&](const auto & key, const auto & file){
+                REQUIRE(recipe.files().each([&](const auto & key, const auto & file){
                             ++count; return true;
                             }));
 

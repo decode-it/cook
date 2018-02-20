@@ -15,7 +15,7 @@ bool IncludePath::process(const Context & context, model::Snapshot & snapshot, m
 
     // find all include paths
     {
-        auto find_paths = [&](const LanguageTypePair & key, const property::File & file)
+        auto find_paths = [&](const LanguageTypePair & key, const ingredient::File & file)
         {
             if (key.type == Type::Header)
                 if (selection_ && selection_(key.language))
@@ -23,7 +23,7 @@ bool IncludePath::process(const Context & context, model::Snapshot & snapshot, m
 
             return true;
         };
-        MSS(snapshot.file_properties().each(find_paths));
+        MSS(snapshot.files().each(find_paths));
     }
 
     for(const auto & p : include_paths)
@@ -32,8 +32,8 @@ bool IncludePath::process(const Context & context, model::Snapshot & snapshot, m
 
         for(const auto & dir : p.second)
         {
-            auto it_p = snapshot.file_properties().insert(key, property::File(dir, {}));
-            property::File & include_path = *it_p.first;
+            auto it_p = snapshot.files().insert(key, ingredient::File(dir, {}));
+            ingredient::File & include_path = *it_p.first;
 
             // set the owner
             if (it_p.second)

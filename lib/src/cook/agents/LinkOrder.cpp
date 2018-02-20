@@ -12,7 +12,7 @@ bool LinkOrder::process(const Context & context, model::Snapshot & snapshot, mod
 {
     MSS_BEGIN(bool);
 
-    for ( auto & p : snapshot.file_properties())
+    for ( auto & p : snapshot.files())
         if (p.first.type == Type::Library)
             if (selection_ && selection_(p.first.language))
                 MSS(process_(context, snapshot, p.second));
@@ -20,12 +20,12 @@ bool LinkOrder::process(const Context & context, model::Snapshot & snapshot, mod
     MSS_END();
 }
 
-bool LinkOrder::process_(const Context & context, model::Snapshot & snapshot, property::Collection<property::File> & libraries) const
+bool LinkOrder::process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const
 {
     MSS_BEGIN(bool);
 
-    std::list<property::File> non_owned_libraries;
-    std::map<model::Recipe *, std::list<property::File>> owned_libraries;
+    std::list<ingredient::File> non_owned_libraries;
+    std::map<model::Recipe *, std::list<ingredient::File>> owned_libraries;
 
     // store all the libraries, either as non-owned or as owned
     for(const auto & file : libraries)

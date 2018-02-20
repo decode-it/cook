@@ -11,18 +11,18 @@ class DefaultSink : public Interface
     {
         return Language::Undefined;
     }
-    bool accepts_file(const LanguageTypePair & key, const property::File & file) const override
+    bool accepts_file(const LanguageTypePair & key, const ingredient::File & file) const override
     {
         return true;
     }
-    bool resolve_file(LanguageTypePair & key, property::File & file) const override
+    bool resolve_file(LanguageTypePair & key, ingredient::File & file) const override
     {
         return true;
     }
-    bool add_file(model::Recipe & recipe, const LanguageTypePair & key, const property::File & file) const
+    bool add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const
     {
         MSS_BEGIN(bool);
-        MSS(recipe.file_properties().insert_or_merge(key, file));
+        MSS(recipe.files().insert_or_merge(key, file));
         MSS_END();
     }
 };

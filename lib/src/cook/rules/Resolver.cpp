@@ -29,7 +29,7 @@ void extract_dir(
 
 }
 
-bool Resolver::operator()(model::Recipe & recipe, LanguageTypePair & key, property::File & file) const
+bool Resolver::operator()(model::Recipe & recipe, LanguageTypePair & key, ingredient::File & file) const
 {
     MSS_BEGIN(bool);
 
@@ -63,7 +63,7 @@ bool Resolver::operator()(model::Recipe & recipe, const model::GlobInfo & globbe
         extract_dir(gubg::make_range(fn), gubg::make_range(dir), f_dir, f_rel);
 
         // resolve the file if possible
-        property::File file(f_dir, f_rel);
+        ingredient::File file(f_dir, f_rel);
         LanguageTypePair key(globber.language, globber.type);
 
         auto accepts = [&](const Interface & interface) { return interface.accepts_file(key, file); };

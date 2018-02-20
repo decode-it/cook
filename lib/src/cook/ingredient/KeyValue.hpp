@@ -1,11 +1,11 @@
-#ifndef HEADER_cook_property_KeyValue_hpp_ALREADY_INCLUDED
-#define HEADER_cook_property_KeyValue_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_ingredient_KeyValue_hpp_ALREADY_INCLUDED
+#define HEADER_cook_ingredient_KeyValue_hpp_ALREADY_INCLUDED
 
-#include "cook/property/Base.hpp"
+#include "cook/ingredient/Base.hpp"
 #include <string>
 #include <optional>
 
-namespace cook { namespace property {
+namespace cook { namespace ingredient {
 
 class KeyValue : public Base<std::string>
 {

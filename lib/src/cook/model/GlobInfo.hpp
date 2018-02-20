@@ -1,7 +1,7 @@
 #ifndef HEADER_cook_model_GlobInfo_hpp_ALREADY_INCLUDED
 #define HEADER_cook_model_GlobInfo_hpp_ALREADY_INCLUDED
 
-#include "cook/property/File.hpp"
+#include "cook/ingredient/File.hpp"
 #include "cook/LanguageTypePair.hpp"
 #include "cook/Propagation.hpp"
 #include "cook/Overwrite.hpp"
@@ -26,7 +26,7 @@ struct GlobInfo
 
     std::optional<Propagation> propagation;
     std::optional<Overwrite> overwrite;
-    std::function<bool (LanguageTypePair &, property::File &)> filter_and_adaptor;
+    std::function<bool (LanguageTypePair &, ingredient::File &)> filter_and_adaptor;
 };
 
 } }

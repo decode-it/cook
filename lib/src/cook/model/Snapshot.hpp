@@ -1,9 +1,9 @@
 #ifndef HEADER_cook_model_Snapshot_hpp_ALREADY_INCLUDED
 #define HEADER_cook_model_Snapshot_hpp_ALREADY_INCLUDED
 
-#include "cook/property/Properties.hpp"
-#include "cook/property/File.hpp"
-#include "cook/property/KeyValue.hpp"
+#include "cook/ingredient/Properties.hpp"
+#include "cook/ingredient/File.hpp"
+#include "cook/ingredient/KeyValue.hpp"
 #include "cook/model/Uri.hpp"
 
 namespace cook { namespace model {
@@ -11,14 +11,14 @@ namespace cook { namespace model {
 class Snapshot
 {
 public:
-    using FileProperties = property::Properties<property::File>;
-    using KeyValueProperties = property::Properties<property::KeyValue>;
+    using Files = ingredient::Ingredients<ingredient::File>;
+    using KeyValues = ingredient::Ingredients<ingredient::KeyValue>;
     Snapshot(const Uri & uri);
 
-    const FileProperties & file_properties() const          { return file_properties_; }
-    const KeyValueProperties & key_value_properties() const { return key_value_properties_; }
-    FileProperties & file_properties()                      { return file_properties_; }
-    KeyValueProperties & key_value_properties()             { return key_value_properties_; }
+    const Files & files() const          { return files_; }
+    const KeyValues & key_values() const { return key_values_; }
+    Files & files()                      { return files_; }
+    KeyValues & key_values()             { return key_values_; }
 
     const Uri & uri() const;
     bool set_uri(const Uri & uri);
@@ -26,8 +26,8 @@ public:
     void set_working_directory(const std::filesystem::path & wd);
 
 private:
-    FileProperties file_properties_;
-    KeyValueProperties key_value_properties_;
+    Files files_;
+    KeyValues key_values_;
     Uri uri_;
     std::filesystem::path wd_;
 };
