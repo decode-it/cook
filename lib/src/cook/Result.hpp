@@ -9,7 +9,7 @@ namespace cook {
     struct Result
     {
         Result()
-        : type_(MessageType::Undefined)
+        : type_(MessageType::Success)
         {
         }
 
@@ -30,7 +30,22 @@ namespace cook {
             messages_.push_back(message);
             return *this;
         }
-        Result & splice(Result & result)
+
+        Result & operator<<(Message && message)
+        {
+            type_ |= message.type;
+            messages_.push_back(std::move(message));
+            return *this;
+        }
+
+        Result & merge(const Result & rhs)
+        {
+            type_ |= rhs.type_;
+            messages_.insert(messages_.end(), rhs.messages_.begin(), rhs.messages_.end());
+            return *this;
+        }
+
+        Result & merge(Result && result)
         {
             type_ |= result.type_;
             messages_.splice(messages_.end(), result.messages_);
@@ -61,12 +76,16 @@ namespace gubg { namespace mss {
 
     template <> inline cook::Result ok_value<cook::Result>()
     {
-        return cook::Result() << cook::Message(cook::MessageType::Success);
+        return cook::Result();
     }
 
-    inline void aggregate(cook::Result &dst, cook::Result src)
+    inline void aggregate(cook::Result &dst, const cook::Result & src)
     {
-        dst.splice(src);
+        dst.merge(src);
+    }
+    inline void aggregate(cook::Result &dst, cook::Result && src)
+    {
+        dst.merge(src);
     }
     template <typename Src>
     void aggregate(cook::Result &dst, Src src)
