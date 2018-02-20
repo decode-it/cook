@@ -3,6 +3,7 @@ begin
 rescue LoadError
     puts("This seems to be a fresh clone: I will update all required submodules for you.")
     sh "git submodule update --init"
+    sh "rake uth prepare"
     retry
 end
 require("gubg/shared")
