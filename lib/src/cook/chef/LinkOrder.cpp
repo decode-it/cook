@@ -1,6 +1,6 @@
-#include "cook/agents/LinkOrder.hpp"
+#include "cook/chef/LinkOrder.hpp"
 
-namespace cook { namespace agents {
+namespace cook { namespace chef {
 
 LinkOrder::LinkOrder(const SelectionFunction & selection_function)
     : selection_(selection_function)

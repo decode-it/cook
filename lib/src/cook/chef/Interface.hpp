@@ -1,9 +1,9 @@
-#ifndef HEADER_cook_agents_Interface_hpp_ALREADY_DEFINED
-#define HEADER_cook_agents_Interface_hpp_ALREADY_DEFINED
+#ifndef HEADER_cook_chef_Interface_hpp_ALREADY_DEFINED
+#define HEADER_cook_chef_Interface_hpp_ALREADY_DEFINED
 
-#include "cook/agents/Context.hpp"
+#include "cook/chef/Context.hpp"
 
-namespace cook { namespace agents {
+namespace cook { namespace chef {
 
 class Interface
 {

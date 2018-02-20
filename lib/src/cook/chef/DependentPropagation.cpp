@@ -1,6 +1,6 @@
-#include "cook/agents/DependentPropagation.hpp"
+#include "cook/chef/DependentPropagation.hpp"
 
-namespace cook { namespace agents {
+namespace cook { namespace chef {
 
 namespace  {
 

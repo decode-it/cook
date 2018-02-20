@@ -1,6 +1,6 @@
-#include "cook/agents/IncludePath.hpp"
+#include "cook/chef/IncludePath.hpp"
 
-namespace cook { namespace agents {
+namespace cook { namespace chef {
 
 IncludePath::IncludePath(const SelectionFunction selection_functor)
     : selection_(selection_functor)

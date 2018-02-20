@@ -1,6 +1,6 @@
-#include "cook/agents/LibraryPath.hpp"
+#include "cook/chef/LibraryPath.hpp"
 
-namespace cook { namespace agents {
+namespace cook { namespace chef {
 
 LibraryPath::LibraryPath(const SelectionFunctor & selection_functor)
     : selection_(selection_functor)

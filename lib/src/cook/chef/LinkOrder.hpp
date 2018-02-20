@@ -1,9 +1,9 @@
-#ifndef HEADER_cook_agents_LinkOrder_hpp_ALREADY_INCLUDED
-#define HEADER_cook_agents_LinkOrder_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_chef_LinkOrder_hpp_ALREADY_INCLUDED
+#define HEADER_cook_chef_LinkOrder_hpp_ALREADY_INCLUDED
 
-#include "cook/agents/Interface.hpp"
+#include "cook/chef/Interface.hpp"
 
-namespace cook { namespace agents {
+namespace cook { namespace chef {
 
 class LinkOrder : public Interface
 {

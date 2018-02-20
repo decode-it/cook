@@ -1,10 +1,10 @@
-#ifndef HEADER_cook_agents_DependentPropagation_hpp_ALREADY_INCLUDED
-#define HEADER_cook_agents_DependentPropagation_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_chef_DependentPropagation_hpp_ALREADY_INCLUDED
+#define HEADER_cook_chef_DependentPropagation_hpp_ALREADY_INCLUDED
 
-#include "cook/agents/Interface.hpp"
+#include "cook/chef/Interface.hpp"
 #include <set>
 
-namespace cook { namespace agents {
+namespace cook { namespace chef {
 
 class DependentPropagation : public Interface
 {

@@ -1,13 +1,13 @@
 #ifndef HEADER_cook_toolchain_Interface_hpp_ALREADY_INCLUDED
 #define HEADER_cook_toolchain_Interface_hpp_ALREADY_INCLUDED
 
-#include "cook/agents/Interface.hpp"
+#include "cook/chef/Interface.hpp"
 #include <memory>
 
 namespace cook { namespace toolchain {
 
 
-using AgentPtr = std::shared_ptr<agents::Interface>;
+using AgentPtr = std::shared_ptr<chef::Interface>;
 
 struct Step
 {
