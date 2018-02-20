@@ -17,6 +17,9 @@
   * The directory specified with `-o` is used as default directory.
   * The phony directory `-` will put the output on `stdout`.
   * If no generator is specified, `build` is used.
+* `-d <visualizer>[=filename]`: Visualize the dependencies:
+  * Visualizers
+    * `dot`: Generates a graphviz file, by default this is the output_directory/recipes.dot
 * `-c`: Clean all data for the specified generators.
 * `-D <key[=value]>`: Define global chai-script variable to influence the process.
   * `config`=`debug|release`
