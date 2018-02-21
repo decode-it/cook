@@ -21,9 +21,6 @@ public:
         std::filesystem::path recipe() const;
         std::filesystem::path output() const;
         std::filesystem::path temporary() const;
-
-        bool operator==(const Dirs & rhs) const;
-
     private:
         std::filesystem::path recipe_;
         std::filesystem::path output_;
@@ -32,13 +29,9 @@ public:
 
 
     virtual bool set_variables(const std::list<Variable> & variables) = 0;
-    bool operator==(const Environment & rhs) const;
 
     Dirs dirs;
     std::string toolchain;
-
-private:
-    virtual bool is_equal_(const Environment * env) const = 0;
 };
 
 } }

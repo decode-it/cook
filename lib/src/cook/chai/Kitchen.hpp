@@ -17,7 +17,7 @@ struct Kitchen : public cook::Kitchen
     const model::Book & root() const { return root_; }
 
 private:
-    std::shared_ptr<model::Environment> create_environment(std::shared_ptr<model::Environment> src) const override;
+    std::shared_ptr<model::Environment> create_environment() const override;
 
     void include_(const std::string & file);
     void reset_engine_();

@@ -22,15 +22,11 @@ public:
 
     bool register_toolchain(ToolChainPtr toolchain);
 
-    model::Context & default_context();
-    const model::Context & default_context() const;
+    model::Context & context();
+    const model::Context & context() const;
 
-    bool has_context(const std::string & name) const;
-    model::Context & context(const std::string & name);
-    const model::Context & context(const std::string & name) const;
-
-    model::Book & root_book()               { return default_context().root; }
-    const model::Book & root_book() const   { return default_context().root; }
+    model::Book & root_book()               { return context().root; }
+    const model::Book & root_book() const   { return context().root; }
 
     bool add_variables(const std::list<Variable> & variables);
     virtual Logger & logger() = 0;
@@ -38,11 +34,9 @@ public:
     bool resolve_dependencies();
 
 private:
-    virtual std::shared_ptr<model::Environment> create_environment(std::shared_ptr<model::Environment> src) const = 0;
+    virtual std::shared_ptr<model::Environment> create_environment() const = 0;
 
-    std::map<std::string, model::Context> registered_contexts_;
     model::Context default_context_;
-
     std::map<std::string, ToolChainPtr> toolchains_;
 };
 

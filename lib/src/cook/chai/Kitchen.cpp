@@ -109,19 +109,10 @@ void Kitchen::include_(const std::string & file)
     d->scripts.pop();
 }
 
-std::shared_ptr<model::Environment> Kitchen::create_environment(std::shared_ptr<model::Environment> src) const
+std::shared_ptr<model::Environment> Kitchen::create_environment() const
 {
     // create a new one, based on nothing
-    if (src == nullptr)
-        return std::make_shared<chai::Environment>();
-
-    // create based on a environment, should be the same type
-    std::shared_ptr<chai::Environment> p = std::dynamic_pointer_cast<chai::Environment>(src);
-    if (!p)
-        return std::shared_ptr<model::Environment>();
-
-    return std::make_shared<chai::Environment>(*p);
-
+    return std::make_shared<chai::Environment>();
 }
 
 } }

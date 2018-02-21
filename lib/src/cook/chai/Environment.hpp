@@ -10,12 +10,8 @@ class Environment : public model::Environment
 {
 public:
     bool set_variables(const std::list<Variable> & variables) override;
-    void copy_from(const Environment & rhs);
-
 
 private:
-    bool is_equal_(const model::Environment * env) const override;
-
     UserData data_;
 };
 
