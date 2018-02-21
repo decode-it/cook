@@ -31,6 +31,7 @@ struct Kitchen::D
         chai.add(chaiscript::fun(&Kitchen::include_, kitchen), "include");
         chai.add(book_module());
         chai.add(recipe_module());
+        chai.add(user_data_module());
         chai.add_global(chaiscript::var(root_book), "root");
     }
 
@@ -76,6 +77,11 @@ bool Kitchen::load(const std::list<std::string> & recipes)
         // create and initialize the engine
         for(const auto & recipe: recipes)
             include_(recipe);
+    }
+    catch(chaiscript::exception::eval_error & error)
+    {
+        std::cout << error.pretty_print();
+        MSS(false);
     }
     catch(std::runtime_error & error)
     {

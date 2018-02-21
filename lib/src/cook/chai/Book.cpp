@@ -60,6 +60,7 @@ gubg::chai::ModulePtr book_module()
     ptr->add(chaiscript::fun(&Book::book), "book");
     ptr->add(chaiscript::fun(&Book::recipe_2), "recipe");
     ptr->add(chaiscript::fun(&Book::recipe_3), "recipe");
+    ptr->add(chaiscript::fun(&Book::data), "data");
 
     return ptr;
 }

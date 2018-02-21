@@ -59,6 +59,7 @@ gubg::chai::ModulePtr recipe_module()
     ptr->add(chaiscript::fun(&Recipe::library), "library");
     ptr->add(chaiscript::fun(&Recipe::library_path), "library_path");
     ptr->add(chaiscript::fun(&Recipe::include_path), "include_path");
+    ptr->add(chaiscript::fun(&Recipe::data), "data");
 
     return ptr;
 }
