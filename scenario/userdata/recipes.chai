@@ -1,0 +1,4 @@
+root.book("a", fun(b) {
+    b.data().a = "test"
+    print(b.data().a)
+})
