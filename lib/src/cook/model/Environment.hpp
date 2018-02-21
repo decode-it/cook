@@ -1,0 +1,46 @@
+#ifndef HEADER_cook_model_Environment_hpp_ALREADY_INCLUDED
+#define HEADER_cook_model_Environment_hpp_ALREADY_INCLUDED
+
+#include "gubg/std/filesystem.hpp"
+#include <string>
+#include <list>
+
+namespace cook { namespace model {
+
+class Environment
+{
+public:
+    using Variable = std::pair<std::string, std::string>;
+
+    struct Dirs
+    {
+        void set_recipe(const std::filesystem::path & dir);
+        void set_output(const std::filesystem::path & dir);
+        void set_temporary(const std::filesystem::path & dir);
+
+        std::filesystem::path recipe() const;
+        std::filesystem::path output() const;
+        std::filesystem::path temporary() const;
+
+        bool operator==(const Dirs & rhs) const;
+
+    private:
+        std::filesystem::path recipe_;
+        std::filesystem::path output_;
+        std::filesystem::path temporary_;
+    };
+
+
+    virtual void set_variables(const std::list<Variable> & variables) const = 0;
+    bool operator==(const Environment & rhs) const;
+
+    Dirs dirs;
+    std::string toolchain;
+
+private:
+    virtual bool is_equal_(const Environment * env) const = 0;
+};
+
+} }
+
+#endif
