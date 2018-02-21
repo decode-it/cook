@@ -180,7 +180,7 @@ Uri Uri::parent() const
 
     if (false) {}
     else if (result.has_name())         { result.clear_name(); }
-    else if (result.path().empty())     { result.pop_back();  }
+    else if (!result.path().empty())    { result.pop_back();  }
 
     return result;
 }

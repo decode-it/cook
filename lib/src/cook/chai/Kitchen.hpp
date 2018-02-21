@@ -15,8 +15,6 @@ struct Kitchen : public cook::Kitchen
 
     bool load(const std::list<std::string> & recipes);
 
-
-
     const model::Book & root() const { return root_; }
 
 private:

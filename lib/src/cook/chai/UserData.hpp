@@ -3,9 +3,12 @@
 
 #include <memory>
 #include <string>
+#include <any>
 #include "gubg/chai/ModuleFwd.hpp"
 
 namespace cook { namespace chai {
+
+
 
 class UserData
 {
@@ -23,6 +26,8 @@ private:
 
     std::shared_ptr<D> d_;
 };
+
+UserData & from_any(std::any & any);
 
 gubg::chai::ModulePtr user_data_module();
 

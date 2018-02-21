@@ -5,7 +5,8 @@ namespace cook { namespace chai {
 
 Recipe::Recipe(model::Recipe * recipe, Logger *logger)
     : recipe_(recipe),
-      logger_(logger)
+      logger_(logger),
+      data_(from_any(recipe->user_data()))
 {
 }
 
@@ -35,17 +36,17 @@ void Recipe::depends_on(const std::string & dependency)
 
 void Recipe::library(const std::string & library)
 {
-    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::Library), ingredient::File("", library));
+    recipe_->pre().files().insert(LanguageTypePair(Language::CXX, Type::Library), ingredient::File("", library));
 }
 
 void Recipe::library_path(const std::string & path)
 {
-    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::LibraryPath), ingredient::File(path, ""));
+    recipe_->pre().files().insert(LanguageTypePair(Language::CXX, Type::LibraryPath), ingredient::File(path, ""));
 }
 
 void Recipe::include_path(const std::string & path)
 {
-    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::IncludePath), ingredient::File(path, ""));
+    recipe_->pre().files().insert(LanguageTypePair(Language::CXX, Type::IncludePath), ingredient::File(path, ""));
 }
 
 gubg::chai::ModulePtr recipe_module()

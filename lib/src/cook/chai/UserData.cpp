@@ -3,6 +3,14 @@
 
 namespace cook { namespace chai {
 
+UserData & from_any(std::any & any)
+{
+    if (!any.has_value())
+        any.emplace<UserData>();
+
+    return std::any_cast<UserData&>(any);
+}
+
 struct UserData::D : public chaiscript::dispatch::Dynamic_Object
 {
     D()
@@ -17,6 +25,8 @@ UserData::UserData()
 
 }
 UserData::~UserData() = default;
+
+
 
 void UserData::set_variable(const std::string & name, const std::string & value)
 {

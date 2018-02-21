@@ -6,7 +6,8 @@ namespace cook { namespace chai {
 
 Book::Book(model::Book * book, Logger *logger)
     : book_(book),
-      logger_(logger)
+      logger_(logger),
+      data_(from_any(book->user_data()))
 {
 }
 

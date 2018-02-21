@@ -5,19 +5,18 @@
 namespace cook { namespace model {
 
 Book::Book()
-    : uri_(make_root_uri()),
-      parent_(nullptr)
+    : Element(make_root_uri())
+{
+}
+
+Book::Book(const Uri & uri)
+    : Element(uri)
 {
 }
 
 bool Book::is_root() const
 {
     return uri().path().empty();
-}
-
-Book * Book::parent() const
-{
-    return parent_;
 }
 
 Book * Book::find_book(const Part & part) const
@@ -37,12 +36,11 @@ Book & Book::goc_book(const Part & part)
     auto it = subbooks_.find(part);
     if (it == subbooks_.end())
     {
-        Uri uri = uri_;
-        uri.add_path_part(part);
+        Uri child_uri = uri();
+        child_uri.add_path_part(part);
+        auto ptr = std::make_shared<Book>(child_uri);
 
-        auto ptr = std::make_shared<Book>();
-        ptr->uri_ = uri;
-        ptr->parent_= this;
+        ptr->set_parent(this);
 
         it = subbooks_.insert( std::make_pair(part, ptr) ).first;
     }
@@ -60,11 +58,6 @@ Recipe & Book::goc_recipe(const Part & part)
     }
 
     return *(it->second);
-}
-
-const Uri & Book::uri() const
-{
-    return uri_;
 }
 
 bool find_book(Book *& result, Book * book, const Uri & uri)

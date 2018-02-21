@@ -71,7 +71,7 @@ bool CXX::add_file(model::Recipe & recipe, const LanguageTypePair & key, const i
     MSS_BEGIN(bool);
 
     MSS(key.language == language());
-    MSS(recipe.files().insert_or_merge(key, file));
+    MSS(recipe.pre().files().insert_or_merge(key, file));
 
     switch (key.type)
     {
@@ -97,7 +97,7 @@ bool CXX::add_additional_path_(model::Recipe & recipe, const ingredient::File & 
 {
     MSS_BEGIN(bool);
 
-    auto p = recipe.files().insert(LanguageTypePair(language(), type), ingredient::File(file.dir(), std::filesystem::path()));
+    auto p = recipe.pre().files().insert(LanguageTypePair(language(), type), ingredient::File(file.dir(), std::filesystem::path()));
 
     {
         ingredient::File & include_path = *p.first;

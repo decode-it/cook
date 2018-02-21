@@ -1,4 +1,23 @@
 root.book("a", fun(b) {
-    b.data().a = "test"
-    print(b.data().a)
+    b.data().str = "test"
+    
+    if(b.data().str != "test") {
+       throw("Userdata error");
+    }
+    
+    b.recipe("b", fun(r) {
+        r.data().str2 = "test2";
+        
+        if(r.data().str2 != "test2") {
+          throw("Userdata error");
+        }
+    })
+})
+
+
+root.book("a", fun(b) {   
+    if(b.data().str != "test") {
+       throw("Userdata error");
+    }
+    print (b.data().str)
 })

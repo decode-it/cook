@@ -23,7 +23,7 @@ bool process_(IngredientExtractor && ingredient_extractor, const DependentPropag
 
     // merge all files
     for(model::Recipe * recipe : context.dependencies)
-        MSS(ingredient_extractor(*recipe).each(merger));
+        MSS(ingredient_extractor(recipe->pre()).each(merger));
 
     MSS_END();
 }

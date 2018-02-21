@@ -49,7 +49,7 @@ bool Resolver::operator()(model::Recipe & recipe, const model::GlobInfo & globbe
     // get the directory
     std::filesystem::path dir = globber.dir;
     if (dir.is_relative())
-        dir = recipe.working_directory() / dir;
+        dir = recipe.pre().working_directory() / dir;
 
     bool error_occured = false;
 

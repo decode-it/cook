@@ -15,11 +15,12 @@ Uri append_part(const Uri & uri, const Part & part)
 }
 
 Recipe::Recipe(Book * book, const Part & part)
-    : Snapshot(append_part(book->uri(), part)),
+    : Element(append_part(book->uri(), part)),
+      pre_(uri()),
       post_(uri()),
-      type_(Type::Undefined),
-      book_(book)
+      type_(Type::Undefined)
 {
+    set_parent(book);
 }
 
 const Recipe::Dependencies & Recipe::dependencies() const

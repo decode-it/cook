@@ -2,6 +2,7 @@
 #define HEADER_cook_chai_Book_hpp_ALREADY_INCLUDED
 
 #include "cook/chai/UserData.hpp"
+#include "cook/chai/Kitchen.hpp"
 #include "cook/model/Book.hpp"
 #include "cook/Logger.hpp"
 #include "gubg/chai/ModuleFwd.hpp"
