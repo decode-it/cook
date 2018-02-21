@@ -2,6 +2,7 @@
 #include "cook/chai/Book.hpp"
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/Logger.hpp"
+#include "cook/chai/Environment.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
 #include "chaiscript/chaiscript.hpp"
@@ -43,16 +44,6 @@ struct Kitchen::D
             return scripts.top().parent_path();
     }
 };
-
-bool Kitchen::add_variables(const std::list<Variable> & variables)
-{
-    MSS_BEGIN(bool);
-
-    for(const auto & v : variables)
-        d->engine.add_global(chaiscript::var(v.second), v.first);
-
-    MSS_END();
-}
 
 cook::Logger & Kitchen::logger()
 {
@@ -116,6 +107,21 @@ void Kitchen::include_(const std::string & file)
     d->scripts.push(script_fn);
     d->engine.eval_file(script_fn.string());
     d->scripts.pop();
+}
+
+std::shared_ptr<model::Environment> Kitchen::create_environment(std::shared_ptr<model::Environment> src) const
+{
+    // create a new one, based on nothing
+    if (src == nullptr)
+        return std::make_shared<chai::Environment>();
+
+    // create based on a environment, should be the same type
+    std::shared_ptr<chai::Environment> p = std::dynamic_pointer_cast<chai::Environment>(src);
+    if (!p)
+        return std::shared_ptr<model::Environment>();
+
+    return std::make_shared<chai::Environment>(*p);
+
 }
 
 } }

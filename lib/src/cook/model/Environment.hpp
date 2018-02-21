@@ -31,7 +31,7 @@ public:
     };
 
 
-    virtual void set_variables(const std::list<Variable> & variables) const = 0;
+    virtual bool set_variables(const std::list<Variable> & variables) = 0;
     bool operator==(const Environment & rhs) const;
 
     Dirs dirs;

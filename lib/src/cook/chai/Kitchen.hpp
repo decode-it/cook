@@ -10,7 +10,6 @@ struct Kitchen : public cook::Kitchen
     Kitchen();
     virtual ~Kitchen();
 
-    bool add_variables(const std::list<Variable> & variables) override;
     cook::Logger & logger() override;
 
     bool load(const std::list<std::string> & recipes);
@@ -18,6 +17,8 @@ struct Kitchen : public cook::Kitchen
     const model::Book & root() const { return root_; }
 
 private:
+    std::shared_ptr<model::Environment> create_environment(std::shared_ptr<model::Environment> src) const override;
+
     void include_(const std::string & file);
     void reset_engine_();
     std::filesystem::path generate_file_path_(const std::string & file) const;

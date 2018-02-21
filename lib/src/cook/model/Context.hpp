@@ -8,7 +8,7 @@ namespace cook { namespace model {
 
 struct Context
 {
-    cook::model::Book root_;
+    cook::model::Book root;
     std::shared_ptr<Environment> environment;
 };
 

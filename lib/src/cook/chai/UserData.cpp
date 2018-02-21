@@ -17,6 +17,15 @@ struct UserData::D : public chaiscript::dispatch::Dynamic_Object
         : chaiscript::dispatch::Dynamic_Object("cook_chai_UserData")
     {
     }
+
+    D(const D & rhs)
+        : chaiscript::dispatch::Dynamic_Object("cook_chai_UserData")
+    {
+        set_explicit(rhs.is_explicit());
+
+        for(const auto & v : rhs.get_attrs())
+            this->get_attr(v.first) = v.second;
+    }
 };
 
 UserData::UserData()
@@ -27,6 +36,13 @@ UserData::UserData()
 UserData::~UserData() = default;
 
 
+UserData UserData::clone() const
+{
+    UserData d;
+    d.d_ = std::make_shared<D>(*d_);
+
+    return d;
+}
 
 void UserData::set_variable(const std::string & name, const std::string & value)
 {

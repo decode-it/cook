@@ -19,6 +19,7 @@ bool App::process()
 
     // process all files
     cook::chai::Kitchen kitchen;
+    MSS(kitchen.initialize());
 
     MSS(kitchen.add_variables(options_.variables));
     MSS(kitchen.load(options_.recipe_files));
