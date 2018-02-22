@@ -25,7 +25,6 @@ public:
     Snapshot & post()               { return post_; }
 
     void add_globber(const GlobInfo & globbing) { globbings_.push_back(globbing); }
-    void resolve_globbings();
 
     const Dependencies & dependencies() const;
     bool add_dependency(const Dependency & dependency);

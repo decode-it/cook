@@ -22,3 +22,111 @@
 	path = gubg.math
 	url = https://github.com/gfannes/gubg.math
 	branch = master
+[submodule "extern/boost/algorithm"]
+	path = extern/boost/algorithm
+	url = https://github.com/boostorg/algorithm
+	branch = master
+[submodule "extern/boost/asio"]
+	path = extern/boost/asio
+	url = https://github.com/boostorg/asio
+	branch = master
+[submodule "extern/boost/assert"]
+	path = extern/boost/assert
+	url = https://github.com/boostorg/assert
+	branch = master
+[submodule "extern/boost/bind"]
+	path = extern/boost/bind
+	url = https://github.com/boostorg/bind
+	branch = master
+[submodule "extern/boost/chrono"]
+	path = extern/boost/chrono
+	url = https://github.com/boostorg/chrono
+	branch = master
+[submodule "extern/boost/config"]
+	path = extern/boost/config
+	url = https://github.com/boostorg/config
+	branch = master
+[submodule "extern/boost/core"]
+	path = extern/boost/core
+	url = https://github.com/boostorg/core
+	branch = master
+[submodule "extern/boost/detail"]
+	path = extern/boost/detail
+	url = https://github.com/boostorg/detail
+	branch = master
+[submodule "extern/boost/filesystem"]
+	path = extern/boost/filesystem
+	url = https://github.com/boostorg/filesystem
+	branch = master
+[submodule "extern/boost/function"]
+	path = extern/boost/function
+	url = https://github.com/boostorg/function
+	branch = master
+[submodule "extern/boost/fusion"]
+	path = extern/boost/fusion
+	url = https://github.com/boostorg/fusion
+	branch = master
+[submodule "extern/boost/integer"]
+	path = extern/boost/integer
+	url = https://github.com/boostorg/integer
+	branch = master
+[submodule "extern/boost/io"]
+	path = extern/boost/io
+	url = https://github.com/boostorg/io
+	branch = master
+[submodule "extern/boost/iterator"]
+	path = extern/boost/iterator
+	url = https://github.com/boostorg/iterator
+	branch = master
+[submodule "extern/boost/move"]
+	path = extern/boost/move
+	url = https://github.com/boostorg/move
+	branch = master
+[submodule "extern/boost/mpl"]
+	path = extern/boost/mpl
+	url = https://github.com/boostorg/mpl
+	branch = master
+[submodule "extern/boost/optional"]
+	path = extern/boost/optional
+	url = https://github.com/boostorg/optional
+	branch = master
+[submodule "extern/boost/predef"]
+	path = extern/boost/predef
+	url = https://github.com/boostorg/predef
+	branch = master
+[submodule "extern/boost/preprocessor"]
+	path = extern/boost/preprocessor
+	url = https://github.com/boostorg/preprocessor
+	branch = master
+[submodule "extern/boost/process"]
+	path = extern/boost/process
+	url = https://github.com/boostorg/process
+	branch = master
+[submodule "extern/boost/range"]
+	path = extern/boost/range
+	url = https://github.com/boostorg/range
+	branch = master
+[submodule "extern/boost/ratio"]
+	path = extern/boost/ratio
+	url = https://github.com/boostorg/ratio
+	branch = master
+[submodule "extern/boost/rational"]
+	path = extern/boost/rational
+	url = https://github.com/boostorg/rational
+	branch = master
+[submodule "extern/boost/system"]
+	path = extern/boost/system
+	url = https://github.com/boostorg/system
+	branch = master
+[submodule "extern/boost/tokenizer"]
+	path = extern/boost/tokenizer
+	url = https://github.com/boostorg/tokenizer
+	branch = master
+[submodule "extern/boost/utility"]
+	path = extern/boost/utility
+	url = https://github.com/boostorg/utility
+	branch = master
+[submodule "extern/boost/winapi"]
+	path = extern/boost/winapi
+	url = https://github.com/boostorg/winapi
+	branch = master

@@ -1,0 +1,1 @@
+auto boosts = ["algorithm", "asio", "assert", "bind", "chrono", "config", "core", "detail", "filesystem", "function", "fusion", "integer", "io", "iterator", "move", "mpl", "optional", "predef", "preprocessor", "process", "range", "ratio", "rational", "system", "tokenizer", "utility", "winapi"]
