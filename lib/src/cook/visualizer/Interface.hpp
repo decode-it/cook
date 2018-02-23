@@ -14,8 +14,6 @@ class Interface
 public:
     virtual std::string name() const = 0;
 
-    virtual std::shared_ptr<Interface> clone() const = 0;
-
     virtual Result set_option(const std::string & option) = 0;
 
     virtual bool can_process(const model::DependencyGraph & graph) const = 0;

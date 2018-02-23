@@ -26,20 +26,6 @@ std::string unexisting_node_name(Recipe * recipe, const Uri & uri)
 
 }
 
-
-
-std::string get_color(Graphviz::Color c)
-{
-    switch(c)
-    {
-        case Graphviz::Color::Root: return "green";
-        case Graphviz::Color::InTree: return "black";
-        case Graphviz::Color::OutsideTree: return "grey";
-        default:
-            return "red";
-    }
-}
-
 using NodeMap = std::unordered_map<Recipe *, Graphviz::Color>;
 
 }
@@ -93,29 +79,54 @@ void Graphviz::process_(std::ostream & oss, const DependencyGraph & graph) const
     // and now write out all the information
     write_header_(oss);
 
-    for(const auto & p : nodes)
-        write_node_(oss, p.first, p.second);
+    // write out the nodes
+    for(const auto & p1 : nodes)
+    {
+        Recipe * recipe = p1.first;
+        Color color = p1.second;
+        write_node_desc_(oss, node_name(recipe), recipe->uri().string(), color);
+    }
 
-    for(const auto & p : nodes)
-        write_edges_(oss, p.first, graph.root_book());
+    for(const auto & p1 : nodes)
+    {
+        Color src_color = p1.second;
+        Recipe * src = p1.first;
+        const std::string & src_id = node_name(src);
+
+        for(const auto & p : src->dependency_pairs())
+        {
+            // make sure we try to resolve it
+            Recipe * tgt = p.second;
+            if (!tgt)
+                algo::resolve_dependency(tgt, p.first, src->parent(), graph.root_book());
+
+            Color dst_color;
+            std::string dst_id;
+
+            if (!tgt)
+            {
+                write_node_desc_(oss, dst_id, p.first.string(), dst_color);
+
+                dst_id = unexisting_node_name(src, p.first);
+                dst_color = Color::Undefined;
+            }
+            else
+            {
+                dst_id = node_name(tgt);
+                dst_color = nodes[tgt];
+            }
+
+            const std::string options = color_property_string_(color_property_map(src_color, dst_color));
+            oss << src_id << " -> " << dst_id << " [" << options << "];" << std::endl;
+        }
+    }
 
     write_footer_(oss);
 }
 
-namespace  {
+namespace {
 
-unsigned int to_int(Graphviz::Color c)
-{
-    switch(c)
-    {
-        case Graphviz::Color::Root: return 0;
-        case Graphviz::Color::InTree: return 1;
-        case Graphviz::Color::OutsideTree: return 2;
-        default: return 3;
-    }
-}
-
-Graphviz::ColorPropertyMap defaultColorPropertyMap(Graphviz::Color c)
+Graphviz::ColorPropertyMap defaultNodeColorPropertyMap(Graphviz::Color c)
 {
     Graphviz::ColorPropertyMap res;
 
@@ -143,33 +154,74 @@ Graphviz::ColorPropertyMap defaultColorPropertyMap(Graphviz::Color c)
     return res;
 }
 
+Graphviz::ColorPropertyMap defaultEdgeColorPropertyMap(Graphviz::Color src, Graphviz::Color dst)
+{
+    Graphviz::Color c = std::max(src, dst);
+
+    Graphviz::ColorPropertyMap res;
+    switch(c)
+    {
+        case Graphviz::Color::Root:
+            break;
+
+        case Graphviz::Color::InTree:
+            break;
+
+        case Graphviz::Color::OutsideTree:
+            res["color"] = "grey";
+            break;
+
+        default:
+            res["color"] = "red";
+            break;
+    }
+
+    return res;
+}
+
 }
 
 Graphviz::Graphviz()
 {
-    for (Color c : {Color::Root, Color::InTree, Color::OutsideTree, Color::Undefined})
-        color_map_[to_int(c)] = defaultColorPropertyMap(c);
+    const static auto all_colors = {Color::Root, Color::InTree, Color::OutsideTree, Color::Undefined};
+
+    for (Color c : all_colors)
+    {
+        node_color_map_[c] = defaultNodeColorPropertyMap(c);
+
+        for (Color c2 : all_colors)
+            edge_color_map_[std::make_pair(c, c2)] = defaultEdgeColorPropertyMap(c, c2);
+    }
 }
 
 
 
 const Graphviz::ColorPropertyMap & Graphviz::color_property_map(Color c) const
 {
-    return color_map_[to_int(c)];
+    return node_color_map_.find(c)->second;
 }
+
+const Graphviz::ColorPropertyMap & Graphviz::color_property_map(Color src, Color dst) const
+{
+    return edge_color_map_.find(std::make_pair(src, dst))->second;
+}
+
 Graphviz::ColorPropertyMap & Graphviz::color_property_map(Color c)
 {
-    return color_map_[to_int(c)];
+    return node_color_map_[c];
 }
 
-std::string Graphviz::color_property_string(Color color) const
+Graphviz::ColorPropertyMap & Graphviz::color_property_map(Color src, Color dst)
 {
-    const ColorPropertyMap & cp = color_property_map(color);
+    return edge_color_map_[std::make_pair(src, dst)];
+}
 
+std::string Graphviz::color_property_string_(const ColorPropertyMap & map) const
+{
     std::ostringstream oss;
-    for(auto it = cp.begin(); it != cp.end(); ++it)
+    for(auto it = map.begin(); it != map.end(); ++it)
     {
-        if (it != cp.begin())
+        if (it != map.begin())
             oss << ", ";
         oss << it->first << "=\"" << it->second << "\"";
     }
@@ -179,40 +231,11 @@ std::string Graphviz::color_property_string(Color color) const
 
 void Graphviz::write_node_desc_(std::ostream & oss, const std::string & id, const std::string & uri, Color color) const
 {
-    oss << id << " [label=\"" << uri << "\", " << color_property_string(color) << "];" << std::endl;
+    std::string cps = color_property_string_(color_property_map(color));
+
+    oss << id << " [label=\"" << uri << "\", " << cps << "];" << std::endl;
 }
 
-void Graphviz::write_node_(std::ostream & oss, model::Recipe * recipe, Color color) const
-{
-    write_node_desc_(oss, node_name(recipe), recipe->uri().string(), color);
-}
-void Graphviz::write_edges_(std::ostream & oss, model::Recipe * recipe, Book *root) const
-{
-    const std::string & nd = node_name(recipe);
-
-    for(const auto & p : recipe->dependency_pairs())
-    {
-
-        // make sure we try to resolve it
-        Recipe * tgt = p.second;
-        if (!tgt)
-            algo::resolve_dependency(tgt, p.first, recipe->parent(), root);
-
-        std::string tgt_id;
-
-        if (!tgt)
-        {
-            tgt_id = unexisting_node_name(recipe, p.first);
-            write_node_desc_(oss, tgt_id, p.first.string(), Graphviz::Color::Undefined);
-        }
-        else
-        {
-            tgt_id = node_name(tgt);
-        }
-
-        oss << nd << " -> " << tgt_id << ";" << std::endl;
-    }
-}
 void Graphviz::write_header_(std::ostream & oss) const
 {
     oss << "digraph G {" << std::endl;
@@ -225,7 +248,7 @@ void Graphviz::write_footer_(std::ostream & oss) const
 
 std::filesystem::path Graphviz::output_filename(const model::Environment & environment) const
 {
-    const static std::string default_extension = "dot";
+    const static std::string default_extension = "graphviz";
     const static std::string default_name = "recipes." + default_extension;
 
     if (false) {}
@@ -239,12 +262,7 @@ std::filesystem::path Graphviz::output_filename(const model::Environment & envir
 
 std::string Graphviz::name() const
 {
-    return "dot";
-}
-
-std::shared_ptr<Interface> Graphviz::clone() const
-{
-    return std::make_shared<Graphviz>(*this);
+    return "graphviz";
 }
 
 Result Graphviz::set_option(const std::string & option)

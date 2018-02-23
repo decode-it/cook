@@ -21,30 +21,29 @@ public:
 
     std::string name() const override;
 
-    std::shared_ptr<Interface> clone() const override;
     Result set_option(const std::string & option) override;
 
     bool can_process(const model::DependencyGraph & graph) const override;
     Result process(const model::DependencyGraph & graph, const model::Environment & environment) override;
 
+    const ColorPropertyMap & color_property_map(Color src, Color dst) const;
     const ColorPropertyMap & color_property_map(Color c) const;
+    ColorPropertyMap & color_property_map(Color src, Color dst);
     ColorPropertyMap & color_property_map(Color c);
 
 private:
     void process_(std::ostream & oss, const model::DependencyGraph & graph) const;
-
     void write_node_desc_(std::ostream & oss, const std::string & id, const std::string & uri, Color color) const;
-    void write_node_(std::ostream & oss, model::Recipe * recipe, Color color) const;
-    void write_edges_(std::ostream & oss, model::Recipe * recipe, model::Book * root) const;
     void write_header_(std::ostream & oss) const;
     void write_footer_(std::ostream & oss) const;
 
-    std::string color_property_string(Color color) const;
+    std::string color_property_string_(const ColorPropertyMap & map) const;
 
     std::filesystem::path output_filename(const model::Environment & environment) const;
 
     std::string filename;
-    std::array<ColorPropertyMap, 4> color_map_;
+    std::map<Color, ColorPropertyMap> node_color_map_;
+    std::map<std::pair<Color, Color>, ColorPropertyMap> edge_color_map_;
 };
 
 } }
