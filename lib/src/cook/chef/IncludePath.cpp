@@ -1,4 +1,5 @@
 #include "cook/chef/IncludePath.hpp"
+#include <set>
 
 namespace cook { namespace chef {
 

@@ -2,6 +2,7 @@
 #define HEADER_cook_model_Book_hpp_ALREADY_INCLUDED
 
 #include "cook/model/Element.hpp"
+#include "boost/iterator/transform_iterator.hpp"
 #include <memory>
 #include <map>
 
@@ -11,7 +12,21 @@ class Recipe;
 
 class Book : public Element
 {
+    using BookMap = std::map<Part, std::shared_ptr<Book>>;
+    using RecipeMap = std::map<Part, std::shared_ptr<Recipe>>;
+
 public:
+
+
+    struct ExtractPointer
+    {
+        model::Book * operator()(const BookMap::value_type & p) const       { return p.second.get(); }
+        model::Recipe * operator()(const RecipeMap::value_type & p) const   { return p.second.get(); }
+    };
+
+    using BookIterator = boost::transform_iterator<ExtractPointer, BookMap::const_iterator>;
+    using RecipeIterator = boost::transform_iterator<ExtractPointer, RecipeMap::const_iterator>;
+
     Book();
     explicit Book(const Uri & uri);
 
@@ -22,6 +37,10 @@ public:
     Recipe * find_recipe(const Part & part) const;
 
     bool is_root() const;
+
+    gubg::Range<BookIterator> books() const;
+    gubg::Range<RecipeIterator> recipes() const;
+
 
     template <typename Functor>
     bool each_book(Functor && f) const
@@ -50,8 +69,8 @@ private:
     Book(Book &&) = default;
     Book & operator=(Book &&) = delete;
 
-    std::map<Part, std::shared_ptr<Book> > subbooks_;
-    std::map<Part, std::shared_ptr<Recipe>> recipes_;
+    BookMap subbooks_;
+    RecipeMap recipes_;
 };
 
 bool find_book(Book *& result, Book * book, const Uri & uri);

@@ -10,6 +10,12 @@ namespace cook {
 
 class Kitchen
 {
+    struct Context : public model::Context
+    {
+        Context() { root = &actual_root; }
+        model::Book actual_root;
+    };
+
 public:
     using ToolChainPtr = std::shared_ptr<toolchain::Interface>;
     using Variable = std::pair<std::string, std::string>;
@@ -19,25 +25,27 @@ public:
 
     bool initialize();
 
-
-    bool register_toolchain(ToolChainPtr toolchain);
-
-    model::Context & context();
-    const model::Context & context() const;
-
-    model::Book & root_book()               { return context().root; }
-    const model::Book & root_book() const   { return context().root; }
-
-    bool add_variables(const std::list<Variable> & variables);
     virtual Logger & logger() = 0;
 
-    bool resolve_dependencies();
+    // getters and setter
+    model::Context & context();
+    const model::Context & context() const;
+    model::Book * root_book() const;
+
+
+    Result register_toolchain(ToolChainPtr toolchain);
+    Result register_variable(const std::string & name, const std::string & value);
+
+
+    Result find_recipe(model::Recipe *&recipe, const std::string & name) const;
+
+    Result resolve_dependencies();
 
 private:
     virtual std::shared_ptr<model::Environment> create_environment() const = 0;
-
-    model::Context default_context_;
     std::map<std::string, ToolChainPtr> toolchains_;
+
+    Context context_;
 };
 
 }

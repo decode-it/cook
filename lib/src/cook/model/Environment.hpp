@@ -1,6 +1,7 @@
 #ifndef HEADER_cook_model_Environment_hpp_ALREADY_INCLUDED
 #define HEADER_cook_model_Environment_hpp_ALREADY_INCLUDED
 
+#include "cook/Result.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <string>
 #include <list>
@@ -28,7 +29,7 @@ public:
     };
 
 
-    virtual bool set_variables(const std::list<Variable> & variables) = 0;
+    virtual Result set_variable(const std::string & name, const std::string & value) = 0;
 
     Dirs dirs;
     std::string toolchain;

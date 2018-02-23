@@ -23,9 +23,21 @@ Recipe::Recipe(Book * book, const Part & part)
     set_parent(book);
 }
 
-const Recipe::Dependencies & Recipe::dependencies() const
+gubg::Range<Recipe::DependencyPairIterator> Recipe::dependency_pairs() const
 {
-    return dependencies_;
+    return gubg::make_range(dependencies_);
+}
+
+gubg::Range<Recipe::DependencyIterator> Recipe::dependencies() const
+{
+    using Functor = util::ElementAt<1>;
+
+//    DependencyIterator begin()
+
+    return gubg::make_range(
+                boost::make_transform_iterator<Functor>(dependencies_.begin()),
+                boost::make_transform_iterator<Functor>(dependencies_.end())
+                );
 }
 
 bool Recipe::resolve_dependency(const Uri & uri, Recipe * recipe)

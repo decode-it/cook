@@ -20,7 +20,7 @@ public:
 
     UserData clone() const;
 
-    void set_variable(const std::string & name, const std::string & value);
+    bool set_variable(const std::string & name, const std::string & value);
     bool operator==(const UserData & rhs) const;
 
 private:

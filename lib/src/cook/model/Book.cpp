@@ -19,6 +19,21 @@ bool Book::is_root() const
     return uri().path().empty();
 }
 
+gubg::Range<Book::BookIterator> Book::books() const
+{
+    return gubg::make_range(
+                boost::make_transform_iterator<ExtractPointer>(subbooks_.begin()),
+                boost::make_transform_iterator<ExtractPointer>(subbooks_.end())
+                );
+}
+gubg::Range<Book::RecipeIterator> Book::recipes() const
+{
+    return gubg::make_range(
+                boost::make_transform_iterator<ExtractPointer>(recipes_.begin()),
+                boost::make_transform_iterator<ExtractPointer>(recipes_.end())
+                );
+}
+
 Book * Book::find_book(const Part & part) const
 {
     auto it = subbooks_.find(part);

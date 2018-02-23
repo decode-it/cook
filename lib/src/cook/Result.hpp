@@ -2,7 +2,9 @@
 #define HEADER_cook_Result_hpp_ALREADY_INCLUDED
 
 #include "cook/Message.hpp"
+#include "gubg/mss.hpp"
 #include <list>
+#include <type_traits>
 
 namespace cook {
 
@@ -16,6 +18,11 @@ namespace cook {
         bool test_flag(MessageType flag) const
         {
             return (type_ & flag) == flag;
+        }
+
+        void set_flag(MessageType flag)
+        {
+            type_ |= flag;
         }
 
         operator bool() const
@@ -36,6 +43,15 @@ namespace cook {
             type_ |= message.type;
             messages_.push_back(std::move(message));
             return *this;
+        }
+
+        Result & operator<<(const Result & rhs)
+        {
+            return merge(rhs);
+        }
+        Result & operator<<(Result && rhs)
+        {
+            return merge(std::move(rhs));
         }
 
         Result & merge(const Result & rhs)
@@ -64,41 +80,45 @@ namespace cook {
         std::list<Message> messages_;
     };
 
+    namespace mss {
+
+    template <typename MSG> auto msg(MSG && msg, typename std::enable_if<std::is_same<cook::Message, std::decay_t<MSG>>::value>::type * /*dummy*/ = nullptr)
+    {
+        return [=](Result & res, auto && src)
+        {
+            if (!gubg::mss::is_ok(src))
+                res << msg;
+        };
+    }
+
+#define MSG_MSS(COND, TYPE, STR) MSS(COND, {}, ::cook::mss::msg(MESSAGE(TYPE, STR)))
+
+    }
 }
-
-
-#include "gubg/mss.hpp"
 
 namespace gubg { namespace mss {
 
     // translation from result to bool
     template <> inline bool is_ok(cook::Result c) { return c; }
 
-    template <> inline cook::Result ok_value<cook::Result>()
+    template <> inline cook::Result ok_value<::cook::Result>()
     {
-        return cook::Result();
+        return ::cook::Result();
     }
 
-    inline void aggregate(cook::Result &dst, const cook::Result & src)
+    inline void aggregate(::cook::Result &dst, const ::cook::Result & src)
     {
         dst.merge(src);
     }
-    inline void aggregate(cook::Result &dst, cook::Result && src)
+    inline void aggregate(::cook::Result &dst, ::cook::Result && src)
     {
         dst.merge(src);
     }
-    template <typename Src>
-    void aggregate(cook::Result &dst, Src src)
+    template <typename Src> void aggregate(::cook::Result &dst, Src src)
     {
-        if (!is_ok(src))
-            dst << cook::Message(cook::MessageType::Error, [=](auto & os) { os << "Unknown error value: " << src; });
+        if (!gubg::mss::is_ok(src))
+            dst << MESSAGE(InternalError, "Unexpected error '" << src << "'");
     }
-    template <typename Dst>
-    void aggregate(Dst &dst, const cook::Result &src)
-    {
-        aggregate(dst, !!src);
-    }
-
 } }
 
 

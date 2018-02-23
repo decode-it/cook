@@ -44,10 +44,15 @@ UserData UserData::clone() const
     return d;
 }
 
-void UserData::set_variable(const std::string & name, const std::string & value)
+bool UserData::set_variable(const std::string & name, const std::string & value)
 {
+    if (d_->has_attr(name))
+        return false;
+
     (*d_)[name] = chaiscript::var(value);
+    return true;
 }
+
 
 bool UserData::operator==(const UserData & rhs) const
 {

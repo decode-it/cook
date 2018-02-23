@@ -187,7 +187,7 @@ TEST_CASE("mss and error code test", "[ut][mss][result]")
         {
             conversion = false;
 
-            SECTION("bool")     { r = mss_T_to_result(false); }
+            SECTION("bool")       { r = mss_T_to_result(false); }
             SECTION("int")      { r = mss_T_to_result(5);     }
             SECTION("RC")       { r = mss_T_to_result(Error); }
         }

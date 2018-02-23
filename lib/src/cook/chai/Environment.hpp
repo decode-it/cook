@@ -9,7 +9,7 @@ namespace cook { namespace chai {
 class Environment : public model::Environment
 {
 public:
-    bool set_variables(const std::list<Variable> & variables) override;
+    Result set_variable(const std::string & name, const std::string & value) override;
 
 private:
     UserData data_;

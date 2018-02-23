@@ -5,7 +5,9 @@
 #include "cook/model/Uri.hpp"
 #include "cook/model/Element.hpp"
 #include "cook/model/GlobInfo.hpp"
-#include <set>
+#include "cook/util/ElementAt.hpp"
+#include "gubg/Range.hpp"
+#include "boost/iterator/transform_iterator.hpp"
 
 namespace cook { namespace model {
 
@@ -17,6 +19,9 @@ public:
     using Dependency = Uri;
     using Dependencies = std::map<Uri, Recipe *>;
 
+    using DependencyPairIterator = Dependencies::const_iterator;
+    using DependencyIterator = boost::transform_iterator<util::ElementAt<1>, DependencyPairIterator>;
+
     Recipe(Book * book, const Part & part);
 
     const Snapshot & pre() const    { return pre_; }
@@ -26,7 +31,9 @@ public:
 
     void add_globber(const GlobInfo & globbing) { globbings_.push_back(globbing); }
 
-    const Dependencies & dependencies() const;
+    gubg::Range<DependencyPairIterator> dependency_pairs() const;
+    gubg::Range<DependencyIterator> dependencies() const;
+
     bool add_dependency(const Dependency & dependency);
     bool resolve_dependency(const Uri & uri, Recipe * recipe);
 

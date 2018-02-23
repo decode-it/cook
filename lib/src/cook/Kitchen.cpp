@@ -11,21 +11,22 @@ Kitchen::Kitchen()
 bool Kitchen::initialize()
 {
     MSS_BEGIN(bool);
-    default_context_.environment = create_environment();
-    MSS(!!context().environment);
+    context_.environment = create_environment();
+    MSS(!!context_.environment);
 
     MSS_END();
 
 }
 
-bool Kitchen::register_toolchain(ToolChainPtr toolchain)
+Result Kitchen::register_toolchain(ToolChainPtr toolchain)
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     MSS(!!toolchain);
     const std::string & name = toolchain->name();
-    MSS(!name.empty());
-    MSS(toolchains_.find(name) == toolchains_.end());
+
+    MSG_MSS(!name.empty(), Error, "Cannot create a toolchain with an empty name");
+    MSG_MSS(toolchains_.find(name) == toolchains_.end(), Error, "A toolchain with name '" << name << "' already exists");
 
     toolchains_.emplace(name, toolchain);
 
@@ -34,33 +35,59 @@ bool Kitchen::register_toolchain(ToolChainPtr toolchain)
 
 model::Context & Kitchen::context()
 {
-    return default_context_;
+    return context_;
 }
 
 const model::Context & Kitchen::context() const
 {
-    return default_context_;
+    return context_;
 }
 
-bool Kitchen::add_variables(const std::list<Variable> & variables)
+model::Book * Kitchen::root_book() const
 {
-    MSS_BEGIN(bool);
+    return context_.root;
+}
 
-    MSS(!!default_context_.environment);
-    MSS(default_context_.environment->set_variables(variables));
+Result Kitchen::register_variable(const std::string &name, const std::string &value)
+{
+    MSS_BEGIN(Result);
+
+    MSS(!!context_.environment);
+    MSS(context_.environment->set_variable(name, value));
 
     MSS_END();
 }
 
-bool Kitchen::resolve_dependencies()
+
+Result Kitchen::find_recipe(model::Recipe *& recipe, const std::string & name) const
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
+    // create the uri
+    std::pair<model::Uri, bool> p = model::Uri::recipe_uri(name);
 
+    MSG_MSS(p.second, Error, "Invalid recipe uri '" << name << "'");
 
+    // forgive the fact that recipe is not absolute
+    p.first.set_absolute(true);
+
+    // find the recipe in the root book
+    MSG_MSS(model::find_recipe(recipe, root_book(), p.first), InternalError, "Error while finding uri '" << p.first << "'");
+
+    // make sure the recipe is found
+    MSG_MSS(!!recipe, Error, "No recipe with name '" << p.first << "' exists ");
+
+    MSS_END();
+
+}
+
+Result Kitchen::resolve_dependencies()
+{
+    MSS_BEGIN(Result);
 
     MSS_END();
 }
 
 }
+
 

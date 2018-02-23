@@ -1,4 +1,5 @@
 #include "cook/chef/LibraryPath.hpp"
+#include <set>
 
 namespace cook { namespace chef {
 

@@ -12,7 +12,7 @@ enum class MessageType
     Warning = 0x01,
     Info = 0x02,
     Error = 0x04,
-    InternalError = 0x008,
+    InternalError = 0x08,
 };
 
 inline MessageType operator&(MessageType lhs, MessageType rhs)
@@ -53,6 +53,8 @@ struct Message
     MessageType type;
     Reporter reporter;
 };
+
+#define MESSAGE(TYPE, STR) ::cook::Message(::cook::MessageType::TYPE, [=](auto & os) { os << STR; })
 
 inline Message make_error_message(Message::Reporter reporter = Message::Reporter())             { return Message(MessageType::Error,            reporter); }
 inline Message make_internal_error_message(Message::Reporter reporter = Message::Reporter())    { return Message(MessageType::InternalError,    reporter); }
