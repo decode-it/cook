@@ -38,12 +38,15 @@ Result App::process()
     model::DependencyGraph g(kitchen_.root_book());
     MSS(g.construct(gubg::make_range(root_recipes)));
 
-    // do the visualization
-    Kitchen::VisualizerPtr ptr = kitchen_.get_visualizer("dot");
-    MSG_MSS(!!ptr, Error, "unknown visualizer 'dot");
+    // process all the requested visualizations
+    for(const auto & p: options_.visualizers)
+    {
+        Kitchen::VisualizerPtr ptr = kitchen_.get_visualizer(p.first);
+        MSG_MSS(!!ptr, Error, "unknown visualizer '" << p.first << "'");
 
-    ptr->process(g, *kitchen_.context().environment);
-
+        MSS(ptr->set_option(p.second));
+        MSS(ptr->process(g, *kitchen_.context().environment));
+    }
 
     // resolve the root book
     MSS_END();
@@ -60,32 +63,6 @@ Result App::load_recipes_()
         MSS(kitchen_.load(fn));
 
     MSS_END();
-}
-
-Result App::propagate_dependencies_(const std::list<model::Recipe*> & root_recipes, bool & all_resolved) const
-{
-//    MSS_BEGIN(Result);
-
-//    all_resolved = true;
-
-
-//    std::stack<model::Recipe*> todo;
-//    for(model::Recipe * recipe : root_recipes)
-//        todo.push(recipe);
-
-//    std::unordered_set<model::Recipe*> seen;
-//    while(!todo.empty())
-//    {
-//        model::Recipe * recipe = todo.top();
-//        todo.pop();
-
-//        if (!seen.insert(recipe).second)
-//            continue;
-
-//        MSS(algo::resolve_dependencies(recipe, &all_resolved));
-//    }
-
-//    MSS_END();
 }
 
 Result App::extract_root_recipes_(std::list<model::Recipe*> & result) const
