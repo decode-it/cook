@@ -13,6 +13,7 @@ struct Options
     std::string temp_path = ".cook";
     std::string toolchain;
     std::list<std::pair<std::string, std::string>> generators;
+    std::list<std::pair<std::string, std::string>> visualizers;
     bool clean = false;
     std::list<std::pair<std::string, std::string>> variables;
 
