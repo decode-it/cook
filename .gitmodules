@@ -130,3 +130,11 @@
 	path = extern/boost/winapi
 	url = https://github.com/boostorg/winapi
 	branch = master
+[submodule "static_assert"]
+	path = extern/boost/static_assert
+	url = https://github.com/boostorg/static_assert
+	branch = master
+[submodule "extern/boost/type_traits"]
+	path = extern/boost/type_traits
+	url = https://github.com/boostorg/type_traits
+	branch = master
