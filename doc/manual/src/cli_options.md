@@ -19,7 +19,7 @@
   * If no generator is specified, `build` is used.
 * `-d <visualizer>[=filename]`: Visualize the dependencies:
   * Visualizers
-    * `dot`: Generates a graphviz file, by default this is the output_directory/recipes.dot
+    * `graphviz`: Generates a graphviz file, by default this is the output_directory/recipes.graphviz
 * `-c`: Clean all data for the specified generators.
 * `-D <key[=value]>`: Define global chai-script variable to influence the process.
   * `config`=`debug|release`
