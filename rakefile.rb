@@ -16,7 +16,7 @@ submods = %w[build std math io algo chaiscript].map{|e|"gubg.#{e}"}
 
 desc "Prepare the submods"
 task :prepare do
-    GUBG::each_submod do |info|
+    GUBG::each_submod(submods: submods) do |info|
         sh "rake prepare"
     end
 end
