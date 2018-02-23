@@ -51,7 +51,7 @@ cook::Logger & Kitchen::logger()
 }
 
 Kitchen::Kitchen()
-    : d(std::make_unique<D>(&root_))
+    : d(std::make_unique<D>(root_book()))
 {
     d->initialize_engine_(this);
 }
@@ -60,15 +60,14 @@ Kitchen::Kitchen()
 Kitchen::~Kitchen() = default;
 
 
-bool Kitchen::load(const std::list<std::string> & recipes)
+bool Kitchen::load(const std::string & recipe)
 {
     MSS_BEGIN(bool);
 
     try
     {
         // create and initialize the engine
-        for(const auto & recipe: recipes)
-            include_(recipe);
+        include_(recipe);
     }
     catch(chaiscript::exception::eval_error & error)
     {
@@ -88,12 +87,13 @@ std::filesystem::path Kitchen::generate_file_path_(const std::string & file) con
 {
     // make the path to the file
     std::filesystem::path script_fn(file);
+
     if (script_fn.is_relative())
         script_fn = d->top_level_path() / script_fn;
 
     if (script_fn.empty())
         script_fn = "recipes.chai";
-    if (std::filesystem::is_directory(script_fn))
+    else if (std::filesystem::is_directory(script_fn))
         script_fn /= "recipes.chai";
 
     return script_fn;

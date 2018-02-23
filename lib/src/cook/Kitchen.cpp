@@ -1,4 +1,5 @@
 #include "cook/Kitchen.hpp"
+#include "cook/visualizer/Graphviz.hpp"
 #include "gubg/mss.hpp"
 #include <cassert>
 
@@ -14,23 +15,53 @@ bool Kitchen::initialize()
     context_.environment = create_environment();
     MSS(!!context_.environment);
 
+    // add the visualizer
+    MSS(register_visualizer(std::make_shared<visualizer::Graphviz>()));
+
     MSS_END();
 
 }
 
-Result Kitchen::register_toolchain(ToolChainPtr toolchain)
+Result Kitchen::register_toolchain(ToolchainPtr toolchain)
 {
     MSS_BEGIN(Result);
 
     MSS(!!toolchain);
     const std::string & name = toolchain->name();
 
-    MSG_MSS(!name.empty(), Error, "Cannot create a toolchain with an empty name");
+    MSG_MSS(!name.empty(), Error, "Cannot add a toolchain with an empty name");
     MSG_MSS(toolchains_.find(name) == toolchains_.end(), Error, "A toolchain with name '" << name << "' already exists");
 
     toolchains_.emplace(name, toolchain);
 
     MSS_END();
+}
+
+Result Kitchen::register_visualizer(VisualizerPtr visualizer)
+{
+    MSS_BEGIN(Result);
+
+    MSS(!!visualizer);
+    const std::string & name = visualizer->name();
+
+    MSG_MSS(!name.empty(), Error, "Cannot add a visualizer with an empty name");
+    MSG_MSS(visualizers_.find(name) == visualizers_.end(), Error, "A visualizer with name '" << name << "' already exists");
+
+    visualizers_.emplace(name, visualizer);
+
+    MSS_END();
+}
+
+Kitchen::ToolchainPtr Kitchen::get_toolchain(const std::string & name) const
+{
+    auto it = toolchains_.find(name);
+    return it == toolchains_.end() ? ToolchainPtr() : it->second;
+}
+
+Kitchen::VisualizerPtr Kitchen::get_visualizer(const std::string & name) const
+{
+    auto it = visualizers_.find(name);
+    return it == visualizers_.end() ? VisualizerPtr() : it->second->clone();
 }
 
 model::Context & Kitchen::context()

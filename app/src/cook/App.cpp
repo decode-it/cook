@@ -1,7 +1,7 @@
 #include "cook/App.hpp"
 #include "cook/chai/Kitchen.hpp"
+#include "cook/model/DependencyGraph.hpp"
 #include "cook/algo/Book.hpp"
-#include "cook/algo/Recipe.hpp"
 #include "gubg/mss.hpp"
 #include <unordered_set>
 
@@ -28,51 +28,64 @@ Result App::process()
         MSS(kitchen_.register_variable(v.first, v.second));
 
     // process all files
-    MSS(kitchen_.load(options_.recipe_files));
+    MSS(load_recipes_());
 
-    // try to extract all root recipes
+    // extract all root recipes
     std::list<model::Recipe*> root_recipes;
     MSS(extract_root_recipes_(root_recipes));
 
-    // propagate the dependencies as far as possible
-    bool all_resolved = true;
-    {
-        MSS(propagate_dependencies_(root_recipes, all_resolved));
+    // and construct a dependency graph
+    model::DependencyGraph g(kitchen_.root_book());
+    MSS(g.construct(gubg::make_range(root_recipes)));
 
-        // do the visualizing
+    // do the visualization
+    Kitchen::VisualizerPtr ptr = kitchen_.get_visualizer("dot");
+    MSG_MSS(!!ptr, Error, "unknown visualizer 'dot");
 
+    ptr->process(g, *kitchen_.context().environment);
 
-        MSG_MSS(all_resolved, Error, "Unable to resolve all recipes");
-    }
 
     // resolve the root book
     MSS_END();
 }
 
-Result App::propagate_dependencies_(const std::list<model::Recipe*> & root_recipes, bool & all_resolved) const
+Result App::load_recipes_()
 {
     MSS_BEGIN(Result);
 
-    all_resolved = true;
+    if (options_.recipe_files.empty())
+        options_.recipe_files.push_back("./");
 
-
-    std::stack<model::Recipe*> todo;
-    for(model::Recipe * recipe : root_recipes)
-        todo.push(recipe);
-
-    std::unordered_set<model::Recipe*> seen;
-    while(!todo.empty())
-    {
-        model::Recipe * recipe = todo.top();
-        todo.pop();
-
-        if (!seen.insert(recipe).second)
-            continue;
-
-        MSS(algo::resolve_dependencies(recipe, &all_resolved));
-    }
+    for(const auto & fn : options_.recipe_files)
+        MSS(kitchen_.load(fn));
 
     MSS_END();
+}
+
+Result App::propagate_dependencies_(const std::list<model::Recipe*> & root_recipes, bool & all_resolved) const
+{
+//    MSS_BEGIN(Result);
+
+//    all_resolved = true;
+
+
+//    std::stack<model::Recipe*> todo;
+//    for(model::Recipe * recipe : root_recipes)
+//        todo.push(recipe);
+
+//    std::unordered_set<model::Recipe*> seen;
+//    while(!todo.empty())
+//    {
+//        model::Recipe * recipe = todo.top();
+//        todo.pop();
+
+//        if (!seen.insert(recipe).second)
+//            continue;
+
+//        MSS(algo::resolve_dependencies(recipe, &all_resolved));
+//    }
+
+//    MSS_END();
 }
 
 Result App::extract_root_recipes_(std::list<model::Recipe*> & result) const

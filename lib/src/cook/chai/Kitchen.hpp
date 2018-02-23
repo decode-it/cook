@@ -12,9 +12,7 @@ struct Kitchen : public cook::Kitchen
 
     cook::Logger & logger() override;
 
-    bool load(const std::list<std::string> & recipes);
-
-    const model::Book & root() const { return root_; }
+    bool load(const std::string &recipe);
 
 private:
     std::shared_ptr<model::Environment> create_environment() const override;
@@ -24,7 +22,6 @@ private:
     std::filesystem::path generate_file_path_(const std::string & file) const;
 
     struct D;
-    model::Book root_;
     std::unique_ptr<D> d;
 };
 

@@ -1,11 +1,11 @@
-#include "cook/algo/DependencyGraph.hpp"
+#include "cook/model/DependencyGraph.hpp"
 #include "cook/algo/Recipe.hpp"
 #include "cook/algo/Visit.hpp"
 #include <unordered_map>
 
 using namespace cook::model;
 
-namespace cook { namespace algo {
+namespace cook { namespace model {
 
 namespace  {
 
@@ -44,7 +44,7 @@ Result fill_count_map(gubg::Range<It> root_recipes, CountMap & count_map)
 
         MSS_END();
     };
-    MSS(visit(initialize, count_dependencies));
+    MSS(algo::visit(initialize, count_dependencies));
 
     MSS_END();
 }
@@ -178,7 +178,7 @@ Result DependencyGraph::sort_topologically_(bool & acyclic)
         MSS_END();
     };
 
-    MSS(visit(add_true_roots, process_topologically));
+    MSS(algo::visit(add_true_roots, process_topologically));
     }
 
     // all edges set to zero ?
@@ -216,16 +216,28 @@ Result DependencyGraph::resolve_recursive_dependencies_(bool & all_resolved)
     {
         MSS_BEGIN(Result);
 
-        MSS(resolve_dependencies(cur, &all_resolved));
+        for(const auto & p : cur->dependency_pairs())
+        {
+            Recipe * dep = nullptr;
+            MSS(algo::resolve_dependency(dep, p.first, cur->parent(), root_book()));
 
-        for(Recipe * dep : cur->dependencies())
+            all_resolved = all_resolved && (dep != nullptr);
+
             if (dep)
+            {
+                MSS(cur->resolve_dependency(p.first, dep));
                 todo.push(dep);
+            }
+            else
+            {
+                all_resolved = false;
+            }
+        }
 
         MSS_END();
     };
 
-    MSS(visit(initialize, dependency_resolver));
+    MSS(algo::visit(initialize, dependency_resolver));
 
     MSS_END();
 }

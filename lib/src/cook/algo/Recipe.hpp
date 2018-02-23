@@ -6,7 +6,7 @@
 
 namespace cook { namespace algo {
 
-Result resolve_dependencies(model::Recipe *recipe, bool *all_resolved = nullptr);
+Result resolve_dependency(model::Recipe *&result, const model::Uri & uri, model::Book * current_book, model::Book * root_book);
 
 
 } }

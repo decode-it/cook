@@ -14,6 +14,7 @@ public:
 
 private:
     Result extract_root_recipes_(std::list<model::Recipe *> & result) const;
+    Result load_recipes_();
     Result propagate_dependencies_(const std::list<model::Recipe *> & result, bool &all_resolved) const;
 
     app::Options options_;

@@ -8,19 +8,6 @@ namespace cook { namespace algo {
 
 namespace  {
 
-bool find_absolute_recipe(Recipe *& result, Book * book, const Uri & uri)
-{
-    MSS_BEGIN(bool);
-
-    while(!!book->parent())
-        book = book->parent();
-
-    MSS(find_recipe(result, book, uri));
-
-    MSS_END();
-}
-
-
 bool find_relative_recipe(Recipe *& result, Book * book, const Uri & uri)
 {
     MSS_BEGIN(bool);
@@ -38,34 +25,17 @@ bool find_relative_recipe(Recipe *& result, Book * book, const Uri & uri)
 
 }
 
-Result resolve_dependencies(Recipe * recipe, bool * all_resolved)
+Result resolve_dependency(model::Recipe *&result, const model::Uri & uri, model::Book * current_book, model::Book * root_book)
 {
     MSS_BEGIN(Result);
-    MSS(!!recipe);
+    MSS(!!current_book);
+    MSS(!!root_book);
+    MSS(root_book->is_root());
 
-    Result rc;
-
-    for(const auto & p : recipe->dependency_pairs())
-    {
-        const Uri & uri = p.first;
-        MSS(uri.has_name());
-
-        Recipe * result = nullptr;
-
-        if (uri.absolute())
-            MSS(find_absolute_recipe(result, recipe->parent(), uri));
-        else
-            MSS(find_relative_recipe(result, recipe->parent(), uri));
-
-        MSG_MSS(!!result, Warning, "could not resolve dependency '" << uri << "' for recipe " << recipe->uri());
-
-        if (result)
-            MSS(recipe->resolve_dependency(uri, result));
-        else if (all_resolved)
-            *all_resolved = false;
-    }
-
-    MSS(rc);
+    if (uri.absolute())
+        MSS(find_recipe(result, root_book, uri));
+    else
+        MSS(find_relative_recipe(result, current_book, uri));
 
     MSS_END();
 }
