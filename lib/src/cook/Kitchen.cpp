@@ -61,7 +61,7 @@ Kitchen::ToolchainPtr Kitchen::get_toolchain(const std::string & name) const
 Kitchen::VisualizerPtr Kitchen::get_visualizer(const std::string & name) const
 {
     auto it = visualizers_.find(name);
-    return it == visualizers_.end() ? VisualizerPtr() : it->second->clone();
+    return it == visualizers_.end() ? VisualizerPtr() : it->second;
 }
 
 model::Context & Kitchen::context()
