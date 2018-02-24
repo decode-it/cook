@@ -6,9 +6,9 @@ root.book("a", fun(b) {
     }
     
     b.recipe("b", fun(r) {
-        r.data().str2 = "test2";
+        r.data().str = "test2";
         
-        if(r.data().str2 != "test2") {
+        if(r.data().str != "test2") {
           throw("Userdata error");
         }
     })

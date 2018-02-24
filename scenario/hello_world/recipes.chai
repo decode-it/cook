@@ -1,0 +1,5 @@
+root.book("a", fun(b){
+    b.recipe("b", fun(r){
+        r.add("./", "main.cpp")
+    })
+})

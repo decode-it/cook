@@ -169,18 +169,46 @@ end
 desc "Test"
 task :test do
     Rake::Task["b0:build"].invoke
-    test_cases = [:ninja, :details, :structure]
-    # test_cases = [:structure]
-    test_cases.each do |test_case|
-        case test_case
-        when :ninja
-            sh "./b0-cook.exe -f test/app /app/exe"
-            sh "cat build.ninja"
-            sh "ninja"
-        when :details
-            sh "./b0-cook.exe -f test/app -g details.naft /app/exe"
-        when :structure
-            sh "./b0-cook.exe -f test/app -g structure.naft -V"
+    cook_exe = File.expand_path("b0-cook.exe")
+    scns_per_dir = {
+        hello_world: [
+            {name: "normal",            recipe: "/a/b",   should: :succeed},
+            {name: "unexisting recipe", recipe: "/a/b/c", should: :fail},
+        ]
+    }
+    summary = Hash.new{|h,k|h[k]=0}
+    puts("[scenarios]{")
+    Dir.chdir("scenario") do
+        scns_per_dir.each do |directory, scns|
+            scns.each do |scn|
+                name = scn[:name]
+                puts("  [scenario](directory:#{directory})(name:#{name}){")
+                Dir.chdir(directory.to_s) do
+                    cmd = [cook_exe]
+                    args = ->(sym, &block){[scn[sym]||[]].flatten.each{|arg|cmd += [block.call(arg)||[]].flatten}}
+                    args.call(:input){|input|["-f", input]}
+                    args.call(:recipe){|recipe|recipe}
+                    sh(cmd*' ') do |ok, ret|
+                        pf = case scn[:should]
+                             when :succeed then (ok  ? :passed : :failed)
+                             when :fail    then (!ok ? :passed : :failed)
+                             end
+                        summary[pf] += 1
+                        case pf
+                        when :passed then puts("    [ok]")
+                        when :failed then puts("    [FAIL]")
+                        end
+                    end
+                end
+                puts("  }")
+            end
         end
     end
+    puts("}")
+    print("[summay]")
+    [:passed, :failed].each do |pf|
+        cnt = summary[pf]
+        print("(#{pf}:#{cnt})") if cnt > 0
+    end
+    puts("")
 end
