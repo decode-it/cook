@@ -178,8 +178,10 @@ task :test, [:filter] do |t,args|
     scns_per_dir = {
         userdata: {name: "normal", should: :succeed},
         hello_world: [
-            {name: "normal",            recipe: "/a/b",   should: :succeed},
-            {name: "unexisting recipe", recipe: "/a/b/c", should: :fail},
+            {name: "help", help: "", should: :succeed},
+            {name: "normal",                                   recipe: "/a/b",   should: :succeed},
+            {name: "using file",        input: "recipes.chai", recipe: "/a/b",   should: :succeed},
+            {name: "unexisting recipe",                        recipe: "/a/b/c", should: :fail},
         ]
     }
     summary = Hash.new{|h,k|h[k]=0}
@@ -193,7 +195,15 @@ task :test, [:filter] do |t,args|
                     Dir.chdir(directory.to_s) do
                         cmd = [cook_exe]
                         args = ->(sym, &block){[scn[sym]||[]].flatten.each{|arg|cmd += [block.call(arg)||[]].flatten}}
-                        args.call(:input){|input|["-f", input]}
+                        args.call(:input){|v|["-f", v]}
+                        args.call(:output){|v|["-o", v]}
+                        args.call(:temp){|v|["-O", v]}
+                        args.call(:toolchain){|v|["-t", v]}
+                        args.call(:generator){|v|["-g", v]}
+                        args.call(:depviz){|v|["-d", v]}
+                        args.call(:data){|v|["-D", v]}
+                        args.call(:help){|v|["-h", v]}
+                        args.call(:vebose){|v|["-v", v]}
                         args.call(:recipe){|recipe|recipe}
                         sh(cmd*' ') do |ok, ret|
                             pf = case scn[:should]
