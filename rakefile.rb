@@ -80,7 +80,7 @@ namespace :b0 do
     task :rtags do
         puts "Make sure you have \"rdm &\" running somewhere."
         sh "ninja -f #{b0_ninja_fn} -t compdb compile > compile_commands.json"
-        sh "rc -J"
+        sh("rc -J"){}
     end
 
     desc "bootstrap-level0: Update rtags"
