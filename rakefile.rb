@@ -179,9 +179,11 @@ task :test, [:filter] do |t,args|
         userdata: {name: "normal", should: :succeed},
         hello_world: [
             {name: "help", help: "", should: :succeed},
-            {name: "normal",                                   recipe: "/a/b",   should: :succeed},
-            {name: "using file",        input: "recipes.chai", recipe: "/a/b",   should: :succeed},
-            {name: "unexisting recipe",                        recipe: "/a/b/c", should: :fail},
+            {name: "normal", recipe: "/a/b", should: :succeed},
+            {name: "using dir", input: "./", recipe: "/a/b", should: :succeed},
+            {name: "using file", input: "recipes.chai", recipe: "/a/b", should: :succeed},
+            {name: "using unkown file", input: "unknown.chai", recipe: "/a/b", should: :fail},
+            {name: "unknown recipe", recipe: "/unknown/recipe", should: :fail},
         ]
     }
     summary = Hash.new{|h,k|h[k]=0}
