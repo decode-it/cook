@@ -205,10 +205,13 @@ task :test do
         end
     end
     puts("}")
-    print("[summay]")
+    print("[summary]")
+    total = 0
     [:passed, :failed].each do |pf|
         cnt = summary[pf]
+        total += cnt
         print("(#{pf}:#{cnt})") if cnt > 0
     end
+    print("(total:#{total})")
     puts("")
 end
