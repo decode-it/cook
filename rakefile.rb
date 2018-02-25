@@ -235,3 +235,8 @@ task :test, [:filter] do |t,args|
     print("(total:#{total})")
     puts("")
 end
+
+task :aaa, :filter do |t,args|
+    FileList.new("scenario/*.rb").each{|fn|require_relative(fn)}
+    GUBG::Catch::run(args[:filter])
+end
