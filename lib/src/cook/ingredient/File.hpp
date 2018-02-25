@@ -24,9 +24,9 @@ public:
                 && rel() == rhs.rel();
     }
 
-    bool merge(const File & rhs)
+    Result merge(const File & rhs)
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(Result);
 
         MSS(merge_(*this, rhs));
 
@@ -46,7 +46,7 @@ private:
 
 inline std::ostream &operator<<(std::ostream &os, const File &file)
 {
-    os << file.dir() << " | " << file.rel();
+    os << "File" << file.dir() << " | " << file.rel();
     return os;
 }
 
