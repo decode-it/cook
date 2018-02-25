@@ -8,14 +8,15 @@ namespace cook { namespace chef {
 class LibraryPath : public Interface
 {
 public:
-    using SelectionFunctor = std::function<bool (Language)>;
+    using SelectionFunction = std::function<bool (Language)>;
 
-    LibraryPath(const SelectionFunctor & selection_functor = SelectionFunctor());
+    LibraryPath();
+    explicit LibraryPath(const SelectionFunction & selection_functor);
 
     bool process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const override;
 
 private:
-    SelectionFunctor selection_;
+    SelectionFunction selection_;
 };
 
 } }
