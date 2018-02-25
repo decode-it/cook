@@ -14,6 +14,13 @@ class Recipe;
 
 namespace ingredient {
 
+inline bool merge(model::Recipe *& old_value, model::Recipe * new_value)
+{
+    if (new_value)
+        old_value = new_value;
+
+    return true;
+}
 
 template <typename KeyType>
 class Base
@@ -46,15 +53,20 @@ protected:
     }
 
     template <typename Ingredient>
-    static bool merge_(Ingredient & lhs, const Ingredient & rhs)
+    static Result merge_(Ingredient & lhs, const Ingredient & rhs)
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(Result);
         MSS(lhs.key() == rhs.key());
 
         // should we update the overwrite policy ?
         Overwrite ov = lhs.overwrite();
-        if (ov != rhs.overwrite())
-            ov = std::min(ov, rhs.overwrite());
+        merge(ov, rhs.overwrite());
+
+        if (false) {}
+        else if (lhs.overwrite() > rhs.overwrite())
+            MSG_MSS(true, Warning, "Refining overwrite for " << lhs << " to " << ov);
+        else if (rhs.overwrite() > lhs.overwrite())
+            MSG_MSS(true, Warning, "Refining overwrite for " << rhs << " to " << ov);
 
         switch(ov)
         {
@@ -62,17 +74,17 @@ protected:
                 break;
 
             case Overwrite::IfSame:
-                MSS(lhs == rhs);
+                MSG_MSS(lhs == rhs, Error, rhs << " != " << lhs << " and overwrite = " << ov);
                 break;
 
             default:
-                MSS(false);
+                MSG_MSS(false, Error, "overwrite = " << ov);
                 break;
         }
 
         lhs.overwrite_ = ov;
-        lhs.propagation_ = rhs.propagation();
-        lhs.owner_ = rhs.owner();
+        MSS(merge(lhs.propagation_, rhs.propagation()));
+        MSS(merge(lhs.owner_, rhs.owner()));
 
         MSS_END();
     }
