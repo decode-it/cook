@@ -26,9 +26,9 @@ public:
         return equal_(rhs) && value_ == rhs.value_;
     }
 
-    bool merge(const KeyValue & rhs)
+    Result merge(const KeyValue & rhs)
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(Result);
 
         MSS(merge_(*this, rhs));
 
@@ -45,6 +45,16 @@ public:
 private:
     std::optional<std::string> value_;
 };
+
+inline std::ostream &operator<<(std::ostream &os, const KeyValue & key_value)
+{
+    os << "Key" <<  key_value.key() << " |";
+
+    if (key_value.has_value())
+        os << " " << key_value.value();
+
+    return os;
+}
 
 } }
 
