@@ -1,12 +1,12 @@
-#ifndef HEADER_cook_model_DependencyGraph_hpp_ALREADY_INCLUDED
-#define HEADER_cook_model_DependencyGraph_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_model_Menu_hpp_ALREADY_INCLUDED
+#define HEADER_cook_model_Menu_hpp_ALREADY_INCLUDED
 
 #include "cook/Result.hpp"
 #include "cook/model/Recipe.hpp"
 
 namespace cook { namespace model {
 
-class DependencyGraph
+class Menu
 {
     enum ConstructionResult
     {
@@ -17,7 +17,7 @@ class DependencyGraph
     };
 
 public:
-    explicit DependencyGraph(Book * root) : root_(root){}
+    explicit Menu(Book * root) : root_(root){}
 
     void clear();
 

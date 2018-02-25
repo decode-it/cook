@@ -30,7 +30,7 @@ using NodeMap = std::unordered_map<Recipe *, Graphviz::Color>;
 
 }
 
-void Graphviz::process_(std::ostream & oss, const DependencyGraph & graph) const
+void Graphviz::process_(std::ostream & oss, const Menu & graph) const
 {
     NodeMap nodes;
 
@@ -275,12 +275,12 @@ Result Graphviz::set_option(const std::string & option)
 
 }
 
-bool Graphviz::can_process(const model::DependencyGraph & graph) const
+bool Graphviz::can_process(const model::Menu & graph) const
 {
     return true;
 }
 
-Result Graphviz::process(const model::DependencyGraph & graph, const model::Environment & environment)
+Result Graphviz::process(const model::Menu & graph, const model::Environment & environment)
 {
     MSS_BEGIN(Result);
 

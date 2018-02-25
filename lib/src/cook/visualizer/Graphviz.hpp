@@ -23,8 +23,8 @@ public:
 
     Result set_option(const std::string & option) override;
 
-    bool can_process(const model::DependencyGraph & graph) const override;
-    Result process(const model::DependencyGraph & graph, const model::Environment & environment) override;
+    bool can_process(const model::Menu & graph) const override;
+    Result process(const model::Menu & graph, const model::Environment & environment) override;
 
     const ColorPropertyMap & color_property_map(Color src, Color dst) const;
     const ColorPropertyMap & color_property_map(Color c) const;
@@ -32,7 +32,7 @@ public:
     ColorPropertyMap & color_property_map(Color c);
 
 private:
-    void process_(std::ostream & oss, const model::DependencyGraph & graph) const;
+    void process_(std::ostream & oss, const model::Menu & graph) const;
     void write_node_desc_(std::ostream & oss, const std::string & id, const std::string & uri, Color color) const;
     void write_header_(std::ostream & oss) const;
     void write_footer_(std::ostream & oss) const;

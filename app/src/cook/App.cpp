@@ -35,7 +35,7 @@ Result App::process()
     MSS(extract_root_recipes_(root_recipes));
 
     // and construct a dependency graph
-    model::DependencyGraph g(kitchen_.root_book());
+    model::Menu g(kitchen_.root_book());
     MSS(g.construct(gubg::make_range(root_recipes)));
 
     // process all the requested visualizations

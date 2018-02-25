@@ -52,14 +52,14 @@ Result fill_count_map(gubg::Range<It> root_recipes, CountMap & count_map)
 }
 
 
-void DependencyGraph::clear()
+void Menu::clear()
 {
     root_recipes_.clear();
     topological_order_.clear();
     result_ = ConstructionResult::InternalError;
 }
 
-bool DependencyGraph::topological_suborder(model::Recipe * new_root, const std::list<model::Recipe*> & topological_order, std::list<model::Recipe *> & new_order)
+bool Menu::topological_suborder(model::Recipe * new_root, const std::list<model::Recipe*> & topological_order, std::list<model::Recipe *> & new_order)
 {
     MSS_BEGIN(bool);
 
@@ -93,7 +93,7 @@ bool DependencyGraph::topological_suborder(model::Recipe * new_root, const std::
     MSS_END();
 }
 
-bool DependencyGraph::topological_order(model::Recipe * root, std::list<model::Recipe *> & order) const
+bool Menu::topological_order(model::Recipe * root, std::list<model::Recipe *> & order) const
 {
     MSS_BEGIN(bool);
     MSS(is_acyclic(), order.clear());
@@ -103,12 +103,12 @@ bool DependencyGraph::topological_order(model::Recipe * root, std::list<model::R
     MSS_END();
 }
 
-const std::list<model::Recipe *> & DependencyGraph::topological_order() const
+const std::list<model::Recipe *> & Menu::topological_order() const
 {
     return topological_order_;
 }
 
-Result DependencyGraph::construct_()
+Result Menu::construct_()
 {
     MSS_BEGIN(Result);
 
@@ -140,7 +140,7 @@ Result DependencyGraph::construct_()
     MSS_END();
 }
 
-Result DependencyGraph::sort_topologically_(bool & acyclic)
+Result Menu::sort_topologically_(bool & acyclic)
 {
     MSS_BEGIN(Result);
 
@@ -191,17 +191,17 @@ Result DependencyGraph::sort_topologically_(bool & acyclic)
 }
 
 
-bool DependencyGraph::all_dependencies_resolved() const
+bool Menu::all_dependencies_resolved() const
 {
     return (result_ & ConstructionResult::UnresolvedDependencies) == 0;
 }
 
-bool DependencyGraph::is_acyclic() const
+bool Menu::is_acyclic() const
 {
     return (result_ & ConstructionResult::CyclicDependencies) == 0;
 }
 
-Result DependencyGraph::resolve_recursive_dependencies_(bool & all_resolved)
+Result Menu::resolve_recursive_dependencies_(bool & all_resolved)
 {
     MSS_BEGIN(Result);
     all_resolved = true;
