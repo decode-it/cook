@@ -14,7 +14,7 @@ public:
     DependentPropagation();
     explicit DependentPropagation(const SelectionFunction & function);
 
-    bool process(const Context &context, model::Snapshot &snapshot, model::Snapshot & post) const override;
+    Result process(const Context &context, model::Snapshot &snapshot, model::Snapshot & post) const override;
 
 private:
     std::function<bool (const LanguageTypePair &)> selection_;

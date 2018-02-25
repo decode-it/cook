@@ -8,9 +8,9 @@ LinkOrder::LinkOrder(const SelectionFunction & selection_function)
 
 }
 
-bool LinkOrder::process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const
+Result LinkOrder::process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     for ( auto & p : snapshot.files())
         if (p.first.type == Type::Library)
@@ -20,9 +20,9 @@ bool LinkOrder::process(const Context & context, model::Snapshot & snapshot, mod
     MSS_END();
 }
 
-bool LinkOrder::process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const
+Result LinkOrder::process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     std::list<ingredient::File> non_owned_libraries;
     std::map<model::Recipe *, std::list<ingredient::File>> owned_libraries;

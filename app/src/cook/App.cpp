@@ -1,6 +1,6 @@
 #include "cook/App.hpp"
 #include "cook/chai/Kitchen.hpp"
-#include "cook/model/DependencyGraph.hpp"
+#include "cook/model/Menu.hpp"
 #include "cook/algo/Book.hpp"
 #include "gubg/mss.hpp"
 #include <unordered_set>

@@ -45,7 +45,7 @@ Result CompileLinkArchive::generate_executable_processors_(std::list<Step> & ste
         Step step;
         step.name = "compilation";
         step.description = "Compilation of source units";
-        step.chefs.push_back(std::make_shared<);
+//        step.chefs.push_back(std::make_shared<);
     };
 
     MSS_END();
@@ -68,13 +68,13 @@ Result CompileLinkArchive::generate_undefined_processors_(std::list<Step> & step
 
 Result CompileLinkArchive::generate_processors(model::Recipe * recipe, std::list<Step> & steps)
 {
-    switch(recipe->type())
-    {
-        case Type::Executable:
-        case Type::Library:
+//    switch(recipe->type())
+//    {
+//        case Type::Executable:
+//        case Type::Library:
 
-        case Type::Undefined:
-    }
+//        case Type::Undefined:
+//    }
 }
 
 

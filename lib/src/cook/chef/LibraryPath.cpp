@@ -16,9 +16,9 @@ LibraryPath::LibraryPath(const SelectionFunction & selection_functor)
 
 }
 
-bool LibraryPath::process(const Context & context, model::Snapshot & snapshot, model::Snapshot & /*post*/) const
+Result LibraryPath::process(const Context & context, model::Snapshot & snapshot, model::Snapshot & /*post*/) const
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     auto selector = [&](const LanguageTypePair & key) -> std::optional<LanguageTypePair>
     {

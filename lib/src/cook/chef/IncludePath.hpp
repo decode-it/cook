@@ -2,7 +2,6 @@
 #define HEADER_cook_chef_IncludePath_hpp_ALREADY_INCLUDED
 
 #include "cook/chef/Interface.hpp"
-#include <optional>
 
 namespace cook { namespace chef {
 
@@ -12,9 +11,9 @@ public:
     using SelectionFunction = std::function<bool (Language)>;
 
     IncludePath();
-    IncludePath(const SelectionFunction selection_functor = SelectionFunction());
+    explicit IncludePath(const SelectionFunction selection_functor);
 
-    bool process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const override;
+    Result process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const override;
 
 private:
     SelectionFunction selection_;

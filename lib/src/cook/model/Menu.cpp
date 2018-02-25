@@ -1,4 +1,4 @@
-#include "cook/model/DependencyGraph.hpp"
+#include "cook/model/Menu.hpp"
 #include "cook/algo/Recipe.hpp"
 #include "cook/algo/Visit.hpp"
 #include <unordered_map>

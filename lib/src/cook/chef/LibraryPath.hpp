@@ -13,7 +13,7 @@ public:
     LibraryPath();
     explicit LibraryPath(const SelectionFunction & selection_functor);
 
-    bool process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const override;
+    Result process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const override;
 
 private:
     SelectionFunction selection_;

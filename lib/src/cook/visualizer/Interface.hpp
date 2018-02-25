@@ -1,8 +1,7 @@
 #ifndef HEADER_cook_visualizer_Interface_hpp_ALREADY_INCLUDED
 #define HEADER_cook_visualizer_Interface_hpp_ALREADY_INCLUDED
 
-
-#include "cook/model/DependencyGraph.hpp"
+#include "cook/model/Menu.hpp"
 #include "cook/model/Environment.hpp"
 #include "cook/Result.hpp"
 #include <memory>

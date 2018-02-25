@@ -16,9 +16,9 @@ IncludePath::IncludePath(const SelectionFunction selection_functor)
 }
 
 
-bool IncludePath::process(const Context & context, model::Snapshot & snapshot, model::Snapshot & /*post*/) const
+Result IncludePath::process(const Context & context, model::Snapshot & snapshot, model::Snapshot & /*post*/) const
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     auto selector = [&](const LanguageTypePair & key) -> std::optional<LanguageTypePair>
     {

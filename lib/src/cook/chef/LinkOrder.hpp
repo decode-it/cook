@@ -12,10 +12,10 @@ public:
 
     explicit LinkOrder(const SelectionFunction & selection_function = SelectionFunction());
 
-    bool process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const override;
+    Result process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const override;
 
 private:
-    bool process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const;
+    Result process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const;
 
     SelectionFunction selection_;
 };

@@ -39,9 +39,9 @@ DependentPropagation::DependentPropagation(const SelectionFunction & function)
 
 }
 
-bool DependentPropagation::process(const Context & context, model::Snapshot & snapshot, model::Snapshot & /*post*/) const
+Result DependentPropagation::process(const Context & context, model::Snapshot & snapshot, model::Snapshot & /*post*/) const
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     MSS(!!selection_);
 
