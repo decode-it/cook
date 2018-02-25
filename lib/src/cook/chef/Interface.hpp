@@ -10,7 +10,7 @@ class Interface
 public:
     virtual ~Interface() {}
 
-    virtual bool process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const = 0;
+    virtual Result process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const = 0;
 };
 
 } }

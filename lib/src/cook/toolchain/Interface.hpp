@@ -7,13 +7,13 @@
 namespace cook { namespace toolchain {
 
 
-using AgentPtr = std::shared_ptr<chef::Interface>;
+using ChefPtr = std::shared_ptr<chef::Interface>;
 
 struct Step
 {
     std::string name;
     std::string description;
-    std::vector<AgentPtr> agents;
+    std::vector<ChefPtr> chefs;
 };
 
 class Interface
@@ -21,8 +21,7 @@ class Interface
 public:
     virtual std::string name() const = 0;
 
-    virtual bool can_process(model::Recipe * recipe) const = 0;
-    virtual std::list<Step> generate_processors(model::Recipe * recipe) = 0;
+    virtual Result generate_processors(model::Recipe * recipe, std::list<Step> & steps) = 0;
 };
 
 } }
