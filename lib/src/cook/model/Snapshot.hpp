@@ -8,6 +8,13 @@
 
 namespace cook { namespace model {
 
+namespace tag {
+
+struct File_t {};
+struct KeyValue_t {};
+
+}
+
 class Snapshot
 {
 public:
@@ -19,6 +26,11 @@ public:
     const KeyValues & key_values() const { return key_values_; }
     Files & files()                      { return files_; }
     KeyValues & key_values()             { return key_values_; }
+
+    const Files & ingredients(tag::File_t) const            { return files_; }
+    const KeyValues & ingredients(tag::KeyValue_t) const    { return key_values_; }
+    Files & ingredients(tag::File_t)                        { return files_; }
+    KeyValues & ingredients(tag::KeyValue_t)                { return key_values_; }
 
     const Uri & uri() const;
     bool set_uri(const Uri & uri);
