@@ -11,6 +11,13 @@ enum class Propagation
     Public = 1,
 };
 
+inline bool merge(Propagation & old_value, Propagation new_value)
+{
+    // by default the best propagation
+    old_value = std::max(old_value, new_value);
+    return true;
+}
+
 inline std::ostream & operator<<(std::ostream & os, Propagation propagation)
 {
 
