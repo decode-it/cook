@@ -16,13 +16,13 @@ public:
     using iterator = typename IngredientMap::iterator;
     using const_iterator = typename IngredientMap::const_iterator;
 
-    bool insert_or_merge(const LanguageTypePair & key, const Ingredient & ingredient)
+    Result insert_or_merge(const LanguageTypePair & key, const Ingredient & ingredient)
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(Result);
 
         auto p = insert(key, ingredient);
         if (!p.second)
-            MSS(p.first->merge(ingredient));
+            MSS(p.first->merge(ingredient), MSS_RC << MESSAGE(Info, "merging " << ingredient << " into " << key << " collection"));
 
         MSS_END();
     }
@@ -58,14 +58,24 @@ public:
     }
 
     template <typename Functor>
-    bool each(Functor && functor) const
+    Result each(Functor && functor) const
     {
+        MSS_BEGIN(Result);
         for(const auto & p : ingredients_)
-            for(const auto & file : p.second)
-                if (!functor(p.first, file))
-                    return false;
+            for(const auto & ingredient : p.second)
+                MSS(functor(p.first, ingredient));
 
-        return true;
+        MSS_END();
+    }
+
+    Result merge(const Ingredients<Ingredient> & rhs)
+    {
+        MSS_BEGIN(Result);
+
+        auto ingredient_merger = [&](const LanguageTypePair & key, const Ingredient & ingredient) { return insert_or_merge(key, ingredient); };
+        MSS(rhs.each(ingredient_merger), MSS_RC << MESSAGE(Info, "merging two collection"));
+
+        MSS_END();
     }
 
 
