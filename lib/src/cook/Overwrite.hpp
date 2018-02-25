@@ -12,6 +12,13 @@ enum class Overwrite
     Always = 0x02,
 };
 
+inline bool merge(Overwrite & old_value, Overwrite new_value)
+{
+    // by default take the most strict
+    old_value = std::min(old_value, new_value);
+    return true;
+}
+
 inline std::ostream & operator<<(std::ostream & os, Overwrite overwrite)
 {
 
