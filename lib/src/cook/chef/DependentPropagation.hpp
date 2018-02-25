@@ -11,7 +11,8 @@ class DependentPropagation : public Interface
 public:
     using SelectionFunction = std::function<bool (const LanguageTypePair &)>;
 
-    DependentPropagation(const SelectionFunction & function = SelectionFunction());
+    DependentPropagation();
+    explicit DependentPropagation(const SelectionFunction & function);
 
     bool process(const Context &context, model::Snapshot &snapshot, model::Snapshot & post) const override;
 

@@ -4,29 +4,32 @@ namespace cook { namespace chef {
 
 namespace  {
 
-template <typename IngredientExtractor>
-bool process_(IngredientExtractor && ingredient_extractor, const DependentPropagation::SelectionFunction & selection, const Context & context, model::Snapshot & snapshot)
+template <typename Tag>
+Result merge_(const model::Snapshot & src_snapshot, model::Snapshot & dst_snapshot, const DependentPropagation::SelectionFunction & selection, Tag tag)
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
-    auto & properties = ingredient_extractor(snapshot);
-    auto merger = [&](const LanguageTypePair & key, const auto & ingredient)
+    const auto & src_ingredients = src_snapshot.ingredients(tag);
+    auto & dst_ingredients = dst_snapshot.ingredients(tag);
+
+    return src_ingredients.each([&](const LanguageTypePair & key, const auto & ingredient)
     {
         MSS_BEGIN(bool);
 
-        if (ingredient.propagation() == Propagation::Public)
-            if (selection && selection(key))
-                MSS(properties.insert_or_merge(key, ingredient));
+        if (ingredient.propagation() == Propagation::Public && selection(key))
+            MSS(dst_ingredients.insert_or_merge(key, ingredient));
 
         MSS_END();
-    };
-
-    // merge all files
-    for(model::Recipe * recipe : context.dependencies)
-        MSS(ingredient_extractor(recipe->pre()).each(merger));
+    });
 
     MSS_END();
 }
+
+}
+
+DependentPropagation::DependentPropagation()
+    : selection_([](const LanguageTypePair & ) { return true; })
+{
 
 }
 
@@ -40,15 +43,14 @@ bool DependentPropagation::process(const Context & context, model::Snapshot & sn
 {
     MSS_BEGIN(bool);
 
+    MSS(!!selection_);
+
+    for (const model::Recipe * recipe: context.dependencies)
     {
-        auto file_extractor = [](model::Snapshot & snapshot) -> ingredient::Ingredients<ingredient::File> & { return snapshot.files(); };
-        MSS(process_(file_extractor, selection_, context, snapshot));
+        MSS( merge_(recipe->pre(), snapshot, selection_, model::tag::File_t() ) );
+        MSS( merge_(recipe->pre(), snapshot, selection_, model::tag::KeyValue_t() ) );
     }
 
-    {
-        auto key_value_extractor = [](model::Snapshot & snapshot) -> ingredient::Ingredients<ingredient::KeyValue> & { return snapshot.key_values(); };
-        MSS(process_(key_value_extractor, selection_, context, snapshot));
-    }
 
     MSS_END();
 }
