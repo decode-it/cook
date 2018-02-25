@@ -1,7 +1,7 @@
 #ifndef HEADER_cook_ingredient_Collection_hpp_ALREADY_INCLUDED
 #define HEADER_cook_ingredient_Collection_hpp_ALREADY_INCLUDED
 
-#include "cook/ingredient//Base.hpp"
+#include "cook/ingredient/Base.hpp"
 #include "gubg/Range.hpp"
 #include <vector>
 #include <algorithm>
