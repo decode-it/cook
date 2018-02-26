@@ -2,6 +2,7 @@
 #define HEADER_cook_toolchain_CompileLinkArchive_hpp_ALREADY_INCLUDED
 
 #include "cook/toolchain/Interface.hpp"
+#include <set>
 
 namespace cook { namespace toolchain {
 
@@ -11,19 +12,29 @@ public:
     explicit CompileLinkArchive(const std::string & name);
 
     std::string name() const override;
+    Result initialize() override;
+    Result generate_processors(model::Recipe * recipe, std::list<Step> & steps) override;
 
-    Result generate_processors(model::Recipe * recipe, std::list<Step> & steps) override = 0;
+    void disable_build() override;
 
 private:
-    Result generate_executable_processors_(std::list<Step> & steps) const;
-    Result generate_shared_lib_processors_(std::list<Step> & steps) const;
-    Result generate_static_lib_processors_(std::list<Step> & steps) const;
-    Result generate_undefined_processors_(std::list<Step> & steps) const;
+
+
+    using StepList = std::list<Step>;
+
+    StepList generate_compile_only_steps_() const;
+    StepList generate_archive_steps_() const;
+    StepList generate_link_steps_() const;
 
     std::string name_;
-    ChefPtr compiler_;
+
+    std::map<Language, ChefPtr> compilers_;
     ChefPtr linker_;
     ChefPtr archiver_;
+
+    StepList compile_only_steps_;
+    StepList archive_steps_;
+    StepList link_steps_;
 };
 
 } }

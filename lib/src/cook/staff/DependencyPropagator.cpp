@@ -1,11 +1,11 @@
-#include "cook/chef/DependentPropagation.hpp"
+#include "cook/staff/DependencyPropagator.hpp"
 
-namespace cook { namespace chef {
+namespace cook { namespace staff {
 
 namespace  {
 
 template <typename Tag>
-Result merge_(const model::Snapshot & src_snapshot, model::Snapshot & dst_snapshot, const DependentPropagation::SelectionFunction & selection, Tag tag)
+Result merge_(const model::Snapshot & src_snapshot, model::Snapshot & dst_snapshot, const DependentPropagator::SelectionFunction & selection, Tag tag)
 {
     MSS_BEGIN(Result);
 
@@ -27,19 +27,19 @@ Result merge_(const model::Snapshot & src_snapshot, model::Snapshot & dst_snapsh
 
 }
 
-DependentPropagation::DependentPropagation()
+DependentPropagator::DependentPropagator()
     : selection_([](const LanguageTypePair & ) { return true; })
 {
 
 }
 
-DependentPropagation::DependentPropagation(const SelectionFunction & function)
+DependentPropagator::DependentPropagator(const SelectionFunction & function)
     : selection_(function)
 {
 
 }
 
-Result DependentPropagation::process(const Context & context, model::Snapshot & snapshot, model::Snapshot & /*post*/) const
+Result DependentPropagator::process(const Context & context, model::Snapshot & snapshot) const
 {
     MSS_BEGIN(Result);
 

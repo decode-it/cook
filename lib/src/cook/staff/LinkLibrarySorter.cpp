@@ -1,26 +1,23 @@
-#include "cook/chef/LinkOrder.hpp"
+#include "cook/staff/LinkLibrarySorter.hpp"
 
-namespace cook { namespace chef {
+namespace cook { namespace staff {
 
-LinkOrder::LinkOrder(const SelectionFunction & selection_function)
-    : selection_(selection_function)
-{
-
-}
-
-Result LinkOrder::process(const Context & context, model::Snapshot & snapshot, model::Snapshot & post) const
+Result LinkLibrarySorter::process(const Context & context, model::Snapshot & snapshot) const
 {
     MSS_BEGIN(Result);
 
-    for ( auto & p : snapshot.files())
-        if (p.first.type == Type::Library)
-            if (selection_ && selection_(p.first.language))
-                MSS(process_(context, snapshot, p.second));
+    model::Snapshot::Files & files = snapshot.files();
+
+    auto it = files.find(LanguageTypePair(Language::ObjectCode, Type::Library));
+    if (it == files.end())
+        MSS_RETURN_OK();
+
+    MSS(process_(context, snapshot, it->second));
 
     MSS_END();
 }
 
-Result LinkOrder::process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const
+Result LinkLibrarySorter::process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const
 {
     MSS_BEGIN(Result);
 

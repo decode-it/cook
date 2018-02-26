@@ -8,6 +8,7 @@ namespace cook {
 enum class Language
 {
     Undefined,
+    ObjectCode,
     C,
     CXX,
     ASM,
@@ -20,6 +21,7 @@ inline std::ostream & operator<<(std::ostream & os, Language type)
     {
 #define L_CASE(NAME) case Language::NAME: os << #NAME; return os
         L_CASE(Undefined);
+        L_CASE(ObjectCode);
         L_CASE(C);
         L_CASE(CXX);
         L_CASE(ASM);

@@ -112,11 +112,9 @@ Result Kitchen::find_recipe(model::Recipe *& recipe, const std::string & name) c
 
 }
 
-Result Kitchen::resolve_dependencies()
+Result Kitchen::prepare(const model::Menu & menu)
 {
-    MSS_BEGIN(Result);
 
-    MSS_END();
 }
 
 }

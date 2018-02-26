@@ -68,6 +68,17 @@ public:
         MSS_END();
     }
 
+    template <typename Functor>
+    Result each(Functor && functor)
+    {
+        MSS_BEGIN(Result);
+        for(auto & p : ingredients_)
+            for(auto & ingredient : p.second)
+                MSS(functor(p.first, ingredient));
+
+        MSS_END();
+    }
+
     Result merge(const Ingredients<Ingredient> & rhs)
     {
         MSS_BEGIN(Result);
