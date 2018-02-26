@@ -16,6 +16,9 @@ submods = %w[build std math io algo chaiscript].map{|e|"gubg.#{e}"}
 
 desc "Prepare the submods"
 task :prepare do
+    %w[iterator config mpl preprocessor static_assert type_traits detail core utility].each do |name|
+        sh("git submodule update --init extern/boost/#{name}")
+    end
     GUBG::each_submod(submods: submods) do |info|
         sh "rake prepare"
     end
@@ -96,8 +99,12 @@ namespace :b1 do
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
     task :build => "b0:build" do
-        sh "./b0-cook.exe"
-        sh "ninja -v"
+        if true
+            cp "b0-cook.exe", "cook.exe"
+        else
+            sh "./b0-cook.exe"
+            sh "ninja -v"
+        end
     end
 
     desc "bootstrap-level1: Clean"
@@ -167,71 +174,7 @@ task :old_doc do
 end
 
 desc "Test"
-task :test, [:filter] do |t,args|
-    filter = args[:filter]||""
-    re = ""
-    filter.each_char{|ch|re << ".*#{ch}"}
-    re << ".*"
-    re = Regexp.new(re)
-    Rake::Task["b0:build"].invoke
-    cook_exe = File.expand_path("b0-cook.exe")
-    scns_per_dir = {
-        userdata: {name: "normal", should: :succeed},
-        hello_world: [
-            {name: "help", help: "", should: :succeed},
-            {name: "normal", recipe: "/a/b", should: :succeed},
-            {name: "using dir", input: "./", recipe: "/a/b", should: :succeed},
-            {name: "using file", input: "recipes.chai", recipe: "/a/b", should: :succeed},
-            {name: "using unkown file", input: "unknown.chai", recipe: "/a/b", should: :fail},
-            {name: "unknown recipe", recipe: "/unknown/recipe", should: :fail},
-        ]
-    }
-    summary = Hash.new{|h,k|h[k]=0}
-    puts("[scenarios]{")
-    Dir.chdir("scenario") do
-        scns_per_dir.each do |directory, scns|
-            if re =~ directory
-                [scns].flatten.each do |scn|
-                    name = scn[:name]
-                    puts("  [scenario](directory:#{directory})(name:#{name}){")
-                    Dir.chdir(directory.to_s) do
-                        cmd = [cook_exe]
-                        args = ->(sym, &block){[scn[sym]||[]].flatten.each{|arg|cmd += [block.call(arg)||[]].flatten}}
-                        args.call(:input){|v|["-f", v]}
-                        args.call(:output){|v|["-o", v]}
-                        args.call(:temp){|v|["-O", v]}
-                        args.call(:toolchain){|v|["-t", v]}
-                        args.call(:generator){|v|["-g", v]}
-                        args.call(:depviz){|v|["-d", v]}
-                        args.call(:data){|v|["-D", v]}
-                        args.call(:help){|v|["-h", v]}
-                        args.call(:vebose){|v|["-v", v]}
-                        args.call(:recipe){|recipe|recipe}
-                        sh(cmd*' ') do |ok, ret|
-                            pf = case scn[:should]
-                                 when :succeed then (ok  ? :passed : :failed)
-                                 when :fail    then (!ok ? :passed : :failed)
-                                 end
-                            summary[pf] += 1
-                            case pf
-                            when :passed then puts("    [ok]")
-                            when :failed then puts("    [FAIL]")
-                            end
-                        end
-                    end
-                    puts("  }")
-                end
-            end
-        end
-    end
-    puts("}")
-    print("[summary]")
-    total = 0
-    [:passed, :failed].each do |pf|
-        cnt = summary[pf]
-        total += cnt
-        print("(#{pf}:#{cnt})") if cnt > 0
-    end
-    print("(total:#{total})")
-    puts("")
+task :test, [:filter] => "b1:build" do |t,args|
+    FileList.new("scenario/*.rb").each{|fn|require_relative(fn)}
+    GUBG::Catch::run(args[:filter])
 end

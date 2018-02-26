@@ -1,7 +1,7 @@
 #include "catch.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
-#include "cook/model/DependencyGraph.hpp"
+#include "cook/model/Menu.hpp"
 
 using namespace cook::model;
 
@@ -167,7 +167,7 @@ TEST_CASE("Dependency resolving", "[ut][algo][dependency_resolving]")
 
 
     // construct the graph
-    cook::model::DependencyGraph graph(&root);
+    cook::model::Menu graph(&root);
     REQUIRE(graph.construct(gubg::make_range(root_recipes)));
 
     REQUIRE(graph.all_dependencies_resolved() == scn.dependencies_resolved);
