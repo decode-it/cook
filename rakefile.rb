@@ -99,8 +99,12 @@ namespace :b1 do
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
     task :build => "b0:build" do
-        sh "./b0-cook.exe"
-        sh "ninja -v"
+        if true
+            cp "b0-cook.exe", "cook.exe"
+        else
+            sh "./b0-cook.exe"
+            sh "ninja -v"
+        end
     end
 
     desc "bootstrap-level1: Clean"
@@ -170,7 +174,7 @@ task :old_doc do
 end
 
 desc "Test"
-task :test, [:filter] do |t,args|
+task :test, [:filter] => "b1:build" do |t,args|
     FileList.new("scenario/*.rb").each{|fn|require_relative(fn)}
     GUBG::Catch::run(args[:filter])
 end
