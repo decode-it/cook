@@ -45,7 +45,7 @@ Result App::process()
         MSG_MSS(!!ptr, Error, "unknown visualizer '" << p.first << "'");
 
         MSS(ptr->set_option(p.second));
-        MSS(ptr->process(g, *kitchen_.context().environment));
+        MSS(ptr->process(g, *kitchen_.environment()));
     }
 
     // resolve the root book

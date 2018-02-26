@@ -1,9 +1,9 @@
-#ifndef HEADER_cook_utensil_Compiler_hpp_ALREADY_INCLUDED
-#define HEADER_cook_utensil_Compiler_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_chef_assistant_Compiler_hpp_ALREADY_INCLUDED
+#define HEADER_cook_chef_assistant_Compiler_hpp_ALREADY_INCLUDED
 
-#include "cook/utensil/Interface.hpp"
+#include "cook/chef/assistant/Interface.hpp"
 
-namespace cook { namespace utensil {
+namespace cook { namespace chef { namespace assistant {
 
 class Compiler : public Interface
 {
@@ -19,7 +19,7 @@ private:
 
 };
 
-} }
+} } }
 
 
 

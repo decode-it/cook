@@ -1,8 +1,8 @@
-#include "cook/utensil/LibraryPathSetter.hpp"
-#include "cook/utensil/PathExtraction.hpp"
+#include "cook/chef/assistant/LibraryPathSetter.hpp"
+#include "cook/chef/assistant/PathExtraction.hpp"
 #include <set>
 
-namespace cook { namespace utensil {
+namespace cook { namespace chef { namespace assistant {
 
 Result LibraryPathSetter::process(const Context & context, model::Snapshot & snapshot) const
 {
@@ -21,4 +21,4 @@ Result LibraryPathSetter::process(const Context & context, model::Snapshot & sna
 }
 
 
-} }
+} } }

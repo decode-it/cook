@@ -12,8 +12,8 @@ Kitchen::Kitchen()
 bool Kitchen::initialize()
 {
     MSS_BEGIN(bool);
-    context_.environment = create_environment();
-    MSS(!!context_.environment);
+    environment_ = create_environment();
+    MSS(!!environment_);
 
     // add the visualizer
     MSS(register_visualizer(std::make_shared<visualizer::Graphviz>()));
@@ -64,27 +64,22 @@ Kitchen::VisualizerPtr Kitchen::get_visualizer(const std::string & name) const
     return it == visualizers_.end() ? VisualizerPtr() : it->second;
 }
 
-model::Context & Kitchen::context()
-{
-    return context_;
-}
-
-const model::Context & Kitchen::context() const
-{
-    return context_;
-}
 
 model::Book * Kitchen::root_book() const
 {
-    return context_.root;
+    return root_.get();
+}
+model::Environment * Kitchen::environment() const
+{
+    return environment_.get();
 }
 
 Result Kitchen::register_variable(const std::string &name, const std::string &value)
 {
     MSS_BEGIN(Result);
 
-    MSS(!!context_.environment);
-    MSS(context_.environment->set_variable(name, value));
+    MSS(!!environment_);
+    MSS(environment_->set_variable(name, value));
 
     MSS_END();
 }
@@ -109,11 +104,6 @@ Result Kitchen::find_recipe(model::Recipe *& recipe, const std::string & name) c
     MSG_MSS(!!recipe, Error, "No recipe with name '" << p.first << "' exists ");
 
     MSS_END();
-
-}
-
-Result Kitchen::prepare(const model::Menu & menu)
-{
 
 }
 

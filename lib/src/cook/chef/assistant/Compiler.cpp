@@ -1,6 +1,6 @@
-#include "cook/utensil/Compiler.hpp"
+#include "cook/chef/assistant/Compiler.hpp"
 
-namespace cook { namespace utensil {
+namespace cook { namespace chef { namespace assistant {
 
 Compiler::Compiler(Language language)
     : language_(language)
@@ -44,4 +44,4 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
     return object;
 }
 
-} }
+} } }

@@ -12,12 +12,6 @@ namespace cook {
 
 class Kitchen
 {
-    struct Context : public model::Context
-    {
-        Context() { root = &actual_root; }
-        model::Book actual_root;
-    };
-
 public:
     using ToolchainPtr = std::shared_ptr<chef::Interface>;
     using VisualizerPtr = std::shared_ptr<visualizer::Interface>;
@@ -31,9 +25,8 @@ public:
     virtual Logger & logger() = 0;
 
     // getters and setter
-    model::Context & context();
-    const model::Context & context() const;
     model::Book * root_book() const;
+    model::Environment * environment() const;
 
     Result register_toolchain(ToolchainPtr chef);
     Result register_visualizer(VisualizerPtr visualizer);
@@ -43,14 +36,14 @@ public:
     Result register_variable(const std::string & name, const std::string & value);
     Result find_recipe(model::Recipe *&recipe, const std::string & name) const;
 
-    Result prepare(const model::Menu & menu);
-
 private:
     virtual std::shared_ptr<model::Environment> create_environment() const = 0;
     std::map<std::string, ToolchainPtr> toolchains_;
     std::map<std::string, VisualizerPtr> visualizers_;
 
-    Context context_;
+    std::shared_ptr<model::Book> root_;
+    std::shared_ptr<model::Environment> environment_;
+
 };
 
 }

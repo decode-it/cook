@@ -1,8 +1,8 @@
-#include "cook/utensil/IncludePathSetter.hpp"
-#include "cook/utensil/PathExtraction.hpp"
+#include "cook/chef/assistant/IncludePathSetter.hpp"
+#include "cook/chef/assistant/PathExtraction.hpp"
 #include <set>
 
-namespace cook { namespace utensil {
+namespace cook { namespace chef { namespace assistant {
 
 IncludePathSetter::IncludePathSetter(Language language)
     : language_(language)
@@ -26,5 +26,5 @@ Result IncludePathSetter::process(const Context & context, model::Snapshot & sna
     MSS_END();
 }
 
-} }
+} } }
 

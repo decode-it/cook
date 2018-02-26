@@ -1,9 +1,9 @@
-#ifndef HEADER_cook_utensil_LinkOrder_hpp_ALREADY_INCLUDED
-#define HEADER_cook_utensil_LinkOrder_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_chef_assistant_LinkOrder_hpp_ALREADY_INCLUDED
+#define HEADER_cook_chef_assistant_LinkOrder_hpp_ALREADY_INCLUDED
 
-#include "cook/utensil/Interface.hpp"
+#include "cook/chef/assistant/Interface.hpp"
 
-namespace cook { namespace utensil {
+namespace cook { namespace chef { namespace assistant {
 
 class LinkLibrarySorter : public Interface
 {
@@ -14,6 +14,6 @@ private:
     Result process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const;
 };
 
-} }
+} } }
 
 #endif

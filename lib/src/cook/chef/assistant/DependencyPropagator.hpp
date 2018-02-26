@@ -1,10 +1,10 @@
-#ifndef HEADER_cook_utensil_DependentPropagator_hpp_ALREADY_INCLUDED
-#define HEADER_cook_utensil_DependentPropagator_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_chef_assistant_DependentPropagator_hpp_ALREADY_INCLUDED
+#define HEADER_cook_chef_assistant_DependentPropagator_hpp_ALREADY_INCLUDED
 
-#include "cook/utensil/Interface.hpp"
+#include "cook/chef/assistant/Interface.hpp"
 #include <set>
 
-namespace cook { namespace utensil {
+namespace cook { namespace chef { namespace assistant {
 
 class DependentPropagator : public Interface
 {
@@ -20,7 +20,7 @@ private:
     std::function<bool (const LanguageTypePair &)> selection_;
 };
 
-} }
+} } }
 
 
 

@@ -1,33 +1,24 @@
-#include "cook/utensil/Linker.hpp"
-#include "gubg/stream.hpp"
+#include "cook/chef/assistant/Archiver.hpp"
 #include "boost/predef.h"
+#include "gubg/stream.hpp"
 
-namespace cook { namespace utensil {
+namespace cook { namespace chef { namespace assistant {
 
 namespace  {
 
-std::string construct_dynamic_library_name(const Context & context)
+
+std::string construct_archive_filename(const Context & context)
 {
 #if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << context.recipe->uri().string('.') << ".dll"; });
+    return gubg::stream([&](auto & os) {os << << context.recipe->uri().string('.') << ".lib"; });
 #else
-    return gubg::stream([&](auto & os) { os << "lib" << context.recipe->uri().string('.') << ".so"; });
+    return gubg::stream([&](auto & os) {os << "lib" << context.recipe->uri().string('.') << ".a"; });
 #endif
 }
 
-std::string construct_executable_name(const Context & context)
-{
-#if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << context.recipe->uri().string('.') << ".exe"; });
-#else
-    return gubg::stream([&](auto & os) { os << context.recipe->uri().string('.'); });
-#endif
 }
 
-
-}
-
-Result Linker::process(const Context & context, model::Snapshot & snapshot) const
+Result Archiver::process(const Context & context, model::Snapshot & snapshot) const
 {
     MSS_BEGIN(Result);
 
@@ -40,11 +31,9 @@ Result Linker::process(const Context & context, model::Snapshot & snapshot) cons
         MSS_RETURN_OK();
     }
 
-
     // stop the propagation, this file is contained in the library
     for(ingredient::File & object : it->second)
         object.set_propagation(Propagation::Private);
-
 
     // create the archive
     const ingredient::File archive = construct_archive_file(context);
@@ -54,10 +43,11 @@ Result Linker::process(const Context & context, model::Snapshot & snapshot) cons
     MSS_END();
 }
 
-ingredient::File Linker::construct_archive_file(const Context &context) const
+
+ingredient::File Archiver::construct_archive_file(const Context &context) const
 {
     const std::filesystem::path dir = context.environment->dirs.output() / context.recipe->pre().working_directory();
-    const std::filesystem::path rel = (context.recipe->type() == Type::Executable ? construct_executable_name(context) : construct_dynamic_library_name(context));
+    const std::filesystem::path rel = construct_archive_filename(context);
 
     ingredient::File archive(dir, rel);
     archive.set_overwrite(Overwrite::IfSame);
@@ -67,4 +57,4 @@ ingredient::File Linker::construct_archive_file(const Context &context) const
     return archive;
 }
 
-} }
+} } }

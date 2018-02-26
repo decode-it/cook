@@ -6,12 +6,6 @@
 
 namespace cook { namespace model {
 
-struct Context
-{
-    std::shared_ptr<Environment> environment;
-    Book * root = nullptr;
-};
-
 } }
 
 #endif

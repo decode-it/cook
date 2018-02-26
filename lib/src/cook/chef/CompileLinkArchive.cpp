@@ -1,21 +1,21 @@
 #include "cook/chef/CompileLinkArchive.hpp"
-#include "cook/utensil/DependencyPropagator.hpp"
-#include "cook/utensil/IncludePathSetter.hpp"
-#include "cook/utensil/LibraryPathSetter.hpp"
-#include "cook/utensil/Compiler.hpp"
-#include "cook/utensil/Archiver.hpp"
-#include "cook/utensil/Linker.hpp"
-#include "cook/utensil/LinkLibrarySorter.hpp"
+#include "cook/chef/assistant/DependencyPropagator.hpp"
+#include "cook/chef/assistant/IncludePathSetter.hpp"
+#include "cook/chef/assistant/LibraryPathSetter.hpp"
+#include "cook/chef/assistant/Compiler.hpp"
+#include "cook/chef/assistant/Archiver.hpp"
+#include "cook/chef/assistant/Linker.hpp"
+#include "cook/chef/assistant/LinkLibrarySorter.hpp"
 
 namespace cook { namespace chef {
 
 CompileLinkArchive::CompileLinkArchive(const std::string & name)
     : name_(name),
-      linker_(std::make_shared<utensil::Linker>()),
-      archiver_(std::make_shared<utensil::Archiver>())
+      linker_(std::make_shared<assistant::Linker>()),
+      archiver_(std::make_shared<assistant::Archiver>())
 {
     for (Language language : {Language::C, Language::CXX})
-        compilers_[language] = std::make_shared<utensil::Compiler>(language);
+        compilers_[language] = std::make_shared<assistant::Compiler>(language);
 }
 
 std::string CompileLinkArchive::name() const
@@ -71,7 +71,7 @@ CompileLinkArchive::StepList CompileLinkArchive::generate_compile_only_steps_() 
         Step step;
         step.name = "dependency propagation";
         step.description = "Propagation of all public dependencies from the dependees";
-        step.chefs.push_back(std::make_shared<utensil::DependentPropagator>());
+        step.chefs.push_back(std::make_shared<assistant::DependentPropagator>());
 
         steps.push_back(std::move(step));
     }
@@ -84,9 +84,9 @@ CompileLinkArchive::StepList CompileLinkArchive::generate_compile_only_steps_() 
 
         // include path extractor for every language
         for (const auto & p: compilers_)
-            step.chefs.push_back(std::make_shared<utensil::IncludePathSetter>(p.first));
+            step.chefs.push_back(std::make_shared<assistant::IncludePathSetter>(p.first));
 
-        step.chefs.push_back(std::make_shared<utensil::LibraryPathSetter>());
+        step.chefs.push_back(std::make_shared<assistant::LibraryPathSetter>());
 
         steps.push_back(std::move(step));
     }
@@ -129,7 +129,7 @@ CompileLinkArchive::StepList CompileLinkArchive::generate_link_steps_() const
         Step step;
         step.name = "sorting libraries";
         step.description = "Sorting the link libraries in topological order";
-        step.chefs.push_back(std::make_shared<utensil::LinkLibrarySorter>());
+        step.chefs.push_back(std::make_shared<assistant::LinkLibrarySorter>());
 
         steps.push_back(std::move(step));
     }

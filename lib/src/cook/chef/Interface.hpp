@@ -1,13 +1,13 @@
 #ifndef HEADER_cook_chef_Interface_hpp_ALREADY_INCLUDED
 #define HEADER_cook_chef_Interface_hpp_ALREADY_INCLUDED
 
-#include "cook/utensil/Interface.hpp"
+#include "cook/chef/assistant/Interface.hpp"
 #include <memory>
 
 namespace cook { namespace chef {
 
 
-using ChefPtr = std::shared_ptr<utensil::Interface>;
+using ChefPtr = std::shared_ptr<assistant::Interface>;
 
 struct Step
 {
