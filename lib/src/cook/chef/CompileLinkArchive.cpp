@@ -1,4 +1,4 @@
-#include "cook/toolchain/CompileLinkArchive.hpp"
+#include "cook/chef/CompileLinkArchive.hpp"
 #include "cook/staff/DependencyPropagator.hpp"
 #include "cook/staff/IncludePathSetter.hpp"
 #include "cook/staff/LibraryPathSetter.hpp"

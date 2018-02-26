@@ -8,7 +8,7 @@ Result LinkLibrarySorter::process(const Context & context, model::Snapshot & sna
 
     model::Snapshot::Files & files = snapshot.files();
 
-    auto it = files.find(LanguageTypePair(Language::ObjectCode, Type::Library));
+    auto it = files.find(LanguageTypePair(Language::Binary, Type::Library));
     if (it == files.end())
         MSS_RETURN_OK();
 

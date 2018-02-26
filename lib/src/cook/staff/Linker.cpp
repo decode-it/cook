@@ -33,7 +33,7 @@ Result Linker::process(const Context & context, model::Snapshot & snapshot) cons
 
     model::Snapshot::Files & files = snapshot.files();
 
-    auto it = files.find(LanguageTypePair(Language::ObjectCode, Type::Object));
+    auto it = files.find(LanguageTypePair(Language::Binary, Type::Object));
     if (it == files.end())
     {
         MSS_RC << MESSAGE(Warning, "archive for " << snapshot.uri() << " is not created as it contains no object code");
@@ -48,7 +48,7 @@ Result Linker::process(const Context & context, model::Snapshot & snapshot) cons
 
     // create the archive
     const ingredient::File archive = construct_archive_file(context);
-    const LanguageTypePair key(Language::ObjectCode, Type::Library);
+    const LanguageTypePair key(Language::Binary, Type::Library);
     MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << snapshot.uri());
 
     MSS_END();

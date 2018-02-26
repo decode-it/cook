@@ -1,7 +1,7 @@
-#ifndef HEADER_cook_toolchain_CompileLinkArchive_hpp_ALREADY_INCLUDED
-#define HEADER_cook_toolchain_CompileLinkArchive_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_chef_CompileLinkArchive_hpp_ALREADY_INCLUDED
+#define HEADER_cook_chef_CompileLinkArchive_hpp_ALREADY_INCLUDED
 
-#include "cook/toolchain/Interface.hpp"
+#include "cook/chef/Interface.hpp"
 #include <set>
 
 namespace cook { namespace toolchain {

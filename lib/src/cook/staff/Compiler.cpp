@@ -23,7 +23,7 @@ Result Compiler::process(const Context & context, model::Snapshot & snapshot) co
         MSG_MSS(source.propagation() == Propagation::Private, Warning, "Source file '" << source << "' in " << snapshot.uri() << " has public propagation and will (probably) result into multiple defined symbols");
 
         const ingredient::File & object = construct_object_file(source, context);
-        const LanguageTypePair key(Language::ObjectCode, Type::Object);
+        const LanguageTypePair key(Language::Binary, Type::Object);
 
         MSG_MSS(files.insert(key, object).second, Error, "Object file '" << object << "' already present in " << snapshot.uri());
     }
