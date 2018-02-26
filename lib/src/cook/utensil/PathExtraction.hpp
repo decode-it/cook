@@ -1,12 +1,12 @@
-#ifndef HEADER_cook_staff_PathExtraction_hpp_ALREADY_INCLUDED
-#define HEADER_cook_staff_PathExtraction_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_utensil_PathExtraction_hpp_ALREADY_INCLUDED
+#define HEADER_cook_utensil_PathExtraction_hpp_ALREADY_INCLUDED
 
 #include "cook/Result.hpp"
 #include "cook/LanguageTypePair.hpp"
 #include "cook/ingredient/File.hpp"
 #include "cook/model/Snapshot.hpp"
 
-namespace cook { namespace staff {
+namespace cook { namespace utensil {
 
 inline Result add_derived_path(const LanguageTypePair & key, const ingredient::File & file, model::Snapshot & snapshot, model::Recipe * recipe)
 {

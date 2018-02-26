@@ -1,9 +1,9 @@
-#ifndef HEADER_cook_staff_LinkOrder_hpp_ALREADY_INCLUDED
-#define HEADER_cook_staff_LinkOrder_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_utensil_LinkOrder_hpp_ALREADY_INCLUDED
+#define HEADER_cook_utensil_LinkOrder_hpp_ALREADY_INCLUDED
 
-#include "cook/staff/Interface.hpp"
+#include "cook/utensil/Interface.hpp"
 
-namespace cook { namespace staff {
+namespace cook { namespace utensil {
 
 class LinkLibrarySorter : public Interface
 {

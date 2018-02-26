@@ -19,7 +19,7 @@ class Kitchen
     };
 
 public:
-    using ToolchainPtr = std::shared_ptr<toolchain::Interface>;
+    using ToolchainPtr = std::shared_ptr<chef::Interface>;
     using VisualizerPtr = std::shared_ptr<visualizer::Interface>;
     using Variable = std::pair<std::string, std::string>;
 
@@ -35,7 +35,7 @@ public:
     const model::Context & context() const;
     model::Book * root_book() const;
 
-    Result register_toolchain(ToolchainPtr toolchain);
+    Result register_toolchain(ToolchainPtr chef);
     Result register_visualizer(VisualizerPtr visualizer);
     ToolchainPtr get_toolchain(const std::string & name) const;
     VisualizerPtr get_visualizer(const std::string & name) const;

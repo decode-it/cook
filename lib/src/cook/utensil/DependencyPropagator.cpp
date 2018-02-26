@@ -1,6 +1,6 @@
-#include "cook/staff/DependencyPropagator.hpp"
+#include "cook/utensil/DependencyPropagator.hpp"
 
-namespace cook { namespace staff {
+namespace cook { namespace utensil {
 
 namespace  {
 

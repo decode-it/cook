@@ -1,10 +1,10 @@
-#ifndef HEADER_cook_staff_DependentPropagator_hpp_ALREADY_INCLUDED
-#define HEADER_cook_staff_DependentPropagator_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_utensil_DependentPropagator_hpp_ALREADY_INCLUDED
+#define HEADER_cook_utensil_DependentPropagator_hpp_ALREADY_INCLUDED
 
-#include "cook/staff/Interface.hpp"
+#include "cook/utensil/Interface.hpp"
 #include <set>
 
-namespace cook { namespace staff {
+namespace cook { namespace utensil {
 
 class DependentPropagator : public Interface
 {

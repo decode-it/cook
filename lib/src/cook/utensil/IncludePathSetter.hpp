@@ -1,9 +1,9 @@
-#ifndef HEADER_cook_staff_IncludePathSetter_hpp_ALREADY_INCLUDED
-#define HEADER_cook_staff_IncludePathSetter_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_utensil_IncludePathSetter_hpp_ALREADY_INCLUDED
+#define HEADER_cook_utensil_IncludePathSetter_hpp_ALREADY_INCLUDED
 
-#include "cook/staff/Interface.hpp"
+#include "cook/utensil/Interface.hpp"
 
-namespace cook { namespace staff {
+namespace cook { namespace utensil {
 
 class IncludePathSetter : public Interface
 {

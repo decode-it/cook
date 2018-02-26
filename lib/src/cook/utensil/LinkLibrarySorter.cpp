@@ -1,6 +1,6 @@
-#include "cook/staff/LinkLibrarySorter.hpp"
+#include "cook/utensil/LinkLibrarySorter.hpp"
 
-namespace cook { namespace staff {
+namespace cook { namespace utensil {
 
 Result LinkLibrarySorter::process(const Context & context, model::Snapshot & snapshot) const
 {

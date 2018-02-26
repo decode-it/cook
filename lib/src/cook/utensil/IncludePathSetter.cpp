@@ -1,8 +1,8 @@
-#include "cook/staff/IncludePathSetter.hpp"
-#include "cook/staff/PathExtraction.hpp"
+#include "cook/utensil/IncludePathSetter.hpp"
+#include "cook/utensil/PathExtraction.hpp"
 #include <set>
 
-namespace cook { namespace staff {
+namespace cook { namespace utensil {
 
 IncludePathSetter::IncludePathSetter(Language language)
     : language_(language)

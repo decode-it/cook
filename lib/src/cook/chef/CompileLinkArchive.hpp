@@ -4,7 +4,7 @@
 #include "cook/chef/Interface.hpp"
 #include <set>
 
-namespace cook { namespace toolchain {
+namespace cook { namespace chef {
 
 class CompileLinkArchive : public Interface
 {

@@ -1,6 +1,6 @@
-#include "cook/staff/Compiler.hpp"
+#include "cook/utensil/Compiler.hpp"
 
-namespace cook { namespace staff {
+namespace cook { namespace utensil {
 
 Compiler::Compiler(Language language)
     : language_(language)
