@@ -36,7 +36,7 @@ bool Options::parse(int argc, const char ** argv)
         opt.add_switch(     'c', "--clean                ", "Clean the data for the specified generators before using them", [&](){ clean = true; });
         opt.add_mandatory(  'D', "--data                 ", "Passes the chaiscript variables to the process.", [&](const std::string & str) { variables.push_back(parse_key_value_pair(str)); });
         opt.add_switch(     'h', "--help                 ", "Prints this help.", [&](){ print_help = true; });
-        opt.add_mandatory(  'v', "--verbosity            ", "Verbosity level. By default this is 1. ", [&](const std::string & str) { verbosity = std::max(0, std::stoi(str)); });
+        opt.add_mandatory(  'v', "--verbosity            ", "Verbosity level, 0 is silent. By default this is 1. ", [&](const std::string & str) { verbosity = std::max(0, std::stoi(str)); });
     }
 
     // set the help message
@@ -64,6 +64,50 @@ bool Options::parse(int argc, const char ** argv)
 bool Options::valid() const
 {
     return parsed_;
+}
+
+void Options::stream(std::ostream &os, Indent &indent) const
+{
+    os << indent << "[options]{" << std::endl;
+
+    {
+        auto scope = indent.scope();
+
+        os << indent << "[recipe_files]";
+        for (const auto &fn: recipe_files)
+            os << "(" << fn << ")";
+        os << std::endl;
+
+        os << indent << "[output_path](" << output_path << ")" << std::endl;
+        os << indent << "[temp_path](" << temp_path << ")" << std::endl;
+        os << indent << "[toolchain](" << toolchain << ")" << std::endl;
+
+        os << indent << "[generators]";
+        for (const auto &p: generators)
+            os << "(" << p.first << ":" << p.second << ")";
+        os << std::endl;
+
+        os << indent << "[visualizers]";
+        for (const auto &p: visualizers)
+            os << "(" << p.first << ":" << p.second << ")";
+        os << std::endl;
+
+        os << indent << "[variables]";
+        for (const auto &p: variables)
+            os << "(" << p.first << ":" << p.second << ")";
+        os << std::endl;
+
+        os << indent << "[recipes]";
+        for (const auto &r: recipes)
+            os << "(" << r << ")";
+        os << std::endl;
+
+        os << indent << "[clean](" << (clean ? "true" : "false") << ")" << std::endl;
+        os << indent << "[print_help](" << (print_help ? "true" : "false") << ")" << std::endl;
+        os << indent << "[verbosity](" << verbosity << ")" << std::endl;
+    }
+
+    os << "}" << std::endl;
 }
 
 } }

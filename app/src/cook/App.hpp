@@ -16,6 +16,7 @@ private:
     Result extract_root_recipes_(std::list<model::Recipe *> & result) const;
     Result load_recipes_();
 
+    cook::Indent indent_;
     app::Options options_;
     cook::chai::Kitchen kitchen_;
 };

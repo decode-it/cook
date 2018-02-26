@@ -24,6 +24,9 @@ Result App::process()
 {
     MSS_BEGIN(Result, logns);
 
+    if (options_.verbosity >= 2)
+        options_.stream(std::cout, indent_);
+
     // initialize the kitchen
     MSS(kitchen_.initialize());
 
