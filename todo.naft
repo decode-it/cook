@@ -1,6 +1,5 @@
 [todo]{
     [cook]{
-        [create decent scenario test support]
         [internal build support]{
             [process api]{
                 [capture output to have uninterleaved output when building multi-threaded]
