@@ -27,21 +27,6 @@ bool Kitchen::initialize()
 
 }
 
-Result Kitchen::register_toolchain(ToolchainPtr toolchain)
-{
-    MSS_BEGIN(Result, logns);
-
-    MSS(!!toolchain);
-    const std::string & name = toolchain->name();
-
-    MSG_MSS(!name.empty(), Error, "Cannot add a toolchain with an empty name");
-    MSG_MSS(toolchains_.find(name) == toolchains_.end(), Error, "A toolchain with name '" << name << "' already exists");
-
-    toolchains_.emplace(name, toolchain);
-
-    MSS_END();
-}
-
 Result Kitchen::register_visualizer(VisualizerPtr visualizer)
 {
     MSS_BEGIN(Result, logns);
@@ -55,12 +40,6 @@ Result Kitchen::register_visualizer(VisualizerPtr visualizer)
     visualizers_.emplace(name, visualizer);
 
     MSS_END();
-}
-
-Kitchen::ToolchainPtr Kitchen::get_toolchain(const std::string & name) const
-{
-    auto it = toolchains_.find(name);
-    return it == toolchains_.end() ? ToolchainPtr() : it->second;
 }
 
 Kitchen::VisualizerPtr Kitchen::get_visualizer(const std::string & name) const

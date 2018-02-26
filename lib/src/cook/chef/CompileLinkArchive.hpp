@@ -1,40 +1,30 @@
 #ifndef HEADER_cook_chef_CompileLinkArchive_hpp_ALREADY_INCLUDED
 #define HEADER_cook_chef_CompileLinkArchive_hpp_ALREADY_INCLUDED
 
-#include "cook/chef/Interface.hpp"
+#include "cook/chef/Chef.hpp"
 #include <set>
 
 namespace cook { namespace chef {
 
-class CompileLinkArchive : public Interface
+struct LinkArchiveChef : public Chef
 {
-public:
-    explicit CompileLinkArchive(const std::string & name);
+    explicit LinkArchiveChef(const std::string &name);
 
-    std::string name() const override;
     Result initialize() override;
-    Result generate_processors(model::Recipe * recipe, std::list<Step> & steps) override;
 
-    void disable_build() override;
+    void set_compiler(Language language, AssistantPtr compiler);
+    void clear_compiler(Language language);
+    void set_linker(AssistantPtr linker);
+    void set_archiver(AssistantPtr archiver);
 
 private:
-
-
-    using StepList = std::list<Step>;
-
-    StepList generate_compile_only_steps_() const;
-    StepList generate_archive_steps_() const;
-    StepList generate_link_steps_() const;
+    std::list<AssistantPtr> generate_compile_only_steps_() const;
 
     std::string name_;
+    std::map<Language, AssistantPtr> compilers_;
+    AssistantPtr linker_;
+    AssistantPtr archiver_;
 
-    std::map<Language, ChefPtr> compilers_;
-    ChefPtr linker_;
-    ChefPtr archiver_;
-
-    StepList compile_only_steps_;
-    StepList archive_steps_;
-    StepList link_steps_;
 };
 
 } }

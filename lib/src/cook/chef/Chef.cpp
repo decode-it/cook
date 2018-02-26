@@ -21,30 +21,28 @@ Result Chef::mis_en_place(Kitchen & kitchen, const Menu & menu)
         const InstructionSet * instruction_set = nullptr;
         MSS(find_instruction_set(instruction_set, recipe));
 
-        assistant::Context context;
+        Context context;
         MSS(prepare_context(context, recipe, menu, kitchen.environment()));
 
 
         MSS(!!instruction_set);
-        MSS(mis_en_place_(kitchen, context, instruction_set->instructions));
+        MSS(mis_en_place_(kitchen, context, *instruction_set));
     }
 
 
     MSS_END();
 }
 
-Result Chef::mis_en_place_(Kitchen & kitchen, const assistant::Context & context, const Instructions & instructions) const
+Result Chef::mis_en_place_(Kitchen & kitchen, const Context & context, const InstructionSet & instruction_set) const
 {
     MSS_BEGIN(Result);
 
     kitchen.logger().LOG(Info, "Preparing " << context.recipe->uri());
 
-    for(const Instruction & instruction : instructions)
+    for(AssistantPtr assistant : instruction_set.assistants)
     {
-        kitchen.logger().LOG(Info, instruction.description);
-
-        for (Instruction::UtensilPtr tool : instruction.steps)
-            MSS(tool->process(context, context.recipe->pre()));
+        kitchen.logger().LOG(Info, assistant->description());
+        MSS(assistant->process(context, context.recipe->pre()));
     }
 
     MSS_END();
@@ -57,7 +55,13 @@ Result Chef::find_instruction_set(const InstructionSet *& result, model::Recipe 
     for(auto it = instruction_set_priority_map_.begin(); it != instruction_set_priority_map_.end(); ++it)
     {
         const InstructionSet & candidate = it->second;
-        if (candidate.decision_function(recipe))
+
+        std::string reason;
+        if (!candidate.can_cook(recipe, reason))
+        {
+            MSS_RC << MESSAGE(Info, "Skipping instruction set '" << candidate.name << "': " << reason);
+        }
+        else
         {
             result = &candidate;
             MSS_RETURN_OK();
@@ -68,7 +72,7 @@ Result Chef::find_instruction_set(const InstructionSet *& result, model::Recipe 
     MSS_END();
 }
 
-Result Chef::prepare_context(assistant::Context & context, model::Recipe * recipe, const model::Menu & menu, model::Environment * environment)
+Result Chef::prepare_context(Context & context, model::Recipe * recipe, const model::Menu & menu, model::Environment * environment)
 {
     MSS_BEGIN(Result);
 
