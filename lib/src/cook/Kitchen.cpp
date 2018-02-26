@@ -3,6 +3,11 @@
 #include "gubg/mss.hpp"
 #include <cassert>
 
+namespace  { 
+    /* const char *logns = ""; */
+    const char *logns = nullptr;
+} 
+
 namespace cook {
 
 Kitchen::Kitchen()
@@ -11,7 +16,7 @@ Kitchen::Kitchen()
 
 bool Kitchen::initialize()
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(bool, logns);
     context_.environment = create_environment();
     MSS(!!context_.environment);
 
@@ -24,7 +29,7 @@ bool Kitchen::initialize()
 
 Result Kitchen::register_toolchain(ToolchainPtr toolchain)
 {
-    MSS_BEGIN(Result);
+    MSS_BEGIN(Result, logns);
 
     MSS(!!toolchain);
     const std::string & name = toolchain->name();
@@ -39,7 +44,7 @@ Result Kitchen::register_toolchain(ToolchainPtr toolchain)
 
 Result Kitchen::register_visualizer(VisualizerPtr visualizer)
 {
-    MSS_BEGIN(Result);
+    MSS_BEGIN(Result, logns);
 
     MSS(!!visualizer);
     const std::string & name = visualizer->name();
@@ -81,7 +86,7 @@ model::Book * Kitchen::root_book() const
 
 Result Kitchen::register_variable(const std::string &name, const std::string &value)
 {
-    MSS_BEGIN(Result);
+    MSS_BEGIN(Result, logns);
 
     MSS(!!context_.environment);
     MSS(context_.environment->set_variable(name, value));
@@ -92,7 +97,7 @@ Result Kitchen::register_variable(const std::string &name, const std::string &va
 
 Result Kitchen::find_recipe(model::Recipe *& recipe, const std::string & name) const
 {
-    MSS_BEGIN(Result);
+    MSS_BEGIN(Result, logns);
 
     // create the uri
     std::pair<model::Uri, bool> p = model::Uri::recipe_uri(name);
@@ -114,7 +119,8 @@ Result Kitchen::find_recipe(model::Recipe *& recipe, const std::string & name) c
 
 Result Kitchen::prepare(const model::Menu & menu)
 {
-
+    MSS_BEGIN(Result, logns);
+    MSS_END();
 }
 
 }

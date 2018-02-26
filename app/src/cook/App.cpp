@@ -5,6 +5,10 @@
 #include "gubg/mss.hpp"
 #include <unordered_set>
 
+namespace  { 
+    const char *logns = nullptr;
+} 
+
 namespace cook {
 
 bool App::initialize(const app::Options & options)
@@ -18,7 +22,7 @@ bool App::initialize(const app::Options & options)
 
 Result App::process()
 {
-    MSS_BEGIN(Result);
+    MSS_BEGIN(Result, logns);
 
     // initialize the kitchen
     MSS(kitchen_.initialize());
