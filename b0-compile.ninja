@@ -3,7 +3,7 @@ cook_lib_include_paths  = -I lib/src $gubg_include_paths
 cook_app_include_paths  = -I app/src
 chai_include_paths  = -I gubg.chaiscript/extern/ChaiScript/include
 catch_include_paths = -I gubg.std/extern/catch/single_include
-boost_include_paths = -I extern/boost/iterator/include -I extern/boost/config/include -I extern/boost/mpl/include -I extern/boost/preprocessor/include -I extern/boost/static_assert/include -I extern/boost/type_traits/include -I extern/boost/detail/include -I extern/boost/core/include -I extern/boost/utility/include
+boost_include_paths = -I extern/boost/iterator/include -I extern/boost/config/include -I extern/boost/mpl/include -I extern/boost/preprocessor/include -I extern/boost/static_assert/include -I extern/boost/type_traits/include -I extern/boost/detail/include -I extern/boost/core/include -I extern/boost/utility/include -I extern/boost/predef/include
 
 #[output](script:
 #$gubg_mods=%w[std io algo math].map{|str|"gubg.#{str}"}
@@ -69,19 +69,7 @@ build .b0/lib/src/cook/chai/Recipe.cpp.obj: compile lib/src/cook/chai/Recipe.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/UserData.cpp.obj: compile lib/src/cook/chai/UserData.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/chef/Archive.cpp.obj: compile lib/src/cook/chef/Archive.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/chef/Compilation.cpp.obj: compile lib/src/cook/chef/Compilation.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/chef/DependentPropagation.cpp.obj: compile lib/src/cook/chef/DependentPropagation.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/chef/IncludePath.cpp.obj: compile lib/src/cook/chef/IncludePath.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/chef/LibraryPath.cpp.obj: compile lib/src/cook/chef/LibraryPath.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/chef/LinkOrder.cpp.obj: compile lib/src/cook/chef/LinkOrder.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/chef/Linking.cpp.obj: compile lib/src/cook/chef/Linking.cpp
+build .b0/lib/src/cook/chef/CompileLinkArchive.cpp.obj: compile lib/src/cook/chef/CompileLinkArchive.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/model/Book.cpp.obj: compile lib/src/cook/model/Book.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
@@ -103,7 +91,19 @@ build .b0/lib/src/cook/rules/Resolver.cpp.obj: compile lib/src/cook/rules/Resolv
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/rules/RuleSet.cpp.obj: compile lib/src/cook/rules/RuleSet.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/toolchain/CompileLinkArchive.cpp.obj: compile lib/src/cook/toolchain/CompileLinkArchive.cpp
+build .b0/lib/src/cook/staff/Archiver.cpp.obj: compile lib/src/cook/staff/Archiver.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/staff/Compiler.cpp.obj: compile lib/src/cook/staff/Compiler.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/staff/DependencyPropagator.cpp.obj: compile lib/src/cook/staff/DependencyPropagator.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/staff/IncludePathSetter.cpp.obj: compile lib/src/cook/staff/IncludePathSetter.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/staff/LibraryPathSetter.cpp.obj: compile lib/src/cook/staff/LibraryPathSetter.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/staff/LinkLibrarySorter.cpp.obj: compile lib/src/cook/staff/LinkLibrarySorter.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/staff/Linker.cpp.obj: compile lib/src/cook/staff/Linker.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/visualizer/Graphviz.cpp.obj: compile lib/src/cook/visualizer/Graphviz.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
@@ -279,13 +279,7 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/chai/Logger.cpp.obj $
     .b0/lib/src/cook/chai/Recipe.cpp.obj $
     .b0/lib/src/cook/chai/UserData.cpp.obj $
-    .b0/lib/src/cook/chef/Archive.cpp.obj $
-    .b0/lib/src/cook/chef/Compilation.cpp.obj $
-    .b0/lib/src/cook/chef/DependentPropagation.cpp.obj $
-    .b0/lib/src/cook/chef/IncludePath.cpp.obj $
-    .b0/lib/src/cook/chef/LibraryPath.cpp.obj $
-    .b0/lib/src/cook/chef/LinkOrder.cpp.obj $
-    .b0/lib/src/cook/chef/Linking.cpp.obj $
+    .b0/lib/src/cook/chef/CompileLinkArchive.cpp.obj $
     .b0/lib/src/cook/model/Book.cpp.obj $
     .b0/lib/src/cook/model/Element.cpp.obj $
     .b0/lib/src/cook/model/Environment.cpp.obj $
@@ -296,7 +290,13 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/rules/CXX.cpp.obj $
     .b0/lib/src/cook/rules/Resolver.cpp.obj $
     .b0/lib/src/cook/rules/RuleSet.cpp.obj $
-    .b0/lib/src/cook/toolchain/CompileLinkArchive.cpp.obj $
+    .b0/lib/src/cook/staff/Archiver.cpp.obj $
+    .b0/lib/src/cook/staff/Compiler.cpp.obj $
+    .b0/lib/src/cook/staff/DependencyPropagator.cpp.obj $
+    .b0/lib/src/cook/staff/IncludePathSetter.cpp.obj $
+    .b0/lib/src/cook/staff/LibraryPathSetter.cpp.obj $
+    .b0/lib/src/cook/staff/LinkLibrarySorter.cpp.obj $
+    .b0/lib/src/cook/staff/Linker.cpp.obj $
     .b0/lib/src/cook/visualizer/Graphviz.cpp.obj $
 
 #}
