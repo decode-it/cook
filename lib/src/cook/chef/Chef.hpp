@@ -13,7 +13,7 @@ class Chef
 public:
     virtual ~Chef() {}
 
-    virtual Result initialize();
+    virtual Result initialize() = 0;
 
     template <typename InstructionSet_>
     void add_instruction_set(unsigned int priority, InstructionSet_ && instruction_set)

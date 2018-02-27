@@ -37,11 +37,11 @@ Result Chef::mis_en_place_(Kitchen & kitchen, const Context & context, const Ins
 {
     MSS_BEGIN(Result);
 
-    kitchen.logger().LOG(Info, "Preparing " << context.recipe->uri());
+    const std::string & name = context.recipe->uri().string();
 
     for(AssistantPtr assistant : instruction_set.assistants)
     {
-        kitchen.logger().LOG(Info, assistant->description());
+        kitchen.logger().LOG(Info, "[" << name << "]: " << assistant->description());
         MSS(assistant->process(context, context.recipe->pre()));
     }
 

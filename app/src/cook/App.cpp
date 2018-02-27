@@ -1,6 +1,7 @@
 #include "cook/App.hpp"
 #include "cook/chai/Kitchen.hpp"
 #include "cook/model/Menu.hpp"
+#include "cook/chef/CompileLinkArchive.hpp"
 #include "cook/algo/Book.hpp"
 #include "gubg/mss.hpp"
 #include <unordered_set>
@@ -54,6 +55,16 @@ Result App::process()
         MSS(ptr->set_option(p.second));
         MSS(ptr->process(g, *kitchen_.environment()));
     }
+
+   MSG_MSS(g.all_dependencies_resolved(), Error, "The requested recipes contain unresolved dependencies");
+   MSG_MSS(g.is_acyclic(), Error, "The requested recipes have cyclic dependencies");
+
+   {
+       chef::LinkArchiveChef lac("default");
+       MSS(lac.initialize());
+
+       MSS(lac.mis_en_place(kitchen_, g));
+   }
 
     // resolve the root book
     MSS_END();

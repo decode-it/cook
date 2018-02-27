@@ -11,6 +11,7 @@ namespace  {
 namespace cook {
 
 Kitchen::Kitchen()
+    : root_(std::make_shared<model::Book>())
 {
 }
 
