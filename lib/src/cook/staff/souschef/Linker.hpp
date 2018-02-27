@@ -1,10 +1,10 @@
-#ifndef HEADER_cook_souschef_Linker_hpp_ALREADY_INCLUDED
-#define HEADER_cook_souschef_Linker_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_staff_souschef_Linker_hpp_ALREADY_INCLUDED
+#define HEADER_cook_staff_souschef_Linker_hpp_ALREADY_INCLUDED
 
-#include "cook/souschef/Interface.hpp"
+#include "cook/staff/souschef/Interface.hpp"
 #include <set>
 
-namespace cook { namespace souschef {
+namespace cook { namespace staff { namespace souschef {
 
 class Linker : public Interface
 {
@@ -16,7 +16,7 @@ private:
     virtual ingredient::File construct_archive_file(const Context &context) const;
 };
 
-} }
+} } }
 
 
 

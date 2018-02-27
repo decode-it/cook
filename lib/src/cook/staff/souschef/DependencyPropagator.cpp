@@ -1,6 +1,6 @@
-#include "cook/souschef/DependencyPropagator.hpp"
+#include "cook/staff/souschef/DependencyPropagator.hpp"
 
-namespace cook { namespace souschef {
+namespace cook { namespace staff { namespace souschef {
 
 namespace  {
 
@@ -55,4 +55,4 @@ Result DependentPropagator::process(const Context & context, model::Snapshot & s
     MSS_END();
 }
 
-} }
+} } }

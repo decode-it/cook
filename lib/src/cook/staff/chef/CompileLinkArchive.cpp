@@ -1,14 +1,14 @@
-#include "cook/chef/CompileLinkArchive.hpp"
-#include "cook/souschef/DependencyPropagator.hpp"
-#include "cook/souschef/IncludePathSetter.hpp"
-#include "cook/souschef/LibraryPathSetter.hpp"
-#include "cook/souschef/Compiler.hpp"
-#include "cook/souschef/Archiver.hpp"
-#include "cook/souschef/Linker.hpp"
-#include "cook/souschef/LinkLibrarySorter.hpp"
+#include "cook/staff/chef/CompileLinkArchive.hpp"
+#include "cook/staff/souschef/DependencyPropagator.hpp"
+#include "cook/staff/souschef/IncludePathSetter.hpp"
+#include "cook/staff/souschef/LibraryPathSetter.hpp"
+#include "cook/staff/souschef/Compiler.hpp"
+#include "cook/staff/souschef/Archiver.hpp"
+#include "cook/staff/souschef/Linker.hpp"
+#include "cook/staff/souschef/LinkLibrarySorter.hpp"
 #include "gubg/stream.hpp"
 
-namespace cook { namespace chef {
+namespace cook { namespace staff { namespace chef {
 
 namespace  {
 
@@ -109,4 +109,4 @@ std::list<AssistantPtr> LinkArchiveChef::generate_compile_only_steps_() const
     return result;
 }
 
-} }
+} } }

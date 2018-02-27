@@ -1,11 +1,11 @@
-#ifndef HEADER_cook_chef_InstructionSet_hpp_ALREADY_INCLUDED
-#define HEADER_cook_chef_InstructionSet_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_staff_chef_InstructionSet_hpp_ALREADY_INCLUDED
+#define HEADER_cook_staff_chef_InstructionSet_hpp_ALREADY_INCLUDED
 
-#include "cook/souschef/Interface.hpp"
+#include "cook/staff/souschef/Interface.hpp"
 #include "cook/model/Recipe.hpp"
 #include <functional>
 
-namespace cook { namespace chef {
+namespace cook { namespace staff { namespace chef {
 
 using AssistantPtr = std::shared_ptr<souschef::Interface>;
 
@@ -16,6 +16,6 @@ struct InstructionSet
     std::list<AssistantPtr> assistants;
 };
 
-} }
+} } }
 
 #endif

@@ -1,12 +1,12 @@
-#ifndef HEADER_cook_chef_Assistant_hpp_ALREADY_DEFINED
-#define HEADER_cook_chef_Assistant_hpp_ALREADY_DEFINED
+#ifndef HEADER_cook_staff_chef_Assistant_hpp_ALREADY_DEFINED
+#define HEADER_cook_staff_chef_Assistant_hpp_ALREADY_DEFINED
 
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Environment.hpp"
 #include <vector>
 #include <list>
 
-namespace cook { namespace souschef {
+namespace cook { namespace staff { namespace souschef {
 
 struct Context
 {
@@ -28,6 +28,6 @@ public:
 
 
 
-} }
+} } }
 
 #endif

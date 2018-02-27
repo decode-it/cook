@@ -1,9 +1,9 @@
-#ifndef HEADER_cook_souschef_LinkOrder_hpp_ALREADY_INCLUDED
-#define HEADER_cook_souschef_LinkOrder_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_staff_souschef_LinkOrder_hpp_ALREADY_INCLUDED
+#define HEADER_cook_staff_souschef_LinkOrder_hpp_ALREADY_INCLUDED
 
-#include "cook/souschef/Interface.hpp"
+#include "cook/staff/souschef/Interface.hpp"
 
-namespace cook { namespace souschef {
+namespace cook { namespace staff { namespace souschef {
 
 class LinkLibrarySorter : public Interface
 {
@@ -15,6 +15,6 @@ private:
     Result process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const;
 };
 
-} }
+} } }
 
 #endif

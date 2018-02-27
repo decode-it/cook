@@ -1,12 +1,12 @@
-#ifndef HEADER_cook_chef_Chef_hpp_ALREADY_INCLUDED
-#define HEADER_cook_chef_Chef_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_staff_chef_Chef_hpp_ALREADY_INCLUDED
+#define HEADER_cook_staff_chef_Chef_hpp_ALREADY_INCLUDED
 
-#include "cook/chef/InstructionSet.hpp"
+#include "cook/staff/chef/InstructionSet.hpp"
 #include "cook/model/Menu.hpp"
 #include "cook/Kitchen.hpp"
 #include <map>
 
-namespace cook { namespace chef {
+namespace cook { namespace staff { namespace chef {
 
 class Chef
 {
@@ -34,6 +34,6 @@ private:
 };
 
 
-} }
+} } }
 
 #endif

@@ -1,8 +1,8 @@
-#include "cook/souschef/IncludePathSetter.hpp"
-#include "cook/souschef/PathExtraction.hpp"
+#include "cook/staff/souschef/IncludePathSetter.hpp"
+#include "cook/staff/souschef/PathExtraction.hpp"
 #include <set>
 
-namespace cook { namespace souschef {
+namespace cook { namespace staff { namespace souschef {
 
 IncludePathSetter::IncludePathSetter(Language language)
     : language_(language)
@@ -26,5 +26,5 @@ Result IncludePathSetter::process(const Context & context, model::Snapshot & sna
     MSS_END();
 }
 
-} }
+} } }
 

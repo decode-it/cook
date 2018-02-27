@@ -1,10 +1,10 @@
-#ifndef HEADER_cook_souschef_IncludePathSetter_hpp_ALREADY_INCLUDED
-#define HEADER_cook_souschef_IncludePathSetter_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_staff_souschef_IncludePathSetter_hpp_ALREADY_INCLUDED
+#define HEADER_cook_staff_souschef_IncludePathSetter_hpp_ALREADY_INCLUDED
 
-#include "cook/souschef/Interface.hpp"
+#include "cook/staff/souschef/Interface.hpp"
 #include "gubg/stream.hpp"
 
-namespace cook { namespace souschef {
+namespace cook { namespace staff { namespace souschef {
 
 class IncludePathSetter : public Interface
 {
@@ -18,6 +18,6 @@ private:
     Language language_;
 };
 
-} }
+} } }
 
 #endif

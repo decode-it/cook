@@ -1,10 +1,10 @@
-#ifndef HEADER_cook_souschef_DependentPropagator_hpp_ALREADY_INCLUDED
-#define HEADER_cook_souschef_DependentPropagator_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_staff_souschef_DependentPropagator_hpp_ALREADY_INCLUDED
+#define HEADER_cook_staff_souschef_DependentPropagator_hpp_ALREADY_INCLUDED
 
-#include "cook/souschef/Interface.hpp"
+#include "cook/staff/souschef/Interface.hpp"
 #include <set>
 
-namespace cook { namespace souschef {
+namespace cook { namespace staff { namespace souschef {
 
 class DependentPropagator : public Interface
 {
@@ -21,7 +21,7 @@ private:
     std::function<bool (const LanguageTypePair &)> selection_;
 };
 
-} }
+} } }
 
 
 
