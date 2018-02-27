@@ -1,6 +1,6 @@
-#include "cook/chef/assistant/LinkLibrarySorter.hpp"
+#include "cook/souschef/LinkLibrarySorter.hpp"
 
-namespace cook { namespace chef { namespace assistant {
+namespace cook { namespace souschef {
 
 Result LinkLibrarySorter::process(const Context & context, model::Snapshot & snapshot) const
 {
@@ -52,5 +52,5 @@ Result LinkLibrarySorter::process_(const Context & context, model::Snapshot & sn
 }
 
 
-} } }
+} }
 

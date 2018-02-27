@@ -21,7 +21,7 @@ Result Chef::mis_en_place(Kitchen & kitchen, const Menu & menu)
         const InstructionSet * instruction_set = nullptr;
         MSS(find_instruction_set(instruction_set, recipe));
 
-        Context context;
+        souschef::Context context;
         MSS(prepare_context(context, recipe, menu, kitchen.environment()));
 
 
@@ -33,7 +33,7 @@ Result Chef::mis_en_place(Kitchen & kitchen, const Menu & menu)
     MSS_END();
 }
 
-Result Chef::mis_en_place_(Kitchen & kitchen, const Context & context, const InstructionSet & instruction_set) const
+Result Chef::mis_en_place_(Kitchen & kitchen, const souschef::Context & context, const InstructionSet & instruction_set) const
 {
     MSS_BEGIN(Result);
 
@@ -72,7 +72,7 @@ Result Chef::find_instruction_set(const InstructionSet *& result, model::Recipe 
     MSS_END();
 }
 
-Result Chef::prepare_context(Context & context, model::Recipe * recipe, const model::Menu & menu, model::Environment * environment)
+Result Chef::prepare_context(souschef::Context & context, model::Recipe * recipe, const model::Menu & menu, model::Environment * environment)
 {
     MSS_BEGIN(Result);
 

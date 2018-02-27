@@ -1,11 +1,11 @@
 #include "cook/chef/CompileLinkArchive.hpp"
-#include "cook/chef/assistant/DependencyPropagator.hpp"
-#include "cook/chef/assistant/IncludePathSetter.hpp"
-#include "cook/chef/assistant/LibraryPathSetter.hpp"
-#include "cook/chef/assistant/Compiler.hpp"
-#include "cook/chef/assistant/Archiver.hpp"
-#include "cook/chef/assistant/Linker.hpp"
-#include "cook/chef/assistant/LinkLibrarySorter.hpp"
+#include "cook/souschef/DependencyPropagator.hpp"
+#include "cook/souschef/IncludePathSetter.hpp"
+#include "cook/souschef/LibraryPathSetter.hpp"
+#include "cook/souschef/Compiler.hpp"
+#include "cook/souschef/Archiver.hpp"
+#include "cook/souschef/Linker.hpp"
+#include "cook/souschef/LinkLibrarySorter.hpp"
 #include "gubg/stream.hpp"
 
 namespace cook { namespace chef {
@@ -19,11 +19,11 @@ const static std::initializer_list<Language> default_supported_languages = { Lan
 LinkArchiveChef::LinkArchiveChef(const std::string & name)
     : name_(name)
 {
-    linker_     = std::make_shared<assistant::Linker>();
-    archiver_   = std::make_shared<assistant::Archiver>();
+    linker_     = std::make_shared<souschef::Linker>();
+    archiver_   = std::make_shared<souschef::Archiver>();
 
     for (cook::Language Language : default_supported_languages)
-        compilers_[Language] = std::make_shared<assistant::Compiler>(Language);
+        compilers_[Language] = std::make_shared<souschef::Compiler>(Language);
 }
 
 Result LinkArchiveChef::initialize()
@@ -44,6 +44,7 @@ Result LinkArchiveChef::initialize()
         };
 
         set.assistants = generate_compile_only_steps_();
+        set.assistants.push_back(std::make_shared<souschef::LinkLibrarySorter>());
         set.assistants.push_back(linker_);
 
         this->add_instruction_set(100, std::move(set));
@@ -95,12 +96,12 @@ std::list<AssistantPtr> LinkArchiveChef::generate_compile_only_steps_() const
 {
     std::list<AssistantPtr> result;
 
-    result.push_back(std::make_shared<assistant::DependentPropagator>());
+    result.push_back(std::make_shared<souschef::DependentPropagator>());
 
     for (const auto & p : compilers_)
-        result.push_back(std::make_shared<assistant::IncludePathSetter>(p.first));
+        result.push_back(std::make_shared<souschef::IncludePathSetter>(p.first));
 
-    result.push_back(std::make_shared<assistant::LibraryPathSetter>());
+    result.push_back(std::make_shared<souschef::LibraryPathSetter>());
 
     for (const auto & p : compilers_)
         result.push_back(p.second);

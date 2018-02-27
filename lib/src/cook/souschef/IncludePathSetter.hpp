@@ -1,12 +1,12 @@
-#ifndef HEADER_cook_chef_assistant_IncludePathSetter_hpp_ALREADY_INCLUDED
-#define HEADER_cook_chef_assistant_IncludePathSetter_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_souschef_IncludePathSetter_hpp_ALREADY_INCLUDED
+#define HEADER_cook_souschef_IncludePathSetter_hpp_ALREADY_INCLUDED
 
-#include "cook/chef/Assistant.hpp"
+#include "cook/souschef/Interface.hpp"
 #include "gubg/stream.hpp"
 
-namespace cook { namespace chef { namespace assistant {
+namespace cook { namespace souschef {
 
-class IncludePathSetter : public Assistant
+class IncludePathSetter : public Interface
 {
 public:
     IncludePathSetter(Language language);
@@ -18,6 +18,6 @@ private:
     Language language_;
 };
 
-} } }
+} }
 
 #endif

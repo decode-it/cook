@@ -1,12 +1,12 @@
-#ifndef HEADER_cook_chef_assistant_DependentPropagator_hpp_ALREADY_INCLUDED
-#define HEADER_cook_chef_assistant_DependentPropagator_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_souschef_DependentPropagator_hpp_ALREADY_INCLUDED
+#define HEADER_cook_souschef_DependentPropagator_hpp_ALREADY_INCLUDED
 
-#include "cook/chef/Assistant.hpp"
+#include "cook/souschef/Interface.hpp"
 #include <set>
 
-namespace cook { namespace chef { namespace assistant {
+namespace cook { namespace souschef {
 
-class DependentPropagator : public Assistant
+class DependentPropagator : public Interface
 {
 public:
     using SelectionFunction = std::function<bool (const LanguageTypePair &)>;
@@ -21,7 +21,7 @@ private:
     std::function<bool (const LanguageTypePair &)> selection_;
 };
 
-} } }
+} }
 
 
 

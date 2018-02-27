@@ -6,7 +6,7 @@
 #include <vector>
 #include <list>
 
-namespace cook { namespace chef {
+namespace cook { namespace souschef {
 
 struct Context
 {
@@ -17,16 +17,16 @@ struct Context
     model::Environment * environment;
 };
 
-class Assistant
+class Interface
 {
 public:
-    virtual ~Assistant() {}
+    virtual ~Interface() {}
 
     virtual Result process(const Context & context, model::Snapshot & snapshot) const = 0;
     virtual std::string description() const  = 0;
 };
 
-using AssistantPtr = std::shared_ptr<Assistant>;
+
 
 } }
 

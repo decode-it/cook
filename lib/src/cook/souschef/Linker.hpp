@@ -1,12 +1,12 @@
-#ifndef HEADER_cook_chef_assistant_Linker_hpp_ALREADY_INCLUDED
-#define HEADER_cook_chef_assistant_Linker_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_souschef_Linker_hpp_ALREADY_INCLUDED
+#define HEADER_cook_souschef_Linker_hpp_ALREADY_INCLUDED
 
-#include "cook/chef/Assistant.hpp"
+#include "cook/souschef/Interface.hpp"
 #include <set>
 
-namespace cook { namespace chef { namespace assistant {
+namespace cook { namespace souschef {
 
-class Linker : public Assistant
+class Linker : public Interface
 {
 public:
     std::string description() const override { return "Linker"; }
@@ -16,7 +16,7 @@ private:
     virtual ingredient::File construct_archive_file(const Context &context) const;
 };
 
-} } }
+} }
 
 
 

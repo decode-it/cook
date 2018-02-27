@@ -1,12 +1,12 @@
-#ifndef HEADER_cook_chef_assistant_Compiler_hpp_ALREADY_INCLUDED
-#define HEADER_cook_chef_assistant_Compiler_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_souschef_Compiler_hpp_ALREADY_INCLUDED
+#define HEADER_cook_souschef_Compiler_hpp_ALREADY_INCLUDED
 
-#include "cook/chef/Assistant.hpp"
+#include "cook/souschef/Interface.hpp"
 #include "gubg/stream.hpp"
 
-namespace cook { namespace chef { namespace assistant {
+namespace cook { namespace souschef {
 
-class Compiler : public Assistant
+class Compiler : public Interface
 {
 public:
     explicit Compiler(Language language);
@@ -21,7 +21,7 @@ private:
 
 };
 
-} } }
+} }
 
 
 
