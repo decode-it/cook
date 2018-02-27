@@ -78,7 +78,7 @@ root.book("myProject", fun(b) {
     ...
 })
 ```
-The second argument to this `book` function is `fun(b){}` is the callback fuctor, with argument `b` the newly created book. (Note that the scope of `fun(b)` starts at first line and goes up to the final line of our script.)
+The second argument to this `book` function is `fun(b){}` is the callback functor, with argument `b` the newly created book. (Note that the scope of `fun(b)` starts at first line and goes up to the final line of our script.)
 
 #### Creating a library
 
