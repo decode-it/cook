@@ -28,6 +28,8 @@ LinkArchiveChef::LinkArchiveChef(const std::string & name)
 
 Result LinkArchiveChef::initialize()
 {
+    MSS_BEGIN(Result);
+
     // the linker
     {
         InstructionSet set;
@@ -65,6 +67,8 @@ Result LinkArchiveChef::initialize()
 
         this->add_instruction_set(100, std::move(set));
     }
+
+    MSS_END();
 }
 
 void LinkArchiveChef::set_compiler(Language language, AssistantPtr compiler)
