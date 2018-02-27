@@ -12,7 +12,7 @@ void Logger::log(LogType type, const Logger::LogFunction & function)
         throw chaiscript::exception::eval_error(gubg::stream(function));
 
     default:
-        std::cout << type << ":" << gubg::stream(function);
+        std::cout << type << ": " << gubg::stream(function) << std::endl;
     }
 }
 
