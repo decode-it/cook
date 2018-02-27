@@ -79,6 +79,24 @@ public:
         MSS_END();
     }
 
+    gubg::Range<typename Collection<Ingredient>::iterator> range(const LanguageTypePair & collection_key)
+    {
+        auto it = find(collection_key);
+        if (it == end())
+            return {};
+        else
+            return gubg::make_range(it->second);
+    }
+
+    gubg::Range<typename Collection<Ingredient>::const_iterator> range(const LanguageTypePair & collection_key) const
+    {
+        auto it = find(collection_key);
+        if (it == end())
+            return {};
+        else
+            return gubg::make_range(it->second);
+    }
+
     Result merge(const Ingredients<Ingredient> & rhs)
     {
         MSS_BEGIN(Result);

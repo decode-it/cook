@@ -6,6 +6,15 @@ namespace cook { namespace staff { namespace souschef {
 
 namespace  {
 
+struct DummyArchiver : public process::Command
+{
+    std::string name() const override { return "archive"; }
+    Result process(const std::list<std::filesystem::path> & input, const std::list<std::filesystem::path> & output) override
+    {
+        return Result();
+    }
+};
+
 
 std::string construct_archive_filename(const Context & context)
 {
@@ -23,22 +32,32 @@ Result Archiver::process(const Context & context, model::Snapshot & snapshot) co
     MSS_BEGIN(Result);
 
     model::Snapshot::Files & files = snapshot.files();
+    MSS(!!context.execution_graph);
+    auto & g = *context.execution_graph;
 
-    auto it = files.find(LanguageTypePair(Language::Binary, Type::Object));
-    if (it == files.end())
+    auto objects = files.range(LanguageTypePair(Language::Binary, Type::Object));
+    if (objects.empty())
     {
         MSS_RC << MESSAGE(Warning, "archive for " << snapshot.uri() << " is not created as it contains no object code");
         MSS_RETURN_OK();
     }
 
+    auto archive_vertex = g.add_vertex(archive_command(context));
+
     // stop the propagation, this file is contained in the library
-    for(ingredient::File & object : it->second)
+    for(ingredient::File & object : objects)
+    {
         object.set_propagation(Propagation::Private);
+        MSS(g.add_edge(g.goc_vertex(object.key()), archive_vertex));
+    }
 
     // create the archive
     const ingredient::File archive = construct_archive_file(context);
     const LanguageTypePair key(Language::Binary, Type::Library);
     MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << snapshot.uri());
+
+    // add the link in the execution graph
+    MSS(g.add_edge(archive_vertex, g.goc_vertex(archive.key())));
 
     MSS_END();
 }
@@ -55,6 +74,11 @@ ingredient::File Archiver::construct_archive_file(const Context &context) const
     archive.set_propagation(Propagation::Public);
 
     return archive;
+}
+
+process::CommandPtr Archiver::archive_command(const Context & context) const
+{
+    return std::make_shared<DummyArchiver>();
 }
 
 } } }

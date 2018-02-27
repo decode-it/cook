@@ -1,21 +1,9 @@
 #ifndef HEADER_cook_staff_chef_Assistant_hpp_ALREADY_DEFINED
 #define HEADER_cook_staff_chef_Assistant_hpp_ALREADY_DEFINED
 
-#include "cook/model/Recipe.hpp"
-#include "cook/model/Environment.hpp"
-#include <vector>
-#include <list>
+#include "cook/staff/souschef/Context.hpp"
 
 namespace cook { namespace staff { namespace souschef {
-
-struct Context
-{
-    model::Recipe * recipe;
-    std::vector<model::Recipe *> dependencies;
-    std::list<model::Recipe *> topological_order;
-
-    model::Environment * environment;
-};
 
 class Interface
 {

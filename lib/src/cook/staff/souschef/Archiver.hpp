@@ -14,6 +14,7 @@ public:
 
 private:
     virtual ingredient::File construct_archive_file(const Context &context) const;
+    virtual process::CommandPtr archive_command(const Context & context) const;
 };
 
 } } }

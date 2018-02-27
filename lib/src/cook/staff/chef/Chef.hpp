@@ -31,6 +31,7 @@ private:
     Result mis_en_place_(Kitchen & kitchen, const souschef::Context & context, const InstructionSet &instruction_set) const;
 
     std::multimap<unsigned int, InstructionSet> instruction_set_priority_map_;
+
 };
 
 

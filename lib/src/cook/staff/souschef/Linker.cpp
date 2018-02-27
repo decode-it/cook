@@ -6,6 +6,15 @@ namespace cook { namespace staff { namespace souschef {
 
 namespace  {
 
+struct DummyLinker : public process::Command
+{
+    std::string name() const override { return "link"; }
+    Result process(const std::list<std::filesystem::path> & input, const std::list<std::filesystem::path> & output) override
+    {
+        return Result();
+    }
+};
+
 std::string construct_dynamic_library_name(const Context & context)
 {
 #if BOOST_OS_WINDOWS
@@ -32,24 +41,45 @@ Result Linker::process(const Context & context, model::Snapshot & snapshot) cons
     MSS_BEGIN(Result);
 
     model::Snapshot::Files & files = snapshot.files();
+    MSS(!!context.execution_graph);
+    auto & g = *context.execution_graph;
 
-    auto it = files.find(LanguageTypePair(Language::Binary, Type::Object));
-    if (it == files.end())
+    auto objects = files.range(LanguageTypePair(Language::Binary, Type::Object));
+    auto libs = files.range(LanguageTypePair(Language::Binary, Type::Library));
+
+    if (objects.empty() && libs.empty())
     {
         MSS_RC << MESSAGE(Warning, "archive for " << snapshot.uri() << " is not created as it contains no object code");
         MSS_RETURN_OK();
     }
 
+    const auto link_vertex = g.add_vertex(link_command(context));
 
-    // stop the propagation, this file is contained in the library
-    for(ingredient::File & object : it->second)
+    // link the objects
+    for(ingredient::File & object : objects)
+    {
+        // stop the propagation, this file is contained in the library
         object.set_propagation(Propagation::Private);
+        MSS(g.add_edge(g.goc_vertex(object.key()), link_vertex));
+    }
 
+    // link the libraries
+    for(ingredient::File & lib: libs)
+    {
+        // stop the propagation, this file is contained in the library
+        lib.set_propagation(Propagation::Private);
+
+        if (lib.owner() != nullptr)
+            MSS(g.add_edge(g.goc_vertex(lib.key()), link_vertex));
+    }
 
     // create the archive
     const ingredient::File archive = construct_archive_file(context);
     const LanguageTypePair key(Language::Binary, Type::Library);
     MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << snapshot.uri());
+
+    // add the link in the execution graph
+    MSS(g.add_edge(link_vertex, g.goc_vertex(archive.key())));
 
     MSS_END();
 }
@@ -65,6 +95,11 @@ ingredient::File Linker::construct_archive_file(const Context &context) const
     archive.set_propagation(Propagation::Public);
 
     return archive;
+}
+
+process::CommandPtr Linker::link_command(const Context & context) const
+{
+    return std::make_shared<DummyLinker>();
 }
 
 } } }

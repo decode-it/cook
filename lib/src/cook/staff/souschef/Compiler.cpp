@@ -2,6 +2,19 @@
 
 namespace cook { namespace staff { namespace souschef {
 
+namespace  {
+
+struct DummyCompiler : public process::Command
+{
+    std::string name() const override { return "compile"; }
+    Result process(const std::list<std::filesystem::path> & input, const std::list<std::filesystem::path> & output) override
+    {
+        return Result();
+    }
+};
+
+}
+
 Compiler::Compiler(Language language)
     : language_(language)
 {
@@ -12,11 +25,16 @@ Result Compiler::process(const Context & context, model::Snapshot & snapshot) co
 {
     MSS_BEGIN(Result);
 
+    MSS(!!context.execution_graph);
+    auto & g = *context.execution_graph;
+
     model::Snapshot::Files & files = snapshot.files();
 
     auto it = files.find(LanguageTypePair(language_, Type::Source));
     if (it == files.end())
         MSS_RETURN_OK();
+
+    process::CommandPtr cc = compile_command(context);
 
     for (const ingredient::File & source : it->second)
     {
@@ -26,6 +44,16 @@ Result Compiler::process(const Context & context, model::Snapshot & snapshot) co
         const LanguageTypePair key(Language::Binary, Type::Object);
 
         MSG_MSS(files.insert(key, object).second, Error, "Object file '" << object << "' already present in " << snapshot.uri());
+
+        auto compile_vertex = g.add_vertex(cc);
+        {
+            auto source_vertex = g.goc_vertex(source.key());
+            MSS(g.add_edge(source_vertex, compile_vertex));
+        }
+        {
+            auto object_vertex = g.goc_vertex(object.key());
+            MSS(g.add_edge(compile_vertex, object_vertex));
+        }
     }
 
     MSS_END();
@@ -42,6 +70,11 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
     object.set_propagation(Propagation::Public);
 
     return object;
+}
+
+process::CommandPtr Compiler::compile_command(const Context & context) const
+{
+    return std::make_shared<DummyCompiler>();
 }
 
 } } }

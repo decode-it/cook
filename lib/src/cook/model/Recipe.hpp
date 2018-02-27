@@ -30,6 +30,7 @@ public:
     Snapshot & post()               { return post_; }
 
     void add_globber(const GlobInfo & globbing) { globbings_.push_back(globbing); }
+    bool allows_early_globbing() const { return false; }
 
     gubg::Range<DependencyPairIterator> dependency_pairs() const;
     gubg::Range<DependencyIterator> dependencies() const;
