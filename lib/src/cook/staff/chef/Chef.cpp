@@ -4,7 +4,7 @@ using namespace cook::model;
 
 namespace cook { namespace staff { namespace chef {
 
-Result Chef::mis_en_place(Kitchen & kitchen, const Menu & menu)
+Result Chef::mis_en_place(Context & kitchen, const Menu & menu)
 {
     MSS_BEGIN(Result);
 
@@ -33,7 +33,7 @@ Result Chef::mis_en_place(Kitchen & kitchen, const Menu & menu)
     MSS_END();
 }
 
-Result Chef::mis_en_place_(Kitchen & kitchen, const souschef::Context & context, const InstructionSet & instruction_set) const
+Result Chef::mis_en_place_(Context &kitchen, const souschef::Context & context, const InstructionSet & instruction_set) const
 {
     MSS_BEGIN(Result);
 

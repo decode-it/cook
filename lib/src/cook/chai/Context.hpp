@@ -1,14 +1,14 @@
-#ifndef HEADER_cook_chai_Kitchen_hpp_ALREADY_INCLUDED
-#define HEADER_cook_chai_Kitchen_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_chai_Context_hpp_ALREADY_INCLUDED
+#define HEADER_cook_chai_Context_hpp_ALREADY_INCLUDED
 
-#include "cook/Kitchen.hpp"
+#include "cook/Context.hpp"
 
 namespace cook { namespace chai {
 
-struct Kitchen : public cook::Kitchen
+struct Context : public cook::Context
 {
-    Kitchen();
-    virtual ~Kitchen();
+    Context();
+    virtual ~Context();
 
     cook::Logger & logger() override;
 

@@ -1,4 +1,4 @@
-#include "cook/Kitchen.hpp"
+#include "cook/Context.hpp"
 #include "cook/visualizer/Graphviz.hpp"
 #include "gubg/mss.hpp"
 #include <cassert>
@@ -10,12 +10,12 @@ namespace  {
 
 namespace cook {
 
-Kitchen::Kitchen()
+Context::Context()
     : root_(std::make_shared<model::Book>())
 {
 }
 
-bool Kitchen::initialize()
+bool Context::initialize()
 {
     MSS_BEGIN(bool);
     environment_ = create_environment();
@@ -28,7 +28,7 @@ bool Kitchen::initialize()
 
 }
 
-Result Kitchen::register_visualizer(VisualizerPtr visualizer)
+Result Context::register_visualizer(VisualizerPtr visualizer)
 {
     MSS_BEGIN(Result, logns);
 
@@ -43,23 +43,23 @@ Result Kitchen::register_visualizer(VisualizerPtr visualizer)
     MSS_END();
 }
 
-Kitchen::VisualizerPtr Kitchen::get_visualizer(const std::string & name) const
+Context::VisualizerPtr Context::get_visualizer(const std::string & name) const
 {
     auto it = visualizers_.find(name);
     return it == visualizers_.end() ? VisualizerPtr() : it->second;
 }
 
 
-model::Book * Kitchen::root_book() const
+model::Book * Context::root_book() const
 {
     return root_.get();
 }
-model::Environment * Kitchen::environment() const
+model::Environment * Context::environment() const
 {
     return environment_.get();
 }
 
-Result Kitchen::register_variable(const std::string &name, const std::string &value)
+Result Context::register_variable(const std::string &name, const std::string &value)
 {
     MSS_BEGIN(Result, logns);
 
@@ -70,7 +70,7 @@ Result Kitchen::register_variable(const std::string &name, const std::string &va
 }
 
 
-Result Kitchen::find_recipe(model::Recipe *& recipe, const std::string & name) const
+Result Context::find_recipe(model::Recipe *& recipe, const std::string & name) const
 {
     MSS_BEGIN(Result, logns);
 

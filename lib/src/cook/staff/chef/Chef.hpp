@@ -3,7 +3,7 @@
 
 #include "cook/staff/chef/InstructionSet.hpp"
 #include "cook/model/Menu.hpp"
-#include "cook/Kitchen.hpp"
+#include "cook/Context.hpp"
 #include <map>
 
 namespace cook { namespace staff { namespace chef {
@@ -22,13 +22,13 @@ public:
     }
 
     // I know it should mets en place, but this corresponds to the cooking term :)
-    Result mis_en_place(Kitchen & kitchen, const model::Menu & menu);
+    Result mis_en_place(Context & kitchen, const model::Menu & menu);
 
     Result find_instruction_set(const InstructionSet *& result, model::Recipe * recipe) const;
     Result prepare_context(souschef::Context & context, model::Recipe * recipe, const model::Menu & menu, model::Environment * environment);
 
 private:
-    Result mis_en_place_(Kitchen & kitchen, const souschef::Context & context, const InstructionSet &instruction_set) const;
+    Result mis_en_place_(Context & kitchen, const souschef::Context & context, const InstructionSet &instruction_set) const;
 
     std::multimap<unsigned int, InstructionSet> instruction_set_priority_map_;
 

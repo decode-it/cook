@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_Kitchen_hpp_ALREADY_INCLUDED
-#define HEADER_cook_Kitchen_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_Context_hpp_ALREADY_INCLUDED
+#define HEADER_cook_Context_hpp_ALREADY_INCLUDED
 
 #include "cook/Logger.hpp"
 #include "cook/model/Book.hpp"
@@ -8,14 +8,14 @@
 
 namespace cook {
 
-class Kitchen
+class Context
 {
 public:
     using VisualizerPtr = std::shared_ptr<visualizer::Interface>;
     using Variable = std::pair<std::string, std::string>;
 
-    Kitchen();
-    virtual ~Kitchen() {}
+    Context();
+    virtual ~Context() {}
 
     bool initialize();
 

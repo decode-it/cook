@@ -1,5 +1,4 @@
 #include "cook/App.hpp"
-#include "cook/chai/Kitchen.hpp"
 #include "cook/model/Menu.hpp"
 #include "cook/staff/chef/CompileLinkArchive.hpp"
 #include "cook/algo/Book.hpp"
@@ -49,7 +48,7 @@ Result App::process()
     // process all the requested visualizations
     for(const auto & p: options_.visualizers)
     {
-        Kitchen::VisualizerPtr ptr = kitchen_.get_visualizer(p.first);
+        Context::VisualizerPtr ptr = kitchen_.get_visualizer(p.first);
         MSG_MSS(!!ptr, Error, "unknown visualizer '" << p.first << "'");
 
         MSS(ptr->set_option(p.second));

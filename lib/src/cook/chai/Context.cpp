@@ -1,4 +1,4 @@
-#include "cook/chai/Kitchen.hpp"
+#include "cook/chai/Context.hpp"
 #include "cook/chai/Book.hpp"
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/Logger.hpp"
@@ -9,7 +9,7 @@
 
 namespace cook { namespace chai {
 
-struct Kitchen::D
+struct Context::D
 {
     using Parser = chaiscript::parser::ChaiScript_Parser<chaiscript::eval::Noop_Tracer, chaiscript::optimizer::Optimizer_Default>;
     using Engine = chaiscript::ChaiScript_Basic;
@@ -25,11 +25,11 @@ struct Kitchen::D
     std::stack<std::filesystem::path> scripts;
     Book root_book;
 
-    void initialize_engine_(Kitchen * kitchen)
+    void initialize_engine_(Context * kitchen)
     {
         auto & chai = engine;
 
-        chai.add(chaiscript::fun(&Kitchen::include_, kitchen), "include");
+        chai.add(chaiscript::fun(&Context::include_, kitchen), "include");
         chai.add(book_module());
         chai.add(recipe_module());
         chai.add(user_data_module());
@@ -45,22 +45,22 @@ struct Kitchen::D
     }
 };
 
-cook::Logger & Kitchen::logger()
+cook::Logger & Context::logger()
 {
     return d->logger;
 }
 
-Kitchen::Kitchen()
+Context::Context()
     : d(std::make_unique<D>(root_book()))
 {
     d->initialize_engine_(this);
 }
 
 
-Kitchen::~Kitchen() = default;
+Context::~Context() = default;
 
 
-bool Kitchen::load(const std::string & recipe)
+bool Context::load(const std::string & recipe)
 {
     MSS_BEGIN(bool);
 
@@ -83,7 +83,7 @@ bool Kitchen::load(const std::string & recipe)
     MSS_END();
 }
 
-std::filesystem::path Kitchen::generate_file_path_(const std::string & file) const
+std::filesystem::path Context::generate_file_path_(const std::string & file) const
 {
     // make the path to the file
     std::filesystem::path script_fn(file);
@@ -99,7 +99,7 @@ std::filesystem::path Kitchen::generate_file_path_(const std::string & file) con
     return script_fn;
 }
 
-void Kitchen::include_(const std::string & file)
+void Context::include_(const std::string & file)
 {
     const std::filesystem::path script_fn = generate_file_path_(file);
 
@@ -109,7 +109,7 @@ void Kitchen::include_(const std::string & file)
     d->scripts.pop();
 }
 
-std::shared_ptr<model::Environment> Kitchen::create_environment() const
+std::shared_ptr<model::Environment> Context::create_environment() const
 {
     // create a new one, based on nothing
     return std::make_shared<chai::Environment>();

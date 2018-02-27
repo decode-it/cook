@@ -2,7 +2,7 @@
 #define HEADER_cook_App_hpp_ALREADY_INCLUDED
 
 #include "cook/app/Options.hpp"
-#include "cook/chai/Kitchen.hpp"
+#include "cook/chai/Context.hpp"
 
 namespace cook {
 
@@ -18,7 +18,7 @@ private:
 
     cook::Indent indent_;
     app::Options options_;
-    cook::chai::Kitchen kitchen_;
+    cook::chai::Context kitchen_;
 };
 
 }
