@@ -91,12 +91,12 @@ void Graphviz::process_(std::ostream & oss, const Context  & context) const
             Color dst_color;
             std::string dst_id;
 
-            if (!tgt)
+            if (tgt == nullptr)
             {
-                write_node_desc_(oss, dst_id, p.first.string(), dst_color);
-
                 dst_id = unexisting_node_name(src, p.first);
                 dst_color = Color::Undefined;
+
+                write_node_desc_(oss, dst_id, p.first.string(), dst_color);
             }
             else
             {
