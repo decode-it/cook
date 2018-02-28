@@ -1,10 +1,3 @@
-gubg_include_paths  = -I gubg.algo/src -I gubg.io/src -I gubg.math/src -I gubg.std/src -I gubg.chaiscript/src
-cook_lib_include_paths  = -I lib/src $gubg_include_paths
-cook_app_include_paths  = -I app/src
-chai_include_paths  = -I gubg.chaiscript/extern/ChaiScript/include
-catch_include_paths = -I gubg.std/extern/catch/single_include
-boost_include_paths = -I extern/boost/iterator/include -I extern/boost/config/include -I extern/boost/mpl/include -I extern/boost/preprocessor/include -I extern/boost/static_assert/include -I extern/boost/type_traits/include -I extern/boost/detail/include -I extern/boost/core/include -I extern/boost/utility/include -I extern/boost/predef/include
-
 #[output](script:
 #$gubg_mods=%w[std io algo math].map{|str|"gubg.#{str}"}
 #$gubg_fns=$gubg_mods.map{|mod|FileList.new("#{mod}/src/gubg/**/*.cpp").to_a}.flatten
@@ -12,7 +5,17 @@ boost_include_paths = -I extern/boost/iterator/include -I extern/boost/config/in
 #$cook_fns=FileList.new("lib/src/**/*.cpp").to_a
 #$cook_test_fns=FileList.new("lib/test/**/*_tests.cpp").to_a
 #$cook_app_fns=FileList.new("app/**/*.cpp").to_a
+#$boost = %w[iterator config mpl preprocessor static_assert type_traits detail core utility predef graph unordered functional container_hash integer assert move throw_exception tuple smart_ptr property_map concept_check multi_index foreach serialization optional range typeof parameter conversion tti function_types]
 #){
+#}
+
+gubg_include_paths  = -I gubg.algo/src -I gubg.io/src -I gubg.math/src -I gubg.std/src -I gubg.chaiscript/src
+cook_lib_include_paths  = -I lib/src $gubg_include_paths
+cook_app_include_paths  = -I app/src
+chai_include_paths  = -I gubg.chaiscript/extern/ChaiScript/include
+catch_include_paths = -I gubg.std/extern/catch/single_include
+#[output](script:output.print("boost_include_paths = ");$boost.map{|e|output.print(" -I extern/boost/#{e}/include")};output.puts()){
+boost_include_paths =  -I extern/boost/iterator/include -I extern/boost/config/include -I extern/boost/mpl/include -I extern/boost/preprocessor/include -I extern/boost/static_assert/include -I extern/boost/type_traits/include -I extern/boost/detail/include -I extern/boost/core/include -I extern/boost/utility/include -I extern/boost/predef/include -I extern/boost/graph/include -I extern/boost/unordered/include -I extern/boost/functional/include -I extern/boost/container_hash/include -I extern/boost/integer/include -I extern/boost/assert/include -I extern/boost/move/include -I extern/boost/throw_exception/include -I extern/boost/tuple/include -I extern/boost/smart_ptr/include -I extern/boost/property_map/include -I extern/boost/concept_check/include -I extern/boost/multi_index/include -I extern/boost/foreach/include -I extern/boost/serialization/include -I extern/boost/optional/include -I extern/boost/range/include -I extern/boost/typeof/include -I extern/boost/parameter/include -I extern/boost/conversion/include -I extern/boost/tti/include -I extern/boost/function_types/include
 #}
 
 #[output](script:
@@ -51,7 +54,7 @@ build .b0/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile gubg.io/src/gubg/pa
 #  output.puts("    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths")
 #end
 #){
-build .b0/lib/src/cook/Kitchen.cpp.obj: compile lib/src/cook/Kitchen.cpp
+build .b0/lib/src/cook/Context.cpp.obj: compile lib/src/cook/Context.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/algo/Book.cpp.obj: compile lib/src/cook/algo/Book.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
@@ -59,9 +62,9 @@ build .b0/lib/src/cook/algo/Recipe.cpp.obj: compile lib/src/cook/algo/Recipe.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/Book.cpp.obj: compile lib/src/cook/chai/Book.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/Environment.cpp.obj: compile lib/src/cook/chai/Environment.cpp
+build .b0/lib/src/cook/chai/Context.cpp.obj: compile lib/src/cook/chai/Context.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/Kitchen.cpp.obj: compile lib/src/cook/chai/Kitchen.cpp
+build .b0/lib/src/cook/chai/Environment.cpp.obj: compile lib/src/cook/chai/Environment.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/Logger.cpp.obj: compile lib/src/cook/chai/Logger.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
@@ -82,6 +85,10 @@ build .b0/lib/src/cook/model/Recipe.cpp.obj: compile lib/src/cook/model/Recipe.c
 build .b0/lib/src/cook/model/Snapshot.cpp.obj: compile lib/src/cook/model/Snapshot.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/model/Uri.cpp.obj: compile lib/src/cook/model/Uri.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/process/FileDependencyGraph.cpp.obj: compile lib/src/cook/process/FileDependencyGraph.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/process/Menu.cpp.obj: compile lib/src/cook/process/Menu.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/rules/CXX.cpp.obj: compile lib/src/cook/rules/CXX.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
@@ -272,12 +279,12 @@ build libb0-gubg.a: archive $
 #output.puts
 #){
 build libb0-cook.a: archive $
-    .b0/lib/src/cook/Kitchen.cpp.obj $
+    .b0/lib/src/cook/Context.cpp.obj $
     .b0/lib/src/cook/algo/Book.cpp.obj $
     .b0/lib/src/cook/algo/Recipe.cpp.obj $
     .b0/lib/src/cook/chai/Book.cpp.obj $
+    .b0/lib/src/cook/chai/Context.cpp.obj $
     .b0/lib/src/cook/chai/Environment.cpp.obj $
-    .b0/lib/src/cook/chai/Kitchen.cpp.obj $
     .b0/lib/src/cook/chai/Logger.cpp.obj $
     .b0/lib/src/cook/chai/Recipe.cpp.obj $
     .b0/lib/src/cook/chai/UserData.cpp.obj $
@@ -288,6 +295,8 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/model/Recipe.cpp.obj $
     .b0/lib/src/cook/model/Snapshot.cpp.obj $
     .b0/lib/src/cook/model/Uri.cpp.obj $
+    .b0/lib/src/cook/process/FileDependencyGraph.cpp.obj $
+    .b0/lib/src/cook/process/Menu.cpp.obj $
     .b0/lib/src/cook/rules/CXX.cpp.obj $
     .b0/lib/src/cook/rules/Resolver.cpp.obj $
     .b0/lib/src/cook/rules/RuleSet.cpp.obj $

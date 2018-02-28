@@ -138,3 +138,71 @@
 	path = extern/boost/type_traits
 	url = https://github.com/boostorg/type_traits
 	branch = master
+[submodule "extern/boost/graph"]
+	path = extern/boost/graph
+	url = https://github.com/boostorg/graph
+	branch = master
+[submodule "extern/boost/unordered"]
+	path = extern/boost/unordered
+	url = https://github.com/boostorg/unordered
+	branch = master
+[submodule "extern/boost/functional"]
+	path = extern/boost/functional
+	url = https://github.com/boostorg/functional
+	branch = master
+[submodule "extern/boost/container_hash"]
+	path = extern/boost/container_hash
+	url = https://github.com/boostorg/container_hash
+	branch = master
+[submodule "extern/boost/throw_exception"]
+	path = extern/boost/throw_exception
+	url = https://github.com/boostorg/throw_exception
+	branch = master
+[submodule "extern/boost/tuple"]
+	path = extern/boost/tuple
+	url = https://github.com/boostorg/tuple
+	branch = master
+[submodule "extern/boost/smart_ptr"]
+	path = extern/boost/smart_ptr
+	url = https://github.com/boostorg/smart_ptr
+	branch = master
+[submodule "extern/boost/property_map"]
+	path = extern/boost/property_map
+	url = https://github.com/boostorg/property_map
+	branch = master
+[submodule "extern/boost/concept_check"]
+	path = extern/boost/concept_check
+	url = https://github.com/boostorg/concept_check
+	branch = master
+[submodule "extern/boost/multi_index"]
+	path = extern/boost/multi_index
+	url = https://github.com/boostorg/multi_index
+	branch = master
+[submodule "extern/boost/foreach"]
+	path = extern/boost/foreach
+	url = https://github.com/boostorg/foreach
+	branch = master
+[submodule "extern/boost/serialization"]
+	path = extern/boost/serialization
+	url = https://github.com/boostorg/serialization
+	branch = master
+[submodule "extern/boost/typeof"]
+	path = extern/boost/typeof
+	url = https://github.com/boostorg/typeof
+	branch = master
+[submodule "extern/boost/parameter"]
+	path = extern/boost/parameter
+	url = https://github.com/boostorg/parameter
+	branch = master
+[submodule "extern/boost/conversion"]
+	path = extern/boost/conversion
+	url = https://github.com/boostorg/conversion
+	branch = master
+[submodule "extern/boost/tti"]
+	path = extern/boost/tti
+	url = https://github.com/boostorg/tti
+	branch = master
+[submodule "extern/boost/function_types"]
+	path = extern/boost/function_types
+	url = https://github.com/boostorg/function_types
+	branch = master
