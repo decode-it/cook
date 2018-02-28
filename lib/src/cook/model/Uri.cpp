@@ -166,6 +166,19 @@ void Uri::set_absolute(bool is_absolute)
     absolute_ = is_absolute;
 }
 
+Uri Uri::as_absolute() const
+{
+    Uri uri = *this;
+    uri.set_absolute(true);
+    return uri;
+}
+Uri Uri::as_relative() const
+{
+    Uri uri = *this;
+    uri.set_absolute(false);
+    return uri;
+}
+
 Uri make_root_uri()
 {
     Uri uri;

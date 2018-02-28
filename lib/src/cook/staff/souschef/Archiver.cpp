@@ -65,7 +65,7 @@ Result Archiver::process(const Context & context, model::Snapshot & snapshot) co
 
 ingredient::File Archiver::construct_archive_file(const Context &context) const
 {
-    const std::filesystem::path dir = context.environment->dirs.output() / context.recipe->pre().working_directory();
+    const std::filesystem::path dir = context.dirs->output() / context.recipe->pre().working_directory();
     const std::filesystem::path rel = construct_archive_filename(context);
 
     ingredient::File archive(dir, rel);

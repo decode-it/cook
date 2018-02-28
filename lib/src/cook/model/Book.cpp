@@ -75,16 +75,36 @@ Recipe & Book::goc_recipe(const Part & part)
     return *(it->second);
 }
 
-bool find_book(Book *& result, Book * book, const Uri & uri)
+Result Book::find_relative(Recipe *& result, const Uri & uri, Book * relative)
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
+
     result = nullptr;
 
-    MSS(!!book);
-    MSS(!uri.has_name());
-    MSS(book->is_root() || !uri.absolute());
+    MSS(!!relative);
+    MSG_MSS(uri.has_name(), Error, "The uri " << uri << " is not a valid recipe uri");
+    MSG_MSS(!uri.absolute(), Error, "The uri '" << uri << " is not relative");
 
-    Book * current = book;
+    Book * parent = nullptr;
+    MSS(find_relative(parent, uri.parent(), relative));
+
+    if (parent)
+        result = parent->find_recipe(*uri.name());
+
+    MSS_END();
+}
+
+Result Book::find_relative(Book *& result, const Uri & uri, Book * relative)
+{
+    MSS_BEGIN(Result);
+
+    result = nullptr;
+
+    MSS(!!relative);
+    MSG_MSS(!uri.has_name(), Error, "The uri " << uri << " is not a valid book uri");
+    MSG_MSS(!uri.absolute(), Error, "The uri '" << uri << " is not relative");
+
+    Book * current = relative;
     for(const auto & p : uri.path())
     {
         Book * child = current->find_book(p);
@@ -93,62 +113,45 @@ bool find_book(Book *& result, Book * book, const Uri & uri)
 
         current = child;
     }
+
     result = current;
 
     MSS_END();
 }
 
-bool goc_book(Book *& result, Book * book, const Uri & uri)
+Result Book::goc_relative(Recipe *& result, const Uri & uri, Book * relative)
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
+
     result = nullptr;
 
-    MSS(!!book);
-    MSS(!uri.has_name());
-    MSS(book->is_root() || !uri.absolute());
+    MSS(!!relative);
+    MSG_MSS(uri.has_name(), Error, "The uri " << uri << " is not a valid recipe uri");
+    MSG_MSS(!uri.absolute(), Error, "The uri '" << uri << " is not relative");
 
-    Book * current = book;
+    Book * parent = nullptr;
+    MSS(goc_relative(parent, uri.parent(), relative));
+    MSS(!!parent);
+
+    result = &parent->goc_recipe(*uri.name());
+    MSS(!!result);
+
+    MSS_END();
+}
+
+Result Book::goc_relative(Book *& result, const Uri & uri, Book * relative)
+{
+    MSS_BEGIN(Result);
+
+    result = nullptr;
+
+    MSS(!!relative);
+    MSG_MSS(!uri.has_name(), Error, "The uri " << uri << " is not a valid book uri");
+    MSG_MSS(!uri.absolute(), Error, "The uri '" << uri << " is not relative");
+
+    result = relative;
     for(const auto & p : uri.path())
-        current = &current->goc_book(p);
-
-    result = current;
-
-    MSS_END();
-}
-
-
-bool find_recipe(Recipe *& result, Book * book, const Uri & uri)
-{
-    MSS_BEGIN(bool);
-    result = nullptr;
-
-    MSS(!!book);
-    MSS(uri.has_name());
-    MSS(book->is_root() || !uri.absolute());
-
-    Book * parent_book = nullptr;
-    MSS(find_book(parent_book, book, uri.parent()));
-
-    if (parent_book)
-        result = parent_book->find_recipe(*uri.name());
-
-    MSS_END();
-}
-
-bool goc_recipe(Recipe *& result, Book * book, const Uri & uri)
-{
-    MSS_BEGIN(bool);
-    result = nullptr;
-
-    MSS(!!book);
-    MSS(uri.has_name());
-    MSS(book->is_root() || !uri.absolute());
-
-    Book * parent_book = nullptr;
-    MSS(goc_book(parent_book, book, uri.parent()));
-    MSS(!!parent_book);
-
-    result = &parent_book->goc_recipe(*uri.name());
+        result = &result->goc_book(p);
 
     MSS_END();
 }

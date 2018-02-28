@@ -61,7 +61,7 @@ Result Compiler::process(const Context & context, model::Snapshot & snapshot) co
 
 ingredient::File Compiler::construct_object_file(const ingredient::File & source, const Context & context) const
 {
-    const std::filesystem::path dir = gubg::filesystem::combine(context.environment->dirs.temporary(), source.dir());
+    const std::filesystem::path dir = gubg::filesystem::combine(context.dirs->temporary(), source.dir());
     const std::filesystem::path rel = source.rel().string() + ".obj";
 
     ingredient::File object(dir, rel);

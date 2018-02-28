@@ -3,7 +3,9 @@
 
 #include "cook/Logger.hpp"
 #include "cook/model/Book.hpp"
-#include "cook/model/Environment.hpp"
+#include "cook/model/Library.hpp"
+#include "cook/model/Dirs.hpp"
+#include "cook/Menu.hpp"
 #include "cook/visualizer/Interface.hpp"
 
 namespace cook {
@@ -14,30 +16,34 @@ public:
     using VisualizerPtr = std::shared_ptr<visualizer::Interface>;
     using Variable = std::pair<std::string, std::string>;
 
-    Context();
     virtual ~Context() {}
 
     bool initialize();
 
     virtual Logger & logger() = 0;
 
+    Result initialize_menu(const std::list<model::Recipe*> & root_recipes);
+
+
     // getters and setter
     model::Book * root_book() const;
-    model::Environment * environment() const;
+    model::Dirs & dirs()                { return dirs_; }
+    const model::Dirs & dirs() const    { return dirs_; }
+    const Menu & menu() const           { return menu_; }
+    const model::Library & lib() const  { return lib_; }
 
     Result register_visualizer(VisualizerPtr visualizer);
     VisualizerPtr get_visualizer(const std::string & name) const;
 
-    Result register_variable(const std::string & name, const std::string & value);
     Result find_recipe(model::Recipe *&recipe, const std::string & name) const;
 
+    virtual Result set_variable(const std::string & name, const std::string & value) = 0;
+
 private:
-    virtual std::shared_ptr<model::Environment> create_environment() const = 0;
     std::map<std::string, VisualizerPtr> visualizers_;
-
-    std::shared_ptr<model::Book> root_;
-    std::shared_ptr<model::Environment> environment_;
-
+    model::Library lib_;
+    model::Dirs dirs_;
+    Menu menu_;
 };
 
 }

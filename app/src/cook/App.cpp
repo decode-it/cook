@@ -1,5 +1,4 @@
 #include "cook/App.hpp"
-#include "cook/model/Menu.hpp"
 #include "cook/staff/chef/CompileLinkArchive.hpp"
 #include "cook/algo/Book.hpp"
 #include "gubg/mss.hpp"
@@ -32,7 +31,7 @@ Result App::process()
 
     // set all the variables
     for(const auto & v : options_.variables)
-        MSS(kitchen_.register_variable(v.first, v.second));
+        MSS(kitchen_.set_variable(v.first, v.second));
 
     // process all files
     MSS(load_recipes_());
@@ -41,28 +40,47 @@ Result App::process()
     std::list<model::Recipe*> root_recipes;
     MSS(extract_root_recipes_(root_recipes));
 
-    // and construct a dependency graph
-    model::Menu g(kitchen_.root_book());
-    MSS(g.construct(gubg::make_range(root_recipes)));
+    // and construct the menu
+    {
+        Result rc = kitchen_.initialize_menu(root_recipes);
 
-    // process all the requested visualizations
+        if (!rc)
+        {
+            // process all the requested visualizations
+            for(const auto & p: options_.visualizers)
+            {
+                Context::VisualizerPtr ptr = kitchen_.get_visualizer(p.first);
+                MSG_MSS(!!ptr, Error, "unknown visualizer '" << p.first << "'");
+
+                MSS(ptr->set_option(p.second));
+
+                if (ptr->can_process(kitchen_))
+                    MSS(ptr->process(kitchen_));
+            }
+        }
+
+        MSS(rc);
+    }
+
+
+    // process the menu with the chef
+    {
+        staff::chef::LinkArchiveChef lac("default");
+        MSS(lac.initialize());
+
+        MSS(lac.mis_en_place(kitchen_));
+    }
+
+    // and now process all the requested visualizations
     for(const auto & p: options_.visualizers)
     {
         Context::VisualizerPtr ptr = kitchen_.get_visualizer(p.first);
         MSG_MSS(!!ptr, Error, "unknown visualizer '" << p.first << "'");
 
         MSS(ptr->set_option(p.second));
-        MSS(ptr->process(g, *kitchen_.environment()));
-    }
 
-    MSG_MSS(g.all_dependencies_resolved(), Error, "The requested recipes contain unresolved dependencies");
-    MSG_MSS(g.is_acyclic(), Error, "The requested recipes have cyclic dependencies");
-
-    {
-        staff::chef::LinkArchiveChef lac("default");
-        MSS(lac.initialize());
-
-        MSS(lac.mis_en_place(kitchen_, g));
+        if (ptr->can_process(kitchen_))
+            MSS(ptr->process(kitchen_));
     }
 
     // resolve the root book
@@ -88,7 +106,7 @@ Result App::extract_root_recipes_(std::list<model::Recipe*> & result) const
 
     if (options_.recipes.empty())
     {
-        cook::algo::list_all_recipes(kitchen_.root_book(), result);
+        result = kitchen_.lib().list_all_recipes();
         MSS_RETURN_OK();
     }
     else

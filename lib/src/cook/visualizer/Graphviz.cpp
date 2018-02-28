@@ -30,9 +30,12 @@ using NodeMap = std::unordered_map<Recipe *, Graphviz::Color>;
 
 }
 
-void Graphviz::process_(std::ostream & oss, const Menu & graph) const
+void Graphviz::process_(std::ostream & oss, const Context  & context) const
 {
     NodeMap nodes;
+
+    const auto & graph = context.menu();
+
 
     // add all the root nodes
     for(Recipe * recipe : graph.root_recipes())
@@ -61,20 +64,8 @@ void Graphviz::process_(std::ostream & oss, const Menu & graph) const
     };
 
     // add all the recipes in the root book
-    std::stack<Book*> todo;
-    todo.push(graph.root_book());
-
-    while(!todo.empty())
-    {
-        Book * cur = todo.top();
-        todo.pop();
-
-        for(auto b : cur->books())
-            todo.push(b);
-
-        for(auto c : cur->recipes())
-            nodes.emplace(c, Graphviz::Color::OutsideTree);
-    }
+    for(model::Recipe * recipe : context.lib().list_all_recipes())
+        nodes.emplace(recipe, Graphviz::Color::OutsideTree);
 
     // and now write out all the information
     write_header_(oss);
@@ -97,9 +88,6 @@ void Graphviz::process_(std::ostream & oss, const Menu & graph) const
         {
             // make sure we try to resolve it
             Recipe * tgt = p.second;
-            if (!tgt)
-                algo::resolve_dependency(tgt, p.first, src->parent(), graph.root_book());
-
             Color dst_color;
             std::string dst_id;
 
@@ -246,14 +234,14 @@ void Graphviz::write_footer_(std::ostream & oss) const
     oss << "}" << std::endl;
 }
 
-std::filesystem::path Graphviz::output_filename(const model::Environment & environment) const
+std::filesystem::path Graphviz::output_filename(const model::Dirs & dirs) const
 {
     const static std::string default_extension = "graphviz";
     const static std::string default_name = "recipes." + default_extension;
 
     if (false) {}
     else if (filename.empty())
-        return environment.dirs.output() / default_name;
+        return dirs.output() / default_name;
     else if (filename.back() == std::filesystem::path::preferred_separator)
         return std::filesystem::path(filename) / default_name;
     else
@@ -275,19 +263,19 @@ Result Graphviz::set_option(const std::string & option)
 
 }
 
-bool Graphviz::can_process(const model::Menu & graph) const
+bool Graphviz::can_process(const Context &context) const
 {
     return true;
 }
 
-Result Graphviz::process(const model::Menu & graph, const model::Environment & environment)
+Result Graphviz::process(const Context & context)
 {
     MSS_BEGIN(Result);
 
     // create the output stream
     std::ofstream ofs;
     {
-        std::filesystem::path p = output_filename(environment);
+        std::filesystem::path p = output_filename(context.dirs());
 
         std::filesystem::path parent = p.parent_path();
         if (!parent.empty())
@@ -297,7 +285,7 @@ Result Graphviz::process(const model::Menu & graph, const model::Environment & e
         MSG_MSS(ofs.good(), Error, "Unable to create file '" << p.string() << "'");
     }
 
-    process_(ofs, graph);
+    process_(ofs, context);
 
     MSS_END();
 }

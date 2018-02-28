@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_process_Graph_hpp_ALREADY_INCLUDED
-#define HEADER_cook_process_Graph_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_process_DependencyDAG_hpp_ALREADY_INCLUDED
+#define HEADER_cook_process_DependencyDAG_hpp_ALREADY_INCLUDED
 
 #include "cook/process/Command.hpp"
 #include "cook/model/Uri.hpp"
@@ -8,7 +8,7 @@
 
 namespace cook { namespace process {
 
-struct FileDependencyGraph
+struct DependencyDAG
 {
     using FileLabel = std::filesystem::path;
     using CommandLabel = CommandPtr;
@@ -18,7 +18,7 @@ struct FileDependencyGraph
     using vertex_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
     using adjcent_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
 
-    FileDependencyGraph() = default;
+    DependencyDAG() = default;
 
     vertex_descriptor goc_vertex(const FileLabel & path);
     vertex_descriptor add_vertex(CommandLabel ptr);
@@ -29,10 +29,10 @@ struct FileDependencyGraph
     const Label & operator[](vertex_descriptor vd) const;
 
 private:
-    FileDependencyGraph(const FileDependencyGraph &) = delete;
-    FileDependencyGraph & operator=(const FileDependencyGraph &) = delete;
-    FileDependencyGraph(FileDependencyGraph &&) = delete;
-    FileDependencyGraph & operator=(FileDependencyGraph &&) = delete;
+    DependencyDAG(const DependencyDAG &) = delete;
+    DependencyDAG & operator=(const DependencyDAG &) = delete;
+    DependencyDAG(DependencyDAG &&) = delete;
+    DependencyDAG & operator=(DependencyDAG &&) = delete;
 
     std::unordered_map<FileLabel, vertex_descriptor> file_map_;
     graph_type g_;

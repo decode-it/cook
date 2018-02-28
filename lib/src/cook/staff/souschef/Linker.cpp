@@ -86,7 +86,7 @@ Result Linker::process(const Context & context, model::Snapshot & snapshot) cons
 
 ingredient::File Linker::construct_archive_file(const Context &context) const
 {
-    const std::filesystem::path dir = context.environment->dirs.output() / context.recipe->pre().working_directory();
+    const std::filesystem::path dir = context.dirs->output() / context.recipe->pre().working_directory();
     const std::filesystem::path rel = (context.recipe->type() == Type::Executable ? construct_executable_name(context) : construct_dynamic_library_name(context));
 
     ingredient::File archive(dir, rel);

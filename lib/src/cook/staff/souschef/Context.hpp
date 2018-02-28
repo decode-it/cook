@@ -2,8 +2,8 @@
 #define HEADER_cook_staff_Context_hpp_ALREADY_INCLUDED
 
 #include "cook/model/Recipe.hpp"
-#include "cook/model/Environment.hpp"
-#include "cook/process/FileDependencyGraph.hpp"
+#include "cook/model/Dirs.hpp"
+#include "cook/process/DependencyDAG.hpp"
 #include <vector>
 #include <list>
 
@@ -14,9 +14,9 @@ struct Context
     model::Recipe * recipe;
     std::vector<model::Recipe *> dependencies;
     std::list<model::Recipe *> topological_order;
-    model::Environment * environment;
+    const model::Dirs * dirs;
 
-    process::FileDependencyGraph * execution_graph;
+    process::DependencyDAG * execution_graph;
 };
 
 } } }

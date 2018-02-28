@@ -68,6 +68,8 @@ public:
     bool operator<(const Uri & rhs) const;
 
     Uri parent() const;
+    Uri as_absolute() const;
+    Uri as_relative() const;
 
 
 private:

@@ -2,7 +2,6 @@
 #include "cook/chai/Book.hpp"
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/Logger.hpp"
-#include "cook/chai/Environment.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
 #include "chaiscript/chaiscript.hpp"
@@ -59,6 +58,14 @@ Context::Context()
 
 Context::~Context() = default;
 
+Result Context::set_variable(const std::string & name, const std::string & value)
+{
+    MSS_BEGIN(Result);
+
+    MSG_MSS(data_.set_variable(name, value), Warning, "Could not set variable '" << name << "' to '" << value << "': Variable already exists");
+
+    MSS_END();
+}
 
 bool Context::load(const std::string & recipe)
 {
@@ -107,12 +114,6 @@ void Context::include_(const std::string & file)
     d->scripts.push(script_fn);
     d->engine.eval_file(script_fn.string());
     d->scripts.pop();
-}
-
-std::shared_ptr<model::Environment> Context::create_environment() const
-{
-    // create a new one, based on nothing
-    return std::make_shared<chai::Environment>();
 }
 
 } }

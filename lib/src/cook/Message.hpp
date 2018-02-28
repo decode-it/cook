@@ -15,6 +15,23 @@ enum class MessageType
     InternalError = 0x08,
 };
 
+inline std::ostream & operator<<(std::ostream & str, MessageType message)
+{
+    switch(message)
+    {
+#define L_CASE(NAME) case MessageType::NAME: return str << #NAME
+        L_CASE(Success);
+        L_CASE(Warning);
+        L_CASE(Info);
+        L_CASE(Error);
+        L_CASE(InternalError);
+#undef L_CASE
+        default:
+            return str << "unknown";
+    }
+}
+
+
 inline MessageType operator&(MessageType lhs, MessageType rhs)
 {
     return static_cast<MessageType>(static_cast<int>(lhs) & static_cast<int>(rhs));

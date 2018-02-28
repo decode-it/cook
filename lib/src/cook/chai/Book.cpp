@@ -2,6 +2,7 @@
 #include "cook/chai/Recipe.hpp"
 #include "gubg/chai/Module.hpp"
 
+
 namespace cook { namespace chai {
 
 Book::Book(model::Book * book, Logger *logger)
@@ -18,8 +19,9 @@ void Book::book(const std::string & uri_str, const std::function<void (Book)> &f
         logger_->LOG(Error, "Bad uri");
 
     model::Book * subbook = nullptr;
-    if (!model::goc_book(subbook, book_, uri.first))
-        logger_->LOG(Error, "Error");
+    Result rc = model::Book::goc_relative(subbook, uri.first, book_);
+    if (!rc)
+        logger_->log(rc);
 
     functor(Book(subbook, logger_));
 }
@@ -38,8 +40,9 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
         logger_->LOG(Error, "Bad uri");
 
     model::Recipe * recipe = nullptr;
-    if (!model::goc_recipe(recipe, book_, uri.first))
-        logger_->LOG(Error, "Error");
+    Result rc = model::Book::goc_relative(recipe, uri.first, book_);
+    if (!rc)
+        logger_->log(rc);
 
     cook::Type type = Type::Undefined;
     if (false) {}

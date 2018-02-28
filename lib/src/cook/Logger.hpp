@@ -2,6 +2,7 @@
 #define HEADER_cook_Logger_hpp_ALREADY_INCLUDED
 
 #include "cook/Message.hpp"
+#include "cook/Result.hpp"
 #include <functional>
 #include <ostream>
 
@@ -38,6 +39,7 @@ public:
     using LogFunction = std::function<void (std::ostream &)>;
 
     virtual void log(LogType type, const LogFunction & function) = 0;
+    virtual void log(const Result & result) = 0;
 };
 
 }

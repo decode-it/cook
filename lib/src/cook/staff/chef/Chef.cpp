@@ -4,12 +4,13 @@ using namespace cook::model;
 
 namespace cook { namespace staff { namespace chef {
 
-Result Chef::mis_en_place(Context & kitchen, const Menu & menu)
+Result Chef::mis_en_place(Context & context)
 {
     MSS_BEGIN(Result);
 
-    MSG_MSS(menu.all_dependencies_resolved(), InternalError, "Menu has unresolved dependencies");
-    MSG_MSS(menu.is_acyclic(), InternalError, "Menu has cycles");
+    const auto & menu = context.menu();
+
+    MSS(menu.is_valid());
 
     const std::list<Recipe *> & order = menu.topological_order();
 
@@ -21,12 +22,12 @@ Result Chef::mis_en_place(Context & kitchen, const Menu & menu)
         const InstructionSet * instruction_set = nullptr;
         MSS(find_instruction_set(instruction_set, recipe));
 
-        souschef::Context context;
-        MSS(prepare_context(context, recipe, menu, kitchen.environment()));
+        souschef::Context sc;
+        MSS(prepare_context(sc, recipe, menu, &context.dirs()));
 
 
         MSS(!!instruction_set);
-        MSS(mis_en_place_(kitchen, context, *instruction_set));
+        MSS(mis_en_place_(context, sc, *instruction_set));
     }
 
 
@@ -72,12 +73,12 @@ Result Chef::find_instruction_set(const InstructionSet *& result, model::Recipe 
     MSS_END();
 }
 
-Result Chef::prepare_context(souschef::Context & context, model::Recipe * recipe, const model::Menu & menu, model::Environment * environment)
+Result Chef::prepare_context(souschef::Context & context, model::Recipe * recipe, const Menu & menu, const Dirs * dirs)
 {
     MSS_BEGIN(Result);
 
-    MSS(!!environment);
-    context.environment = environment;
+    MSS(!!dirs);
+    context.dirs = dirs;
 
     MSS(!!recipe);
     context.recipe = recipe;
@@ -88,7 +89,7 @@ Result Chef::prepare_context(souschef::Context & context, model::Recipe * recipe
         context.dependencies.push_back(dep);
     }
 
-    MSS(menu.topological_order(recipe, context.topological_order));
+//    MSS(menu.topological_order(recipe, context.topological_order));
 
     MSS_END();
 }

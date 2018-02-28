@@ -9,6 +9,7 @@ class Logger : public cook::Logger
 {
 public:
     void log(LogType type, const LogFunction & function) override;
+    void log(const Result & result) override;
 };
 
 } }

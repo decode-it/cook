@@ -16,5 +16,16 @@ void Logger::log(LogType type, const Logger::LogFunction & function)
     }
 }
 
+void Logger::log(const Result & result)
+{
+    result.each_message([](const auto & type, const auto & reporter)
+    {
+        std::cout << type << ": ";
+        if (reporter)
+            reporter(std::cout);
+        std::cout << std::endl;
+    });
+}
+
 } }
 

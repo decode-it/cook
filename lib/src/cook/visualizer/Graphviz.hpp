@@ -2,6 +2,8 @@
 #define HEADER_cook_visualizer_Graphviz_hpp_ALREADY_INCLUDED
 
 #include "cook/visualizer/Interface.hpp"
+#include "cook/Menu.hpp"
+#include "cook/Context.hpp"
 
 namespace cook { namespace visualizer {
 
@@ -23,8 +25,8 @@ public:
 
     Result set_option(const std::string & option) override;
 
-    bool can_process(const model::Menu & graph) const override;
-    Result process(const model::Menu & graph, const model::Environment & environment) override;
+    bool can_process(const Context & context) const override;
+    Result process(const Context & context) override;
 
     const ColorPropertyMap & color_property_map(Color src, Color dst) const;
     const ColorPropertyMap & color_property_map(Color c) const;
@@ -32,14 +34,14 @@ public:
     ColorPropertyMap & color_property_map(Color c);
 
 private:
-    void process_(std::ostream & oss, const model::Menu & graph) const;
+    void process_(std::ostream & oss, const Context &context) const;
     void write_node_desc_(std::ostream & oss, const std::string & id, const std::string & uri, Color color) const;
     void write_header_(std::ostream & oss) const;
     void write_footer_(std::ostream & oss) const;
 
     std::string color_property_string_(const ColorPropertyMap & map) const;
 
-    std::filesystem::path output_filename(const model::Environment & environment) const;
+    std::filesystem::path output_filename(const model::Dirs & dirs) const;
 
     std::string filename;
     std::map<Color, ColorPropertyMap> node_color_map_;

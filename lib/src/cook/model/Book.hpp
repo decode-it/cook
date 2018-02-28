@@ -2,6 +2,7 @@
 #define HEADER_cook_model_Book_hpp_ALREADY_INCLUDED
 
 #include "cook/model/Element.hpp"
+#include "cook/Result.hpp"
 #include "boost/iterator/transform_iterator.hpp"
 #include <memory>
 #include <map>
@@ -32,9 +33,16 @@ public:
 
     Book & goc_book(const Part & part);
     Recipe & goc_recipe(const Part & part);
-
     Book * find_book(const Part & part) const;
     Recipe * find_recipe(const Part & part) const;
+
+    static Result find_relative(Recipe *& result, const Uri & uri, Book * relative);
+    static Result find_relative(Book *& result, const Uri & uri, Book * relative);
+    static Result goc_relative(Recipe *& result, const Uri & uri, Book * relative);
+    static Result goc_relative(Book *& result, const Uri & uri, Book * relative);
+
+
+
 
     bool is_root() const;
 
@@ -73,10 +81,7 @@ private:
     RecipeMap recipes_;
 };
 
-bool find_book(Book *& result, Book * book, const Uri & uri);
-bool find_recipe(Recipe *& result, Book * book, const Uri & uri);
-bool goc_book(Book *& result, Book * book, const Uri & uri);
-bool goc_recipe(Recipe *& result, Book * book, const Uri & uri);
+
 
 } }
 
