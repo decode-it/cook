@@ -169,8 +169,8 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
 
             recipe.set_working_directory(std::filesystem::current_path());
 
-            cook::rules::RuleSet ruleset;
-            cook::process::souschef::Resolver resolver(&ruleset);
+            auto ruleset = cook::rules::RuleSet::create();
+            cook::process::souschef::Resolver resolver(ruleset);
 
             REQUIRE(resolver.process_one(recipe, globber));
         }

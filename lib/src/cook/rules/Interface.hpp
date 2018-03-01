@@ -4,6 +4,7 @@
 #include "cook/LanguageTypePair.hpp"
 #include "cook/ingredient/File.hpp"
 #include "gubg/std/filesystem.hpp"
+#include <memory>
 
 namespace cook { namespace model {
 
@@ -16,6 +17,8 @@ namespace rules {
 class Interface
 {
 public:
+    using Ptr = std::shared_ptr<Interface>;
+
     virtual ~Interface(){}
 
     virtual Language language() const = 0;

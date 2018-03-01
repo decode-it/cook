@@ -10,10 +10,13 @@ namespace cook { namespace rules {
 
 class RuleSet
 {
-    using Ptr = std::shared_ptr<Interface>;
 
 public:
+    using Ptr = std::shared_ptr<RuleSet>;
+
     RuleSet();
+
+    static Ptr create(){return Ptr(new RuleSet);}
 
     template <typename Functor>
     const Interface & find(Functor && functor) const
@@ -30,8 +33,8 @@ public:
     }
 
 private:
-    std::multimap<unsigned int, Ptr> priority_map_;
-    Ptr default_interface_;
+    std::multimap<unsigned int, Interface::Ptr> priority_map_;
+    Interface::Ptr default_interface_;
 };
 
 } }

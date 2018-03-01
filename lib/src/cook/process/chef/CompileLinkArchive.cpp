@@ -1,4 +1,5 @@
 #include "cook/process/chef/CompileLinkArchive.hpp"
+#include "cook/process/souschef/Resolver.hpp"
 #include "cook/process/souschef/DependencyPropagator.hpp"
 #include "cook/process/souschef/IncludePathSetter.hpp"
 #include "cook/process/souschef/LibraryPathSetter.hpp"
@@ -95,6 +96,9 @@ void LinkArchiveChef::set_archiver(AssistantPtr archiver)
 std::list<AssistantPtr> LinkArchiveChef::generate_compile_only_steps_() const
 {
     std::list<AssistantPtr> result;
+
+    auto rule_set = rules::RuleSet::create();
+    result.push_back(std::make_shared<souschef::Resolver>(rule_set));
 
     result.push_back(std::make_shared<souschef::DependentPropagator>());
 

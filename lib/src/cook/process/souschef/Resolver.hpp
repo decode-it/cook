@@ -11,7 +11,7 @@ namespace cook { namespace process { namespace souschef {
     class Resolver: public Interface
     {
     public:
-        Resolver(const rules::RuleSet * rule_set)
+        Resolver(const rules::RuleSet::Ptr &rule_set)
         : rule_set_(rule_set)
         {
         }
@@ -25,7 +25,7 @@ namespace cook { namespace process { namespace souschef {
     private:
         bool process_(model::Recipe & recipe, LanguageTypePair & key, ingredient::File & file) const;
 
-        const rules::RuleSet * rule_set_;
+        rules::RuleSet::Ptr rule_set_;
     };
 
 } } }
