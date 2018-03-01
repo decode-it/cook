@@ -7,6 +7,7 @@
 #include "cook/process/souschef/Archiver.hpp"
 #include "cook/process/souschef/Linker.hpp"
 #include "cook/process/souschef/LinkLibrarySorter.hpp"
+#include "cook/rules/CXX.hpp"
 #include "gubg/stream.hpp"
 
 namespace cook { namespace process { namespace chef {
@@ -98,6 +99,7 @@ std::list<AssistantPtr> LinkArchiveChef::generate_compile_only_steps_() const
     std::list<AssistantPtr> result;
 
     auto rule_set = rules::RuleSet::create();
+    rule_set->add<rules::CXX>();
     result.push_back(std::make_shared<souschef::Resolver>(rule_set));
 
     result.push_back(std::make_shared<souschef::DependentPropagator>());

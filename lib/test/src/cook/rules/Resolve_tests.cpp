@@ -3,6 +3,7 @@
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
 #include "cook/process/souschef/Resolver.hpp"
+#include "cook/rules/CXX.hpp"
 
 #define BASE_DIR "generated/"
 
@@ -170,6 +171,7 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
             recipe.set_working_directory(std::filesystem::current_path());
 
             auto ruleset = cook::rules::RuleSet::create();
+            /* ruleset->add<cook::rules::CXX>(); */
             cook::process::souschef::Resolver resolver(ruleset);
 
             REQUIRE(resolver.process_one(recipe, globber));

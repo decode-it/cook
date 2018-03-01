@@ -18,6 +18,9 @@ public:
 
     static Ptr create(){return Ptr(new RuleSet);}
 
+    template <typename Rule>
+    void add(unsigned int prio = 0) {priority_map_.emplace(prio, Interface::Ptr(new Rule));}
+
     template <typename Functor>
     const Interface & find(Functor && functor) const
     {
