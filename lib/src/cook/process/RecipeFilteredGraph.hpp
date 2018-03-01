@@ -1,16 +1,16 @@
-#ifndef HEADER_cook_build_RecipeLocalGraph_hpp_ALREADY_INCLUDED
-#define HEADER_cook_build_RecipeLocalGraph_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_process_RecipeFilteredGraph_hpp_ALREADY_INCLUDED
+#define HEADER_cook_process_RecipeFilteredGraph_hpp_ALREADY_INCLUDED
 
 #include "cook/process/build/Graph.hpp"
 
-namespace cook { namespace process { namespace build {
+namespace cook { namespace process {
 
-class RecipeLocalGraph : public config::Graph
+class RecipeFilteredGraph : public build::config::Graph
 {
     using CommandVertices = std::unordered_set<vertex_descriptor>;
     using CommandVertexIterator = CommandVertices::const_iterator;
 public:
-    explicit RecipeLocalGraph(GraphPtr ptr);
+    explicit RecipeFilteredGraph(build::GraphPtr ptr);
 
     vertex_descriptor goc_vertex(const FileLabel & path);
     vertex_descriptor add_vertex(CommandLabel ptr);
@@ -25,9 +25,9 @@ public:
 private:
     std::unordered_set<vertex_descriptor> command_vertices_;
 
-    GraphPtr ptr_;
+    build::GraphPtr ptr_;
 };
 
-} } }
+} }
 
 #endif

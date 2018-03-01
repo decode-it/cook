@@ -125,7 +125,7 @@ Result Menu::construct_count_map_(CountMap & in_degree_map) const
     MSS_END();
 }
 
-bool Menu::grow_(model::Recipe * seed, unsigned int component_identifier, const std::unordered_multimap<model::Recipe *, model::Recipe *> & in_edge_map)
+bool Menu::grow_(model::Recipe * seed, build::GraphPtr graph_ptr, const std::unordered_multimap<model::Recipe *, model::Recipe *> & in_edge_map)
 {
     MSS_BEGIN(bool);
 
@@ -137,16 +137,11 @@ bool Menu::grow_(model::Recipe * seed, unsigned int component_identifier, const 
         model::Recipe * recipe = todo.top();
         todo.pop();
 
-        auto p = process_info_map_.emplace(recipe, ProcessInfo(recipe->uri()));
+        auto p = process_info_map_.emplace(recipe, ProcessInfo(recipe->uri(), graph_ptr));
         ProcessInfo & pinfo = p.first->second;
 
         if (!p.second)
-        {
-            MSS(pinfo.component_identifier == component_identifier);
             continue;
-        }
-
-        pinfo.component_identifier = component_identifier;
 
         // early globbing means our children can share the current graph
         if (recipe->allows_early_globbing())
@@ -175,33 +170,14 @@ bool Menu::initialize_process_info_()
         for(model::Recipe * dep : recipe->dependencies())
             dep_in_edges.insert(std::make_pair(dep, recipe));
 
-    // fill a color map for components (sharing the same graph
-    std::vector<std::shared_ptr<build::Graph>> dep_graphs;
-
+    // assign a single build graph to every component
     {
-        unsigned int current_component = 0;
+        build::GraphPtr ptr = std::make_shared<build::Graph>();
 
         // loop over all recipes
         for(model::Recipe * recipe : topological_order_)
             if (process_info_map_.find(recipe) == process_info_map_.end())
-                MSS(grow_(recipe, current_component++, dep_in_edges));
-
-        // initialize the dependency graphs
-        dep_graphs.resize(current_component);
-        for(auto & ptr : dep_graphs)
-            ptr = std::make_shared<build::Graph>();
-    }
-
-    // initialize the process data per element
-    for(model::Recipe * recipe : topological_order_)
-    {
-        auto it = process_info_map_.find(recipe);
-        MSS(it != process_info_map_.end());
-        ProcessInfo & info = it->second;
-
-        // set the graph
-        MSS(info.component_identifier < dep_graphs.size());
-        info.graph = dep_graphs[info.component_identifier];
+                MSS(grow_(recipe, ptr, dep_in_edges));
     }
 
     MSS_END();

@@ -1,7 +1,8 @@
-#ifndef HEADER_cook_Menu_hpp_ALREADY_INCLUDED
-#define HEADER_cook_Menu_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_process_Menu_hpp_ALREADY_INCLUDED
+#define HEADER_cook_process_Menu_hpp_ALREADY_INCLUDED
 
 #include "cook/process/build/Graph.hpp"
+#include "cook/process/RecipeFilteredGraph.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
 #include <unordered_map>
@@ -37,19 +38,17 @@ private:
     Result construct_count_map_(CountMap & in_degree_map) const;
     Result construct_topological_order_(CountMap & in_degree_map);
     bool initialize_process_info_();
-    bool grow_(model::Recipe * seed, unsigned int component_identifier, const std::unordered_multimap<model::Recipe *, model::Recipe *> & in_edge_map);
+    bool grow_(model::Recipe * seed, build::GraphPtr graph_ptr, const std::unordered_multimap<model::Recipe *, model::Recipe *> & in_edge_map);
 
     std::list<model::Recipe *> topological_order_;
     std::list<model::Recipe *> root_recipes_;
 
     struct ProcessInfo
     {
-        ProcessInfo(const model::Uri & uri): post(uri) {}
+        ProcessInfo(const model::Uri & uri, build::GraphPtr ptr): post(uri), graph(ptr) {}
 
-        std::shared_ptr<build::Graph> graph;
-        std::vector<build::Graph::vertex_descriptor> commands;
         model::Snapshot post;
-        unsigned int component_identifier = std::numeric_limits<unsigned int>::max();
+        RecipeFilteredGraph graph;
     };
 
     std::map<model::Recipe *, ProcessInfo> process_info_map_;

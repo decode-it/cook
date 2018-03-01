@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_staff_chef_CompileLinkArchive_hpp_ALREADY_INCLUDED
-#define HEADER_cook_staff_chef_CompileLinkArchive_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_process_chef_CompileLinkArchive_hpp_ALREADY_INCLUDED
+#define HEADER_cook_process_chef_CompileLinkArchive_hpp_ALREADY_INCLUDED
 
 #include "cook/process/chef/Chef.hpp"
 #include <set>

@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_build_Graph_hpp_ALREADY_INCLUDED
-#define HEADER_cook_build_Graph_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_process_build_Graph_hpp_ALREADY_INCLUDED
+#define HEADER_cook_process_build_Graph_hpp_ALREADY_INCLUDED
 
 #include "cook/process/build/Command.hpp"
 #include "cook/model/Uri.hpp"

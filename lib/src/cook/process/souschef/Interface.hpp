@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_staff_chef_Assistant_hpp_ALREADY_DEFINED
-#define HEADER_cook_staff_chef_Assistant_hpp_ALREADY_DEFINED
+#ifndef HEADER_cook_process_chef_Assistant_hpp_ALREADY_DEFINED
+#define HEADER_cook_process_chef_Assistant_hpp_ALREADY_DEFINED
 
 #include "cook/process/souschef/Context.hpp"
 

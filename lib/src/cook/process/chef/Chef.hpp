@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_staff_chef_Chef_hpp_ALREADY_INCLUDED
-#define HEADER_cook_staff_chef_Chef_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_process_chef_Chef_hpp_ALREADY_INCLUDED
+#define HEADER_cook_process_chef_Chef_hpp_ALREADY_INCLUDED
 
 #include "cook/process/chef/InstructionSet.hpp"
 #include "cook/process/Menu.hpp"

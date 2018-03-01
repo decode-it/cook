@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_staff_souschef_PathExtraction_hpp_ALREADY_INCLUDED
-#define HEADER_cook_staff_souschef_PathExtraction_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_process_souschef_PathExtraction_hpp_ALREADY_INCLUDED
+#define HEADER_cook_process_souschef_PathExtraction_hpp_ALREADY_INCLUDED
 
 #include "cook/Result.hpp"
 #include "cook/LanguageTypePair.hpp"
