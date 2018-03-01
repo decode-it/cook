@@ -35,8 +35,8 @@ private:
 
     using CountMap = std::unordered_map<model::Recipe *, unsigned int>;
     Result construct_();
-    Result construct_count_map_(CountMap & in_degree_map) const;
-    Result construct_topological_order_(CountMap & in_degree_map);
+//    Result construct_count_map_(CountMap & in_degree_map) const;
+//    Result construct_topological_order_(CountMap & in_degree_map);
     bool initialize_process_info_();
     bool grow_(model::Recipe * seed, build::GraphPtr graph_ptr, const std::unordered_multimap<model::Recipe *, model::Recipe *> & in_edge_map);
 

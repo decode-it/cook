@@ -1,5 +1,5 @@
 #include "cook/process/Menu.hpp"
-#include "cook/algo/Visit.hpp"
+#include "cook/algo/Recipe.hpp"
 #include "boost/graph/adjacency_list.hpp"
 #include <cassert>
 
@@ -22,12 +22,14 @@ Result Menu::construct_()
 
     valid_ = false;
 
+    MSS(algo::topological_order(root_recipes_, topological_order_));
+    /*
     // construct the count map and resolve the dependencies
     CountMap in_degree_map;
     MSS(construct_count_map_(in_degree_map), valid_ = false);
 
     // extract a topological order
-    MSS(construct_topological_order_(in_degree_map), valid_ = false);
+    MSS(construct_topological_order_(in_degree_map), valid_ = false)*/;
 
     MSS(initialize_process_info_());
 
@@ -36,94 +38,94 @@ Result Menu::construct_()
     MSS_END();
 }
 
-Result Menu::construct_topological_order_(CountMap & in_degree_map)
-{
-    MSS_BEGIN(Result);
+//Result Menu::construct_topological_order_(CountMap & in_degree_map)
+//{
+//    MSS_BEGIN(Result);
 
-    auto initialization_function = [&](auto & stack)
-    {
-        for(const auto & p : in_degree_map)
-            if (p.second == 0)
-                stack.push(p.first);
-    };
+//    auto initialization_function = [&](auto & stack)
+//    {
+//        for(const auto & p : in_degree_map)
+//            if (p.second == 0)
+//                stack.push(p.first);
+//    };
 
-    auto process_function = [&](model::Recipe * recipe, auto & stack)
-    {
-        MSS_BEGIN(Result);
+//    auto process_function = [&](model::Recipe * recipe, auto & stack)
+//    {
+//        MSS_BEGIN(Result);
 
-        MSS(in_degree_map[recipe] == 0);
-        topological_order_.push_back(recipe);
+//        MSS(in_degree_map[recipe] == 0);
+//        topological_order_.push_back(recipe);
 
-        for(model::Recipe * dep : recipe->dependencies())
-        {
-            auto & count = in_degree_map[dep];
-            MSS(count > 0);
+//        for(model::Recipe * dep : recipe->dependencies())
+//        {
+//            auto & count = in_degree_map[dep];
+//            MSS(count > 0);
 
-            if (--count == 0)
-                stack.push(dep);
-        }
+//            if (--count == 0)
+//                stack.push(dep);
+//        }
 
-        MSS_END();
-    };
+//        MSS_END();
+//    };
 
-    topological_order_.clear();
-    MSS(algo::visit(initialization_function, process_function));
+//    topological_order_.clear();
+//    MSS(algo::visit(initialization_function, process_function));
 
-    MSG_MSS(topological_order_.size() == in_degree_map.size(), Error, "The recipes contain cyclic dependencies");
+//    MSG_MSS(topological_order_.size() == in_degree_map.size(), Error, "The recipes contain cyclic dependencies");
 
-    MSS_END();
+//    MSS_END();
 
-}
+//}
 
 const std::list<model::Recipe*> & Menu::root_recipes() const
 {
     return root_recipes_;
 }
 
-Result Menu::construct_count_map_(CountMap & in_degree_map) const
-{
-    MSS_BEGIN(Result);
-    MSS(in_degree_map.empty());
+//Result Menu::construct_count_map_(CountMap & in_degree_map) const
+//{
+//    MSS_BEGIN(Result);
+//    MSS(in_degree_map.empty());
 
-    auto initialization_function = [&](auto & stack)
-    {
-        for(model::Recipe * recipe : root_recipes_)
-        {
-            stack.push(recipe);
-            in_degree_map[recipe] = 0;
-        }
-    };
+//    auto initialization_function = [&](auto & stack)
+//    {
+//        for(model::Recipe * recipe : root_recipes_)
+//        {
+//            stack.push(recipe);
+//            in_degree_map[recipe] = 0;
+//        }
+//    };
 
-    Result rc;
+//    Result rc;
 
-    auto process_function = [&](model::Recipe * recipe, auto & stack)
-    {
-        MSS_BEGIN(Result);
-        MSS(!!recipe);
+//    auto process_function = [&](model::Recipe * recipe, auto & stack)
+//    {
+//        MSS_BEGIN(Result);
+//        MSS(!!recipe);
 
-        for (const auto & p : recipe->dependency_pairs())
-        {
-            model::Recipe * dep = p.second;
+//        for (const auto & p : recipe->dependency_pairs())
+//        {
+//            model::Recipe * dep = p.second;
 
-            if (dep == nullptr)
-            {
-                rc << MESSAGE(Error, "recipe " << recipe->uri() << " has an unresolved dependency on " << p.first);
-            }
-            else
-            {
-                stack.push(dep);
-                ++in_degree_map[dep];
-            }
-        }
+//            if (dep == nullptr)
+//            {
+//                rc << MESSAGE(Error, "recipe " << recipe->uri() << " has an unresolved dependency on " << p.first);
+//            }
+//            else
+//            {
+//                stack.push(dep);
+//                ++in_degree_map[dep];
+//            }
+//        }
 
-        MSS_END();
-    };
+//        MSS_END();
+//    };
 
-    MSS(algo::visit(initialization_function, process_function));
+//    MSS(algo::visit(initialization_function, process_function));
 
-    MSS(rc);
-    MSS_END();
-}
+//    MSS(rc);
+//    MSS_END();
+//}
 
 bool Menu::grow_(model::Recipe * seed, build::GraphPtr graph_ptr, const std::unordered_multimap<model::Recipe *, model::Recipe *> & in_edge_map)
 {
