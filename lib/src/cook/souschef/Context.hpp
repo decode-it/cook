@@ -7,7 +7,7 @@
 #include <vector>
 #include <list>
 
-namespace cook { namespace staff { namespace souschef {
+namespace cook { namespace souschef {
 
 struct Context
 {
@@ -19,6 +19,6 @@ struct Context
     build::Graph * execution_graph;
 };
 
-} } }
+} }
 
 #endif

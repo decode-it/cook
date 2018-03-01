@@ -1,9 +1,9 @@
 #ifndef HEADER_cook_staff_chef_Assistant_hpp_ALREADY_DEFINED
 #define HEADER_cook_staff_chef_Assistant_hpp_ALREADY_DEFINED
 
-#include "cook/staff/souschef/Context.hpp"
+#include "cook/souschef/Context.hpp"
 
-namespace cook { namespace staff { namespace souschef {
+namespace cook { namespace souschef {
 
 class Interface
 {
@@ -16,6 +16,6 @@ public:
 
 
 
-} } }
+} }
 
 #endif

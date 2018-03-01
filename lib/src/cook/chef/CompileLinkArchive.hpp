@@ -1,10 +1,10 @@
 #ifndef HEADER_cook_staff_chef_CompileLinkArchive_hpp_ALREADY_INCLUDED
 #define HEADER_cook_staff_chef_CompileLinkArchive_hpp_ALREADY_INCLUDED
 
-#include "cook/staff/chef/Chef.hpp"
+#include "cook/chef/Chef.hpp"
 #include <set>
 
-namespace cook { namespace staff { namespace chef {
+namespace cook { namespace chef {
 
 struct LinkArchiveChef : public Chef
 {
@@ -27,6 +27,6 @@ private:
 
 };
 
-} } }
+} }
 
 #endif

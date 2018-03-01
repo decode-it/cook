@@ -1,8 +1,8 @@
-#include "cook/staff/souschef/Archiver.hpp"
+#include "cook/souschef/Archiver.hpp"
 #include "boost/predef.h"
 #include "gubg/stream.hpp"
 
-namespace cook { namespace staff { namespace souschef {
+namespace cook { namespace souschef {
 
 namespace  {
 
@@ -81,4 +81,4 @@ build::CommandPtr Archiver::archive_command(const Context & context) const
     return std::make_shared<DummyArchiver>();
 }
 
-} } }
+} }

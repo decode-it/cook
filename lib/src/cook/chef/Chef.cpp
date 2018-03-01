@@ -1,8 +1,8 @@
-#include "cook/staff/chef/Chef.hpp"
+#include "cook/chef/Chef.hpp"
 
 using namespace cook::model;
 
-namespace cook { namespace staff { namespace chef {
+namespace cook { namespace chef {
 
 Result Chef::mis_en_place(Context & context)
 {
@@ -97,6 +97,6 @@ Result Chef::prepare_context(souschef::Context & context, model::Recipe * recipe
 
 
 
-} } }
+} }
 
 

@@ -1,11 +1,11 @@
 #ifndef HEADER_cook_staff_souschef_Compiler_hpp_ALREADY_INCLUDED
 #define HEADER_cook_staff_souschef_Compiler_hpp_ALREADY_INCLUDED
 
-#include "cook/staff/souschef/Interface.hpp"
+#include "cook/souschef/Interface.hpp"
 #include "cook/build/Command.hpp"
 #include "gubg/stream.hpp"
 
-namespace cook { namespace staff { namespace souschef {
+namespace cook { namespace souschef {
 
 class Compiler : public Interface
 {
@@ -24,7 +24,7 @@ private:
 
 };
 
-} } }
+} }
 
 
 

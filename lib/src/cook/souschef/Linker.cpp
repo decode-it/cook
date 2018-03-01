@@ -1,8 +1,8 @@
-#include "cook/staff/souschef/Linker.hpp"
+#include "cook/souschef/Linker.hpp"
 #include "gubg/stream.hpp"
 #include "boost/predef.h"
 
-namespace cook { namespace staff { namespace souschef {
+namespace cook { namespace souschef {
 
 namespace  {
 
@@ -102,4 +102,4 @@ build::CommandPtr Linker::link_command(const Context & context) const
     return std::make_shared<DummyLinker>();
 }
 
-} } }
+} }

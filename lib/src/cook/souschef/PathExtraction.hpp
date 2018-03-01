@@ -6,7 +6,7 @@
 #include "cook/ingredient/File.hpp"
 #include "cook/model/Snapshot.hpp"
 
-namespace cook { namespace staff { namespace souschef {
+namespace cook { namespace souschef {
 
 inline Result add_derived_path(const LanguageTypePair & key, const ingredient::File & file, model::Snapshot & snapshot, model::Recipe * recipe)
 {
@@ -24,6 +24,6 @@ inline Result add_derived_path(const LanguageTypePair & key, const ingredient::F
     MSS_END();
 }
 
-} } }
+} }
 
 #endif

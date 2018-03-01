@@ -1,11 +1,11 @@
 #ifndef HEADER_cook_staff_souschef_Linker_hpp_ALREADY_INCLUDED
 #define HEADER_cook_staff_souschef_Linker_hpp_ALREADY_INCLUDED
 
-#include "cook/staff/souschef/Interface.hpp"
+#include "cook/souschef/Interface.hpp"
 #include "cook/build/Command.hpp"
 #include <set>
 
-namespace cook { namespace staff { namespace souschef {
+namespace cook { namespace souschef {
 
 class Linker : public Interface
 {
@@ -18,7 +18,7 @@ private:
     virtual build::CommandPtr link_command(const Context & context) const;
 };
 
-} } }
+} }
 
 
 

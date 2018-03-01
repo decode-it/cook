@@ -1,10 +1,10 @@
 #ifndef HEADER_cook_staff_souschef_Archiver_hpp_ALREADY_INCLUDED
 #define HEADER_cook_staff_souschef_Archiver_hpp_ALREADY_INCLUDED
 
-#include "cook/staff/souschef/Interface.hpp"
+#include "cook/souschef/Interface.hpp"
 #include <set>
 
-namespace cook { namespace staff { namespace souschef {
+namespace cook { namespace souschef {
 
 class Archiver : public Interface
 {
@@ -17,7 +17,7 @@ private:
     virtual build::CommandPtr archive_command(const Context & context) const;
 };
 
-} } }
+} }
 
 
 

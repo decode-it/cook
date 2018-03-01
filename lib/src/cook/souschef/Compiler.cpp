@@ -1,6 +1,6 @@
-#include "cook/staff/souschef/Compiler.hpp"
+#include "cook/souschef/Compiler.hpp"
 
-namespace cook { namespace staff { namespace souschef {
+namespace cook { namespace souschef {
 
 namespace  {
 
@@ -77,4 +77,4 @@ build::CommandPtr Compiler::compile_command(const Context & context) const
     return std::make_shared<DummyCompiler>();
 }
 
-} } }
+} }

@@ -1,9 +1,9 @@
 #ifndef HEADER_cook_staff_souschef_LibraryPathSetter_hpp_ALREADY_INCLUDED
 #define HEADER_cook_staff_souschef_LibraryPathSetter_hpp_ALREADY_INCLUDED
 
-#include "cook/staff/souschef/Interface.hpp"
+#include "cook/souschef/Interface.hpp"
 
-namespace cook { namespace staff { namespace souschef {
+namespace cook { namespace souschef {
 
 class LibraryPathSetter : public Interface
 {
@@ -12,6 +12,6 @@ public:
     Result process(const Context & context, model::Snapshot & snapshot) const override;
 };
 
-} } }
+} }
 
 #endif
