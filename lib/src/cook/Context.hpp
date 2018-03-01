@@ -5,7 +5,7 @@
 #include "cook/model/Book.hpp"
 #include "cook/model/Library.hpp"
 #include "cook/model/Dirs.hpp"
-#include "cook/Menu.hpp"
+#include "cook/process/Menu.hpp"
 #include "cook/visualizer/Interface.hpp"
 
 namespace cook {
@@ -29,7 +29,7 @@ public:
     model::Book * root_book() const;
     model::Dirs & dirs()                { return dirs_; }
     const model::Dirs & dirs() const    { return dirs_; }
-    const Menu & menu() const           { return menu_; }
+    const process::Menu & menu() const  { return menu_; }
     const model::Library & lib() const  { return lib_; }
 
     Result register_visualizer(VisualizerPtr visualizer);
@@ -43,7 +43,7 @@ private:
     std::map<std::string, VisualizerPtr> visualizers_;
     model::Library lib_;
     model::Dirs dirs_;
-    Menu menu_;
+    process::Menu menu_;
 };
 
 }

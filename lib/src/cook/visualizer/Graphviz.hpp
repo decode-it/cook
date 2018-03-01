@@ -2,7 +2,7 @@
 #define HEADER_cook_visualizer_Graphviz_hpp_ALREADY_INCLUDED
 
 #include "cook/visualizer/Interface.hpp"
-#include "cook/Menu.hpp"
+#include "cook/process/Menu.hpp"
 #include "cook/Context.hpp"
 
 namespace cook { namespace visualizer {

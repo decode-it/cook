@@ -1,5 +1,5 @@
 #include "cook/App.hpp"
-#include "cook/chef/CompileLinkArchive.hpp"
+#include "cook/process/chef/CompileLinkArchive.hpp"
 #include "cook/algo/Book.hpp"
 #include "gubg/mss.hpp"
 #include <unordered_set>
@@ -65,7 +65,7 @@ Result App::process()
 
     // process the menu with the chef
     {
-        chef::LinkArchiveChef lac("default");
+        process::chef::LinkArchiveChef lac("default");
         MSS(lac.initialize());
 
         MSS(lac.mis_en_place(kitchen_));

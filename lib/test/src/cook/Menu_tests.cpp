@@ -2,7 +2,7 @@
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
 #include "cook/model/Library.hpp"
-#include "cook/Menu.hpp"
+#include "cook/process/Menu.hpp"
 
 using namespace cook::model;
 
@@ -176,7 +176,7 @@ TEST_CASE("Dependency resolving", "[ut][algo][dependency_resolving]")
             REQUIRE(!all_resolved);
     }
 
-    cook::Menu menu;
+    cook::process::Menu menu;
     cook::Result rc = menu.construct(gubg::make_range(root_recipes));
 
     if (false) {}
