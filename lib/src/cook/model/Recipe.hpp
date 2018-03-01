@@ -1,15 +1,24 @@
 #ifndef HEADER_cook_model_Recipe_hpp_ALREADY_INCLUDED
 #define HEADER_cook_model_Recipe_hpp_ALREADY_INCLUDED
 
-#include "cook/model/Snapshot.hpp"
 #include "cook/model/Uri.hpp"
 #include "cook/model/Element.hpp"
 #include "cook/model/GlobInfo.hpp"
+#include "cook/ingredient/Properties.hpp"
+#include "cook/ingredient/File.hpp"
+#include "cook/ingredient/KeyValue.hpp"
 #include "cook/util/ElementAt.hpp"
 #include "gubg/Range.hpp"
 #include "boost/iterator/transform_iterator.hpp"
 
 namespace cook { namespace model {
+
+    namespace tag {
+
+        struct File_t {};
+        struct KeyValue_t {};
+
+    }
 
 class Book;
 
@@ -22,12 +31,25 @@ public:
     using DependencyPairIterator = Dependencies::const_iterator;
     using DependencyIterator = boost::transform_iterator<util::ElementAt<1>, DependencyPairIterator>;
 
-    Recipe(Book * book, const Part & part);
+    using Files = ingredient::Ingredients<ingredient::File>;
+    using KeyValues = ingredient::Ingredients<ingredient::KeyValue>;
 
-    const Snapshot & pre() const    { return pre_; }
-    const Snapshot & post() const   { return post_; }
-    Snapshot & pre()                { return pre_; }
-    Snapshot & post()               { return post_; }
+    Recipe(Book * book, const Part & part);
+    //Copying is needed in MESSAGE()
+    Recipe(const Recipe &) = default;
+
+    const Files & files() const          { return files_; }
+    const KeyValues & key_values() const { return key_values_; }
+    Files & files()                      { return files_; }
+    KeyValues & key_values()             { return key_values_; }
+
+    const Files & ingredients(tag::File_t) const            { return files_; }
+    const KeyValues & ingredients(tag::KeyValue_t) const    { return key_values_; }
+    Files & ingredients(tag::File_t)                        { return files_; }
+    KeyValues & ingredients(tag::KeyValue_t)                { return key_values_; }
+
+    const std::filesystem::path & working_directory() const;
+    void set_working_directory(const std::filesystem::path & wd);
 
     void add_globber(const GlobInfo & globbing) { globbings_.push_back(globbing); }
     bool allows_early_globbing() const { return false; }
@@ -42,16 +64,16 @@ public:
     Type type() const;
 
 private:
-    Recipe(const Recipe &) = delete;
     Recipe(Recipe &&) = delete;
     Recipe & operator=(const Recipe &) = delete;
     Recipe & operator=(Recipe &&) = delete;
 
-    Snapshot pre_;
-    Snapshot post_;
-    std::list<GlobInfo> globbings_;
-    Dependencies dependencies_;
     Type type_;
+    std::filesystem::path wd_;
+    std::list<GlobInfo> globbings_;
+    Files files_;
+    KeyValues key_values_;
+    Dependencies dependencies_;
 };
 
 } }

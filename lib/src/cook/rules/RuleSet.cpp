@@ -22,7 +22,7 @@ class DefaultSink : public Interface
     bool add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const
     {
         MSS_BEGIN(bool);
-        MSS(recipe.pre().files().insert_or_merge(key, file));
+        MSS(recipe.files().insert_or_merge(key, file));
         MSS_END();
     }
 };

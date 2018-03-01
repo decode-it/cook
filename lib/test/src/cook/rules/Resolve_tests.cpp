@@ -167,7 +167,7 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
             cook::model::Book book;
             cook::model::Recipe & recipe = book.goc_recipe(*p.first.name());
 
-            recipe.pre().set_working_directory(std::filesystem::current_path());
+            recipe.set_working_directory(std::filesystem::current_path());
 
             cook::rules::RuleSet ruleset;
             cook::rules::Resolver resolver(&ruleset);

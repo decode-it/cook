@@ -2,22 +2,22 @@
 
 namespace cook { namespace process { namespace souschef {
 
-Result LinkLibrarySorter::process(const Context & context, model::Snapshot & snapshot) const
+Result LinkLibrarySorter::process(const Context & context, model::Recipe & recipe) const
 {
     MSS_BEGIN(Result);
 
-    model::Snapshot::Files & files = snapshot.files();
+    model::Recipe::Files & files = recipe.files();
 
     auto it = files.find(LanguageTypePair(Language::Binary, Type::Library));
     if (it == files.end())
         MSS_RETURN_OK();
 
-    MSS(process_(context, snapshot, it->second));
+    MSS(process_(context, recipe, it->second));
 
     MSS_END();
 }
 
-Result LinkLibrarySorter::process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const
+Result LinkLibrarySorter::process_(const Context & context, model::Recipe & recipe, ingredient::Collection<ingredient::File> & libraries) const
 {
     MSS_BEGIN(Result);
 

@@ -10,7 +10,7 @@ class Archiver : public Interface
 {
 public:
     std::string description() const override { return "Archiver"; }
-    Result process(const Context & context, model::Snapshot & snapshot) const override;
+    Result process(const Context &, model::Recipe &) const override;
 
 private:
     virtual ingredient::File construct_archive_file(const Context &context) const;

@@ -16,8 +16,6 @@ Uri append_part(const Uri & uri, const Part & part)
 
 Recipe::Recipe(Book * book, const Part & part)
     : Element(append_part(book->uri(), part)),
-      pre_(uri()),
-      post_(uri()),
       type_(Type::Undefined)
 {
     set_parent(book);
@@ -70,6 +68,16 @@ void Recipe::set_type(const Type & type)
 Type Recipe::type() const
 {
     return type_;
+}
+
+const std::filesystem::path & Recipe::working_directory() const
+{
+    return wd_;
+}
+
+void Recipe::set_working_directory(const std::filesystem::path & wd)
+{
+    wd_ = wd;
 }
 
 } }

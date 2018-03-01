@@ -10,7 +10,7 @@ class Interface
 public:
     virtual ~Interface() {}
 
-    virtual Result process(const Context & context, model::Snapshot & snapshot) const = 0;
+    virtual Result process(const Context &, model::Recipe &) const = 0;
     virtual std::string description() const  = 0;
 };
 

@@ -21,14 +21,14 @@ Compiler::Compiler(Language language)
 
 }
 
-Result Compiler::process(const Context & context, model::Snapshot & snapshot) const
+Result Compiler::process(const Context & context, model::Recipe & recipe) const
 {
     MSS_BEGIN(Result);
 
     MSS(!!context.execution_graph);
     auto & g = *context.execution_graph;
 
-    model::Snapshot::Files & files = snapshot.files();
+    model::Recipe::Files & files = recipe.files();
 
     auto it = files.find(LanguageTypePair(language_, Type::Source));
     if (it == files.end())
@@ -38,12 +38,12 @@ Result Compiler::process(const Context & context, model::Snapshot & snapshot) co
 
     for (const ingredient::File & source : it->second)
     {
-        MSG_MSS(source.propagation() == Propagation::Private, Warning, "Source file '" << source << "' in " << snapshot.uri() << " has public propagation and will (probably) result into multiple defined symbols");
+        MSG_MSS(source.propagation() == Propagation::Private, Warning, "Source file '" << source << "' in " << recipe.uri() << " has public propagation and will (probably) result into multiple defined symbols");
 
         const ingredient::File & object = construct_object_file(source, context);
         const LanguageTypePair key(Language::Binary, Type::Object);
 
-        MSG_MSS(files.insert(key, object).second, Error, "Object file '" << object << "' already present in " << snapshot.uri());
+        MSG_MSS(files.insert(key, object).second, Error, "Object file '" << object << "' already present in " << recipe.uri());
 
         auto compile_vertex = g.add_vertex(cc);
         {

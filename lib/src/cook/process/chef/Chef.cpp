@@ -43,7 +43,7 @@ Result Chef::mis_en_place_(Context &kitchen, const souschef::Context & context, 
     for(AssistantPtr assistant : instruction_set.assistants)
     {
         kitchen.logger().LOG(Info, "[" << name << "]: " << assistant->description());
-        MSS(assistant->process(context, context.recipe->pre()));
+        MSS(assistant->process(context, *context.recipe));
     }
 
     MSS_END();

@@ -27,18 +27,18 @@ std::string construct_archive_filename(const Context & context)
 
 }
 
-Result Archiver::process(const Context & context, model::Snapshot & snapshot) const
+Result Archiver::process(const Context & context, model::Recipe & recipe) const
 {
     MSS_BEGIN(Result);
 
-    model::Snapshot::Files & files = snapshot.files();
+    model::Recipe::Files & files = recipe.files();
     MSS(!!context.execution_graph);
     auto & g = *context.execution_graph;
 
     auto objects = files.range(LanguageTypePair(Language::Binary, Type::Object));
     if (objects.empty())
     {
-        MSS_RC << MESSAGE(Warning, "archive for " << snapshot.uri() << " is not created as it contains no object code");
+        MSS_RC << MESSAGE(Warning, "archive for " << recipe.uri() << " is not created as it contains no object code");
         MSS_RETURN_OK();
     }
 
@@ -54,7 +54,7 @@ Result Archiver::process(const Context & context, model::Snapshot & snapshot) co
     // create the archive
     const ingredient::File archive = construct_archive_file(context);
     const LanguageTypePair key(Language::Binary, Type::Library);
-    MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << snapshot.uri());
+    MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << recipe.uri());
 
     // add the link in the execution graph
     MSS(g.add_edge(archive_vertex, g.goc_vertex(archive.key())));
@@ -65,7 +65,7 @@ Result Archiver::process(const Context & context, model::Snapshot & snapshot) co
 
 ingredient::File Archiver::construct_archive_file(const Context &context) const
 {
-    const std::filesystem::path dir = context.dirs->output() / context.recipe->pre().working_directory();
+    const std::filesystem::path dir = context.dirs->output() / context.recipe->working_directory();
     const std::filesystem::path rel = construct_archive_filename(context);
 
     ingredient::File archive(dir, rel);

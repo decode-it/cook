@@ -43,9 +43,8 @@ private:
 
     struct ProcessInfo
     {
-        ProcessInfo(const model::Uri & uri, build::GraphPtr ptr): post(uri), graph(ptr) {}
+        ProcessInfo(build::GraphPtr ptr): graph(ptr) {}
 
-        model::Snapshot post;
         RecipeFilteredGraph graph;
     };
 
