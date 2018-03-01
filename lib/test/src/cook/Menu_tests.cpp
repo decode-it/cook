@@ -65,46 +65,46 @@ TEST_CASE("Dependency resolving", "[ut][algo][dependency_resolving]")
 
     Scenario scn;
 
-    SECTION("empty set") {}
-    SECTION("single element")
-    {
-        auto * recipe = goc(lib, "a");
-
-        SECTION("in root")
+        SECTION("empty set") {}
+        SECTION("single element")
         {
-            root_recipes.push_back(recipe);
-            scn.total_topological_order = 1;
+            auto * recipe = goc(lib, "a");
 
-            SECTION("no suborder") { }
-            SECTION("suborder") { scn.subroot_count = 1; subroot = recipe; }
+            SECTION("in root")
+            {
+                root_recipes.push_back(recipe);
+                scn.total_topological_order = 1;
+
+                SECTION("no suborder") { }
+                SECTION("suborder") { scn.subroot_count = 1; subroot = recipe; }
+            }
+
+            SECTION("outside of root") { }
         }
 
-        SECTION("outside of root") { }
-    }
-
-    SECTION("two unconnected elements")
-    {
-        auto * recipe_a = goc(lib, "a");
-        auto * recipe_b = goc(lib, "b");
-
-        SECTION("single root")
+        SECTION("two unconnected elements")
         {
-            root_recipes.push_back(recipe_a);
-            scn.total_topological_order = 1;
+            auto * recipe_a = goc(lib, "a");
+            auto * recipe_b = goc(lib, "b");
 
-            SECTION("suborder") { scn.subroot_count = 1; subroot = recipe_a; }
+            SECTION("single root")
+            {
+                root_recipes.push_back(recipe_a);
+                scn.total_topological_order = 1;
+
+                SECTION("suborder") { scn.subroot_count = 1; subroot = recipe_a; }
+            }
+
+            SECTION("both root")
+            {
+                root_recipes.push_back(recipe_a);
+                root_recipes.push_back(recipe_b);
+                scn.total_topological_order = 2;
+
+                SECTION("suborder a") { scn.subroot_count = 1; subroot = recipe_a; }
+                SECTION("suborder b") { scn.subroot_count = 1; subroot = recipe_b; }
+            }
         }
-
-        SECTION("both root")
-        {
-            root_recipes.push_back(recipe_a);
-            root_recipes.push_back(recipe_b);
-            scn.total_topological_order = 2;
-
-            SECTION("suborder a") { scn.subroot_count = 1; subroot = recipe_a; }
-            SECTION("suborder b") { scn.subroot_count = 1; subroot = recipe_b; }
-        }
-    }
 
     SECTION("simple DAG")
     {

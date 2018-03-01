@@ -49,6 +49,7 @@ private:
     };
 
     std::map<model::Recipe *, ProcessInfo> process_info_map_;
+    std::list<build::GraphPtr> topological_build_graph_order_;
     bool valid_;
 };
 
