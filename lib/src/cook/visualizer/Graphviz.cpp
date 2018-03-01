@@ -2,7 +2,7 @@
 #include "cook/model/Book.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/algo/Visit.hpp"
-#include "cook/algo/Recipe.hpp"
+#include "cook/algo/TopologicalOrder.hpp"
 #include <unordered_map>
 
 using namespace cook::model;

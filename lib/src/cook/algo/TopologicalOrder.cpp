@@ -1,5 +1,5 @@
-#include "cook/algo/Recipe.hpp"
-#include "cook/algo/Visit.hpp"
+#include "cook/algo/TopologicalOrder.hpp"
+#include "cook/algo/DependencyGraph.hpp"
 #include "boost/graph/topological_sort.hpp"
 #include <unordered_map>
 #include <stack>
@@ -20,7 +20,7 @@ Result topological_order_(const gubg::Range<It> & root_range, std::list<model::R
 
 
     std::unordered_map<model::Recipe *, boost::graph_traits<G>::vertex_descriptor> map;
-    MSS(construct_dependency_graph(root_range, g, map));
+    MSS(make_DependencyGraph(root_range, g, map));
 
     std::vector<Vertex> vertices(boost::num_vertices(g));
 
@@ -41,11 +41,11 @@ Result topological_order_(const gubg::Range<It> & root_range, std::list<model::R
 
 }
 
-Result topological_order(const std::list<model::Recipe *> & roots, std::list<model::Recipe*> & top_order)
+Result make_TopologicalOrder(const std::list<model::Recipe *> & roots, std::list<model::Recipe*> & top_order)
 {
     return topological_order_(gubg::make_range(roots), top_order);
 }
-Result topological_order(model::Recipe * root, std::list<model::Recipe*> & top_order)
+Result make_TopologicalOrder(model::Recipe * root, std::list<model::Recipe*> & top_order)
 {
     return topological_order_(gubg::make_range(&root, (&root) + 1), top_order);
 }

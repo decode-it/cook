@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_algo_Recipe_hpp_ALREADY_INCLUDED
-#define HEADER_cook_algo_Recipe_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_algo_DependencyGraph_hpp_ALREADY_INCLUDED
+#define HEADER_cook_algo_DependencyGraph_hpp_ALREADY_INCLUDED
 
 #include "cook/algo/Visit.hpp"
 #include "cook/model/Recipe.hpp"
@@ -8,12 +8,8 @@
 
 namespace cook { namespace algo {
 
-Result topological_order(const std::list<model::Recipe *> & roots, std::list<model::Recipe*> & topological_order);
-Result topological_order(model::Recipe * root, std::list<model::Recipe*> & topological_order);
-
-
 template <typename It, typename Graph, typename RecipeVertexMap>
-Result construct_dependency_graph(const gubg::Range<It> & roots, Graph & g, RecipeVertexMap & translation_map)
+Result make_DependencyGraph(const gubg::Range<It> & roots, Graph & g, RecipeVertexMap & translation_map)
 {
     MSS_BEGIN(Result);
 
@@ -21,7 +17,7 @@ Result construct_dependency_graph(const gubg::Range<It> & roots, Graph & g, Reci
     MSS(translation_map.empty());
 
     auto initialization_function = [&](auto & stack)
-    {     
+    {
         for(model::Recipe * root : roots)
             if(translation_map.find(root) == translation_map.end())
             {
