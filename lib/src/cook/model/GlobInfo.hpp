@@ -12,22 +12,28 @@
 #include <optional>
 #include <functional>
 #include <algorithm>
-
+#include <ostream>
 
 namespace cook { namespace model {
 
-struct GlobInfo
-{
-    std::string dir;
-    std::string pattern;
+    struct GlobInfo
+    {
+        std::string dir;
+        std::string pattern;
 
-    Language language = Language::Undefined;
-    Type type = Type::Undefined;
+        Language language = Language::Undefined;
+        Type type = Type::Undefined;
 
-    std::optional<Propagation> propagation;
-    std::optional<Overwrite> overwrite;
-    std::function<bool (LanguageTypePair &, ingredient::File &)> filter_and_adaptor;
-};
+        std::optional<Propagation> propagation;
+        std::optional<Overwrite> overwrite;
+        std::function<bool (LanguageTypePair &, ingredient::File &)> filter_and_adaptor;
+    };
+
+    inline std::ostream &operator<<(std::ostream &os, const GlobInfo &globber)
+    {
+        os << "[GlobInfo](dir:" << globber.dir << ")(pattern: " << globber.pattern << ")";
+        return os;
+    }
 
 } }
 

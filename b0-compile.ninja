@@ -106,9 +106,9 @@ build .b0/lib/src/cook/process/souschef/LinkLibrarySorter.cpp.obj: compile lib/s
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/process/souschef/Linker.cpp.obj: compile lib/src/cook/process/souschef/Linker.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/rules/CXX.cpp.obj: compile lib/src/cook/rules/CXX.cpp
+build .b0/lib/src/cook/process/souschef/Resolver.cpp.obj: compile lib/src/cook/process/souschef/Resolver.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/rules/Resolver.cpp.obj: compile lib/src/cook/rules/Resolver.cpp
+build .b0/lib/src/cook/rules/CXX.cpp.obj: compile lib/src/cook/rules/CXX.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/rules/RuleSet.cpp.obj: compile lib/src/cook/rules/RuleSet.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
@@ -303,8 +303,8 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/process/souschef/LibraryPathSetter.cpp.obj $
     .b0/lib/src/cook/process/souschef/LinkLibrarySorter.cpp.obj $
     .b0/lib/src/cook/process/souschef/Linker.cpp.obj $
+    .b0/lib/src/cook/process/souschef/Resolver.cpp.obj $
     .b0/lib/src/cook/rules/CXX.cpp.obj $
-    .b0/lib/src/cook/rules/Resolver.cpp.obj $
     .b0/lib/src/cook/rules/RuleSet.cpp.obj $
     .b0/lib/src/cook/visualizer/Graphviz.cpp.obj $
 

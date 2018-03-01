@@ -33,6 +33,7 @@ public:
 
     using Files = ingredient::Ingredients<ingredient::File>;
     using KeyValues = ingredient::Ingredients<ingredient::KeyValue>;
+    using Globbings = std::list<GlobInfo>;
 
     Recipe(Book * book, const Part & part);
     //Copying is needed in MESSAGE()
@@ -53,6 +54,7 @@ public:
 
     void add_globber(const GlobInfo & globbing) { globbings_.push_back(globbing); }
     bool allows_early_globbing() const { return false; }
+    const Globbings &globbings() const { return globbings_; }
 
     gubg::Range<DependencyPairIterator> dependency_pairs() const;
     gubg::Range<DependencyIterator> dependencies() const;
@@ -69,8 +71,8 @@ private:
     Recipe & operator=(Recipe &&) = delete;
 
     Type type_;
+    Globbings globbings_;
     std::filesystem::path wd_;
-    std::list<GlobInfo> globbings_;
     Files files_;
     KeyValues key_values_;
     Dependencies dependencies_;

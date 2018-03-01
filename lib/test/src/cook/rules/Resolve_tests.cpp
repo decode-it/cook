@@ -2,7 +2,7 @@
 #include "cook/model/GlobInfo.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
-#include "cook/rules/Resolver.hpp"
+#include "cook/process/souschef/Resolver.hpp"
 
 #define BASE_DIR "generated/"
 
@@ -170,9 +170,9 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
             recipe.set_working_directory(std::filesystem::current_path());
 
             cook::rules::RuleSet ruleset;
-            cook::rules::Resolver resolver(&ruleset);
+            cook::process::souschef::Resolver resolver(&ruleset);
 
-            REQUIRE(resolver(recipe, globber));
+            REQUIRE(resolver.process_one(recipe, globber));
         }
 
         REQUIRE(files == scn.expected_files);
