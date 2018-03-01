@@ -26,7 +26,7 @@ Result Context::initialize_menu(const std::list<model::Recipe*> & root_recipes)
 {
     MSS_BEGIN(Result);
 
-//    MSS(lib_.resolve());
+    MSS(lib_.resolve());
     MSS(menu_.construct(gubg::make_range(root_recipes)));
 
     MSS_END();
