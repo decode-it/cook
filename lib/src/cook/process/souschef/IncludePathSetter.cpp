@@ -10,18 +10,18 @@ IncludePathSetter::IncludePathSetter(Language language)
 
 }
 
-Result IncludePathSetter::process(const Context & context, model::Snapshot & snapshot) const
+Result IncludePathSetter::process(const Context & context, model::Recipe & recipe) const
 {
     MSS_BEGIN(Result);
 
-    auto & files = snapshot.files();
+    auto & files = recipe.files();
     auto it = files.find(LanguageTypePair(language_, Type::Header));
 
     if (it == files.end())
         MSS_RETURN_OK();
 
     for(const ingredient::File & file : it->second)
-        MSS(add_derived_path(LanguageTypePair(language_, Type::IncludePath), file, snapshot, context.recipe));
+        MSS(add_derived_path(LanguageTypePair(language_, Type::IncludePath), file, recipe));
 
     MSS_END();
 }

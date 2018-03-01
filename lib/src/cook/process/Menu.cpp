@@ -48,7 +48,7 @@ bool Menu::grow_(model::Recipe * seed, build::GraphPtr graph_ptr, const std::uno
         model::Recipe * recipe = todo.top();
         todo.pop();
 
-        auto p = process_info_map_.emplace(recipe, ProcessInfo(recipe->uri(), graph_ptr));
+        auto p = process_info_map_.emplace(recipe, ProcessInfo(graph_ptr));
         ProcessInfo & pinfo = p.first->second;
 
         if (!p.second)

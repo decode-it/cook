@@ -9,10 +9,10 @@ class LinkLibrarySorter : public Interface
 {
 public:
     std::string description() const override { return "Link library sorter"; }
-    Result process(const Context & context, model::Snapshot & snapshot) const override;
+    Result process(const Context &, model::Recipe &) const override;
 
 private:
-    Result process_(const Context & context, model::Snapshot & snapshot, ingredient::Collection<ingredient::File> & libraries) const;
+    Result process_(const Context &, model::Recipe &, ingredient::Collection<ingredient::File> & libraries) const;
 };
 
 } } }
