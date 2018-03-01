@@ -5,8 +5,11 @@
 #include "cook/model/Uri.hpp"
 #include "boost/graph/adjacency_list.hpp"
 #include <variant>
+#include <memory>
 
 namespace cook { namespace build {
+
+namespace config {
 
 struct Graph
 {
@@ -17,6 +20,12 @@ struct Graph
     using graph_type = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, Label>;
     using vertex_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
     using adjcent_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
+};
+
+}
+
+struct Graph : public config::Graph
+{
 
     Graph() = default;
 
@@ -37,6 +46,8 @@ private:
     std::unordered_map<FileLabel, vertex_descriptor> file_map_;
     graph_type g_;
 };
+
+using GraphPtr = std::shared_ptr<Graph>;
 
 } }
 
