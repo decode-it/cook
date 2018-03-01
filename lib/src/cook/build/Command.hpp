@@ -1,11 +1,11 @@
-#ifndef HEADER_cook_process_Command_hpp_ALREADY_INCLUDED
-#define HEADER_cook_process_Command_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_build_Command_hpp_ALREADY_INCLUDED
+#define HEADER_cook_build_Command_hpp_ALREADY_INCLUDED
 
 #include "cook/Result.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <memory>
 
-namespace cook { namespace process {
+namespace cook { namespace build {
 
 struct Command
 {

@@ -6,7 +6,7 @@ namespace cook { namespace staff { namespace souschef {
 
 namespace  {
 
-struct DummyArchiver : public process::Command
+struct DummyArchiver : public build::Command
 {
     std::string name() const override { return "archive"; }
     Result process(const std::list<std::filesystem::path> & input, const std::list<std::filesystem::path> & output) override
@@ -76,7 +76,7 @@ ingredient::File Archiver::construct_archive_file(const Context &context) const
     return archive;
 }
 
-process::CommandPtr Archiver::archive_command(const Context & context) const
+build::CommandPtr Archiver::archive_command(const Context & context) const
 {
     return std::make_shared<DummyArchiver>();
 }

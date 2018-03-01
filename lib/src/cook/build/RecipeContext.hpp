@@ -1,10 +1,10 @@
-#ifndef HEADER_cook_process_RecipeContext_hpp_ALREADY_INCLUDED
-#define HEADER_cook_process_RecipeContext_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_build_RecipeContext_hpp_ALREADY_INCLUDED
+#define HEADER_cook_build_RecipeContext_hpp_ALREADY_INCLUDED
 
 #include "cook/model/Recipe.hpp"
 #include <list>
 
-namespace cook { namespace process {
+namespace cook { namespace build {
 
 struct LocalContext
 {

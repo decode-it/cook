@@ -6,7 +6,7 @@ namespace cook { namespace staff { namespace souschef {
 
 namespace  {
 
-struct DummyLinker : public process::Command
+struct DummyLinker : public build::Command
 {
     std::string name() const override { return "link"; }
     Result process(const std::list<std::filesystem::path> & input, const std::list<std::filesystem::path> & output) override
@@ -97,7 +97,7 @@ ingredient::File Linker::construct_archive_file(const Context &context) const
     return archive;
 }
 
-process::CommandPtr Linker::link_command(const Context & context) const
+build::CommandPtr Linker::link_command(const Context & context) const
 {
     return std::make_shared<DummyLinker>();
 }

@@ -4,7 +4,7 @@ namespace cook { namespace staff { namespace souschef {
 
 namespace  {
 
-struct DummyCompiler : public process::Command
+struct DummyCompiler : public build::Command
 {
     std::string name() const override { return "compile"; }
     Result process(const std::list<std::filesystem::path> & input, const std::list<std::filesystem::path> & output) override
@@ -34,7 +34,7 @@ Result Compiler::process(const Context & context, model::Snapshot & snapshot) co
     if (it == files.end())
         MSS_RETURN_OK();
 
-    process::CommandPtr cc = compile_command(context);
+    build::CommandPtr cc = compile_command(context);
 
     for (const ingredient::File & source : it->second)
     {
@@ -72,7 +72,7 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
     return object;
 }
 
-process::CommandPtr Compiler::compile_command(const Context & context) const
+build::CommandPtr Compiler::compile_command(const Context & context) const
 {
     return std::make_shared<DummyCompiler>();
 }

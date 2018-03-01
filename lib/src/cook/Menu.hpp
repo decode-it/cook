@@ -1,7 +1,7 @@
 #ifndef HEADER_cook_Menu_hpp_ALREADY_INCLUDED
 #define HEADER_cook_Menu_hpp_ALREADY_INCLUDED
 
-#include "cook/process/DependencyDAG.hpp"
+#include "cook/build/Graph.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
 #include <unordered_map>
@@ -46,8 +46,8 @@ private:
     {
         ProcessInfo(const model::Uri & uri): post(uri) {}
 
-        std::shared_ptr<process::DependencyDAG> graph;
-        std::vector<process::DependencyDAG::vertex_descriptor> commands;
+        std::shared_ptr<build::Graph> graph;
+        std::vector<build::Graph::vertex_descriptor> commands;
         model::Snapshot post;
         unsigned int component_identifier = std::numeric_limits<unsigned int>::max();
     };

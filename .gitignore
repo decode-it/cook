@@ -13,7 +13,7 @@ makefile
 .ninja_log
 test.ninja
 build.ninja
-build
+/build
 recipes.chai.user
 compile_commands.json
 fontconfig/

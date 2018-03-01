@@ -176,7 +176,7 @@ bool Menu::initialize_process_info_()
             dep_in_edges.insert(std::make_pair(dep, recipe));
 
     // fill a color map for components (sharing the same graph
-    std::vector<std::shared_ptr<process::DependencyDAG>> dep_graphs;
+    std::vector<std::shared_ptr<build::Graph>> dep_graphs;
 
     {
         unsigned int current_component = 0;
@@ -189,7 +189,7 @@ bool Menu::initialize_process_info_()
         // initialize the dependency graphs
         dep_graphs.resize(current_component);
         for(auto & ptr : dep_graphs)
-            ptr = std::make_shared<process::DependencyDAG>();
+            ptr = std::make_shared<build::Graph>();
     }
 
     // initialize the process data per element

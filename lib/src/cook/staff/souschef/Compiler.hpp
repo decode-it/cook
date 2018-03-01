@@ -2,7 +2,7 @@
 #define HEADER_cook_staff_souschef_Compiler_hpp_ALREADY_INCLUDED
 
 #include "cook/staff/souschef/Interface.hpp"
-#include "cook/process/Command.hpp"
+#include "cook/build/Command.hpp"
 #include "gubg/stream.hpp"
 
 namespace cook { namespace staff { namespace souschef {
@@ -17,7 +17,7 @@ public:
 
 private:
     virtual ingredient::File construct_object_file(const ingredient::File & source, const Context &context) const;
-    virtual process::CommandPtr compile_command(const Context & context) const;
+    virtual build::CommandPtr compile_command(const Context & context) const;
 
 
     Language language_;

@@ -2,7 +2,7 @@
 #define HEADER_cook_staff_souschef_Linker_hpp_ALREADY_INCLUDED
 
 #include "cook/staff/souschef/Interface.hpp"
-#include "cook/process/Command.hpp"
+#include "cook/build/Command.hpp"
 #include <set>
 
 namespace cook { namespace staff { namespace souschef {
@@ -15,7 +15,7 @@ public:
 
 private:
     virtual ingredient::File construct_archive_file(const Context &context) const;
-    virtual process::CommandPtr link_command(const Context & context) const;
+    virtual build::CommandPtr link_command(const Context & context) const;
 };
 
 } } }

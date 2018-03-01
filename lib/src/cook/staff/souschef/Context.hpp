@@ -3,7 +3,7 @@
 
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Dirs.hpp"
-#include "cook/process/DependencyDAG.hpp"
+#include "cook/build/Graph.hpp"
 #include <vector>
 #include <list>
 
@@ -16,7 +16,7 @@ struct Context
     std::list<model::Recipe *> topological_order;
     const model::Dirs * dirs;
 
-    process::DependencyDAG * execution_graph;
+    build::Graph * execution_graph;
 };
 
 } } }

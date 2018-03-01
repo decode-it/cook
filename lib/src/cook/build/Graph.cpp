@@ -1,9 +1,9 @@
-#include "cook/process/DependencyDAG.hpp"
+#include "cook/build/Graph.hpp"
 #include "boost/graph/topological_sort.hpp"
 
-namespace cook { namespace process {
+namespace cook { namespace build {
 
-DependencyDAG::vertex_descriptor DependencyDAG::goc_vertex(const FileLabel & path)
+Graph::vertex_descriptor Graph::goc_vertex(const FileLabel & path)
 {
     auto it = file_map_.find(path);
     if (it != file_map_.end())
@@ -15,12 +15,12 @@ DependencyDAG::vertex_descriptor DependencyDAG::goc_vertex(const FileLabel & pat
     return v;
 }
 
-DependencyDAG::vertex_descriptor DependencyDAG::add_vertex(CommandLabel ptr)
+Graph::vertex_descriptor Graph::add_vertex(CommandLabel ptr)
 {
     boost::add_vertex(Label(ptr), g_);
 }
 
-Result DependencyDAG::add_edge(vertex_descriptor src, vertex_descriptor tgt)
+Result Graph::add_edge(vertex_descriptor src, vertex_descriptor tgt)
 {
     MSS_BEGIN(Result);
 
@@ -41,12 +41,12 @@ Result DependencyDAG::add_edge(vertex_descriptor src, vertex_descriptor tgt)
 
 }
 
-const DependencyDAG::Label & DependencyDAG::operator[](vertex_descriptor vd) const
+const Graph::Label & Graph::operator[](vertex_descriptor vd) const
 {
     return g_[vd];
 }
 
-Result DependencyDAG::topological_commands(std::vector<vertex_descriptor> & commands) const
+Result Graph::topological_commands(std::vector<vertex_descriptor> & commands) const
 {
     MSS_BEGIN(Result);
     std::vector<vertex_descriptor> top_order(boost::num_vertices(g_));
