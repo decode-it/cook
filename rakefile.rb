@@ -16,7 +16,7 @@ submods = %w[build std math io algo chaiscript].map{|e|"gubg.#{e}"}
 
 desc "Prepare the submods"
 task :prepare do
-    %w[iterator config mpl preprocessor static_assert type_traits detail core utility predef graph unordered functional container_hash integer assert move throw_exception tuple smart_ptr property_map concept_check foreach serialization optional range typeof parameter conversion tti function_types].each do |name|
+    %w[iterator config mpl preprocessor static_assert type_traits detail core utility predef graph unordered functional container_hash integer assert move throw_exception tuple smart_ptr property_map concept_check foreach serialization optional range typeof parameter conversion tti function_types multi_index].each do |name|
         sh("git submodule update --init extern/boost/#{name}")
     end
     GUBG::each_submod(submods: submods) do |info|
