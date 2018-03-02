@@ -3,13 +3,13 @@ bind
 concept_check
 config
 container
-container_hash
 conversion
 core
 detail
 foreach
 function
 function_types
+functional
 graph
 graph_parallel
 integer

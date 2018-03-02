@@ -3,6 +3,7 @@
 
 #include "cook/model/Recipe.hpp"
 #include "cook/Result.hpp"
+#include "boost/graph/adjacency_list.hpp"
 #include "boost/graph/topological_sort.hpp"
 
 namespace cook { namespace algo {
@@ -13,7 +14,7 @@ template <typename DependencyGraph, typename OutIterator>
 Result make_TopologicalOrder(const DependencyGraph & dependency_graph, OutIterator out_iterator)
 {
     MSS_BEGIN(Result);
-    using Vertex = typename boost::graph_traits<g>::vertex_descriptor;
+    using Vertex = typename boost::graph_traits<DependencyGraph>::vertex_descriptor;
 
     std::vector<Vertex> vertices(boost::num_vertices(dependency_graph));
 
