@@ -34,7 +34,7 @@ Result LinkArchiveChef::initialize()
 
     // the linker
     {
-        InstructionSet set;
+        Brigade set;
 
         set.name = "Link executable or dynamic library";
         set.can_cook = [](const model::Recipe * recipe, std::string & reason) {
@@ -45,16 +45,16 @@ Result LinkArchiveChef::initialize()
             return false;
         };
 
-        set.assistants = generate_compile_only_steps_();
-        set.assistants.push_back(std::make_shared<souschef::LinkLibrarySorter>());
-        set.assistants.push_back(linker_);
+        set.souschefs = generate_compile_only_steps_();
+        set.souschefs.push_back(std::make_shared<souschef::LinkLibrarySorter>());
+        set.souschefs.push_back(linker_);
 
-        this->add_instruction_set(100, std::move(set));
+        this->add_brigade(100, std::move(set));
     }
 
     // the archiver
     {
-        InstructionSet set;
+        Brigade set;
 
         set.name = "Archive static library";
         set.can_cook = [](const model::Recipe * recipe, std::string & reason) {
@@ -65,16 +65,16 @@ Result LinkArchiveChef::initialize()
             return false;
         };
 
-        set.assistants = generate_compile_only_steps_();
-        set.assistants.push_back(archiver_);
+        set.souschefs = generate_compile_only_steps_();
+        set.souschefs.push_back(archiver_);
 
-        this->add_instruction_set(100, std::move(set));
+        this->add_brigade(100, std::move(set));
     }
 
     MSS_END();
 }
 
-void LinkArchiveChef::set_compiler(Language language, AssistantPtr compiler)
+void LinkArchiveChef::set_compiler(Language language, SouschefPtr compiler)
 {
     compilers_[language] = compiler;
 }
@@ -84,19 +84,19 @@ void LinkArchiveChef::clear_compiler(Language language)
     compilers_.erase(language);
 }
 
-void LinkArchiveChef::set_linker(AssistantPtr linker)
+void LinkArchiveChef::set_linker(SouschefPtr linker)
 {
     linker_ = linker;
 }
 
-void LinkArchiveChef::set_archiver(AssistantPtr archiver)
+void LinkArchiveChef::set_archiver(SouschefPtr archiver)
 {
     archiver_ = archiver;
 }
 
-std::list<AssistantPtr> LinkArchiveChef::generate_compile_only_steps_() const
+std::list<SouschefPtr> LinkArchiveChef::generate_compile_only_steps_() const
 {
-    std::list<AssistantPtr> result;
+    std::list<SouschefPtr> result;
 
     auto rule_set = rules::RuleSet::create();
     rule_set->add<rules::CXX>();

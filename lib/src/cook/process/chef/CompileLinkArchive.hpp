@@ -12,18 +12,18 @@ struct LinkArchiveChef : public Chef
 
     Result initialize() override;
 
-    void set_compiler(Language language, AssistantPtr compiler);
+    void set_compiler(Language language, SouschefPtr compiler);
     void clear_compiler(Language language);
-    void set_linker(AssistantPtr linker);
-    void set_archiver(AssistantPtr archiver);
+    void set_linker(SouschefPtr linker);
+    void set_archiver(SouschefPtr archiver);
 
 private:
-    std::list<AssistantPtr> generate_compile_only_steps_() const;
+    std::list<SouschefPtr> generate_compile_only_steps_() const;
 
     std::string name_;
-    std::map<Language, AssistantPtr> compilers_;
-    AssistantPtr linker_;
-    AssistantPtr archiver_;
+    std::map<Language, SouschefPtr> compilers_;
+    SouschefPtr linker_;
+    SouschefPtr archiver_;
 
 };
 
