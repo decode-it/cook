@@ -24,8 +24,12 @@ public:
 
     bool is_valid() const { return valid_; }
 
-    const std::list<model::Recipe*> & topological_order() const;
+    const std::list<model::Recipe*> & topological_order_recipes() const;
+    const std::list<build::GraphPtr> & topological_order_build_graphs() const;
     const std::list<model::Recipe*> & root_recipes() const;
+
+    const RecipeFilteredGraph * recipe_filtered_graph(model::Recipe *recipe) const;
+    RecipeFilteredGraph * recipe_filtered_graph(model::Recipe * recipe);
 
 private:
     Menu(const Menu &) = delete;
@@ -41,14 +45,7 @@ private:
     std::list<model::Recipe *> topological_order_;
     std::list<model::Recipe *> root_recipes_;
 
-    struct ProcessInfo
-    {
-        ProcessInfo(build::GraphPtr ptr): graph(ptr) {}
-
-        RecipeFilteredGraph graph;
-    };
-
-    std::map<model::Recipe *, ProcessInfo> process_info_map_;
+    std::map<model::Recipe *, RecipeFilteredGraph> recipe_filtered_graphs_;
     std::list<build::GraphPtr> topological_build_graph_order_;
     bool valid_;
 };

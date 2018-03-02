@@ -14,9 +14,26 @@ Menu::Menu()
 
 }
 
-const std::list<model::Recipe*> & Menu::topological_order() const
+const std::list<model::Recipe*> & Menu::topological_order_recipes() const
 {
     return topological_order_;
+}
+
+const std::list<build::GraphPtr> & Menu::topological_order_build_graphs() const
+{
+    return topological_build_graph_order_;
+}
+
+const RecipeFilteredGraph * Menu::recipe_filtered_graph(model::Recipe * recipe) const
+{
+    auto it = recipe_filtered_graphs_.find(recipe);
+    return it == recipe_filtered_graphs_.end() ? nullptr : &(it->second);
+}
+
+RecipeFilteredGraph * Menu::recipe_filtered_graph(model::Recipe *recipe)
+{
+    auto it = recipe_filtered_graphs_.find(recipe);
+    return it == recipe_filtered_graphs_.end() ? nullptr : &(it->second);
 }
 
 Result Menu::construct_()
@@ -78,7 +95,7 @@ bool Menu::initialize_process_info_()
         build::GraphPtr ptr = std::make_shared<build::Graph>();
 
         for(auto * recipe : recipe_set)
-            process_info_map_.emplace(recipe, ProcessInfo(ptr));
+            recipe_filtered_graphs_.emplace(recipe, RecipeFilteredGraph(ptr));
 
         topological_build_graph_order_.push_back(ptr);
     }

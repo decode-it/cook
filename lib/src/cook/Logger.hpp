@@ -38,8 +38,8 @@ public:
 
     using LogFunction = std::function<void (std::ostream &)>;
 
-    virtual void log(LogType type, const LogFunction & function) = 0;
-    virtual void log(const Result & result) = 0;
+    virtual void log(LogType type, const LogFunction & function) const = 0;
+    virtual void log(const Result & result) const = 0;
 };
 
 }

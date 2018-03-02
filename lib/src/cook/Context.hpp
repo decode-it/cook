@@ -20,7 +20,7 @@ public:
 
     bool initialize();
 
-    virtual Logger & logger() = 0;
+    virtual const Logger & logger() const = 0;
 
     Result initialize_menu(const std::list<model::Recipe*> & root_recipes);
 
@@ -30,6 +30,7 @@ public:
     model::Dirs & dirs()                { return dirs_; }
     const model::Dirs & dirs() const    { return dirs_; }
     const process::Menu & menu() const  { return menu_; }
+    process::Menu & menu()              { return menu_; }
     const model::Library & lib() const  { return lib_; }
 
     Result register_visualizer(VisualizerPtr visualizer);

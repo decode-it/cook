@@ -15,34 +15,33 @@ struct DummyLinker : public build::Command
     }
 };
 
-std::string construct_dynamic_library_name(const Context & context)
+std::string construct_dynamic_library_name(const model::Recipe & recipe)
 {
 #if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << context.recipe->uri().string('.') << ".dll"; });
+    return gubg::stream([&](auto & os) { os << recipe.uri().string('.') << ".dll"; });
 #else
-    return gubg::stream([&](auto & os) { os << "lib" << context.recipe->uri().string('.') << ".so"; });
+    return gubg::stream([&](auto & os) { os << "lib" << recipe.uri().string('.') << ".so"; });
 #endif
 }
 
-std::string construct_executable_name(const Context & context)
+std::string construct_executable_name(const model::Recipe & recipe)
 {
 #if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << context.recipe->uri().string('.') << ".exe"; });
+    return gubg::stream([&](auto & os) { os << recipe.uri().string('.') << ".exe"; });
 #else
-    return gubg::stream([&](auto & os) { os << context.recipe->uri().string('.'); });
+    return gubg::stream([&](auto & os) { os << recipe.uri().string('.'); });
 #endif
 }
 
 
 }
 
-Result Linker::process(const Context & context, model::Recipe & recipe) const
+Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
 {
     MSS_BEGIN(Result);
 
     model::Recipe::Files & files = recipe.files();
-    MSS(!!context.execution_graph);
-    auto & g = *context.execution_graph;
+    auto & g = file_command_graph;
 
     auto objects = files.range(LanguageTypePair(Language::Binary, Type::Object));
     auto libs = files.range(LanguageTypePair(Language::Binary, Type::Library));
@@ -74,7 +73,7 @@ Result Linker::process(const Context & context, model::Recipe & recipe) const
     }
 
     // create the archive
-    const ingredient::File archive = construct_archive_file(context);
+    const ingredient::File archive = construct_archive_file(recipe, context);
     const LanguageTypePair key(Language::Binary, Type::Library);
     MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << recipe.uri());
 
@@ -84,14 +83,14 @@ Result Linker::process(const Context & context, model::Recipe & recipe) const
     MSS_END();
 }
 
-ingredient::File Linker::construct_archive_file(const Context &context) const
+ingredient::File Linker::construct_archive_file(model::Recipe & recipe, const Context &context) const
 {
-    const std::filesystem::path dir = context.dirs->output() / context.recipe->working_directory();
-    const std::filesystem::path rel = (context.recipe->type() == Type::Executable ? construct_executable_name(context) : construct_dynamic_library_name(context));
+    const std::filesystem::path dir = context.dirs().output() / recipe.working_directory();
+    const std::filesystem::path rel = (recipe.type() == Type::Executable ? construct_executable_name(recipe) : construct_dynamic_library_name(recipe));
 
     ingredient::File archive(dir, rel);
     archive.set_overwrite(Overwrite::IfSame);
-    archive.set_owner(context.recipe);
+    archive.set_owner(&recipe);
     archive.set_propagation(Propagation::Public);
 
     return archive;

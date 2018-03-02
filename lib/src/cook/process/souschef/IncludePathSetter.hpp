@@ -12,7 +12,7 @@ public:
     IncludePathSetter(Language language);
 
     std::string description() const override { return gubg::stream([&](auto & os) { os << language_ << " include path setter"; }); }
-    Result process(const Context &, model::Recipe &) const override;
+    Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
 
 private:
     Language language_;

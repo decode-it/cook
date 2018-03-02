@@ -11,7 +11,7 @@ struct Context : public cook::Context
     Context();
     virtual ~Context();
 
-    cook::Logger & logger() override;
+    const cook::Logger & logger() const override;
     Result set_variable(const std::string & name, const std::string & value) override;
 
     bool load(const std::string &recipe);

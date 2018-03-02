@@ -4,7 +4,7 @@
 
 namespace cook { namespace process { namespace souschef {
 
-Result LibraryPathSetter::process(const Context & context, model::Recipe & recipe) const
+Result LibraryPathSetter::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
 {
     MSS_BEGIN(Result);
 

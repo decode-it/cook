@@ -10,7 +10,7 @@ IncludePathSetter::IncludePathSetter(Language language)
 
 }
 
-Result IncludePathSetter::process(const Context & context, model::Recipe & recipe) const
+Result IncludePathSetter::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
 {
     MSS_BEGIN(Result);
 

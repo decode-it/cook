@@ -9,7 +9,7 @@ class LibraryPathSetter : public Interface
 {
 public:
     std::string description() const override { return "Library path setter"; }
-    Result process(const Context &, model::Recipe &) const override;
+    Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
 };
 
 } } }

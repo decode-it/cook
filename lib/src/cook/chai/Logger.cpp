@@ -4,7 +4,7 @@
 
 namespace cook { namespace chai {
 
-void Logger::log(LogType type, const Logger::LogFunction & function)
+void Logger::log(LogType type, const Logger::LogFunction & function) const
 {
     switch(type)
     {
@@ -16,7 +16,7 @@ void Logger::log(LogType type, const Logger::LogFunction & function)
     }
 }
 
-void Logger::log(const Result & result)
+void Logger::log(const Result & result) const
 {
     result.each_message([](const auto & type, const auto & reporter)
     {

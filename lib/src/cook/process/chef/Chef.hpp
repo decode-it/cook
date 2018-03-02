@@ -25,10 +25,9 @@ public:
     Result mis_en_place(Context & kitchen);
 
     Result find_instruction_set(const InstructionSet *& result, model::Recipe * recipe) const;
-    Result prepare_context(souschef::Context & context, model::Recipe * recipe, const Menu & menu, const model::Dirs *dirs);
 
 private:
-    Result mis_en_place_(Context & kitchen, const souschef::Context & context, const InstructionSet &instruction_set) const;
+    Result mis_en_place_(model::Recipe &recipe, RecipeFilteredGraph & file_command_graph, const Context & context, const InstructionSet &instruction_set) const;
 
     std::multimap<unsigned int, InstructionSet> instruction_set_priority_map_;
 

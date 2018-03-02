@@ -15,7 +15,7 @@ public:
     explicit DependentPropagator(const SelectionFunction & function);
 
     std::string description() const override { return "Dependent ingredient propagation"; }
-    Result process(const Context &, model::Recipe &) const override;
+    Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
 
 private:
     std::function<bool (const LanguageTypePair &)> selection_;

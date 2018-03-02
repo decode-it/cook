@@ -8,40 +8,40 @@ Result Chef::mis_en_place(Context & context)
 {
     MSS_BEGIN(Result);
 
-    const auto & menu = context.menu();
+    Menu & menu = context.menu();
 
     MSS(menu.is_valid());
 
-    const std::list<Recipe *> & order = menu.topological_order();
+    const std::list<Recipe *> & order = menu.topological_order_recipes();
 
-    // process every element in topological order
+    // process every recipe in topological order
     for(model::Recipe * recipe : order)
     {
+        // get the instruction set for this recipe
         const InstructionSet * instruction_set = nullptr;
         MSS(find_instruction_set(instruction_set, recipe));
-
-        souschef::Context sc;
-        MSS(prepare_context(sc, recipe, menu, &context.dirs()));
-
-
         MSS(!!instruction_set);
-        MSS(mis_en_place_(context, sc, *instruction_set));
-    }
 
+        // get the graph
+        RecipeFilteredGraph * graph = menu.recipe_filtered_graph(recipe);
+        MSS(!!graph);
+
+        MSS(mis_en_place_(*recipe, *graph, context, *instruction_set));
+    }
 
     MSS_END();
 }
 
-Result Chef::mis_en_place_(Context &kitchen, const souschef::Context & context, const InstructionSet & instruction_set) const
+Result Chef::mis_en_place_(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context &context, const InstructionSet &instruction_set) const
 {
     MSS_BEGIN(Result);
 
-    const std::string & name = context.recipe->uri().string();
+    const std::string & name = recipe.uri().string();
 
     for(AssistantPtr assistant : instruction_set.assistants)
     {
-        kitchen.logger().LOG(Info, "[" << name << "]: " << assistant->description());
-        MSS(assistant->process(context, *context.recipe));
+        context.logger().LOG(Info, "[" << name << "]: " << assistant->description());
+        MSS(assistant->process(recipe, file_command_graph, context));
     }
 
     MSS_END();
@@ -70,30 +70,6 @@ Result Chef::find_instruction_set(const InstructionSet *& result, model::Recipe 
     MSG_MSS(false, Error, "No way found to build recipe '" << recipe->uri() << "'");
     MSS_END();
 }
-
-Result Chef::prepare_context(souschef::Context & context, model::Recipe * recipe, const Menu & menu, const Dirs * dirs)
-{
-    MSS_BEGIN(Result);
-
-    MSS(!!dirs);
-    context.dirs = dirs;
-
-    MSS(!!recipe);
-    context.recipe = recipe;
-
-    for(Recipe * dep : recipe->dependencies())
-    {
-        MSS(!!dep);
-        context.dependencies.push_back(dep);
-    }
-
-//    MSS(menu.topological_order(recipe, context.topological_order));
-
-    MSS_END();
-}
-
-
-
 
 } } }
 

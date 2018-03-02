@@ -194,7 +194,7 @@ TEST_CASE("Dependency resolving", "[ut][algo][dependency_resolving]")
 
         // check total topological order
         {
-            auto order = menu.topological_order();
+            auto order = menu.topological_order_recipes();
             REQUIRE(order.size() == scn.total_topological_order);
             REQUIRE(is_topological_order(order));
         }

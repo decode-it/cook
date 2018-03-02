@@ -44,7 +44,7 @@ struct Context::D
     }
 };
 
-cook::Logger & Context::logger()
+const cook::Logger & Context::logger() const
 {
     return d->logger;
 }

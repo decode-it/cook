@@ -13,10 +13,10 @@ public:
     explicit Compiler(Language language);
 
     std::string description() const override { return gubg::stream([&](auto & os) { os << language_ << " compiler"; }); }
-    Result process(const Context &, model::Recipe &) const override;
+    Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
 
 private:
-    virtual ingredient::File construct_object_file(const ingredient::File & source, const Context &context) const;
+    virtual ingredient::File construct_object_file(const ingredient::File & source, model::Recipe &recipe, const Context &context) const;
     virtual build::CommandPtr compile_command(const Context & context) const;
 
 

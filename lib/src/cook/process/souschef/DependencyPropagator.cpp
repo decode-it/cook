@@ -39,16 +39,16 @@ DependentPropagator::DependentPropagator(const SelectionFunction & function)
 
 }
 
-Result DependentPropagator::process(const Context & context, model::Recipe & dst_recipe) const
+Result DependentPropagator::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
 {
     MSS_BEGIN(Result);
 
     MSS(!!selection_);
 
-    for (const model::Recipe * src_recipe: context.dependencies)
+    for (const model::Recipe * src_recipe: recipe.dependencies())
     {
-        MSS( merge_(*src_recipe, dst_recipe, selection_, model::tag::File_t() ) );
-        MSS( merge_(*src_recipe, dst_recipe, selection_, model::tag::KeyValue_t() ) );
+        MSS( merge_(*src_recipe, recipe, selection_, model::tag::File_t() ) );
+        MSS( merge_(*src_recipe, recipe, selection_, model::tag::KeyValue_t() ) );
     }
 
 

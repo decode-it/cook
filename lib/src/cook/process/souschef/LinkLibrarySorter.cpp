@@ -1,8 +1,9 @@
 #include "cook/process/souschef/LinkLibrarySorter.hpp"
+#include "cook/algo/TopologicalOrder.hpp"
 
 namespace cook { namespace process { namespace souschef {
 
-Result LinkLibrarySorter::process(const Context & context, model::Recipe & recipe) const
+Result LinkLibrarySorter::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
 {
     MSS_BEGIN(Result);
 
@@ -12,17 +13,17 @@ Result LinkLibrarySorter::process(const Context & context, model::Recipe & recip
     if (it == files.end())
         MSS_RETURN_OK();
 
-    MSS(process_(context, recipe, it->second));
+    MSS(process_(recipe, it->second));
 
     MSS_END();
 }
 
-Result LinkLibrarySorter::process_(const Context & context, model::Recipe & recipe, ingredient::Collection<ingredient::File> & libraries) const
+Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collection<ingredient::File> & libraries) const
 {
     MSS_BEGIN(Result);
 
     std::list<ingredient::File> non_owned_libraries;
-    std::map<model::Recipe *, std::list<ingredient::File>> owned_libraries;
+    std::unordered_map<model::Recipe *, std::list<ingredient::File>> owned_libraries;
 
     // store all the libraries, either as non-owned or as owned
     for(const auto & file : libraries)
@@ -38,10 +39,14 @@ Result LinkLibrarySorter::process_(const Context & context, model::Recipe & reci
     for(const auto & file : non_owned_libraries)
         libraries.insert(file);
 
+    // get a topological order for this recipe
+    std::list<model::Recipe *> top_order;
+    MSS(algo::make_TopologicalOrder(&recipe, top_order));
+
     // add the owned in topological inverse order
-    for (auto recipe_it = context.topological_order.rbegin(); recipe_it != context.topological_order.rend(); ++recipe_it)
+    for (model::Recipe * cur : top_order)
     {
-        auto it = owned_libraries.find(*recipe_it);
+        auto it = owned_libraries.find(cur);
         for(const auto & file : it->second)
             libraries.insert(file);
     }

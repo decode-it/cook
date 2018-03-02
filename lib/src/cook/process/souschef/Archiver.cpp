@@ -16,24 +16,23 @@ struct DummyArchiver : public build::Command
 };
 
 
-std::string construct_archive_filename(const Context & context)
+std::string construct_archive_filename(const model::Recipe & recipe)
 {
 #if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) {os << << context.recipe->uri().string('.') << ".lib"; });
+    return gubg::stream([&](auto & os) {os << << recipe.uri().string('.') << ".lib"; });
 #else
-    return gubg::stream([&](auto & os) {os << "lib" << context.recipe->uri().string('.') << ".a"; });
+    return gubg::stream([&](auto & os) {os << "lib" << recipe.uri().string('.') << ".a"; });
 #endif
 }
 
 }
 
-Result Archiver::process(const Context & context, model::Recipe & recipe) const
+Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
 {
     MSS_BEGIN(Result);
 
     model::Recipe::Files & files = recipe.files();
-    MSS(!!context.execution_graph);
-    auto & g = *context.execution_graph;
+    auto & g = file_command_graph;
 
     auto objects = files.range(LanguageTypePair(Language::Binary, Type::Object));
     if (objects.empty())
@@ -52,7 +51,7 @@ Result Archiver::process(const Context & context, model::Recipe & recipe) const
     }
 
     // create the archive
-    const ingredient::File archive = construct_archive_file(context);
+    const ingredient::File archive = construct_archive_file(recipe, context);
     const LanguageTypePair key(Language::Binary, Type::Library);
     MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << recipe.uri());
 
@@ -63,14 +62,14 @@ Result Archiver::process(const Context & context, model::Recipe & recipe) const
 }
 
 
-ingredient::File Archiver::construct_archive_file(const Context &context) const
+ingredient::File Archiver::construct_archive_file(model::Recipe &recipe, const Context &context) const
 {
-    const std::filesystem::path dir = context.dirs->output() / context.recipe->working_directory();
-    const std::filesystem::path rel = construct_archive_filename(context);
+    const std::filesystem::path dir = context.dirs().output() / recipe.working_directory();
+    const std::filesystem::path rel = construct_archive_filename(recipe);
 
     ingredient::File archive(dir, rel);
     archive.set_overwrite(Overwrite::IfSame);
-    archive.set_owner(context.recipe);
+    archive.set_owner(&recipe);
     archive.set_propagation(Propagation::Public);
 
     return archive;
