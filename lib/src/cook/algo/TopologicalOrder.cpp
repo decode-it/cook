@@ -17,24 +17,9 @@ Result topological_order_(const gubg::Range<It> & root_range, std::list<model::R
     MSS_BEGIN(Result);
 
     G g;
-
-
     std::unordered_map<model::Recipe *, boost::graph_traits<G>::vertex_descriptor> map;
     MSS(make_DependencyGraph(root_range, g, map));
-
-    std::vector<Vertex> vertices(boost::num_vertices(g));
-
-    try
-    {
-        boost::topological_sort(g, vertices.begin());
-    }
-    catch(boost::not_a_dag)
-    {
-        MSG_MSS(false, Error, "Cyclic dependency detected");
-    }
-
-    for(const auto & v : vertices)
-        top_order.push_front(g[v]);
+    MSS(make_TopologicalOrder(g, std::back_inserter(top_order)));
 
     MSS_END();
 }

@@ -12,18 +12,19 @@ bool is_topological_order(std::list<Recipe *> & recipes)
 {
     MSS_BEGIN(bool);
 
-    for (auto it1 = recipes.begin(); it1 != recipes.end(); ++it1)
+    for (auto recipe_it = recipes.begin(); recipe_it != recipes.end(); ++recipe_it)
     {
-        Recipe * recipe = *it1;
+        Recipe * recipe = *recipe_it;
         for(Recipe * dep : recipe->dependencies())
         {
             MSS(!!dep);
 
-            REQUIRE(std::find(recipes.begin(), it1, dep) == it1);
+            // find the dependency, should be earlier in the list
+            auto dep_it = std::find(recipes.begin(), recipe_it, dep);
+            REQUIRE(dep_it != recipe_it);
 
-            auto it2 = std::find(it1, recipes.end(), dep);
-            REQUIRE(it2 != it1);
-            REQUIRE(it2 != recipes.end());
+            // and not llater
+            REQUIRE(std::find(recipe_it, recipes.end(), dep) == recipes.end());
         }
     }
 

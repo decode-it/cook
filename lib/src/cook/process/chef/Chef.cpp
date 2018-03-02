@@ -14,11 +14,9 @@ Result Chef::mis_en_place(Context & context)
 
     const std::list<Recipe *> & order = menu.topological_order();
 
-    // process every element in inverse topological order
-    for(auto it = order.rbegin(); it != order.rend(); ++it)
+    // process every element in topological order
+    for(model::Recipe * recipe : order)
     {
-        Recipe * recipe = *it;
-
         const InstructionSet * instruction_set = nullptr;
         MSS(find_instruction_set(instruction_set, recipe));
 
