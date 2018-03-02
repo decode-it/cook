@@ -163,6 +163,20 @@ namespace :doc do
             sh(mdbook_exe, "serve")
         end
     end
+    desc "Publish the static pages on the web"
+    task :publish, [:filter] do |t,args|
+        infos = {
+            site: {src: "site", dst: ""},
+            doc:  {src: "doc",  dst: "doc"},
+        }
+        infos.each do |name,info|
+            name = name.to_s
+            puts("[#{name}](src:#{info[:src]})(dst:#{info[:dst]})")
+            Dir.chdir(info[:src]) do
+                sh "scp -r * web-gfannes@ssh.linuxsystems.be:fannes.com/cook/#{info[:dst]}"
+            end if args[:filter] == name
+        end
+    end
 end
 task :old_doc do
     Dir.chdir("doc") do
