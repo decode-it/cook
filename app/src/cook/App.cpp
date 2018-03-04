@@ -47,7 +47,7 @@ Result App::process()
         if (!rc)
         {
             // process all the requested generators
-            for(const auto & p: options_.visualizers)
+            for(const auto & p: options_.generators)
             {
                 Context::GeneratorPtr ptr = kitchen_.get_generator(p.first);
                 MSG_MSS(!!ptr, Error, "unknown generator '" << p.first << "'");
@@ -72,7 +72,7 @@ Result App::process()
     }
 
     // and now process all the requested visualizations
-    for(const auto & p: options_.visualizers)
+    for(const auto & p: options_.generators)
     {
         Context::GeneratorPtr ptr = kitchen_.get_generator(p.first);
         MSG_MSS(!!ptr, Error, "unknown visualizer '" << p.first << "'");

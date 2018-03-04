@@ -32,7 +32,6 @@ bool Options::parse(int argc, const char ** argv)
         opt.add_mandatory(  'O', "--temp-dir             ", "Temporary build cache directory. Default is .cook", [&](const std::string & str) {temp_path = str; });
         opt.add_mandatory(  't', "--toolchain            ", "The toolchain to use.", [&](const std::string & str) { toolchain = str; });
         opt.add_mandatory(  'g', "--generator            ", "A generator to use. If none are specified, then build is used.", [&](const std::string & str) { generators.push_back(parse_key_value_pair(str)); });
-        opt.add_mandatory(  'd', "--dependency-visualizer", "A dependency visualizer to use.", [&](const std::string & str) { visualizers.push_back(parse_key_value_pair(str)); });
         opt.add_switch(     'c', "--clean                ", "Clean the data for the specified generators before using them", [&](){ clean = true; });
         opt.add_mandatory(  'D', "--data                 ", "Passes the chaiscript variables to the process.", [&](const std::string & str) { variables.push_back(parse_key_value_pair(str)); });
         opt.add_switch(     'h', "--help                 ", "Prints this help.", [&](){ print_help = true; });
@@ -84,11 +83,6 @@ void Options::stream(std::ostream &os, Indent &indent) const
 
         os << indent << "[generators]";
         for (const auto &p: generators)
-            os << "(" << p.first << ":" << p.second << ")";
-        os << std::endl;
-
-        os << indent << "[visualizers]";
-        for (const auto &p: visualizers)
             os << "(" << p.first << ":" << p.second << ")";
         os << std::endl;
 
