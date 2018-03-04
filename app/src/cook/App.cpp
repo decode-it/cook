@@ -1,6 +1,7 @@
 #include "cook/App.hpp"
 #include "cook/process/chef/CompileLinkArchive.hpp"
 #include "cook/algo/Book.hpp"
+#include "cook/util/File.hpp"
 #include "gubg/mss.hpp"
 #include <unordered_set>
 
@@ -45,19 +46,7 @@ Result App::process()
         Result rc = kitchen_.initialize_menu(root_recipes);
 
         if (!rc)
-        {
-            // process all the requested generators
-            for(const auto & p: options_.generators)
-            {
-                Context::GeneratorPtr ptr = kitchen_.get_generator(p.first);
-                MSG_MSS(!!ptr, Error, "unknown generator '" << p.first << "'");
-
-                MSS(ptr->set_option(p.second));
-
-                if (ptr->can_process(kitchen_))
-                    MSS(ptr->process(kitchen_));
-            }
-        }
+            MSS(process_generators_());
 
         MSS(rc);
     }
@@ -72,18 +61,43 @@ Result App::process()
     }
 
     // and now process all the requested visualizations
-    for(const auto & p: options_.generators)
-    {
-        Context::GeneratorPtr ptr = kitchen_.get_generator(p.first);
-        MSG_MSS(!!ptr, Error, "unknown visualizer '" << p.first << "'");
-
-        MSS(ptr->set_option(p.second));
-
-        if (ptr->can_process(kitchen_))
-            MSS(ptr->process(kitchen_));
-    }
+    MSS(process_generators_());
 
     // resolve the root book
+    MSS_END();
+}
+
+Result App::process_generator_(const std::string & name, const std::string & value) const
+{
+    MSS_BEGIN(Result);
+
+    Context::GeneratorPtr ptr = kitchen_.get_generator(name);
+    MSG_MSS(!!ptr, Error, "unknown visualizer '" << name << "'");
+
+    MSS(ptr->set_option(value));
+
+    if (ptr->can_process(kitchen_))
+    {
+        std::ofstream ofs;
+        std::filesystem::path path = ptr->output_filename(kitchen_.dirs());
+        MSS(util::open_file(path, ofs));
+        MSS(ptr->process(ofs, kitchen_));
+    }
+
+    MSS_END();
+}
+
+
+Result App::process_generators_() const
+{
+    MSS_BEGIN(Result);
+
+    Result rc;
+    for(const auto & p: options_.generators)
+        rc.merge(process_generator_(p.first, p.second));
+
+    MSS(rc);
+
     MSS_END();
 }
 

@@ -15,6 +15,8 @@ public:
 private:
     Result extract_root_recipes_(std::list<model::Recipe *> & result) const;
     Result load_recipes_();
+    Result process_generators_() const;
+    Result process_generator_(const std::string & name, const std::string & value) const;
 
     cook::Indent indent_;
     app::Options options_;

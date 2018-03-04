@@ -1,4 +1,4 @@
-#include "cook/generator/Graphviz.hpp"
+#include "cook/generator/graphviz/Dependency.hpp"
 #include "cook/model/Book.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/algo/Visit.hpp"
@@ -8,7 +8,7 @@
 
 using namespace cook::model;
 
-namespace cook { namespace generator {
+namespace cook { namespace generator { namespace graphviz {
 
 namespace  {
 
@@ -27,33 +27,35 @@ std::string unexisting_node_name(Recipe * recipe, const Uri & uri)
 
 }
 
-using NodeMap = std::unordered_map<Recipe *, Graphviz::Color>;
+using NodeMap = std::unordered_map<Recipe *, Dependency::Color>;
 
 }
 
-void Graphviz::process_(std::ostream & oss, const Context  & context) const
+Result Dependency::process(std::ostream & oss, const Context  & context)
 {
+    MSS_BEGIN(Result);
+
     NodeMap nodes;
 
-    const auto & graph = context.menu();
+    const auto & menu = context.menu();
 
 
     // add all the root nodes
-    for(Recipe * recipe : graph.root_recipes())
-        nodes.emplace(recipe, Graphviz::Color::Root);
+    for(Recipe * recipe : menu.root_recipes())
+        nodes.emplace(recipe, Dependency::Color::Root);
 
     // add all the tree nodes
     {
         auto initializer = [&](auto & stack)
         {
-            for (model::Recipe * recipe : graph.root_recipes())
+            for (model::Recipe * recipe : menu.root_recipes())
                 stack.push(recipe);
         };
 
         auto add_tree_nodes = [&](model::Recipe * cur, auto & stack)
         {
             // add to the map (if not present)
-            nodes.emplace(cur, Graphviz::Color::InTree);
+            nodes.emplace(cur, Dependency::Color::InTree);
 
             for(model::Recipe * dep : cur->dependencies())
                 if (dep)
@@ -66,7 +68,7 @@ void Graphviz::process_(std::ostream & oss, const Context  & context) const
 
     // add all the recipes in the root book
     for(model::Recipe * recipe : context.lib().list_all_recipes())
-        nodes.emplace(recipe, Graphviz::Color::OutsideTree);
+        nodes.emplace(recipe, Dependency::Color::OutsideTree);
 
     // and now write out all the information
     write_header_(oss);
@@ -111,25 +113,27 @@ void Graphviz::process_(std::ostream & oss, const Context  & context) const
     }
 
     write_footer_(oss);
+
+    MSS_END();
 }
 
 namespace {
 
-Graphviz::ColorPropertyMap defaultNodeColorPropertyMap(Graphviz::Color c)
+Dependency::ColorPropertyMap defaultNodeColorPropertyMap(Dependency::Color c)
 {
-    Graphviz::ColorPropertyMap res;
+    Dependency::ColorPropertyMap res;
 
     switch(c)
     {
-        case Graphviz::Color::Root:
+        case Dependency::Color::Root:
             res["color"] = "green";
             res["fontcolor"] = "black";
             break;
 
-        case Graphviz::Color::InTree:
+        case Dependency::Color::InTree:
             break;
 
-        case Graphviz::Color::OutsideTree:
+        case Dependency::Color::OutsideTree:
             res["color"] = "grey";
             res["fontcolor"] = "grey";
             break;
@@ -143,20 +147,20 @@ Graphviz::ColorPropertyMap defaultNodeColorPropertyMap(Graphviz::Color c)
     return res;
 }
 
-Graphviz::ColorPropertyMap defaultEdgeColorPropertyMap(Graphviz::Color src, Graphviz::Color dst)
+Dependency::ColorPropertyMap defaultEdgeColorPropertyMap(Dependency::Color src, Dependency::Color dst)
 {
-    Graphviz::Color c = std::max(src, dst);
+    Dependency::Color c = std::max(src, dst);
 
-    Graphviz::ColorPropertyMap res;
+    Dependency::ColorPropertyMap res;
     switch(c)
     {
-        case Graphviz::Color::Root:
+        case Dependency::Color::Root:
             break;
 
-        case Graphviz::Color::InTree:
+        case Dependency::Color::InTree:
             break;
 
-        case Graphviz::Color::OutsideTree:
+        case Dependency::Color::OutsideTree:
             res["color"] = "grey";
             break;
 
@@ -170,7 +174,7 @@ Graphviz::ColorPropertyMap defaultEdgeColorPropertyMap(Graphviz::Color src, Grap
 
 }
 
-Graphviz::Graphviz()
+Dependency::Dependency()
 {
     const static auto all_colors = {Color::Root, Color::InTree, Color::OutsideTree, Color::Undefined};
 
@@ -185,27 +189,27 @@ Graphviz::Graphviz()
 
 
 
-const Graphviz::ColorPropertyMap & Graphviz::color_property_map(Color c) const
+const Dependency::ColorPropertyMap & Dependency::color_property_map(Color c) const
 {
     return node_color_map_.find(c)->second;
 }
 
-const Graphviz::ColorPropertyMap & Graphviz::color_property_map(Color src, Color dst) const
+const Dependency::ColorPropertyMap & Dependency::color_property_map(Color src, Color dst) const
 {
     return edge_color_map_.find(std::make_pair(src, dst))->second;
 }
 
-Graphviz::ColorPropertyMap & Graphviz::color_property_map(Color c)
+Dependency::ColorPropertyMap & Dependency::color_property_map(Color c)
 {
     return node_color_map_[c];
 }
 
-Graphviz::ColorPropertyMap & Graphviz::color_property_map(Color src, Color dst)
+Dependency::ColorPropertyMap & Dependency::color_property_map(Color src, Color dst)
 {
     return edge_color_map_[std::make_pair(src, dst)];
 }
 
-std::string Graphviz::color_property_string_(const ColorPropertyMap & map) const
+std::string Dependency::color_property_string_(const ColorPropertyMap & map) const
 {
     std::ostringstream oss;
     for(auto it = map.begin(); it != map.end(); ++it)
@@ -218,43 +222,34 @@ std::string Graphviz::color_property_string_(const ColorPropertyMap & map) const
     return oss.str();
 }
 
-void Graphviz::write_node_desc_(std::ostream & oss, const std::string & id, const std::string & uri, Color color) const
+void Dependency::write_node_desc_(std::ostream & oss, const std::string & id, const std::string & uri, Color color) const
 {
     std::string cps = color_property_string_(color_property_map(color));
 
     oss << id << " [label=\"" << uri << "\", " << cps << "];" << std::endl;
 }
 
-void Graphviz::write_header_(std::ostream & oss) const
+void Dependency::write_header_(std::ostream & oss) const
 {
     oss << "digraph G {" << std::endl;
 }
 
-void Graphviz::write_footer_(std::ostream & oss) const
+void Dependency::write_footer_(std::ostream & oss) const
 {
     oss << "}" << std::endl;
 }
 
-std::filesystem::path Graphviz::output_filename(const model::Dirs & dirs) const
+std::string Dependency::default_filename() const
 {
-    const static std::string default_extension = "graphviz";
-    const static std::string default_name = "recipes." + default_extension;
-
-    if (false) {}
-    else if (filename.empty())
-        return dirs.output() / default_name;
-    else if (filename.back() == std::filesystem::path::preferred_separator)
-        return std::filesystem::path(filename) / default_name;
-    else
-        return std::filesystem::path(filename);
+    return "recipes.graphviz";
 }
 
-std::string Graphviz::name() const
+std::string Dependency::name() const
 {
-    return "graphviz";
+    return "graphviz.dependency";
 }
 
-Result Graphviz::set_option(const std::string & option)
+Result Dependency::set_option(const std::string & option)
 {
     MSS_BEGIN(Result);
 
@@ -264,21 +259,9 @@ Result Graphviz::set_option(const std::string & option)
 
 }
 
-bool Graphviz::can_process(const Context &context) const
+bool Dependency::can_process(const Context &context) const
 {
     return true;
 }
 
-Result Graphviz::process(const Context & context)
-{
-    MSS_BEGIN(Result);
-
-    // create the output stream
-    std::ofstream ofs;
-    MSS(util::open_file(output_filename(context.dirs()), ofs));
-    process_(ofs, context);
-
-    MSS_END();
-}
-
-} }
+} } }

@@ -8,7 +8,7 @@ namespace cook { namespace generator {
 Result CMake::set_option(const std::string & option)
 {
     MSS_BEGIN(Result);
-    filename_ = option;
+    set_filename(option);
     MSS_END();
 }
 
@@ -17,12 +17,9 @@ bool CMake::can_process(const Context & context) const
     return context.menu().is_valid();
 }
 
-Result CMake::process(const Context & context)
+Result CMake::process(std::ostream & ofs, const Context & context)
 {
     MSS_BEGIN(Result);
-
-    std::ofstream ofs;
-    MSS(util::open_file(output_filename_(context.dirs()), ofs));
 
     const auto & recipe_list = context.menu().topological_order_recipes();
 
@@ -45,20 +42,12 @@ Result CMake::process(const Context & context)
     MSS_END();
 }
 
-std::filesystem::path CMake::output_filename_(const model::Dirs & dirs) const
+std::string CMake::default_filename() const
 {
-    const static std::string default_name = "CMakeLists.txt";
-
-    if (false) {}
-    else if (filename_.empty())
-        return dirs.output() / default_name;
-    else if (filename_.back() == std::filesystem::path::preferred_separator)
-        return std::filesystem::path(filename_) / default_name;
-    else
-        return std::filesystem::path(filename_);
+    return "CMakeLists.txt";
 }
 
-void CMake::add_interface_(std::ofstream & ofs, const model::Recipe & recipe) const
+void CMake::add_interface_(std::ostream &ofs, const model::Recipe & recipe) const
 {
     ofs << "# " << recipe.uri() << std::endl;
 
@@ -72,7 +61,7 @@ void CMake::add_interface_(std::ofstream & ofs, const model::Recipe & recipe) co
     ofs << "# " << recipe.uri() << std::endl << std::endl;
 }
 
-void CMake::add_library_(std::ofstream & ofs, const model::Recipe & recipe) const
+void CMake::add_library_(std::ostream & ofs, const model::Recipe & recipe) const
 {
     ofs << "# " << recipe.uri() << std::endl;
     if (contains_sources_(recipe))
@@ -98,7 +87,7 @@ bool CMake::contains_sources_(const model::Recipe & recipe) const
     return has_sources;
 }
 
-void CMake::add_executable_(std::ofstream & ofs, const model::Recipe & recipe) const
+void CMake::add_executable_(std::ostream & ofs, const model::Recipe & recipe) const
 {
     ofs << "# " << recipe.uri() << std::endl;
     set_link_paths_(ofs, recipe);
@@ -125,7 +114,7 @@ std::string CMake::deduce_library_type_(const model::Recipe & recipe) const
         return "STATIC";
 }
 
-void CMake::add_source_and_header_(std::ofstream & ofs, const model::Recipe & recipe, bool add_headers) const
+void CMake::add_source_and_header_(std::ostream & ofs, const model::Recipe & recipe, bool add_headers) const
 {
     recipe.files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
@@ -153,7 +142,7 @@ void CMake::add_source_and_header_(std::ofstream & ofs, const model::Recipe & re
 namespace  {
 
 template <typename OpenFunction>
-void write_elements_(std::ofstream & ofs, OpenFunction && open_function, const std::list<std::string> & elements, bool new_line = true)
+void write_elements_(std::ostream & ofs, OpenFunction && open_function, const std::list<std::string> & elements, bool new_line = true)
 {
     if (elements.empty())
         return;
@@ -174,7 +163,7 @@ void write_elements_(std::ofstream & ofs, OpenFunction && open_function, const s
 
 }
 
-void CMake::set_link_paths_(std::ofstream & ofs, const model::Recipe & recipe) const
+void CMake::set_link_paths_(std::ostream & oss, const model::Recipe & recipe) const
 {
     std::list<std::string> link_directories;
     recipe.files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
@@ -184,10 +173,10 @@ void CMake::set_link_paths_(std::ofstream & ofs, const model::Recipe & recipe) c
         return true;
     });
 
-    write_elements_(ofs, [](auto & os) { os << "link_directories("; }, link_directories, false);
+    write_elements_(oss, [](auto & os) { os << "link_directories("; }, link_directories, false);
 }
 
-void CMake::set_target_properties_(std::ofstream & ofs, const model::Recipe & recipe, const std::string & keyword) const
+void CMake::set_target_properties_(std::ostream & ofs, const model::Recipe & recipe, const std::string & keyword) const
 {
     const std::string & name = recipe_name_(recipe);
 

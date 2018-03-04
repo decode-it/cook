@@ -53,7 +53,7 @@ public:
     void set_working_directory(const std::filesystem::path & wd);
 
     void add_globber(const GlobInfo & globbing) { globbings_.push_back(globbing); }
-    bool allows_early_globbing() const { return false; }
+    bool allows_early_globbing() const { return allows_early_globbing_; }
     const Globbings &globbings() const { return globbings_; }
 
     gubg::Range<DependencyPairIterator> dependency_pairs() const;
@@ -76,6 +76,7 @@ private:
     Files files_;
     KeyValues key_values_;
     Dependencies dependencies_;
+    bool allows_early_globbing_;
 };
 
 } }

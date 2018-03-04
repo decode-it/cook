@@ -15,12 +15,7 @@ public:
     Result set_option(const std::string & option) override;
 
     bool can_process(const Context & context) const override;
-    Result process(const Context & context) override;
-
-private:
-    std::filesystem::path output_filename_(const model::Dirs & dirs) const;
-
-    std::string filename_;
+    Result process(std::ostream & oss, const Context & context) override;
 };
 
 } }
