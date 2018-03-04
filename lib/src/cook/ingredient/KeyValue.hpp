@@ -41,6 +41,13 @@ public:
     const std::string & value() const           { return *value_; }
     bool set_value(const std::string & value)   { value_ = value; }
     bool clear_value()                          { value_.reset(); }
+    std::string to_string() const
+    {
+        if (!value_)
+            return key();
+        else
+            return key() + "=" + value();
+    }
 
 private:
     std::optional<std::string> value_;
