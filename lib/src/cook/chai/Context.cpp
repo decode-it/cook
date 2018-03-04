@@ -13,9 +13,9 @@ struct Context::D
     using Parser = chaiscript::parser::ChaiScript_Parser<chaiscript::eval::Noop_Tracer, chaiscript::optimizer::Optimizer_Default>;
     using Engine = chaiscript::ChaiScript_Basic;
 
-    D(model::Book * book)
+    D(model::Book * book, Context * context)
         : engine(chaiscript::Std_Lib::library(), std::make_unique<Parser>()),
-          root_book(book, &logger)
+          root_book(book, context, &logger)
     {
     }
 
@@ -50,7 +50,7 @@ const cook::Logger & Context::logger() const
 }
 
 Context::Context()
-    : d(std::make_unique<D>(root_book()))
+    : d(std::make_unique<D>(root_book(), this))
 {
     d->initialize_engine_(this);
 }
@@ -104,6 +104,11 @@ std::filesystem::path Context::generate_file_path_(const std::string & file) con
         script_fn /= "recipes.chai";
 
     return script_fn;
+}
+
+std::filesystem::path Context::current_working_directory() const
+{
+    return d->top_level_path();
 }
 
 void Context::include_(const std::string & file)

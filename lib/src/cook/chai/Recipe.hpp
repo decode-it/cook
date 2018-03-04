@@ -8,14 +8,17 @@
 
 namespace cook { namespace chai {
 
+class Context;
+
 class Recipe
 {
 public:
-    Recipe(model::Recipe * recipe, Logger * runner);
+    Recipe(model::Recipe * recipe, Context * context, Logger * runner);
 
     void add(const std::string & dir, const std::string & pattern);
     void depends_on(const std::string & dependency);
     void set_type(cook::Type type);
+    void set_working_directory(const std::string & dir);
 
     void library(const std::string & library);
     void library_path(const std::string & path);
@@ -25,6 +28,7 @@ public:
 
 private:
     model::Recipe * recipe_;
+    Context * context_;
     Logger * logger_;
     UserData data_;
 };

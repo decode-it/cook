@@ -9,11 +9,13 @@
 
 namespace cook { namespace chai {
 
+class Context;
+
 struct Recipe;
 
 struct Book
 {
-    Book(model::Book * book, Logger * logger);
+    Book(model::Book * book, Context * context, Logger * logger);
 
     void book(const std::string & uri_str, const std::function<void (Book)> &functor);
     void recipe_2(const std::string & uri_str, const std::function<void (Recipe)> & functor);
@@ -23,6 +25,7 @@ struct Book
 
 private:
     model::Book * book_;
+    Context * context_;
     Logger * logger_;
     UserData data_;
 };

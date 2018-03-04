@@ -1,12 +1,13 @@
 #include "cook/chai/Book.hpp"
 #include "cook/chai/Recipe.hpp"
 #include "gubg/chai/Module.hpp"
-
+#include "cook/chai/Context.hpp"
 
 namespace cook { namespace chai {
 
-Book::Book(model::Book * book, Logger *logger)
+Book::Book(model::Book * book, Context * context, Logger * logger)
     : book_(book),
+      context_(context),
       logger_(logger),
       data_(from_any(book->user_data()))
 {
@@ -23,7 +24,7 @@ void Book::book(const std::string & uri_str, const std::function<void (Book)> &f
     if (!rc)
         logger_->log(rc);
 
-    functor(Book(subbook, logger_));
+    functor(Book(subbook, context_, logger_));
 }
 
 
@@ -49,9 +50,12 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
     else if (type_str == "executable") { type = Type::Executable; }
     else if (type_str == "library") { type = Type::Library; }
 
+
+
     {
-        Recipe r(recipe, logger_);
+        Recipe r(recipe, context_, logger_);
         r.set_type(type);
+        r.set_working_directory(context_->current_working_directory());
         functor(r);
     }
 }

@@ -3,8 +3,9 @@
 
 namespace cook { namespace chai {
 
-Recipe::Recipe(model::Recipe * recipe, Logger *logger)
+Recipe::Recipe(model::Recipe * recipe, Context *context, Logger *logger)
     : recipe_(recipe),
+      context_(context),
       logger_(logger),
       data_(from_any(recipe->user_data()))
 {
@@ -13,6 +14,11 @@ Recipe::Recipe(model::Recipe * recipe, Logger *logger)
 void Recipe::set_type(Type type)
 {
     recipe_->set_type(type);
+}
+
+void Recipe::set_working_directory(const std::string & dir)
+{
+    recipe_->set_working_directory(dir);
 }
 
 void Recipe::add(const std::string & dir, const std::string & pattern)
@@ -36,17 +42,26 @@ void Recipe::depends_on(const std::string & dependency)
 
 void Recipe::library(const std::string & library)
 {
-    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::Library), ingredient::File("", library));
+    auto lib = ingredient::File("", library);
+    lib.set_propagation(Propagation::Public);
+
+    recipe_->files().insert(LanguageTypePair(Language::Binary, Type::Library), lib);
 }
 
 void Recipe::library_path(const std::string & path)
 {
-    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::LibraryPath), ingredient::File(path, ""));
+    auto lib_path = ingredient::File(path, "");
+    lib_path.set_propagation(Propagation::Public);
+
+    recipe_->files().insert(LanguageTypePair(Language::Binary, Type::LibraryPath), lib_path);
 }
 
 void Recipe::include_path(const std::string & path)
 {
-    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::IncludePath), ingredient::File(path, ""));
+    auto inc_path = ingredient::File(path, "");
+    inc_path.set_propagation(Propagation::Public);
+
+    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::IncludePath), inc_path);
 }
 
 gubg::chai::ModulePtr recipe_module()
