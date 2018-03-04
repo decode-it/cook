@@ -32,7 +32,7 @@ std::filesystem::path Dirs::output() const
 
 std::filesystem::path Dirs::temporary() const
 {
-    if (temporary().is_absolute())
+    if (temporary_.is_absolute())
         return temporary_;
     else
         return output() / temporary_;
