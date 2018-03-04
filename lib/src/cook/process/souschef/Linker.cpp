@@ -18,21 +18,20 @@ struct DummyLinker : public build::Command
 std::string construct_dynamic_library_name(const model::Recipe & recipe)
 {
 #if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << recipe.uri().string('.') << ".dll"; });
+    return gubg::stream([&](auto & os) { os << recipe.uri().as_relative().string('.') << ".dll"; });
 #else
-    return gubg::stream([&](auto & os) { os << "lib" << recipe.uri().string('.') << ".so"; });
+    return gubg::stream([&](auto & os) { os << "lib" << recipe.uri().as_relative().string('.') << ".so"; });
 #endif
 }
 
 std::string construct_executable_name(const model::Recipe & recipe)
 {
 #if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << recipe.uri().string('.') << ".exe"; });
+    return gubg::stream([&](auto & os) { os << recipe.uri().as_relative().string('.') << ".exe"; });
 #else
-    return gubg::stream([&](auto & os) { os << recipe.uri().string('.'); });
+    return gubg::stream([&](auto & os) { os << recipe.uri().as_relative().string('.'); });
 #endif
 }
-
 
 }
 
@@ -85,7 +84,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
 
 ingredient::File Linker::construct_archive_file(model::Recipe & recipe, const Context &context) const
 {
-    const std::filesystem::path dir = context.dirs().output() / recipe.working_directory();
+    const std::filesystem::path dir = context.dirs().output();
     const std::filesystem::path rel = (recipe.type() == Type::Executable ? construct_executable_name(recipe) : construct_dynamic_library_name(recipe));
 
     ingredient::File archive(dir, rel);
