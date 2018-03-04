@@ -1,6 +1,7 @@
 #include "cook/Context.hpp"
 #include "cook/algo/Book.hpp"
 #include "cook/generator/Graphviz.hpp"
+#include "cook/generator/CMake.hpp"
 #include "gubg/mss.hpp"
 #include <cassert>
 
@@ -17,6 +18,7 @@ bool Context::initialize()
 
     // add the generator
     MSS(register_generator(std::make_shared<generator::Graphviz>()));
+    MSS(register_generator(std::make_shared<generator::CMake>()));
 
     MSS_END();
 
