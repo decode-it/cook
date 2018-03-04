@@ -19,9 +19,9 @@ struct DummyArchiver : public build::Command
 std::string construct_archive_filename(const model::Recipe & recipe)
 {
 #if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) {os << << recipe.uri().string('.') << ".lib"; });
+    return gubg::stream([&](auto & os) {os << << recipe.uri().as_relative().string('.') << ".lib"; });
 #else
-    return gubg::stream([&](auto & os) {os << "lib" << recipe.uri().string('.') << ".a"; });
+    return gubg::stream([&](auto & os) {os << "lib" << recipe.uri().as_relative().string('.') << ".a"; });
 #endif
 }
 
@@ -64,7 +64,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 
 ingredient::File Archiver::construct_archive_file(model::Recipe &recipe, const Context &context) const
 {
-    const std::filesystem::path dir = context.dirs().output() / recipe.working_directory();
+    const std::filesystem::path dir = context.dirs().output();
     const std::filesystem::path rel = construct_archive_filename(recipe);
 
     ingredient::File archive(dir, rel);
