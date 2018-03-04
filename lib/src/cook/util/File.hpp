@@ -5,10 +5,9 @@
 #include "gubg/std/filesystem.hpp"
 #include <fstream>
 
-
 namespace cook { namespace util {
 
-Result open_file(const std::filesystem::path & path, std::ofstream & ofs)
+inline Result open_file(const std::filesystem::path & path, std::ofstream & ofs)
 {
     MSS_BEGIN(Result);
 
