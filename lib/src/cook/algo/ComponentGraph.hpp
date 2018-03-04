@@ -29,8 +29,8 @@ void grow_(typename boost::graph_traits<DependencyGraph>::vertex_descriptor dep_
         if (!set.insert(cur_recipe).second)
             continue;
 
-        // add the translation from v  -> its component
-        dep_comp_map[v] = c;
+        // add the translation from the recipe -> its component
+        dep_comp_map[cur_recipe] = c;
 
         // add all the dependencies to the same component if globbing is allowd
         if (cur_recipe->allows_early_globbing())
@@ -60,7 +60,9 @@ Result make_ComponentGraph(const DependencyGraph & dependency_graph, ComponentGr
     auto p = boost::vertices(dependency_graph);
     for(auto p = boost::vertices(dependency_graph); p.first != p.second; ++p.first)
     {
-        if (dependency_vertex_to_component_vertex_map.find(*p.first) != dependency_vertex_to_component_vertex_map.end())
+        model::Recipe * recipe = dependency_graph[*p.first];
+
+        if (dependency_vertex_to_component_vertex_map.find(recipe) != dependency_vertex_to_component_vertex_map.end())
             continue;
 
         auto comp_v = boost::add_vertex(component_graph);
@@ -70,8 +72,11 @@ Result make_ComponentGraph(const DependencyGraph & dependency_graph, ComponentGr
     // construct the edges of the component graph
     for(const auto & e : gubg::make_range(boost::edges(dependency_graph)))
     {
-        auto src_it = dependency_vertex_to_component_vertex_map.find(boost::source(e, dependency_graph));
-        auto dst_it = dependency_vertex_to_component_vertex_map.find(boost::source(e, dependency_graph));
+        model::Recipe * src_recipe = dependency_graph[boost::source(e, dependency_graph)];
+        model::Recipe * dst_recipe = dependency_graph[boost::target(e, dependency_graph)];
+
+        auto src_it = dependency_vertex_to_component_vertex_map.find(src_recipe);
+        auto dst_it = dependency_vertex_to_component_vertex_map.find(dst_recipe);
         MSS(src_it != dependency_vertex_to_component_vertex_map.end());
         MSS(dst_it != dependency_vertex_to_component_vertex_map.end());
 
@@ -80,6 +85,17 @@ Result make_ComponentGraph(const DependencyGraph & dependency_graph, ComponentGr
         if (src_v != dst_v)
             boost::add_edge(src_v, dst_v, component_graph);
     }
+
+    MSS_END();
+}
+
+template <typename DependencyGraph, typename ComponentGraph>
+Result make_ComponentGraph(const DependencyGraph & dependency_graph, ComponentGraph & component_graph)
+{
+    MSS_BEGIN(Result);
+
+    std::unordered_map<model::Recipe * , typename boost::graph_traits<ComponentGraph>::vertex_descriptor> translation_map;
+    MSS(make_ComponentGraph(dependency_graph, component_graph, translation_map));
 
     MSS_END();
 }

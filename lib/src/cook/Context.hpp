@@ -6,14 +6,16 @@
 #include "cook/model/Library.hpp"
 #include "cook/model/Dirs.hpp"
 #include "cook/process/Menu.hpp"
-#include "cook/visualizer/Interface.hpp"
+#include "cook/generator/Interface.hpp"
+#include "boost/graph/adjacency_list.hpp"
+#include <optional>
 
 namespace cook {
 
 class Context
 {
 public:
-    using VisualizerPtr = std::shared_ptr<visualizer::Interface>;
+    using GeneratorPtr = std::shared_ptr<generator::Interface>;
     using Variable = std::pair<std::string, std::string>;
 
     virtual ~Context() {}
@@ -33,15 +35,15 @@ public:
     process::Menu & menu()              { return menu_; }
     const model::Library & lib() const  { return lib_; }
 
-    Result register_visualizer(VisualizerPtr visualizer);
-    VisualizerPtr get_visualizer(const std::string & name) const;
+    Result register_generator(GeneratorPtr generator);
+    GeneratorPtr get_generator(const std::string & name) const;
 
     Result find_recipe(model::Recipe *&recipe, const std::string & name) const;
 
     virtual Result set_variable(const std::string & name, const std::string & value) = 0;
 
 private:
-    std::map<std::string, VisualizerPtr> visualizers_;
+    std::map<std::string, GeneratorPtr> generators_;
     model::Library lib_;
     model::Dirs dirs_;
     process::Menu menu_;

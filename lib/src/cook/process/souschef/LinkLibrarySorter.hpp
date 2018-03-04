@@ -12,7 +12,7 @@ public:
     Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
 
 private:
-    Result process_(model::Recipe &, ingredient::Collection<ingredient::File> & libraries) const;
+    Result process_(model::Recipe &, ingredient::Collection<ingredient::File> & libraries, const process::Menu &menu) const;
 };
 
 } } }

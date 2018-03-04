@@ -1,11 +1,11 @@
-#ifndef HEADER_cook_visualizer_Graphviz_hpp_ALREADY_INCLUDED
-#define HEADER_cook_visualizer_Graphviz_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_generator_Graphviz_hpp_ALREADY_INCLUDED
+#define HEADER_cook_generator_Graphviz_hpp_ALREADY_INCLUDED
 
-#include "cook/visualizer/Interface.hpp"
+#include "cook/generator/Interface.hpp"
 #include "cook/process/Menu.hpp"
 #include "cook/Context.hpp"
 
-namespace cook { namespace visualizer {
+namespace cook { namespace generator {
 
 class Graphviz : public Interface
 {

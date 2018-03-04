@@ -67,6 +67,15 @@ Result make_DependencyGraph(const gubg::Range<It> & roots, Graph & g, RecipeVert
     MSS_END();
 }
 
+template <typename It, typename Graph>
+Result make_DependencyGraph(const gubg::Range<It> & roots, Graph & g)
+{
+    MSS_BEGIN(Result);
+
+    std::unordered_map<model::Recipe *, typename boost::graph_traits<Graph>::vertex_descriptor> translation_map;
+    MSS(make_DependencyGraph(roots, g, translation_map));
+    MSS_END();
+}
 
 } }
 

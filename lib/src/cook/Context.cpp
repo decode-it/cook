@@ -1,6 +1,6 @@
 #include "cook/Context.hpp"
 #include "cook/algo/Book.hpp"
-#include "cook/visualizer/Graphviz.hpp"
+#include "cook/generator/Graphviz.hpp"
 #include "gubg/mss.hpp"
 #include <cassert>
 
@@ -15,8 +15,8 @@ bool Context::initialize()
 {
     MSS_BEGIN(bool);
 
-    // add the visualizer
-    MSS(register_visualizer(std::make_shared<visualizer::Graphviz>()));
+    // add the generator
+    MSS(register_generator(std::make_shared<generator::Graphviz>()));
 
     MSS_END();
 
@@ -32,25 +32,25 @@ Result Context::initialize_menu(const std::list<model::Recipe*> & root_recipes)
     MSS_END();
 }
 
-Result Context::register_visualizer(VisualizerPtr visualizer)
+Result Context::register_generator(GeneratorPtr generator)
 {
     MSS_BEGIN(Result, logns);
 
-    MSS(!!visualizer);
-    const std::string & name = visualizer->name();
+    MSS(!!generator);
+    const std::string & name = generator->name();
 
-    MSG_MSS(!name.empty(), Error, "Cannot add a visualizer with an empty name");
-    MSG_MSS(visualizers_.find(name) == visualizers_.end(), Error, "A visualizer with name '" << name << "' already exists");
+    MSG_MSS(!name.empty(), Error, "Cannot add a generator with an empty name");
+    MSG_MSS(generators_.find(name) == generators_.end(), Error, "A generator with name '" << name << "' already exists");
 
-    visualizers_.emplace(name, visualizer);
+    generators_.emplace(name, generator);
 
     MSS_END();
 }
 
-Context::VisualizerPtr Context::get_visualizer(const std::string & name) const
+Context::GeneratorPtr Context::get_generator(const std::string & name) const
 {
-    auto it = visualizers_.find(name);
-    return it == visualizers_.end() ? VisualizerPtr() : it->second;
+    auto it = generators_.find(name);
+    return it == generators_.end() ? GeneratorPtr() : it->second;
 }
 
 

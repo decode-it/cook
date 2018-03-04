@@ -1,13 +1,14 @@
-#include "cook/visualizer/Graphviz.hpp"
+#include "cook/generator/Graphviz.hpp"
 #include "cook/model/Book.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/algo/Visit.hpp"
 #include "cook/algo/TopologicalOrder.hpp"
+#include "cook/util/File.hpp"
 #include <unordered_map>
 
 using namespace cook::model;
 
-namespace cook { namespace visualizer {
+namespace cook { namespace generator {
 
 namespace  {
 
@@ -274,17 +275,7 @@ Result Graphviz::process(const Context & context)
 
     // create the output stream
     std::ofstream ofs;
-    {
-        std::filesystem::path p = output_filename(context.dirs());
-
-        std::filesystem::path parent = p.parent_path();
-        if (!parent.empty())
-            MSG_MSS(std::filesystem::create_directories(parent), Error, "Unable to create directory '" << p.parent_path() << "'");
-
-        ofs.open(p.string());
-        MSG_MSS(ofs.good(), Error, "Unable to create file '" << p.string() << "'");
-    }
-
+    MSS(util::open_file(output_filename(context.dirs()), ofs));
     process_(ofs, context);
 
     MSS_END();

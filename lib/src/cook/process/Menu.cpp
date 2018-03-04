@@ -14,9 +14,46 @@ Menu::Menu()
 
 }
 
+bool Menu::is_valid() const
+{
+    return valid_;
+}
+
 const std::list<model::Recipe*> & Menu::topological_order_recipes() const
 {
     return topological_order_;
+}
+
+Result Menu::topological_order_recipes(model::Recipe * root, std::list<model::Recipe*> & result) const
+{
+    using DependencyVertex = boost::graph_traits<DependencyGraph::Graph>::vertex_descriptor;
+
+    MSS_BEGIN(Result);
+    MSS(is_valid());
+    MSS(!!root);
+
+    std::unordered_set<model::Recipe *> todo( {root} );
+
+    for (auto it = topological_order_recipes().rbegin(); it != topological_order_recipes().rend(); ++it)
+    {
+        model::Recipe * cur =*it;
+        MSS(!!cur);
+
+        // does this occur in the todo?
+        if (todo.erase(cur) == 0)
+            continue;
+
+        // add to the list
+        result.push_front(cur);
+
+        // and allow the children for processing
+        for(model::Recipe * dep : cur->dependencies())
+            todo.insert(dep);
+    }
+
+    MSS(todo.empty());
+
+    MSS_END();
 }
 
 const std::list<build::GraphPtr> & Menu::topological_order_build_graphs() const
@@ -36,14 +73,57 @@ RecipeFilteredGraph * Menu::recipe_filtered_graph(model::Recipe *recipe)
     return it == recipe_filtered_graphs_.end() ? nullptr : &(it->second);
 }
 
+const Menu::DependencyGraph & Menu::dependency_graph() const
+{
+    return dependency_graph_;
+}
+const Menu::ComponentGraph & Menu::component_graph() const
+{
+    return component_graph_;
+}
+
 Result Menu::construct_()
 {
     MSS_BEGIN(Result);
 
     valid_ = false;
 
-    MSS(algo::make_TopologicalOrder(root_recipes_, topological_order_));
-    MSS(initialize_process_info_());
+    using DependencyVertex = boost::graph_traits<DependencyGraph::Graph>::vertex_descriptor;
+    using ComponentVertex = boost::graph_traits<ComponentGraph::Graph>::vertex_descriptor;
+
+    // build the dependnecy graph
+    MSS(algo::make_DependencyGraph(gubg::make_range(root_recipes()), dependency_graph_.graph, dependency_graph_.translation_map));
+
+    // create the topological order
+    MSS(algo::make_TopologicalOrder(dependency_graph().graph, std::back_inserter(topological_order_)));
+
+    // construct the component graph
+    MSS(algo::make_ComponentGraph(dependency_graph_.graph, component_graph_.graph, component_graph_.translation_map));
+
+    // try to order the component graph topologically
+    std::vector<ComponentVertex> vertices(boost::num_vertices(component_graph().graph));
+    try
+    {
+        boost::topological_sort(component_graph().graph, vertices.begin());
+    }
+    catch(boost::not_a_dag)
+    {
+        MSS(false);
+    }
+
+    // process the components in topological order
+    for(ComponentVertex v : vertices)
+    {
+        // a single graph per component
+        build::GraphPtr ptr = std::make_shared<build::Graph>();
+
+        // and use the graph for every recipe in the component
+        for(auto * recipe : component_graph().graph[v])
+            recipe_filtered_graphs_.emplace(recipe, RecipeFilteredGraph(ptr));
+
+        // and assign the build graph order to the topological list
+        topological_build_graph_order_.push_back(ptr);
+    }
 
     valid_ = true;
 
@@ -56,51 +136,5 @@ const std::list<model::Recipe*> & Menu::root_recipes() const
     return root_recipes_;
 }
 
-
-bool Menu::initialize_process_info_()
-{
-    MSS_BEGIN(bool);
-
-    using DepG = boost::adjacency_list<boost::listS, boost::listS, boost::bidirectionalS, model::Recipe *>;
-    using CompG = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, std::set<model::Recipe *>>;
-    using DepV = boost::graph_traits<DepG>::vertex_descriptor;
-    using CompV = boost::graph_traits<CompG>::vertex_descriptor;
-
-    // construct a dependency graph
-    DepG dep_g;
-    std::unordered_map<model::Recipe *, DepV> recipe_dep_map;
-    MSS(algo::make_DependencyGraph(gubg::make_range(root_recipes_), dep_g, recipe_dep_map));
-
-    // construct the component graph
-    CompG component_graph;
-    std::unordered_map<DepV, CompV> dep_comp_map;
-    MSS(algo::make_ComponentGraph(dep_g, component_graph, dep_comp_map));
-
-    // order it topologically
-    std::vector<CompV> vertices(boost::num_vertices(component_graph));
-    try
-    {
-        boost::topological_sort(component_graph, vertices.begin());
-    }
-    catch(boost::not_a_dag)
-    {
-        MSS(false);
-    }
-
-    // vertices is order from can execute first, to should execute last
-    for(CompV v : gubg::make_range(boost::vertices(component_graph)))
-    {
-        // a single graph per component
-        const auto & recipe_set = component_graph[v];
-        build::GraphPtr ptr = std::make_shared<build::Graph>();
-
-        for(auto * recipe : recipe_set)
-            recipe_filtered_graphs_.emplace(recipe, RecipeFilteredGraph(ptr));
-
-        topological_build_graph_order_.push_back(ptr);
-    }
-
-    MSS_END();
-}
 
 } }

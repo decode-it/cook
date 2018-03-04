@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_visualizer_Interface_hpp_ALREADY_INCLUDED
-#define HEADER_cook_visualizer_Interface_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_generator_Interface_hpp_ALREADY_INCLUDED
+#define HEADER_cook_generator_Interface_hpp_ALREADY_INCLUDED
 
 #include "cook/Result.hpp"
 #include <memory>
@@ -8,13 +8,9 @@ namespace cook {
 
 class Context;
 
-namespace model {
+}
 
-class Menu;
-
-} }
-
-namespace cook { namespace visualizer {
+namespace cook { namespace generator {
 
 class Interface
 {

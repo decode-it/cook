@@ -1,9 +1,8 @@
 #include "cook/process/souschef/LinkLibrarySorter.hpp"
-#include "cook/algo/TopologicalOrder.hpp"
 
 namespace cook { namespace process { namespace souschef {
 
-Result LinkLibrarySorter::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
+Result LinkLibrarySorter::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & context) const
 {
     MSS_BEGIN(Result);
 
@@ -13,12 +12,12 @@ Result LinkLibrarySorter::process(model::Recipe & recipe, RecipeFilteredGraph & 
     if (it == files.end())
         MSS_RETURN_OK();
 
-    MSS(process_(recipe, it->second));
+    MSS(process_(recipe, it->second, context.menu()));
 
     MSS_END();
 }
 
-Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collection<ingredient::File> & libraries) const
+Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collection<ingredient::File> & libraries, const process::Menu & menu) const
 {
     MSS_BEGIN(Result);
 
@@ -41,7 +40,7 @@ Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collectio
 
     // get a topological order for this recipe
     std::list<model::Recipe *> top_order;
-    MSS(algo::make_TopologicalOrder(&recipe, top_order));
+    MSS(menu.topological_order_recipes(&recipe, top_order));
 
     // add the owned in topological inverse order
     for (model::Recipe * cur : top_order)
