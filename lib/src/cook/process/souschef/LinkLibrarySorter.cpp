@@ -46,8 +46,9 @@ Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collectio
     for (model::Recipe * cur : top_order)
     {
         auto it = owned_libraries.find(cur);
-        for(const auto & file : it->second)
-            libraries.insert(file);
+        if (it != owned_libraries.end())
+            for(const auto & file : it->second)
+                libraries.insert(file);
     }
 
     MSS(prev_size == libraries.size());
