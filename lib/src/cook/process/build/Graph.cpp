@@ -17,7 +17,7 @@ Graph::vertex_descriptor Graph::goc_vertex(const FileLabel & path)
 
 Graph::vertex_descriptor Graph::add_vertex(CommandLabel ptr)
 {
-    boost::add_vertex(Label(ptr), g_);
+    return boost::add_vertex(Label(ptr), g_);
 }
 
 Result Graph::add_edge(vertex_descriptor src, vertex_descriptor tgt)
