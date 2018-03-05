@@ -65,43 +65,36 @@ bool Options::valid() const
     return parsed_;
 }
 
-void Options::stream(std::ostream &os, Indent &indent) const
+void Options::stream(logger::Verbose &verbose, int level) const
 {
-    os << indent << "[options]{" << std::endl;
+    auto options = verbose.scope("options", level);
 
     {
-        auto scope = indent.scope();
-
-        os << indent << "[recipe_files]";
+        auto scope = options.scope("recipe_files");
         for (const auto &fn: recipe_files)
-            os << "(" << fn << ")";
-        os << std::endl;
-
-        os << indent << "[output_path](" << output_path << ")" << std::endl;
-        os << indent << "[temp_path](" << temp_path << ")" << std::endl;
-        os << indent << "[toolchain](" << toolchain << ")" << std::endl;
-
-        os << indent << "[generators]";
-        for (const auto &p: generators)
-            os << "(" << p.first << ":" << p.second << ")";
-        os << std::endl;
-
-        os << indent << "[variables]";
-        for (const auto &p: variables)
-            os << "(" << p.first << ":" << p.second << ")";
-        os << std::endl;
-
-        os << indent << "[recipes]";
-        for (const auto &r: recipes)
-            os << "(" << r << ")";
-        os << std::endl;
-
-        os << indent << "[clean](" << (clean ? "true" : "false") << ")" << std::endl;
-        os << indent << "[print_help](" << (print_help ? "true" : "false") << ")" << std::endl;
-        os << indent << "[verbosity](" << verbosity << ")" << std::endl;
+            scope.attr(fn);
     }
-
-    os << "}" << std::endl;
+    options.scope("output_path").attr(output_path);
+    options.scope("temp_path").attr(temp_path);
+    options.scope("toolchain").attr(toolchain);
+    {
+        auto scope = options.scope("generators");
+        for (const auto &p: generators)
+            scope.attr(p);
+    }
+    {
+        auto scope = options.scope("variables");
+        for (const auto &p: variables)
+            scope.attr(p);
+    }
+    {
+        auto scope = options.scope("recipes");
+        for (const auto &r: recipes)
+            scope.attr(r);
+    }
+    options.scope("clean").attr((clean ? "true" : "false"));
+    options.scope("print_help").attr((print_help ? "true" : "false"));
+    options.scope("verbosity").attr(verbosity);
 }
 
 } }

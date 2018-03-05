@@ -3,6 +3,8 @@
 
 #include "cook/app/Options.hpp"
 #include "cook/chai/Context.hpp"
+#include "cook/logger/Verbose.hpp"
+#include "gubg/naft/Document.hpp"
 
 namespace cook {
 
@@ -18,7 +20,9 @@ private:
     Result process_generators_() const;
     Result process_generator_(const std::string & name, const std::string & value) const;
 
-    cook::Indent indent_;
+    gubg::naft::Document doc_{std::cout};
+    cook::logger::Verbose verbose_{doc_};
+
     app::Options options_;
     cook::chai::Context kitchen_;
 };
