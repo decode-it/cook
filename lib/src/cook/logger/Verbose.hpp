@@ -11,9 +11,9 @@ namespace cook { namespace logger {
     class Verbose
     {
     public:
-        Verbose(gubg::naft::Node &node): node_(node) { }
-        Verbose(gubg::naft::Node &node, const std::string &tag): node_opt_{node.node(tag)}, node_(*node_opt_) { }
-        Verbose(Verbose &&dying): level_(dying.level_), node_opt_(std::move(dying.node_opt_)), node_(*node_opt_) {}
+        Verbose(int level, gubg::naft::Node &node): level_(level), node_(node) { }
+        Verbose(int level, gubg::naft::Node &node, const std::string &tag): level_(level), node_opt_{node.node(tag)}, node_(*node_opt_) { }
+        Verbose(Verbose &&dying): level_(dying.level_), node_opt_(std::move(dying.node_opt_)), node_(!!node_opt_ ? *node_opt_ : dying.node_) {}
 
         void set_level(int level) {level_ = level;}
 
@@ -24,20 +24,20 @@ namespace cook { namespace logger {
         {
             if (!operator()(level))
             {
-                Verbose v{node_};
+                Verbose v{level_, node_};
                 return v;
             }
-            Verbose v{node_, tag};
+            Verbose v{level_, node_, tag};
             return v;
         }
         Verbose scope(const std::string &tag) const
         {
             if (!node_opt_)
             {
-                Verbose v{node_};
+                Verbose v{level_, node_};
                 return v;
             }
-            Verbose v{node_, tag};
+            Verbose v{level_, node_, tag};
             return v;
         }
 

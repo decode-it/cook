@@ -8,7 +8,8 @@ test_case("hello_world") do
     section("positive") do
         should = :pass
         section("help"){cmd << "-h"}
-        section("verbose"){cmd << "-v 2"}
+        section("verbose 2"){cmd << "-v 2"}
+        section("verbose 3"){cmd << "-v 3"}
         section("input file") do
             cmd << "-f scenario/hello_world/recipes.chai"
             section("recipe /a/b"){cmd << "/a/b"}

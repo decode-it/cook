@@ -21,7 +21,7 @@ private:
     Result process_generator_(const std::string & name, const std::string & value) const;
 
     gubg::naft::Document doc_{std::cout};
-    cook::logger::Verbose verbose_{doc_};
+    cook::logger::Verbose verbose_{0, doc_};
 
     app::Options options_;
     cook::chai::Context kitchen_;

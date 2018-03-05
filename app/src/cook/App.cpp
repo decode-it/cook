@@ -26,7 +26,9 @@ Result App::process()
 
     verbose_.set_level(options_.verbosity);
 
-    options_.stream(verbose_, 2);
+    auto scope = verbose_.scope("process", 3);
+
+    options_.stream(scope, 2);
 
     // initialize the kitchen
     MSS(kitchen_.initialize());
