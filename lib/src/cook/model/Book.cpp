@@ -89,7 +89,7 @@ Result Book::find_relative(Recipe *& result, const Uri & uri, Book * relative)
     MSS(find_relative(parent, uri.parent(), relative));
 
     if (parent)
-        result = parent->find_recipe(*uri.name());
+        result = parent->find_recipe(uri.name());
 
     MSS_END();
 }
@@ -133,7 +133,7 @@ Result Book::goc_relative(Recipe *& result, const Uri & uri, Book * relative)
     MSS(goc_relative(parent, uri.parent(), relative));
     MSS(!!parent);
 
-    result = &parent->goc_recipe(*uri.name());
+    result = &parent->goc_recipe(uri.name());
     MSS(!!result);
 
     MSS_END();

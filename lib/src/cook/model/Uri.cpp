@@ -156,9 +156,9 @@ bool Uri::has_name() const
     return name_.has_value();
 }
 
-const std::optional<Part> & Uri::name() const
+const Part & Uri::name() const
 {
-    return name_;
+    return *name_;
 }
 
 void Uri::set_absolute(bool is_absolute)

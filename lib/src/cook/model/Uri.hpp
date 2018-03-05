@@ -57,7 +57,7 @@ public:
     void set_name(const Part & name);
     bool has_name() const;
     void clear_name();
-    const std::optional<Part> & name() const;
+    const Part & name() const;
 
     bool absolute() const;
     void set_absolute(bool is_absolute);

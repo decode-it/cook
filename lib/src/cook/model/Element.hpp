@@ -19,6 +19,9 @@ public:
     std::any & user_data();
     const std::any & user_data() const;
 
+    void set_name(const std::string & name);
+    std::string name() const;
+
 protected:
     bool set_parent(Book * parent);
 
@@ -26,7 +29,7 @@ private:
     Uri uri_;
     Book * parent_;
     std::any user_data_;
-
+    std::string name_;
 };
 
 

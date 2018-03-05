@@ -10,6 +10,23 @@ Element::Element(const Uri & uri)
 {
 }
 
+void Element::set_name(const std::string & name)
+{
+    name_ = name;
+}
+
+std::string Element::name() const
+{
+    if (false) {}
+    else if (!name_.empty())
+        return name_;
+    else if (uri().has_name())
+        return uri().name().string();
+    else if (!uri().path().empty())
+        return uri().path().back().string();
+    else return "";
+}
+
 const Uri & Element::uri() const
 {
     return uri_;
