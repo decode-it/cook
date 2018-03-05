@@ -7,19 +7,19 @@ rescue LoadError
     retry
 end
 require("gubg/shared")
+require_relative("extern/boost/boost.rb")
 
 task :default do
     sh "rake -T"
 end
 
-submods = %w[build std math io algo chaiscript].map{|e|"gubg.#{e}"}
+gubg_submods = %w[build std math io algo chaiscript].map{|e|"gubg.#{e}"}
 
 desc "Prepare the submods"
+task :prepare do
+    Rake::Task["boost:update"].invoke
 
-require_relative("extern/boost/boost.rb")
-
-task :prepare => "boost:generate_modules" do
-    GUBG::each_submod(submods: submods) do |info|
+    GUBG::each_submod(submods: gubg_submods) do |info|
         sh "rake prepare"
     end
 end
@@ -38,7 +38,7 @@ end
 
 desc "Update submodules to head"
 task :uth do
-    GUBG::each_submod(submods: submods) do |info|
+    GUBG::each_submod(submods: gubg_submods) do |info|
         sh "git checkout #{info[:branch]}"
         sh "git pull --rebase"
     end
@@ -56,7 +56,7 @@ namespace :b0 do
     end
 
     desc "bootstrap-level0: Update the ninja scripts (depends on gubg.build)"
-    task :update => ["boost:parse"] do
+    task :update => ["boost:load"] do
         require("gubg/build/expand_templates")
         GUBG::Build::expand_templates("b0-compile.ninja")
     end

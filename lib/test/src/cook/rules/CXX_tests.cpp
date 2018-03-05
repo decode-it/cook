@@ -186,7 +186,7 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
     REQUIRE(p.second);
 
     model::Book book;
-    model::Recipe & recipe = book.goc_recipe(*p.first.name());
+    model::Recipe & recipe = book.goc_recipe(p.first.name());
 
     {
         // check the accept function

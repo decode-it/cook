@@ -166,7 +166,7 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
             REQUIRE(p.second);
 
             cook::model::Book book;
-            cook::model::Recipe & recipe = book.goc_recipe(*p.first.name());
+            cook::model::Recipe & recipe = book.goc_recipe(p.first.name());
 
             recipe.set_working_directory(std::filesystem::current_path());
 

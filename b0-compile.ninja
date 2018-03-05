@@ -15,7 +15,7 @@ cook_app_include_paths  = -I app/src
 chai_include_paths  = -I gubg.chaiscript/extern/ChaiScript/include
 catch_include_paths = -I gubg.std/extern/catch/single_include
 #[output](script:output.print("boost_include_paths = ");$boost.map{|e|output.print(" -I extern/boost/modules/#{e}/include")};output.puts()){
-boost_include_paths =  -I extern/boost/modules/assert/include -I extern/boost/modules/bind/include -I extern/boost/modules/concept_check/include -I extern/boost/modules/config/include -I extern/boost/modules/container/include -I extern/boost/modules/conversion/include -I extern/boost/modules/core/include -I extern/boost/modules/detail/include -I extern/boost/modules/foreach/include -I extern/boost/modules/function/include -I extern/boost/modules/function_types/include -I extern/boost/modules/functional/include -I extern/boost/modules/graph/include -I extern/boost/modules/graph_parallel/include -I extern/boost/modules/integer/include -I extern/boost/modules/intrusive/include -I extern/boost/modules/iterator/include -I extern/boost/modules/move/include -I extern/boost/modules/mpi/include -I extern/boost/modules/mpl/include -I extern/boost/modules/multi_index/include -I extern/boost/modules/optional/include -I extern/boost/modules/parameter/include -I extern/boost/modules/predef/include -I extern/boost/modules/preprocessor/include -I extern/boost/modules/property_map/include -I extern/boost/modules/range/include -I extern/boost/modules/serialization/include -I extern/boost/modules/smart_ptr/include -I extern/boost/modules/static_assert/include -I extern/boost/modules/throw_exception/include -I extern/boost/modules/tti/include -I extern/boost/modules/tuple/include -I extern/boost/modules/type_index/include -I extern/boost/modules/type_traits/include -I extern/boost/modules/typeof/include -I extern/boost/modules/unordered/include -I extern/boost/modules/utility/include
+boost_include_paths =  -I extern/boost/modules/algorithm/include -I extern/boost/modules/any/include -I extern/boost/modules/array/include -I extern/boost/modules/assert/include -I extern/boost/modules/atomic/include -I extern/boost/modules/bind/include -I extern/boost/modules/chrono/include -I extern/boost/modules/concept_check/include -I extern/boost/modules/config/include -I extern/boost/modules/container/include -I extern/boost/modules/conversion/include -I extern/boost/modules/core/include -I extern/boost/modules/date_time/include -I extern/boost/modules/detail/include -I extern/boost/modules/exception/include -I extern/boost/modules/foreach/include -I extern/boost/modules/function/include -I extern/boost/modules/function_types/include -I extern/boost/modules/functional/include -I extern/boost/modules/fusion/include -I extern/boost/modules/graph/include -I extern/boost/modules/graph_parallel/include -I extern/boost/modules/integer/include -I extern/boost/modules/intrusive/include -I extern/boost/modules/iterator/include -I extern/boost/modules/lexical_cast/include -I extern/boost/modules/math/include -I extern/boost/modules/move/include -I extern/boost/modules/mpi/include -I extern/boost/modules/mpl/include -I extern/boost/modules/multi_index/include -I extern/boost/modules/numeric_conversion/include -I extern/boost/modules/optional/include -I extern/boost/modules/parameter/include -I extern/boost/modules/predef/include -I extern/boost/modules/preprocessor/include -I extern/boost/modules/property_map/include -I extern/boost/modules/proto/include -I extern/boost/modules/range/include -I extern/boost/modules/ratio/include -I extern/boost/modules/rational/include -I extern/boost/modules/serialization/include -I extern/boost/modules/smart_ptr/include -I extern/boost/modules/spirit/include -I extern/boost/modules/static_assert/include -I extern/boost/modules/system/include -I extern/boost/modules/thread/include -I extern/boost/modules/throw_exception/include -I extern/boost/modules/tti/include -I extern/boost/modules/tuple/include -I extern/boost/modules/type_index/include -I extern/boost/modules/type_traits/include -I extern/boost/modules/typeof/include -I extern/boost/modules/unordered/include -I extern/boost/modules/utility/include -I extern/boost/modules/winapi/include -I extern/boost/modules/xpressive/include
 #}
 
 #[output](script:
@@ -70,9 +70,11 @@ build .b0/lib/src/cook/chai/UserData.cpp.obj: compile lib/src/cook/chai/UserData
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/generator/CMake.cpp.obj: compile lib/src/cook/generator/CMake.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/generator/Graphviz.cpp.obj: compile lib/src/cook/generator/Graphviz.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/generator/Naft.cpp.obj: compile lib/src/cook/generator/Naft.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/generator/graphviz/Component.cpp.obj: compile lib/src/cook/generator/graphviz/Component.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/generator/graphviz/Dependency.cpp.obj: compile lib/src/cook/generator/graphviz/Dependency.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/model/Book.cpp.obj: compile lib/src/cook/model/Book.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
@@ -287,8 +289,9 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/chai/Recipe.cpp.obj $
     .b0/lib/src/cook/chai/UserData.cpp.obj $
     .b0/lib/src/cook/generator/CMake.cpp.obj $
-    .b0/lib/src/cook/generator/Graphviz.cpp.obj $
     .b0/lib/src/cook/generator/Naft.cpp.obj $
+    .b0/lib/src/cook/generator/graphviz/Component.cpp.obj $
+    .b0/lib/src/cook/generator/graphviz/Dependency.cpp.obj $
     .b0/lib/src/cook/model/Book.cpp.obj $
     .b0/lib/src/cook/model/Dirs.cpp.obj $
     .b0/lib/src/cook/model/Element.cpp.obj $
