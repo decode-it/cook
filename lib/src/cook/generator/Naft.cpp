@@ -45,18 +45,38 @@ void Processor::process(gubg::naft::Node & node, model::Book * book)
     auto n = node.node("book");
     n.attr("uri", book->uri()).attr("display_name", book->name());
 
+    // process the subbooks
+    for(model::Book * child : book->books())
+        process(n, child);
+
+    // process the recipes
+    for(model::Recipe * child: book->recipes())
+        process(n, child);
 }
 
 void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
 {
+    if (used_recipes_.find(recipe) == used_recipes_.end())
+        return;
 
+    const auto & uri = recipe->uri();
+
+    auto n = node.node("recipe");
+    n.attr("uri", uri);
+    n.attr("tag", uri.name());
+    n.attr("display_name", recipe->name());
+    n.attr("path", recipe->working_directory().string());
+    n.attr("type", recipe->type());
+    n.attr("build_target", "");
 }
 
 }
 
 Result Naft::set_option(const std::string & option)
 {
+    MSS_BEGIN(Result);
     set_filename(option);
+    MSS_END();
 }
 
 bool Naft::can_process(const Context & context) const
@@ -66,7 +86,16 @@ bool Naft::can_process(const Context & context) const
 
 Result Naft::process(std::ostream & oss, const Context & context)
 {
+    MSS_BEGIN(Result);
 
+    Processor p(context);
+    p.construct_book_list();;
+
+    auto n = gubg::naft::Document(oss).node("structure");
+
+    p.process(n, context.root_book());
+
+    MSS_END();
 }
 
 } }

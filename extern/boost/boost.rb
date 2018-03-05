@@ -21,7 +21,7 @@ namespace :boost do
         end
     end
     
-    task :create_recipe => [:parse]do
+    task :create_recipe => [:parse] do
         File.open(File.join(cur_dir, 'dependencies.chai'), 'w') do |f|
             ar = $boost_modules.map { |k| "\"#{k}\"" }.join(", ")
             f << "auto boosts = [#{ar}]\n" 

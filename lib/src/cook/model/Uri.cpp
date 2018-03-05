@@ -203,6 +203,11 @@ std::ostream & operator<<(std::ostream & str, const Uri & uri)
     return str << uri.string();
 }
 
+std::ostream & operator<<(std::ostream & str, const Part & part)
+{
+    return str << part.string();
+}
+
 bool Uri::operator==(const Uri & rhs) const
 {
     return string() == rhs.string();

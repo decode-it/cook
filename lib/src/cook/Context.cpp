@@ -3,6 +3,7 @@
 #include "cook/generator/graphviz/Dependency.hpp"
 #include "cook/generator/graphviz/Component.hpp"
 #include "cook/generator/CMake.hpp"
+#include "cook/generator/Naft.hpp"
 #include "gubg/mss.hpp"
 #include <cassert>
 
@@ -21,6 +22,7 @@ bool Context::initialize()
     MSS(register_generator(std::make_shared<generator::graphviz::Dependency>()));
     MSS(register_generator(std::make_shared<generator::graphviz::Component>()));
     MSS(register_generator(std::make_shared<generator::CMake>()));
+    MSS(register_generator(std::make_shared<generator::Naft>()));
 
     MSS_END();
 

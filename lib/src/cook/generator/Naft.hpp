@@ -10,7 +10,7 @@ namespace cook { namespace generator {
 class Naft : public Interface
 {
 public:
-    std::string name() const override { return "Naft"; }
+    std::string name() const override { return "naft"; }
 
     Result set_option(const std::string & option) override;
 

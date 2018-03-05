@@ -80,6 +80,7 @@ private:
     bool absolute_;
 };
 
+std::ostream & operator<<(std::ostream & str, const Part & part);
 std::ostream & operator<<(std::ostream & str, const Uri & uri);
 
 Uri make_root_uri();
