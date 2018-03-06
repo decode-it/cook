@@ -24,9 +24,9 @@ Result App::process()
 {
     MSS_BEGIN(Result, logns);
 
-    verbose_.set_level(options_.verbosity);
+    log_.set_level(options_.verbosity);
 
-    auto scope = verbose_.scope("process", 3);
+    auto scope = log_.scope("process", 3);
 
     options_.stream(scope, 2);
 

@@ -65,9 +65,9 @@ bool Options::valid() const
     return parsed_;
 }
 
-void Options::stream(logger::Verbose &verbose, int level) const
+void Options::stream(log::Scope &log, int level) const
 {
-    auto options = verbose.scope("options", level);
+    auto options = log.scope("options", level);
 
     {
         auto scope = options.scope("recipe_files");

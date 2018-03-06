@@ -1,7 +1,7 @@
 #ifndef HEADER_cook_app_Options_hpp_ALREADY_INCLUDED
 #define HEADER_cook_app_Options_hpp_ALREADY_INCLUDED
 
-#include "cook/logger/Verbose.hpp"
+#include "cook/log/Scope.hpp"
 #include <string>
 #include <list>
 #include <ostream>
@@ -27,7 +27,7 @@ namespace cook { namespace app {
 
         bool parse(int argc, const char **argv);
         bool valid() const;
-        void stream(logger::Verbose &, int level = 2) const;
+        void stream(log::Scope &, int level = 2) const;
 
     private:
         bool parsed_ = false;

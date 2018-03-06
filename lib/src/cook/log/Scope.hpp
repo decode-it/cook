@@ -1,62 +1,62 @@
-#ifndef HEADER_cook_logger_Verbose_hpp_ALREADY_INCLUDED
-#define HEADER_cook_logger_Verbose_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_log_Scope_hpp_ALREADY_INCLUDED
+#define HEADER_cook_log_Scope_hpp_ALREADY_INCLUDED
 
 #include "gubg/naft/Node.hpp"
 #include "gubg/debug.hpp"
 #include <iostream>
 #include <optional>
 
-namespace cook { namespace logger { 
+namespace cook { namespace log { 
 
-    class Verbose
+    class Scope
     {
     public:
-        Verbose(int level, gubg::naft::Node &node): level_(level), node_(node) { }
-        Verbose(int level, gubg::naft::Node &node, const std::string &tag): level_(level), node_opt_{node.node(tag)}, node_(*node_opt_) { }
-        Verbose(Verbose &&dying): level_(dying.level_), node_opt_(std::move(dying.node_opt_)), node_(!!node_opt_ ? *node_opt_ : dying.node_) {}
+        Scope(int level, gubg::naft::Node &node): level_(level), node_(node) { }
+        Scope(int level, gubg::naft::Node &node, const std::string &tag): level_(level), node_opt_{node.node(tag)}, node_(*node_opt_) { }
+        Scope(Scope &&dying): level_(dying.level_), node_opt_(std::move(dying.node_opt_)), node_(!!node_opt_ ? *node_opt_ : dying.node_) {}
 
         void set_level(int level) {level_ = level;}
 
         //Indicates if level should be logged
         bool operator()(int level) const {return level_ >= level;}
 
-        Verbose scope(const std::string &tag, int level) const
+        Scope scope(const std::string &tag, int level) const
         {
             if (!operator()(level))
             {
-                Verbose v{level_, node_};
+                Scope v{level_, node_};
                 return v;
             }
-            Verbose v{level_, node_, tag};
+            Scope v{level_, node_, tag};
             return v;
         }
-        Verbose scope(const std::string &tag) const
+        Scope scope(const std::string &tag) const
         {
             if (!node_opt_)
             {
-                Verbose v{level_, node_};
+                Scope v{level_, node_};
                 return v;
             }
-            Verbose v{level_, node_, tag};
+            Scope v{level_, node_, tag};
             return v;
         }
 
         template <typename Key, typename Value>
-        Verbose &attr(const Key &key, const Value &value)
+        Scope &attr(const Key &key, const Value &value)
         {
             if (!!node_opt_)
                 node_opt_->attr(key, value);
             return *this;
         }
         template <typename Key>
-        Verbose &attr(const Key &key)
+        Scope &attr(const Key &key)
         {
             if (!!node_opt_)
                 node_opt_->attr(key);
             return *this;
         }
         template <typename Key, typename Value>
-        Verbose &attr(const std::pair<Key, Value> &pair)
+        Scope &attr(const std::pair<Key, Value> &pair)
         {
             return attr(pair.first, pair.second);
         }
