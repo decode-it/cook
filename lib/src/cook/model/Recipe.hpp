@@ -8,6 +8,7 @@
 #include "cook/ingredient/File.hpp"
 #include "cook/ingredient/KeyValue.hpp"
 #include "cook/util/ElementAt.hpp"
+#include "cook/log/Scope.hpp"
 #include "gubg/Range.hpp"
 #include "boost/iterator/transform_iterator.hpp"
 
@@ -64,6 +65,8 @@ public:
 
     void set_type(const Type & type);
     Type type() const;
+
+    void stream(log::Scope &, int level = 1) const;
 
 private:
     Recipe(Recipe &&) = delete;

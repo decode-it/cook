@@ -5,6 +5,7 @@
 #include "cook/process/RecipeFilteredGraph.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
+#include "cook/log/Scope.hpp"
 #include <unordered_map>
 
 namespace cook { namespace process {
@@ -44,6 +45,8 @@ public:
 
     const RecipeFilteredGraph * recipe_filtered_graph(model::Recipe *recipe) const;
     RecipeFilteredGraph * recipe_filtered_graph(model::Recipe * recipe);
+
+    void stream(log::Scope &, int level) const;
 
 private:
     Menu(const Menu &) = delete;

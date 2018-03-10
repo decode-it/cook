@@ -5,11 +5,10 @@ test_case("hello_world") do
     cook_fn = File.expand_path("cook.exe")
     should = nil
     cmd = [cook_fn]
+    cmd << "-v 3"
     section("positive") do
         should = :pass
         section("help"){cmd << "-h"}
-        section("verbose 2"){cmd << "-v 2"}
-        section("verbose 3"){cmd << "-v 3"}
         section("input file") do
             cmd << "-f scenario/hello_world/recipes.chai"
             section("recipe /a/b"){cmd << "/a/b"}

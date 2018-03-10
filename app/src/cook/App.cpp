@@ -37,36 +37,49 @@ Result App::process()
     for(const auto & v : options_.variables)
         MSS(kitchen_.set_variable(v.first, v.second));
 
-    // process all files
-    MSS(load_recipes_());
-
-    // extract all root recipes
-    std::list<model::Recipe*> root_recipes;
-    MSS(extract_root_recipes_(root_recipes));
-
-    // and construct the menu
     {
+        auto scop = scope.scope("Loading recipes", 3);
+        // process all files
+        MSS(load_recipes_());
+    }
+
+    std::list<model::Recipe*> root_recipes;
+    {
+        auto scop = scope.scope("root_recipes", 3);
+        MSS(extract_root_recipes_(root_recipes));
+        for (auto rr: root_recipes)
+            rr->stream(scop);
+    }
+
+    {
+        auto scop = scope.scope("menu", 3);
         Result rc = kitchen_.initialize_menu(root_recipes);
 
         if (!rc)
             MSS(process_generators_());
 
+        kitchen_.menu().stream(scop, 3);
+
         MSS(rc);
     }
 
-
-    // process the menu with the chef
     {
-        process::chef::LinkArchiveChef lac("default");
-        MSS(lac.initialize());
+        auto scop = scope.scope("Process with chef", 3);
+        // process the menu with the chef
+        {
+            process::chef::LinkArchiveChef lac("default");
+            MSS(lac.initialize());
 
-        MSS(lac.mis_en_place(kitchen_));
+            MSS(lac.mis_en_place(kitchen_));
+        }
     }
 
-    // and now process all the requested visualizations
-    MSS(process_generators_());
+    {
+        auto scop = scope.scope("Process with generators", 3);
+        // and now process all the requested visualizations
+        MSS(process_generators_());
+    }
 
-    // resolve the root book
     MSS_END();
 }
 

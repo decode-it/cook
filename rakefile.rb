@@ -127,11 +127,11 @@ task :clean do
 end
 
 desc "Install"
-task :install, [:bin] => "build" do |task, args|
-    bin = args[:bin]
-    if bin
-        GUBG::mkdir(bin)
-        sh("cp cook.exe #{bin}")
+task :install, [:path] => "build" do |task, args|
+    path = args[:path]
+    if path
+        GUBG::mkdir(path)
+        sh("cp cook.exe #{path}")
     else
         case GUBG::os
         when :linux then sh("sudo cp cook.exe /usr/local/bin/cook")
