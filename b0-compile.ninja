@@ -76,6 +76,8 @@ build .b0/lib/src/cook/generator/graphviz/Component.cpp.obj: compile lib/src/coo
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/generator/graphviz/Dependency.cpp.obj: compile lib/src/cook/generator/graphviz/Dependency.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/log/Scope.cpp.obj: compile lib/src/cook/log/Scope.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/model/Book.cpp.obj: compile lib/src/cook/model/Book.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/model/Dirs.cpp.obj: compile lib/src/cook/model/Dirs.cpp
@@ -111,6 +113,8 @@ build .b0/lib/src/cook/process/souschef/LibraryPathSetter.cpp.obj: compile lib/s
 build .b0/lib/src/cook/process/souschef/LinkLibrarySorter.cpp.obj: compile lib/src/cook/process/souschef/LinkLibrarySorter.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/process/souschef/Linker.cpp.obj: compile lib/src/cook/process/souschef/Linker.cpp
+    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
+build .b0/lib/src/cook/process/souschef/RecipeNamer.cpp.obj: compile lib/src/cook/process/souschef/RecipeNamer.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/process/souschef/Resolver.cpp.obj: compile lib/src/cook/process/souschef/Resolver.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
@@ -292,6 +296,7 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/generator/Naft.cpp.obj $
     .b0/lib/src/cook/generator/graphviz/Component.cpp.obj $
     .b0/lib/src/cook/generator/graphviz/Dependency.cpp.obj $
+    .b0/lib/src/cook/log/Scope.cpp.obj $
     .b0/lib/src/cook/model/Book.cpp.obj $
     .b0/lib/src/cook/model/Dirs.cpp.obj $
     .b0/lib/src/cook/model/Element.cpp.obj $
@@ -310,6 +315,7 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/process/souschef/LibraryPathSetter.cpp.obj $
     .b0/lib/src/cook/process/souschef/LinkLibrarySorter.cpp.obj $
     .b0/lib/src/cook/process/souschef/Linker.cpp.obj $
+    .b0/lib/src/cook/process/souschef/RecipeNamer.cpp.obj $
     .b0/lib/src/cook/process/souschef/Resolver.cpp.obj $
     .b0/lib/src/cook/rules/CXX.cpp.obj $
     .b0/lib/src/cook/rules/RuleSet.cpp.obj $

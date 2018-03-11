@@ -11,7 +11,11 @@ test_case("hello_world") do
         section("help"){cmd << "-h"}
         section("input file") do
             cmd << "-f scenario/hello_world/recipes.chai"
-            section("recipe /a/b"){cmd << "/a/b"}
+            section("recipe /a/b") do
+                section("naft"){cmd << "-g naft"}
+                section("naft"){cmd << "-g CMake"}
+                cmd << "/a/b"
+            end
         end
     end
     section("negative") do

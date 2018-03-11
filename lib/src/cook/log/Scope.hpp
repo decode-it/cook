@@ -11,9 +11,27 @@ namespace cook { namespace log {
     class Scope
     {
     public:
-        Scope(int level, gubg::naft::Node &node): level_(level), node_(node) { }
-        Scope(int level, gubg::naft::Node &node, const std::string &tag): level_(level), node_opt_{node.node(tag)}, node_(*node_opt_) { }
-        Scope(Scope &&dying): level_(dying.level_), node_opt_(std::move(dying.node_opt_)), node_(!!node_opt_ ? *node_opt_ : dying.node_) {}
+        static Scope *top;
+
+        Scope(int level, gubg::naft::Node &node): level_(level), node_(node)
+        {
+            parent_ = top;
+            top = this;
+        }
+        Scope(int level, gubg::naft::Node &node, const std::string &tag): level_(level), node_opt_{node.node(tag)}, node_(*node_opt_)
+        {
+            parent_ = top;
+            top = this;
+        }
+        Scope(Scope &&dying): level_(dying.level_), node_opt_(std::move(dying.node_opt_)), node_(!!node_opt_ ? *node_opt_ : dying.node_), parent_(dying.parent_)
+        {
+            top = this;
+        }
+        ~Scope()
+        {
+            if (top == this)
+                top = parent_;
+        }
 
         void set_level(int level) {level_ = level;}
 
@@ -70,6 +88,8 @@ namespace cook { namespace log {
 
         //Refers to node_opt_, or a valid node from the parent
         gubg::naft::Node &node_;
+
+        Scope *parent_ = nullptr;
     };
 
 } } 
