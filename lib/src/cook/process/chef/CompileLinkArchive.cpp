@@ -6,6 +6,7 @@
 #include "cook/process/souschef/Compiler.hpp"
 #include "cook/process/souschef/Archiver.hpp"
 #include "cook/process/souschef/Linker.hpp"
+#include "cook/process/souschef/RecipeNamer.hpp"
 #include "cook/process/souschef/LinkLibrarySorter.hpp"
 #include "cook/rules/CXX.hpp"
 #include "gubg/stream.hpp"
@@ -13,6 +14,8 @@
 namespace cook { namespace process { namespace chef {
 
 namespace  {
+
+const static unsigned int default_priority = 100;
 
 const static std::initializer_list<Language> default_supported_languages = { Language::C, Language::CXX };
 
@@ -49,7 +52,7 @@ Result LinkArchiveChef::initialize()
         set.souschefs.push_back(std::make_shared<souschef::LinkLibrarySorter>());
         set.souschefs.push_back(linker_);
 
-        this->add_brigade(100, std::move(set));
+        this->add_brigade(default_priority, std::move(set));
     }
 
     // the archiver
@@ -68,7 +71,7 @@ Result LinkArchiveChef::initialize()
         set.souschefs = generate_compile_only_steps_();
         set.souschefs.push_back(archiver_);
 
-        this->add_brigade(100, std::move(set));
+        this->add_brigade(default_priority, std::move(set));
     }
 
     MSS_END();
@@ -111,6 +114,8 @@ std::list<SouschefPtr> LinkArchiveChef::generate_compile_only_steps_() const
 
     for (const auto & p : compilers_)
         result.push_back(p.second);
+
+    result.push_back(std::make_shared<souschef::RecipeNamer>());
 
     return result;
 }

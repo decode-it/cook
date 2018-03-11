@@ -15,16 +15,6 @@ struct DummyArchiver : public build::Command
     }
 };
 
-
-std::string construct_archive_filename(const model::Recipe & recipe)
-{
-#if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) {os << << recipe.uri().as_relative().string('.') << ".lib"; });
-#else
-    return gubg::stream([&](auto & os) {os << "lib" << recipe.uri().as_relative().string('.') << ".a"; });
-#endif
-}
-
 }
 
 Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
@@ -51,6 +41,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     }
 
     // create the archive
+    MSS(!!recipe.build_target().filename, "No filename has been set for this build target");
     const ingredient::File archive = construct_archive_file(recipe, context);
     const LanguageTypePair key(Language::Binary, Type::Library);
     MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << recipe.uri());
@@ -65,7 +56,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 ingredient::File Archiver::construct_archive_file(model::Recipe &recipe, const Context &context) const
 {
     const std::filesystem::path dir = context.dirs().output();
-    const std::filesystem::path rel = construct_archive_filename(recipe);
+    const std::filesystem::path rel = *recipe.build_target().filename;
 
     ingredient::File archive(dir, rel);
     archive.set_overwrite(Overwrite::IfSame);

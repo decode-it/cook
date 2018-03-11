@@ -4,6 +4,7 @@
 #include "cook/model/Uri.hpp"
 #include "cook/model/Element.hpp"
 #include "cook/model/GlobInfo.hpp"
+#include "cook/model/BuildTarget.hpp"
 #include "cook/ingredient/Properties.hpp"
 #include "cook/ingredient/File.hpp"
 #include "cook/ingredient/KeyValue.hpp"
@@ -50,6 +51,9 @@ public:
     Files & ingredients(tag::File_t)                        { return files_; }
     KeyValues & ingredients(tag::KeyValue_t)                { return key_values_; }
 
+    const BuildTarget & build_target() const                { return build_target_; }
+    BuildTarget & build_target()                            { return build_target_; }
+
     const std::filesystem::path & working_directory() const;
     void set_working_directory(const std::filesystem::path & wd);
 
@@ -80,6 +84,7 @@ private:
     KeyValues key_values_;
     Dependencies dependencies_;
     bool allows_early_globbing_;
+    BuildTarget build_target_;
 };
 
 } }

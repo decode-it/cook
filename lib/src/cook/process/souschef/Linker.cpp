@@ -15,24 +15,6 @@ struct DummyLinker : public build::Command
     }
 };
 
-std::string construct_dynamic_library_name(const model::Recipe & recipe)
-{
-#if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << recipe.uri().as_relative().string('.') << ".dll"; });
-#else
-    return gubg::stream([&](auto & os) { os << "lib" << recipe.uri().as_relative().string('.') << ".so"; });
-#endif
-}
-
-std::string construct_executable_name(const model::Recipe & recipe)
-{
-#if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << recipe.uri().as_relative().string('.') << ".exe"; });
-#else
-    return gubg::stream([&](auto & os) { os << recipe.uri().as_relative().string('.'); });
-#endif
-}
-
 }
 
 Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
@@ -72,6 +54,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     }
 
     // create the archive
+    MSS(!!recipe.build_target().filename, "No filename has been set for this build target");
     const ingredient::File archive = construct_archive_file(recipe, context);
     const LanguageTypePair key(Language::Binary, Type::Library);
     MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << recipe.uri());
@@ -85,7 +68,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
 ingredient::File Linker::construct_archive_file(model::Recipe & recipe, const Context &context) const
 {
     const std::filesystem::path dir = context.dirs().output();
-    const std::filesystem::path rel = (recipe.type() == Type::Executable ? construct_executable_name(recipe) : construct_dynamic_library_name(recipe));
+    const std::filesystem::path rel = *recipe.build_target().filename;
 
     ingredient::File archive(dir, rel);
     archive.set_overwrite(Overwrite::IfSame);

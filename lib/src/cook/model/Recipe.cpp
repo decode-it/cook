@@ -19,7 +19,8 @@ Uri append_part(const Uri & uri, const Part & part)
 Recipe::Recipe(Book * book, const Part & part)
     : Element(append_part(book->uri(), part)),
       type_(Type::Undefined),
-      allows_early_globbing_(counter++%2 == 0)
+      allows_early_globbing_(counter++%2 == 0),
+      build_target_(uri().as_relative().string('.'))
 {
     set_parent(book);
 }
