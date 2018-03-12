@@ -87,7 +87,7 @@ void Recipe::set_working_directory(const std::filesystem::path & wd)
 void Recipe::stream(log::Scope &log, int level) const
 {
     auto scope = log.scope("recipe");
-    scope.attr("name", name()).attr("uri", uri());
+    scope.attr("name", name()).attr("uri", uri()).attr("type", type());
     if (scope(4+level))
     {
         {

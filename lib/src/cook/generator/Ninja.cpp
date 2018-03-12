@@ -25,8 +25,10 @@ namespace cook { namespace generator {
 
         ofs << "rule compile" << std::endl;
         ofs << "    command = g++ -std=c++17 -c $in -o $out" << std::endl;
-        ofs << "rule link" << std::endl;
+        ofs << "rule archive" << std::endl;
         ofs << "    command = ar crf $out $in" << std::endl;
+        ofs << "rule link" << std::endl;
+        ofs << "    command = g++ -std=c++17 -o $out $in" << std::endl;
 
         for (auto recipe: context.menu().topological_order_recipes())
         {

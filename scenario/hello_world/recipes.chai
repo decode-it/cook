@@ -1,5 +1,5 @@
 root.book("book", fun(book){
-    book.recipe("foobar", "library", fun(r){
+    book.recipe("foobar", fun(r){
         r.add("", "foo.*")
         r.add("", "bar.*")
     })

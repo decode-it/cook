@@ -17,7 +17,7 @@ std::filesystem::path RecipeNamer::dynamic_library_filename(const std::string & 
 #endif
 }
 
-std::filesystem::path RecipeNamer::static_library_filename(const std::string &build_target_name) const
+std::filesystem::path RecipeNamer::executable_filename(const std::string &build_target_name) const
 {
 #if BOOST_OS_WINDOWS
     return gubg::stream([&](auto & os) { os << build_target_name << ".exe"; });
@@ -26,7 +26,7 @@ std::filesystem::path RecipeNamer::static_library_filename(const std::string &bu
 #endif
 }
 
-std::filesystem::path RecipeNamer::executable_filename(const std::string &build_target_name) const
+std::filesystem::path RecipeNamer::static_library_filename(const std::string &build_target_name) const
 {
 #if BOOST_OS_WINDOWS
     return gubg::stream([&](auto & os) { os << build_target_name << ".lib"; });
