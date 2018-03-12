@@ -26,8 +26,9 @@ struct Graph
 
 struct Graph : public config::Graph
 {
-
     Graph() = default;
+
+    size_t num_vertices() const {return boost::num_vertices(g_);}
 
     vertex_descriptor goc_vertex(const FileLabel & path);
     vertex_descriptor add_vertex(CommandLabel ptr);

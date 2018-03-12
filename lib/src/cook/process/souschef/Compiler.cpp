@@ -24,6 +24,7 @@ Compiler::Compiler(Language language)
 Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
 {
     MSS_BEGIN(Result);
+    L(C(&file_command_graph)C(file_command_graph.num_vertices()));
 
     auto & g = file_command_graph;
 
@@ -32,6 +33,7 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     auto it = files.find(LanguageTypePair(language_, Type::Source));
     if (it == files.end())
         MSS_RETURN_OK();
+    L("Found source files for " << language_);
 
     build::CommandPtr cc = compile_command(context);
 
@@ -44,6 +46,7 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 
         MSG_MSS(files.insert(key, object).second, Error, "Object file '" << object << "' already present in " << recipe.uri());
 
+        L("Adding compile command");
         auto compile_vertex = g.add_vertex(cc);
         {
             auto source_vertex = g.goc_vertex(source.key());

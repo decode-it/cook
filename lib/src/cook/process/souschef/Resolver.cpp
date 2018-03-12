@@ -1,4 +1,5 @@
 #include "cook/process/souschef/Resolver.hpp"
+#include "cook/log/Scope.hpp"
 
 namespace cook { namespace process { namespace souschef { 
 
@@ -10,6 +11,7 @@ std::string Resolver::description() const
 Result Resolver::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
 {
     MSS_BEGIN(Result);
+    auto scope = log::Scope::top->scope("process");
     for (const auto &globber: recipe.globbings())
     {
         MSG_MSS(process_one(recipe, globber), Error, "Could not resolve " << globber << " for " << recipe.uri());
@@ -61,10 +63,17 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
 {
     MSS_BEGIN(bool);
 
+    auto scope = log::Scope::top->scope("process_one");
+    globber.stream(scope);
+
     // get the directory
     std::filesystem::path dir = globber.dir;
-    if (dir.is_relative())
-        dir = recipe.working_directory() / dir;
+    {
+        auto scop = scope.scope("directory");
+        if (dir.is_relative())
+            dir = recipe.working_directory() / dir;
+        scop.attr("dir", dir);
+    }
 
     bool error_occured = false;
 
@@ -72,10 +81,14 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
     auto file_callback = [&](const std::filesystem::path & fn)
     {
         MSS_BEGIN(bool);
+        L(C(fn));
+        auto scop = scope.scope("file");
+        scop.attr("full_name", fn);
 
         // extract the dir and the fn part
         std::filesystem::path f_dir, f_rel;
         extract_dir(gubg::make_range(fn), gubg::make_range(dir), f_dir, f_rel);
+        scop.attr("dir", f_dir).attr("rel", f_rel);
 
         // resolve the file if possible
         ingredient::File file(f_dir, f_rel);

@@ -3,12 +3,14 @@
 
 #include "cook/ingredient/Collection.hpp"
 #include "cook/LanguageTypePair.hpp"
+#include "cook/log/Scope.hpp"
 #include "gubg/mss.hpp"
 #include <map>
 
 namespace cook { namespace ingredient {
 
-template <typename Ingredient> class Ingredients
+template <typename Ingredient>
+class Ingredients
 {
     using IngredientMap = std::map<LanguageTypePair, Collection<Ingredient>>;
 
@@ -106,7 +108,6 @@ public:
 
         MSS_END();
     }
-
 
 private:
     template <typename Ingredient_, typename Ingredients_>

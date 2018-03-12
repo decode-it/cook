@@ -12,6 +12,13 @@ class RecipeFilteredGraph : public build::config::Graph
 public:
     explicit RecipeFilteredGraph(build::GraphPtr ptr);
 
+    size_t num_vertices() const
+    {
+        if (!ptr_)
+            return 0;
+        return ptr_->num_vertices();
+    }
+
     vertex_descriptor goc_vertex(const FileLabel & path);
     vertex_descriptor add_vertex(CommandLabel ptr);
     Result add_edge(vertex_descriptor src, vertex_descriptor tgt);

@@ -32,6 +32,7 @@ Result RecipeFilteredGraph::topological_commands(std::vector<vertex_descriptor> 
 
     std::vector<vertex_descriptor> cmds;
     MSS(ptr_->topological_commands(cmds));
+    L(C(cmds.size()));
 
     for(auto vd : cmds)
         if(command_vertices_.find(vd) != command_vertices_.end())

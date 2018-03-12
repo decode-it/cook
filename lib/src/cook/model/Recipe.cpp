@@ -84,10 +84,41 @@ void Recipe::set_working_directory(const std::filesystem::path & wd)
     wd_ = wd;
 }
 
-void Recipe::stream(log::Scope &scope, int level) const
+void Recipe::stream(log::Scope &log, int level) const
 {
-    auto scop = scope.scope("recipe");
-    scop.attr("name", name()).attr("uri", uri());
+    auto scope = log.scope("recipe");
+    scope.attr("name", name()).attr("uri", uri());
+    if (scope(4+level))
+    {
+        {
+            auto scop = scope.scope("files");
+            for (const auto &p: files_)
+            {
+                auto sco = scop.scope("entry");
+                p.first.stream(sco);
+                for (const auto &e: p.second)
+                {
+                    auto sc = sco.scope("file");
+                    sc.attr("full_name", e.key()).attr("dir", e.dir()).attr("rel", e.rel());
+                }
+            }
+        }
+        {
+            auto scop = scope.scope("key_values");
+            for (const auto &p: key_values_)
+            {
+                auto sco = scop.scope("entry");
+                p.first.stream(sco);
+                for (const auto &e: p.second)
+                {
+                    auto sc = sco.scope("key_value");
+                    sc.attr("key", e.key());
+                    if (e.has_value())
+                        sc.attr("value", e.value());
+                }
+            }
+        }
+    }
 }
 
 } }

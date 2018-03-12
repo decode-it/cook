@@ -91,7 +91,7 @@ Result Menu::construct_()
     using DependencyVertex = boost::graph_traits<DependencyGraph::Graph>::vertex_descriptor;
     using ComponentVertex = boost::graph_traits<ComponentGraph::Graph>::vertex_descriptor;
 
-    // build the dependnecy graph
+    // build the dependency graph
     MSS(algo::make_DependencyGraph(gubg::make_range(root_recipes()), dependency_graph_.graph, dependency_graph_.translation_map));
 
     // create the topological order

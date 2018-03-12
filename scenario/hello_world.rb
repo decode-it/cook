@@ -6,6 +6,13 @@ test_case("hello_world") do
     should = nil
     cmd = [cook_fn]
     cmd << "-v 3"
+    section("negative") do
+        should = :fail
+        section("input file") do
+            cmd << "-f scenario/hello_world/recipes.chai"
+            section("recipe /unknown/recipe"){cmd << "/unknown/recipe"}
+        end
+    end
     section("positive") do
         should = :pass
         section("help"){cmd << "-h"}
@@ -17,13 +24,6 @@ test_case("hello_world") do
                 section("naft"){cmd << "-g ninja"}
                 cmd << "/a/b"
             end
-        end
-    end
-    section("negative") do
-        should = :fail
-        section("input file") do
-            cmd << "-f scenario/hello_world/recipes.chai"
-            section("recipe /unknown/recipe"){cmd << "/unknown/recipe"}
         end
     end
     sh(cmd.flatten*' ') do |t,args|

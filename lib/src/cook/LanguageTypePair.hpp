@@ -3,6 +3,7 @@
 
 #include "cook/Language.hpp"
 #include "cook/Type.hpp"
+#include "cook/log/Scope.hpp"
 #include <utility>
 #include <ostream>
 
@@ -25,6 +26,12 @@ struct LanguageTypePair
     bool operator==(const LanguageTypePair & rhs) const { return to_pair() == rhs.to_pair(); }
 
     std::pair<Language, Type> to_pair() const { return std::make_pair(language, type); }
+
+    void stream(log::Scope &log) const
+    {
+        auto scope = log.scope("language_type");
+        scope.attr("language", language).attr("type", type);
+    }
 };
 
 inline std::ostream &operator<<(std::ostream &os, const LanguageTypePair &pair)

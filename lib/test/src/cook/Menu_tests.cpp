@@ -23,7 +23,7 @@ bool is_topological_order(std::list<Recipe *> & recipes)
             auto dep_it = std::find(recipes.begin(), recipe_it, dep);
             REQUIRE(dep_it != recipe_it);
 
-            // and not llater
+            // and not later
             REQUIRE(std::find(recipe_it, recipes.end(), dep) == recipes.end());
         }
     }

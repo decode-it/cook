@@ -70,7 +70,7 @@ public:
     void set_type(const Type & type);
     Type type() const;
 
-    void stream(log::Scope &, int level = 1) const;
+    void stream(log::Scope &, int level = 0) const;
 
 private:
     Recipe(Recipe &&) = delete;

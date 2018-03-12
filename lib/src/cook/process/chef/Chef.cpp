@@ -1,4 +1,5 @@
 #include "cook/process/chef/Chef.hpp"
+#include "cook/log/Scope.hpp"
 
 using namespace cook::model;
 
@@ -7,6 +8,8 @@ namespace cook { namespace process { namespace chef {
 Result Chef::mis_en_place(Context & context)
 {
     MSS_BEGIN(Result);
+
+    auto scope = log::Scope::top->scope("mis_en_place");
 
     Menu & menu = context.menu();
 
@@ -27,6 +30,8 @@ Result Chef::mis_en_place(Context & context)
         MSS(!!graph);
 
         MSS(mis_en_place_(*recipe, *graph, context, *brigaqde));
+
+        recipe->stream(scope, -1);
     }
 
     MSS_END();

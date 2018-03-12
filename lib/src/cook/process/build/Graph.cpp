@@ -49,7 +49,8 @@ const Graph::Label & Graph::operator[](vertex_descriptor vd) const
 Result Graph::topological_commands(std::vector<vertex_descriptor> & commands) const
 {
     MSS_BEGIN(Result);
-    std::vector<vertex_descriptor> top_order(boost::num_vertices(g_));
+    std::vector<vertex_descriptor> top_order(num_vertices());
+    L(C(top_order.size()));
 
     try
     {
@@ -66,7 +67,7 @@ Result Graph::topological_commands(std::vector<vertex_descriptor> & commands) co
         const Label & l = g_[vd];
         auto visitor = [&](auto && arg)
         {
-            using T = decltype(arg);
+            using T = std::decay_t<decltype(arg)>;
             if (std::is_same<T, CommandLabel>::value)
                 commands.push_back(vd);
         };
