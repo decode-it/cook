@@ -16,6 +16,8 @@ namespace cook { namespace generator {
 class Interface
 {
 public:
+    virtual ~Interface() {}
+
     virtual std::string name() const = 0;
 
     virtual Result set_option(const std::string & option) = 0;

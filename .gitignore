@@ -17,3 +17,5 @@ build.ninja
 recipes.chai.user
 compile_commands.json
 fontconfig/
+CMakeLists.txt
+recipes.naft

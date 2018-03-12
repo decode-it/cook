@@ -4,6 +4,7 @@
 #include "cook/generator/graphviz/Component.hpp"
 #include "cook/generator/CMake.hpp"
 #include "cook/generator/Naft.hpp"
+#include "cook/generator/Ninja.hpp"
 #include "gubg/mss.hpp"
 #include <cassert>
 
@@ -18,14 +19,14 @@ bool Context::initialize()
 {
     MSS_BEGIN(bool);
 
-    // add the generator
+    // add the generators
     MSS(register_generator(std::make_shared<generator::graphviz::Dependency>()));
     MSS(register_generator(std::make_shared<generator::graphviz::Component>()));
     MSS(register_generator(std::make_shared<generator::CMake>()));
     MSS(register_generator(std::make_shared<generator::Naft>()));
+    MSS(register_generator(std::make_shared<generator::Ninja>()));
 
     MSS_END();
-
 }
 
 Result Context::initialize_menu(const std::list<model::Recipe*> & root_recipes)

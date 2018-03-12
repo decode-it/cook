@@ -14,6 +14,7 @@ test_case("hello_world") do
             section("recipe /a/b") do
                 section("naft"){cmd << "-g naft"}
                 section("naft"){cmd << "-g CMake"}
+                section("naft"){cmd << "-g ninja"}
                 cmd << "/a/b"
             end
         end
