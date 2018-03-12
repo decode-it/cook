@@ -26,11 +26,11 @@ Result RecipeFilteredGraph::add_edge(vertex_descriptor consumer, vertex_descript
     return ptr_->add_edge(consumer, producer);
 }
 
-Result RecipeFilteredGraph::topological_commands(std::vector<vertex_descriptor> & commands) const
+Result RecipeFilteredGraph::topological_commands(OrderedVertices & commands) const
 {
     MSS_BEGIN(Result);
 
-    std::vector<vertex_descriptor> cmds;
+    OrderedVertices cmds;
     MSS(ptr_->topological_commands(cmds));
     L(C(cmds.size()));
 
@@ -49,6 +49,15 @@ const RecipeFilteredGraph::Label & RecipeFilteredGraph::operator[](vertex_descri
 gubg::Range<RecipeFilteredGraph::CommandVertexIterator> RecipeFilteredGraph::command_vertices() const
 {
     return gubg::make_range(command_vertices_);
+}
+
+void RecipeFilteredGraph::input_output(Vertices &inputs, Vertices &outputs, vertex_descriptor command) const
+{
+    inputs.clear();
+    outputs.clear();
+    if (command_vertices_.find(command) == command_vertices_.end())
+        return;
+    ptr_->input_output(inputs, outputs, command);
 }
 
 } }

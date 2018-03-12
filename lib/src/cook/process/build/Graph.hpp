@@ -6,6 +6,8 @@
 #include "boost/graph/adjacency_list.hpp"
 #include <variant>
 #include <memory>
+#include <vector>
+#include <list>
 
 namespace cook { namespace process { namespace build {
 
@@ -19,7 +21,10 @@ struct Graph
     using Label = std::variant<FileLabel, CommandLabel>;
     using graph_type = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, Label>;
     using vertex_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
-    using adjcent_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
+    using adjacent_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
+
+    using OrderedVertices = std::vector<vertex_descriptor>;
+    using Vertices = std::list<vertex_descriptor>;
 };
 
 }
@@ -37,6 +42,8 @@ struct Graph : public config::Graph
     Result topological_commands(std::vector<vertex_descriptor> & commands) const;
 
     const Label & operator[](vertex_descriptor vd) const;
+
+    void input_output(Vertices &inputs, Vertices &outputs, vertex_descriptor command) const;
 
 private:
     Graph(const Graph &) = delete;

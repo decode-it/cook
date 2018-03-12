@@ -77,6 +77,17 @@ Result Graph::topological_commands(std::vector<vertex_descriptor> & commands) co
     MSS_END();
 }
 
+void Graph::input_output(Vertices &inputs, Vertices &outputs, vertex_descriptor command) const
+{
+    auto inputs_pair = boost::adjacent_vertices(command, g_);
+    for (; inputs_pair.first != inputs_pair.second; ++inputs_pair.first)
+        inputs.push_back(*inputs_pair.first);
+
+    auto outputs_pair = boost::inv_adjacent_vertices(command, g_);
+    for (; outputs_pair.first != outputs_pair.second; ++outputs_pair.first)
+        outputs.push_back(*outputs_pair.first);
+}
+
 } } }
 
 

@@ -18,11 +18,11 @@ test_case("hello_world") do
         section("help"){cmd << "-h"}
         section("input file") do
             cmd << "-f scenario/hello_world/recipes.chai"
-            section("recipe /a/b") do
+            section("recipe /book/main") do
                 section("naft"){cmd << "-g naft"}
                 section("naft"){cmd << "-g CMake"}
                 section("naft"){cmd << "-g ninja"}
-                cmd << "/a/b"
+                cmd << "/book/main"
             end
         end
     end

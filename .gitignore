@@ -5,6 +5,7 @@
 *.srctrldb
 *.srctrlbm
 *.srctrlprj
+*.so
 makefile
 .gubg/
 .bcook/

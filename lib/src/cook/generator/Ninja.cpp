@@ -22,6 +22,12 @@ namespace cook { namespace generator {
 
         MSS_BEGIN(Result);
         auto scope = log::Scope::top->scope("process");
+
+        ofs << "rule compile" << std::endl;
+        ofs << "    command = g++ -std=c++17 -c $in -o $out" << std::endl;
+        ofs << "rule link" << std::endl;
+        ofs << "    command = ar crf $out $in" << std::endl;
+
         for (auto recipe: context.menu().topological_order_recipes())
         {
             recipe->stream(scope);
@@ -30,7 +36,7 @@ namespace cook { namespace generator {
             L(C(build_graph_ptr));
             MSS(!!build_graph_ptr);
             auto &build_graph = *build_graph_ptr;
-            std::vector<vertex_descriptor> commands;
+            process::RecipeFilteredGraph::OrderedVertices commands;
             MSS(build_graph.topological_commands(commands));
 
             auto scop = scope.scope("commands");
@@ -45,6 +51,26 @@ namespace cook { namespace generator {
                 MSS(!!command_ptr);
                 auto &command = *command_ptr;
                 sco.attr("name", command->name());
+                process::RecipeFilteredGraph::Vertices inputs, outputs;
+                build_graph.input_output(inputs, outputs, vertex);
+                {
+                    auto sc = sco.scope("inputs");
+                    for (auto v: inputs)
+                        sc.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                }
+                {
+                    auto sc = sco.scope("outputs");
+                    for (auto v: outputs)
+                        sc.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                }
+
+                ofs << "build";
+                for (auto v: outputs)
+                    ofs << " " << std::get<process::build::config::Graph::FileLabel>(build_graph[v]).string();
+                ofs << ": " << command->name();
+                for (auto v: inputs)
+                    ofs << " " << std::get<process::build::config::Graph::FileLabel>(build_graph[v]).string();
+                ofs << std::endl;
             }
         }
         MSS_END();

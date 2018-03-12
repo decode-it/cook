@@ -23,11 +23,13 @@ public:
     vertex_descriptor add_vertex(CommandLabel ptr);
     Result add_edge(vertex_descriptor consumer, vertex_descriptor producer);
 
-    Result topological_commands(std::vector<vertex_descriptor> & commands) const;
+    Result topological_commands(OrderedVertices & commands) const;
 
     const Label & operator[](vertex_descriptor vd) const;
 
     gubg::Range<CommandVertexIterator> command_vertices() const;
+
+    void input_output(Vertices &inputs, Vertices &outputs, vertex_descriptor command) const;
 
 private:
     std::unordered_set<vertex_descriptor> command_vertices_;
