@@ -37,7 +37,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     for(ingredient::File & object : objects)
     {
         object.set_propagation(Propagation::Private);
-        MSS(g.add_edge(g.goc_vertex(object.key()), archive_vertex));
+        MSS(g.add_edge(archive_vertex, g.goc_vertex(object.key())));
     }
 
     // create the archive
@@ -47,7 +47,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << recipe.uri());
 
     // add the link in the execution graph
-    MSS(g.add_edge(archive_vertex, g.goc_vertex(archive.key())));
+    MSS(g.add_edge(g.goc_vertex(archive.key()), archive_vertex));
 
     MSS_END();
 }

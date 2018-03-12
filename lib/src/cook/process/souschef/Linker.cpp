@@ -40,7 +40,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     {
         // stop the propagation, this file is contained in the library
         object.set_propagation(Propagation::Private);
-        MSS(g.add_edge(g.goc_vertex(object.key()), link_vertex));
+        MSS(g.add_edge(link_vertex, g.goc_vertex(object.key())));
     }
 
     // link the libraries
@@ -50,7 +50,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
         lib.set_propagation(Propagation::Private);
 
         if (lib.owner() != nullptr)
-            MSS(g.add_edge(g.goc_vertex(lib.key()), link_vertex));
+            MSS(g.add_edge(link_vertex, g.goc_vertex(lib.key())));
     }
 
     // create the archive
@@ -60,7 +60,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << recipe.uri());
 
     // add the link in the execution graph
-    MSS(g.add_edge(link_vertex, g.goc_vertex(archive.key())));
+    MSS(g.add_edge(g.goc_vertex(archive.key()), link_vertex));
 
     MSS_END();
 }

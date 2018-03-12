@@ -50,11 +50,11 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         auto compile_vertex = g.add_vertex(cc);
         {
             auto source_vertex = g.goc_vertex(source.key());
-            MSS(g.add_edge(source_vertex, compile_vertex));
+            MSS(g.add_edge(compile_vertex, source_vertex));
         }
         {
             auto object_vertex = g.goc_vertex(object.key());
-            MSS(g.add_edge(compile_vertex, object_vertex));
+            MSS(g.add_edge(object_vertex, compile_vertex));
         }
     }
 

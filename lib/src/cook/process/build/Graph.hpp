@@ -32,7 +32,7 @@ struct Graph : public config::Graph
 
     vertex_descriptor goc_vertex(const FileLabel & path);
     vertex_descriptor add_vertex(CommandLabel ptr);
-    Result add_edge(vertex_descriptor src, vertex_descriptor tgt);
+    Result add_edge(vertex_descriptor consumer, vertex_descriptor producer);
 
     Result topological_commands(std::vector<vertex_descriptor> & commands) const;
 
