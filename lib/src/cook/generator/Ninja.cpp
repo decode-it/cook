@@ -23,12 +23,11 @@ namespace cook { namespace generator {
         MSS_BEGIN(Result);
         auto scope = log::Scope::top->scope("process");
 
-        ofs << "rule compile" << std::endl;
-        ofs << "    command = g++ -std=c++17 -c $in -o $out" << std::endl;
-        ofs << "rule archive" << std::endl;
-        ofs << "    command = ar crf $out $in" << std::endl;
-        ofs << "rule link" << std::endl;
-        ofs << "    command = g++ -std=c++17 -o $out $in" << std::endl;
+        //We use only one simple rule, basically deferring the actual command to $process_command, defined
+        //for each build seperately.
+        //Trying to create rules per command that include $in or $out will be much more difficult to generalize.
+        ofs << "rule process" << std::endl;
+        ofs << "    command = $process_command" << std::endl;
 
         for (auto recipe: context.menu().topological_order_recipes())
         {
@@ -49,7 +48,6 @@ namespace cook { namespace generator {
                 auto sco = scop.scope("vertex");
                 const auto &label = build_graph[vertex];
                 auto command_ptr = std::get_if<process::build::CommandPtr>(&label);
-                /* auto command_ptr = std::get_if<std::filesystem::path>(&label); */
                 MSS(!!command_ptr);
                 auto &command = *command_ptr;
                 sco.attr("name", command->name());
@@ -66,12 +64,47 @@ namespace cook { namespace generator {
                         sc.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
                 }
 
+                //Lambdas that stream the input and output files, prepended with a space.
+                auto stream_inputs = [&](){
+                    for (auto v: inputs)
+                        ofs << " " << std::get<process::build::config::Graph::FileLabel>(build_graph[v]).string();
+                };
+                auto stream_outputs = [&](){
+                    for (auto v: outputs)
+                        ofs << " " << std::get<process::build::config::Graph::FileLabel>(build_graph[v]).string();
+                };
+
+                const auto cmd = command->name();
+
+                //The build basically specifies the dependency between the output and input files
                 ofs << "build";
-                for (auto v: outputs)
-                    ofs << " " << std::get<process::build::config::Graph::FileLabel>(build_graph[v]).string();
-                ofs << ": " << command->name();
-                for (auto v: inputs)
-                    ofs << " " << std::get<process::build::config::Graph::FileLabel>(build_graph[v]).string();
+                stream_outputs();
+                ofs << ": process";
+                stream_inputs();
+                ofs << std::endl;
+
+                //For each build, we have to specify the full $process_command
+                ofs << "    process_command = ";
+                if (false) {}
+                else if (cmd == "compile")
+                {
+                    ofs << "g++ -std=c++17 -c";
+                    stream_inputs();
+                    ofs <<  " -o";
+                    stream_outputs();
+                }
+                else if (cmd == "archive")
+                {
+                    ofs << "ar crf";
+                    stream_outputs();
+                    stream_inputs();
+                }
+                else if (cmd == "link")
+                {
+                    ofs << "g++ -std=c++17 -o";
+                    stream_outputs();
+                    stream_inputs();
+                }
                 ofs << std::endl;
             }
         }
