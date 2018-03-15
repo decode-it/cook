@@ -2,6 +2,7 @@
 #include "cook/app/Version.hpp"
 #include "gubg/mss.hpp"
 #include "gubg/OptionParser.hpp"
+#include <algorithm>
 
 namespace cook { namespace app {
 

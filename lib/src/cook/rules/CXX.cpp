@@ -110,9 +110,11 @@ bool CXX::add_additional_path_(model::Recipe & recipe, const ingredient::File & 
     MSS_END();
 }
 
-bool CXX::type_from_extension(Type &dst, const std::string & extension, Type src)
+bool CXX::type_from_extension(Type &dst, const std::filesystem::path & ext, Type src)
 {
     MSS_BEGIN(bool);
+
+    const auto extension = ext.string();
 
     if (src == Type::Undefined)
     {

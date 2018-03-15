@@ -16,8 +16,8 @@ public:
     bool resolve_file(LanguageTypePair &key, ingredient::File &file) const override;
     bool add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const override;
 
-    static bool type_from_extension(Type &dst, const std::string & extension, Type src);
-    static bool type_from_extension(const std::string & extension) {Type type = Type::Undefined; return type_from_extension(type, extension, type);}
+    static bool type_from_extension(Type &dst, const std::filesystem::path & extension, Type src);
+    static bool type_from_extension(const std::filesystem::path & extension) {Type type = Type::Undefined; return type_from_extension(type, extension, type);}
 
 private:
     bool add_additional_path_(model::Recipe & recipe, const ingredient::File & file, Type type, Propagation propagation) const;

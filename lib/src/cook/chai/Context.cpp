@@ -5,6 +5,7 @@
 #include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
 #include "chaiscript/chaiscript.hpp"
+#include <stack>
 
 namespace cook { namespace chai {
 

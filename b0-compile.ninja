@@ -1,6 +1,6 @@
 #[output](script:
 #$gubg_mods=%w[std io algo math].map{|str|"gubg.#{str}"}
-#$gubg_fns=$gubg_mods.map{|mod|FileList.new("#{mod}/src/gubg/**/*.cpp").to_a}.flatten
+#$gubg_fns=$gubg_mods.map{|mod|FileList.new("#{mod}/src/gubg/**/*.cpp").exclude("gubg.io/src/gubg/file/Descriptor.cpp").to_a}.flatten
 #$gubg_test_fns=$gubg_mods.map{|mod|FileList.new("#{mod}/test/src/gubg/**/*_tests.cpp").to_a}.flatten
 #$cook_fns=FileList.new("lib/src/**/*.cpp").to_a
 #$cook_test_fns=FileList.new("lib/test/**/*_tests.cpp").to_a
@@ -31,8 +31,6 @@ build .b0/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/Option
 build .b0/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
     include_paths = $gubg_include_paths
 build .b0/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj: compile gubg.io/src/gubg/bitmagic/bitmagic.cpp
-    include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/file/Descriptor.cpp.obj: compile gubg.io/src/gubg/file/Descriptor.cpp
     include_paths = $gubg_include_paths
 build .b0/gubg.io/src/gubg/file/File.cpp.obj: compile gubg.io/src/gubg/file/File.cpp
     include_paths = $gubg_include_paths
@@ -269,7 +267,6 @@ build libb0-gubg.a: archive $
     .b0/gubg.io/src/gubg/OptionParser.cpp.obj $
     .b0/gubg.io/src/gubg/Strange.cpp.obj $
     .b0/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
-    .b0/gubg.io/src/gubg/file/Descriptor.cpp.obj $
     .b0/gubg.io/src/gubg/file/File.cpp.obj $
     .b0/gubg.io/src/gubg/file/Filesystem.cpp.obj $
     .b0/gubg.io/src/gubg/file/Forest.cpp.obj $
@@ -402,4 +399,5 @@ build b0-cook.exe: link $
     | libb0-cook.a libb0-gubg.a
 #}
     library_paths =  -L./
-    user_libs = -lb0-cook -lb0-gubg
+    user_libs_gcc = -lb0-cook -lb0-gubg
+    user_libs_msvc = libb0-cook.a libb0-gubg.a

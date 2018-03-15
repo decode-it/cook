@@ -1,4 +1,5 @@
 #include "cook/chai/Recipe.hpp"
+#include "cook/chai/Context.hpp"
 #include "gubg/chai/Module.hpp"
 
 namespace cook { namespace chai {

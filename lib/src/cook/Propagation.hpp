@@ -2,6 +2,7 @@
 #define HEADER_cook_Propagation_hpp_ALREADY_INCLUDED
 
 #include <ostream>
+#include <algorithm>
 
 namespace cook {
 

@@ -55,7 +55,7 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
     {
         Recipe r(recipe, context_, logger_);
         r.set_type(type);
-        r.set_working_directory(context_->current_working_directory());
+        r.set_working_directory(context_->current_working_directory().string());
         functor(r);
     }
 }

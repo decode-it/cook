@@ -1,8 +1,10 @@
 rule compile
     command = cl -c $in /Fo:$out $cflags $defines $include_paths
 rule link
-    command = link /OUT:$out $in
+    command = link /OUT:$out $in $user_libs_msvc
+rule archive
+    command = lib /OUT:$out $in
 
-cflags = /nologo /EHsc
+cflags = /nologo /EHsc /std:c++latest
 
 subninja b0-compile.ninja
