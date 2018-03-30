@@ -383,7 +383,8 @@ build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     | libb0-cook.a libb0-gubg.a
 #}
     library_paths =  -L./
-    user_libs = -lb0-cook -lb0-gubg
+    user_libs_gcc = -lb0-cook -lb0-gubg
+    user_libs_msvc = libb0-cook.a libb0-gubg.a
 
 #[output](script:
 #output.puts("build b0-cook.exe: link $")
