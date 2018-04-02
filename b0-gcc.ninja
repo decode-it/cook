@@ -1,6 +1,6 @@
 rule compile
     depfile = $out.d
-    command = g++ -std=c++17 $cflags $defines $include_paths -c $in -o $out -MMD -MF $out.d
+    command = g++ -std=c++17 -fsanitize=address $cflags $defines $include_paths -c $in -o $out -MMD -MF $out.d
 rule archive
     command = ar $aflags $out $in
 rule link
@@ -14,6 +14,6 @@ cflags = -g
 
 aflags = crf
 
-system_libs = -ldl -lstdc++fs -lpthread
+system_libs = -lasan -ldl -lstdc++fs -lpthread
 
 subninja b0-compile.ninja

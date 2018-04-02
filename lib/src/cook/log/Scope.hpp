@@ -2,6 +2,7 @@
 #define HEADER_cook_log_Scope_hpp_ALREADY_INCLUDED
 
 #include "gubg/naft/Node.hpp"
+#include "gubg/naft/Document.hpp"
 #include "gubg/debug.hpp"
 #include <iostream>
 #include <optional>
@@ -11,31 +12,39 @@ namespace cook { namespace log {
     class Scope
     {
     public:
-        static Scope *top;
-
         Scope(int level, gubg::naft::Node &node)
             : level_(level),
               node_(node)
         {
-            parent_ = top;
-            top = this;
+            parent_ = top_;
+            top_ = this;
         }
         Scope(int level, gubg::naft::Node &node, const std::string &tag)
             : level_(level),
               node_opt_{node.node(tag)},
               node_(*node_opt_)
         {
-            parent_ = top;
-            top = this;
+            parent_ = top_;
+            top_ = this;
         }
         Scope(Scope &&dying): level_(dying.level_), node_opt_(std::move(dying.node_opt_)), node_(!!node_opt_ ? *node_opt_ : dying.node_), parent_(dying.parent_)
         {
-            top = this;
+            top_ = this;
         }
         ~Scope()
         {
-            if (top == this)
-                top = parent_;
+            if (top_ == this)
+                top_ = parent_;
+        }
+
+        static Scope &top()
+        {
+            if (!top_)
+            {
+                auto *doc = new gubg::naft::Document(std::cout);
+                top_ = new Scope(0, *doc);
+            }
+            return *top_;
         }
 
         void set_level(int level) {level_ = level;}
@@ -105,6 +114,8 @@ namespace cook { namespace log {
 //        }
 
     private:
+        static Scope *top_;
+
         //A higher will log more
         int level_ = -1;
 

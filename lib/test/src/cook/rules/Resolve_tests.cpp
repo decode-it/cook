@@ -4,7 +4,8 @@
 #include "cook/model/Book.hpp"
 #include "cook/log/Root.hpp"
 #include "cook/process/souschef/Resolver.hpp"
-#include "cook/rules/CXX.hpp"
+#include "cook/rules/C_family.hpp"
+#include "gubg/mss.hpp"
 
 #define BASE_DIR "generated/"
 
@@ -57,6 +58,8 @@ bool check_if_equal(std::optional<T> t, T value, T unset_value)
 
 TEST_CASE("glob resolve tests", "[ut][glob]")
 {
+    S("");
+
     create_files();
 
     cook::log::Root log;
@@ -70,8 +73,6 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
         SECTION("dir as base dir")
         {
             globber.dir = BASE_DIR;
-
-
 
             SECTION("all files")
             {

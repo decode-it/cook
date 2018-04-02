@@ -8,7 +8,8 @@
 #include "cook/process/souschef/Linker.hpp"
 #include "cook/process/souschef/RecipeNamer.hpp"
 #include "cook/process/souschef/LinkLibrarySorter.hpp"
-#include "cook/rules/CXX.hpp"
+#include "cook/rules/C_family.hpp"
+#include "cook/rules/ASM.hpp"
 #include "gubg/stream.hpp"
 
 namespace cook { namespace process { namespace chef {
@@ -17,7 +18,7 @@ namespace  {
 
 const static unsigned int default_priority = 100;
 
-const static std::initializer_list<Language> default_supported_languages = { Language::C, Language::CXX };
+const static std::initializer_list<Language> default_supported_languages = { Language::C, Language::CXX, Language::ASM };
 
 }
 
@@ -103,6 +104,8 @@ std::list<SouschefPtr> LinkArchiveChef::generate_compile_only_steps_() const
 
     auto rule_set = rules::RuleSet::create();
     rule_set->add<rules::CXX>();
+    rule_set->add<rules::Cc>();
+    rule_set->add<rules::ASM>();
     result.push_back(std::make_shared<souschef::Resolver>(rule_set));
 
     result.push_back(std::make_shared<souschef::DependentPropagator>());

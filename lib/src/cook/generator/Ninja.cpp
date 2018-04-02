@@ -21,7 +21,7 @@ namespace cook { namespace generator {
         using vertex_descriptor = process::build::config::Graph::vertex_descriptor;
 
         MSS_BEGIN(Result);
-        auto scope = log::Scope::top->scope("process");
+        auto scope = log::Scope::top().scope("process");
 
         //We use only one simple rule, basically deferring the actual command to $process_command, defined
         //for each build seperately.

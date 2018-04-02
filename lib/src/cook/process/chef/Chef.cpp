@@ -9,7 +9,7 @@ Result Chef::mis_en_place(Context & context)
 {
     MSS_BEGIN(Result);
 
-    auto scope = log::Scope::top->scope("mis_en_place");
+    auto scope = log::Scope::top().scope("mis_en_place");
 
     Menu & menu = context.menu();
 

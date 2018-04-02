@@ -11,7 +11,7 @@ std::string Resolver::description() const
 Result Resolver::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
 {
     MSS_BEGIN(Result);
-    auto scope = log::Scope::top->scope("process");
+    auto scope = log::Scope::top().scope("process");
     for (const auto &globber: recipe.globbings())
     {
         MSG_MSS(process_one(recipe, globber), Error, "Could not resolve " << globber << " for " << recipe.uri());
@@ -63,7 +63,7 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
 {
     MSS_BEGIN(bool);
 
-    auto scope = log::Scope::top->scope("process_one");
+    auto scope = log::Scope::top().scope("process_one");
     globber.stream(scope);
 
     // get the directory

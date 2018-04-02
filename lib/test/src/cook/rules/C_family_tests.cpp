@@ -1,89 +1,11 @@
 #include "catch.hpp"
-#include "cook/rules/CXX.hpp"
+#include "cook/rules/C_family.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
+#include "gubg/debug.hpp"
 
 using namespace cook;
 
-TEST_CASE("cook::rules::CXX::type_from_extension tests", "[ut][rules][CXX][type_from_extension]")
-{
-    struct Scn
-    {
-        std::string extension;
-        Type type = Type::Undefined;
-    };
-    Scn scn;
-
-    struct Should
-    {
-        bool type_is_known = false;
-        Type type = Type::Undefined;
-    };
-    Should should;
-
-    SECTION("positive")
-    {
-        should.type_is_known = true;
-
-        SECTION("type not known upfront")
-        {
-            SECTION("source")
-            {
-                should.type = Type::Source;
-                SECTION(".cpp") { scn.extension = ".cpp"; }
-                SECTION(".cxx") { scn.extension = ".cxx"; }
-                SECTION(".CPP") { scn.extension = ".CPP"; }
-                SECTION(".CXX") { scn.extension = ".CXX"; }
-            }
-            SECTION("header")
-            {
-                should.type = Type::Header;
-                SECTION(".hpp") { scn.extension = ".hpp"; }
-                SECTION(".hxx") { scn.extension = ".hxx"; }
-                SECTION(".HPP") { scn.extension = ".HPP"; }
-                SECTION(".HXX") { scn.extension = ".HXX"; }
-            }
-            SECTION("object")
-            {
-                should.type = Type::Object;
-                SECTION(".o") { scn.extension = ".o"; }
-                SECTION(".obj") { scn.extension = ".obj"; }
-            }
-
-            SECTION("library")
-            {
-                should.type = Type::Library;
-                SECTION(".a") {scn.extension = ".a"; }
-                SECTION(".so") {scn.extension = ".so"; }
-                SECTION(".lib") {scn.extension = ".lib"; }
-                SECTION(".dll") {scn.extension = ".dll"; }
-            }
-        }
-        SECTION("type already known upfront")
-        {
-            scn.type = Type::Source;
-            should.type = scn.type;
-            SECTION(".cpp") { scn.extension = ".cpp"; }
-            SECTION(".hpp") { scn.extension = ".hpp"; }
-            SECTION(".unknown") { scn.extension = ".unkown"; }
-        }
-
-        REQUIRE(should.type != Type::Undefined);
-    }
-    SECTION("negative")
-    {
-        should.type_is_known = false;
-
-        SECTION("default") { }
-        SECTION(".unknown") { scn.extension = ".unkown"; }
-    }
-
-    Type type;
-    const auto type_is_known = rules::CXX::type_from_extension(type, scn.extension, scn.type);
-    REQUIRE(type_is_known == should.type_is_known);
-    if (type_is_known)
-        REQUIRE(type == should.type);
-}
 
 namespace  {
 
@@ -112,6 +34,7 @@ namespace  {
 
 TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
 {
+    S("");
     rules::CXX cxx;
     REQUIRE(cxx.language() == Language::CXX);
 
@@ -151,25 +74,6 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
             };
         }
 
-        SECTION("object file")
-        {
-            SECTION(".o") { scn.file_to_create = "test.o"; }
-
-            scn.resolved.type = Type::Object;
-            scn.resolved.overwrite = Overwrite::Never;
-            scn.resolved.propagation = Propagation::Private;
-            scn.num_added_files = 2;
-
-            scn.additional_check = [](const model::Recipe & recipe) {
-                auto ptr = recipe.files().find(LanguageTypePair(Language::CXX, Type::LibraryPath), "./");
-
-                REQUIRE(ptr);
-                REQUIRE(ptr->propagation() == Propagation::Private);
-            };
-        }
-
-
-
         scn.rel = scn.file_to_create;
     }
 
@@ -193,7 +97,8 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
         LanguageTypePair key = scn.key;
         ingredient::File file("./", scn.rel);
 
-        bool does_accept = cxx.accepts_file(key, file);
+        L(C(key)C(file));
+        const bool does_accept = cxx.accepts_file(key, file);
         REQUIRE(does_accept == scn.accepts);
 
         // if accept, then continue

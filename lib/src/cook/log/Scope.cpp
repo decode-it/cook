@@ -2,6 +2,6 @@
 
 namespace cook { namespace log { 
 
-    Scope *Scope::top = nullptr;
+    Scope *Scope::top_ = nullptr;
 
 } } 
