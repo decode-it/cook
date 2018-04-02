@@ -69,10 +69,14 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
     // get the directory
     std::filesystem::path dir = globber.dir;
     {
-        auto scop = scope.scope("directory");
+
         if (dir.is_relative())
             dir = recipe.working_directory() / dir;
-        scop.attr("dir", dir);
+
+        scope.scope("directory", [&](auto & n) {
+            n.attr("dir", dir);
+        });
+
     }
 
     bool error_occured = false;
@@ -82,13 +86,15 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
     {
         MSS_BEGIN(bool);
         L(C(fn));
-        auto scop = scope.scope("file");
-        scop.attr("full_name", fn);
 
         // extract the dir and the fn part
         std::filesystem::path f_dir, f_rel;
         extract_dir(gubg::make_range(fn), gubg::make_range(dir), f_dir, f_rel);
-        scop.attr("dir", f_dir).attr("rel", f_rel);
+
+        // some logging
+        scope.scope("file", [&](auto & n) {
+            n.attr("full_name", fn).attr("dir", f_dir).attr("rel", f_rel);
+        });
 
         // resolve the file if possible
         ingredient::File file(f_dir, f_rel);

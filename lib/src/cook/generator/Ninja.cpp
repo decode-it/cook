@@ -40,28 +40,36 @@ namespace cook { namespace generator {
             process::RecipeFilteredGraph::OrderedVertices commands;
             MSS(build_graph.topological_commands(commands));
 
-            auto scop = scope.scope("commands");
-            scop.attr("size", commands.size());
+            auto scop = scope.scope("commands", [&](auto & node) {
+                node.attr("size", commands.size());
+            });
 
             for (auto vertex: commands)
             {
-                auto sco = scop.scope("vertex");
+
                 const auto &label = build_graph[vertex];
                 auto command_ptr = std::get_if<process::build::CommandPtr>(&label);
                 MSS(!!command_ptr);
                 auto &command = *command_ptr;
-                sco.attr("name", command->name());
+
+                auto sco = scop.scope("vertex", [&](auto & n) {
+                    n.attr("name", command->name());
+                });
+
                 process::RecipeFilteredGraph::Vertices inputs, outputs;
                 build_graph.input_output(inputs, outputs, vertex);
                 {
-                    auto sc = sco.scope("inputs");
-                    for (auto v: inputs)
-                        sc.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                    sco.scope("inputs", [&](auto & n) {
+                        for (auto v: inputs)
+                            n.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                    });
                 }
                 {
-                    auto sc = sco.scope("outputs");
-                    for (auto v: outputs)
-                        sc.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                    sco.scope("outputs", [&](auto & n) {
+                        for (auto v: outputs)
+                            n.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                    });
+
                 }
 
                 //Lambdas that stream the input and output files, prepended with a space.

@@ -34,7 +34,7 @@ gubg::Range<Recipe::DependencyIterator> Recipe::dependencies() const
 {
     using Functor = util::ElementAt<1>;
 
-//    DependencyIterator begin()
+    //    DependencyIterator begin()
 
     return gubg::make_range(
                 boost::make_transform_iterator<Functor>(dependencies_.begin()),
@@ -86,8 +86,10 @@ void Recipe::set_working_directory(const std::filesystem::path & wd)
 
 void Recipe::stream(log::Scope &log, int level) const
 {
-    auto scope = log.scope("recipe");
-    scope.attr("name", name()).attr("uri", uri()).attr("type", type());
+    auto scope = log.scope("recipe", [&](auto & n) {
+        n.attr("name", name()).attr("uri", uri()).attr("type", type());
+    });
+
     if (scope(4+level))
     {
         {
@@ -98,8 +100,10 @@ void Recipe::stream(log::Scope &log, int level) const
                 p.first.stream(sco);
                 for (const auto &e: p.second)
                 {
-                    auto sc = sco.scope("file");
-                    sc.attr("full_name", e.key()).attr("dir", e.dir()).attr("rel", e.rel());
+                    sco.scope("file", [&](auto & n) {
+                        n.attr("full_name", e.key()).attr("dir", e.dir()).attr("rel", e.rel());
+                    });
+
                 }
             }
         }
@@ -111,10 +115,12 @@ void Recipe::stream(log::Scope &log, int level) const
                 p.first.stream(sco);
                 for (const auto &e: p.second)
                 {
-                    auto sc = sco.scope("key_value");
-                    sc.attr("key", e.key());
-                    if (e.has_value())
-                        sc.attr("value", e.value());
+                    sco.scope("key_value", [&](auto & n) {
+                        n.attr("key", e.key());
+                        if (e.has_value())
+                            n.attr("value", e.value());
+                    });
+
                 }
             }
         }

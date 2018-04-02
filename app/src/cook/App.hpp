@@ -3,7 +3,7 @@
 
 #include "cook/app/Options.hpp"
 #include "cook/chai/Context.hpp"
-#include "cook/log/Scope.hpp"
+#include "cook/log/Root.hpp"
 #include "gubg/naft/Document.hpp"
 
 namespace cook {
@@ -20,9 +20,7 @@ private:
     Result process_generators_() const;
     Result process_generator_(const std::string & name, const std::string & value) const;
 
-    gubg::naft::Document doc_{std::cout};
-    cook::log::Scope log_{0, doc_};
-
+    cook::log::Root log_;
     app::Options options_;
     cook::chai::Context kitchen_;
 };

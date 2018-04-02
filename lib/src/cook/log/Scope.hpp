@@ -13,12 +13,17 @@ namespace cook { namespace log {
     public:
         static Scope *top;
 
-        Scope(int level, gubg::naft::Node &node): level_(level), node_(node)
+        Scope(int level, gubg::naft::Node &node)
+            : level_(level),
+              node_(node)
         {
             parent_ = top;
             top = this;
         }
-        Scope(int level, gubg::naft::Node &node, const std::string &tag): level_(level), node_opt_{node.node(tag)}, node_(*node_opt_)
+        Scope(int level, gubg::naft::Node &node, const std::string &tag)
+            : level_(level),
+              node_opt_{node.node(tag)},
+              node_(*node_opt_)
         {
             parent_ = top;
             top = this;
@@ -41,43 +46,63 @@ namespace cook { namespace log {
         Scope scope(const std::string &tag, int level) const
         {
             if (!operator()(level))
-            {
-                Scope v{level_, node_};
-                return v;
-            }
-            Scope v{level_, node_, tag};
-            return v;
+                return Scope(level_, node_);
+
+            return Scope(level_, node_, tag);
         }
+
         Scope scope(const std::string &tag) const
         {
             if (!node_opt_)
-            {
-                Scope v{level_, node_};
-                return v;
-            }
-            Scope v{level_, node_, tag};
+                return Scope(level_, node_);
+
+            return Scope(level_, node_, tag);
+        }
+
+        template <typename Functor>
+        Scope scope(const std::string &tag, int level, Functor && functor) const
+        {
+            if (!operator()(level))
+                return Scope(level_, node_);
+
+            Scope v(level_, node_, tag);
+
+            if (!!v.node_opt_)
+                functor(v.node_);
+
             return v;
         }
 
-        template <typename Key, typename Value>
-        Scope &attr(const Key &key, const Value &value)
+        template <typename Functor>
+        Scope scope(const std::string &tag, Functor && functor) const
         {
-            if (!!node_opt_)
-                node_opt_->attr(key, value);
-            return *this;
+            if (!node_opt_)
+                return Scope(level_, node_);
+
+            Scope v(level_, node_, tag);
+            functor(v.node_);
+            return v;
         }
-        template <typename Key>
-        Scope &attr(const Key &key)
-        {
-            if (!!node_opt_)
-                node_opt_->attr(key);
-            return *this;
-        }
-        template <typename Key, typename Value>
-        Scope &attr(const std::pair<Key, Value> &pair)
-        {
-            return attr(pair.first, pair.second);
-        }
+
+//        template <typename Key, typename Value>
+//        Scope &attr(const Key &key, const Value &value)
+//        {
+//            if (!!node_opt_)
+//                node_opt_->attr(key, value);
+//            return *this;
+//        }
+//        template <typename Key>
+//        Scope &attr(const Key &key)
+//        {
+//            if (!!node_opt_)
+//                node_opt_->attr(key);
+//            return *this;
+//        }
+//        template <typename Key, typename Value>
+//        Scope &attr(const std::pair<Key, Value> &pair)
+//        {
+//            return attr(pair.first, pair.second);
+//        }
 
     private:
         //A higher will log more

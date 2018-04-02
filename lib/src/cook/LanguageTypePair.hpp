@@ -29,8 +29,10 @@ struct LanguageTypePair
 
     void stream(log::Scope &log) const
     {
-        auto scope = log.scope("language_type");
-        scope.attr("language", language).attr("type", type);
+        log.scope("language_type", [&](auto & node)
+        {
+            node.attr("language", language).attr("type", type);
+        });
     }
 };
 

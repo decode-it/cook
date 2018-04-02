@@ -68,34 +68,33 @@ bool Options::valid() const
 
 void Options::stream(log::Scope &log, int level) const
 {
-    auto options = log.scope("options", level);
+    auto options = log.scope("options", level, [&](auto & n) {
+        n.attr("output_path", output_path);
+        n.attr("temp_path", temp_path);
+        n.attr("toolchain", toolchain);
+        n.attr("clean", (clean ? "true" : "false"));
+        n.attr("print_help", (print_help ? "true" : "false"));
+        n.attr("verbosity", verbosity);
+    });
 
-    {
-        auto scope = options.scope("recipe_files");
+    options.scope("recipe_files", [&](auto & n) {
         for (const auto &fn: recipe_files)
-            scope.attr(fn);
-    }
-    options.scope("output_path").attr(output_path);
-    options.scope("temp_path").attr(temp_path);
-    options.scope("toolchain").attr(toolchain);
-    {
-        auto scope = options.scope("generators");
+            n.attr(fn);
+    });
+    options.scope("generators", [&](auto & n) {
         for (const auto &p: generators)
-            scope.attr(p);
-    }
-    {
-        auto scope = options.scope("variables");
+            n.attr(p.first, p.second);
+    });
+
+    options.scope("variables", [&](auto & n) {
         for (const auto &p: variables)
-            scope.attr(p);
-    }
-    {
-        auto scope = options.scope("recipes");
+            n.attr(p.first, p.second);
+    });
+
+    options.scope("recipes", [&](auto & n) {
         for (const auto &r: recipes)
-            scope.attr(r);
-    }
-    options.scope("clean").attr((clean ? "true" : "false"));
-    options.scope("print_help").attr((print_help ? "true" : "false"));
-    options.scope("verbosity").attr(verbosity);
+            n.attr(r);
+    });
 }
 
 } }

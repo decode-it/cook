@@ -87,8 +87,10 @@ Result App::process_generator_(const std::string & name, const std::string & val
 {
     MSS_BEGIN(Result);
 
-    auto scope = log::Scope::top->scope("process_generator", 3);
-    scope.attr("name", name).attr("value", value);
+    log::Scope::top->scope("process_generator", 3, [&](auto & n) {
+        n.attr("name", name).attr("value", value);
+    });
+
 
     Context::GeneratorPtr ptr = kitchen_.get_generator(name);
     MSG_MSS(!!ptr, Error, "unknown visualizer '" << name << "'");

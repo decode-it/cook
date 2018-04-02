@@ -31,8 +31,9 @@ namespace cook { namespace model {
 
         void stream(log::Scope &log, int level = 2) const
         {
-            auto scope = log.scope("GlobInfo");
-            scope.attr("dir", dir).attr("pattern", pattern);
+            log.scope("GlobInfo", [&](auto & node) {
+                node.attr("dir", dir).attr("pattern", pattern);
+            });
         }
     };
 
