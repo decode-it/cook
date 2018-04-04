@@ -72,20 +72,7 @@ namespace cook { namespace log {
         Scope scope(const std::string &tag, int level, Functor && functor) const
         {
             if (!operator()(level))
-                return Scope(level_, node_);
-
-            Scope v(level_, node_, tag);
-
-            if (!!v.node_opt_)
-                functor(v.node_);
-
-            return v;
-        }
-
-        template <typename Functor>
-        Scope scope(const std::string &tag, Functor && functor) const
-        {
-            if (!node_opt_)
+                //New level should not be logged
                 return Scope(level_, node_);
 
             Scope v(level_, node_, tag);
@@ -93,25 +80,17 @@ namespace cook { namespace log {
             return v;
         }
 
-//        template <typename Key, typename Value>
-//        Scope &attr(const Key &key, const Value &value)
-//        {
-//            if (!!node_opt_)
-//                node_opt_->attr(key, value);
-//            return *this;
-//        }
-//        template <typename Key>
-//        Scope &attr(const Key &key)
-//        {
-//            if (!!node_opt_)
-//                node_opt_->attr(key);
-//            return *this;
-//        }
-//        template <typename Key, typename Value>
-//        Scope &attr(const std::pair<Key, Value> &pair)
-//        {
-//            return attr(pair.first, pair.second);
-//        }
+        template <typename Functor>
+        Scope scope(const std::string &tag, Functor && functor) const
+        {
+            if (!node_opt_)
+                //Parent was not logged, new scope won't be logged either
+                return Scope(level_, node_);
+
+            Scope v(level_, node_, tag);
+            functor(v.node_);
+            return v;
+        }
 
     private:
         static Scope *top_;
