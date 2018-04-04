@@ -9,7 +9,7 @@ Result Chef::mis_en_place(Context & context)
 {
     MSS_BEGIN(Result);
 
-    auto scope = log::Scope::top().scope("mis_en_place");
+    auto ss = log::scope("mis_en_place");
 
     Menu & menu = context.menu();
 
@@ -31,7 +31,7 @@ Result Chef::mis_en_place(Context & context)
 
         MSS(mis_en_place_(*recipe, *graph, context, *brigaqde));
 
-        recipe->stream(scope, -1);
+        recipe->stream(-1);
     }
 
     MSS_END();

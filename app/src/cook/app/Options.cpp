@@ -66,35 +66,46 @@ bool Options::valid() const
     return parsed_;
 }
 
-void Options::stream(log::Scope &log, int level) const
+void Options::stream(log::Importance importance) const
 {
-    auto options = log.scope("options", level, [&](auto & n) {
-        n.attr("output_path", output_path);
-        n.attr("temp_path", temp_path);
-        n.attr("toolchain", toolchain);
-        n.attr("clean", (clean ? "true" : "false"));
-        n.attr("print_help", (print_help ? "true" : "false"));
-        n.attr("verbosity", verbosity);
-    });
+    const auto imp = log::importance(importance);
 
-    options.scope("recipe_files", [&](auto & n) {
-        for (const auto &fn: recipe_files)
-            n.attr(fn);
-    });
-    options.scope("generators", [&](auto & n) {
-        for (const auto &p: generators)
-            n.attr(p.first, p.second);
-    });
+    auto ss = log::scope("options", imp, [&](auto &n){
+            n.attr("output_path", output_path);
+            n.attr("temp_path", temp_path);
+            n.attr("toolchain", toolchain);
+            n.attr("clean", (clean ? "true" : "false"));
+            n.attr("print_help", (print_help ? "true" : "false"));
+            n.attr("verbosity", verbosity);
+            });
 
-    options.scope("variables", [&](auto & n) {
-        for (const auto &p: variables)
-            n.attr(p.first, p.second);
-    });
+    {
+        auto ss = log::scope("recipe_files", imp, [&](auto & n) {
+                for (const auto &fn: recipe_files)
+                n.attr(fn);
+                });
+    }
 
-    options.scope("recipes", [&](auto & n) {
-        for (const auto &r: recipes)
-            n.attr(r);
-    });
+    {
+        auto ss = log::scope("generators", imp, [&](auto & n) {
+                for (const auto &p: generators)
+                n.attr(p.first, p.second);
+                });
+    }
+
+    {
+        auto ss = log::scope("variables", imp, [&](auto & n) {
+                for (const auto &p: variables)
+                n.attr(p.first, p.second);
+                });
+    }
+
+    {
+        auto ss = log::scope("recipes", imp, [&](auto & n) {
+                for (const auto &r: recipes)
+                n.attr(r);
+                });
+    }
 }
 
 } }

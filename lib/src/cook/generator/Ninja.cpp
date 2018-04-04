@@ -21,7 +21,7 @@ namespace cook { namespace generator {
         using vertex_descriptor = process::build::config::Graph::vertex_descriptor;
 
         MSS_BEGIN(Result);
-        auto scope = log::Scope::top().scope("process");
+        auto ss = log::scope("process");
 
         //We use only one simple rule, basically deferring the actual command to $process_command, defined
         //for each build seperately.
@@ -31,7 +31,7 @@ namespace cook { namespace generator {
 
         for (auto recipe: context.menu().topological_order_recipes())
         {
-            recipe->stream(scope);
+            recipe->stream();
 
             auto build_graph_ptr = context.menu().recipe_filtered_graph(recipe);
             L(C(build_graph_ptr));
@@ -40,7 +40,7 @@ namespace cook { namespace generator {
             process::RecipeFilteredGraph::OrderedVertices commands;
             MSS(build_graph.topological_commands(commands));
 
-            auto scop = scope.scope("commands", [&](auto & node) {
+            auto ss = log::scope_("commands", [&](auto & node) {
                 node.attr("size", commands.size());
             });
 
@@ -52,20 +52,20 @@ namespace cook { namespace generator {
                 MSS(!!command_ptr);
                 auto &command = *command_ptr;
 
-                auto sco = scop.scope("vertex", [&](auto & n) {
+                auto ss = log::scope_("vertex", [&](auto & n) {
                     n.attr("name", command->name());
                 });
 
                 process::RecipeFilteredGraph::Vertices inputs, outputs;
                 build_graph.input_output(inputs, outputs, vertex);
                 {
-                    sco.scope("inputs", [&](auto & n) {
+                    auto ss = log::scope_("inputs", [&](auto & n) {
                         for (auto v: inputs)
                             n.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
                     });
                 }
                 {
-                    sco.scope("outputs", [&](auto & n) {
+                    auto ss = log::scope_("outputs", [&](auto & n) {
                         for (auto v: outputs)
                             n.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
                     });

@@ -27,12 +27,9 @@ struct LanguageTypePair
 
     std::pair<Language, Type> to_pair() const { return std::make_pair(language, type); }
 
-    void stream(log::Scope &log) const
+    void stream(log::Importance imp = log::Importance{}) const
     {
-        log.scope("language_type", [&](auto & node)
-        {
-            node.attr("language", language).attr("type", type);
-        });
+        auto ss = log::scope("language_type", imp, [&](auto &n){n.attr("language", language).attr("type", type);});
     }
 };
 

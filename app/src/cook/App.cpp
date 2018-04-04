@@ -2,6 +2,7 @@
 #include "cook/process/chef/CompileLinkArchive.hpp"
 #include "cook/algo/Book.hpp"
 #include "cook/util/File.hpp"
+#include "cook/log/Scope.hpp"
 #include "gubg/mss.hpp"
 #include <unordered_set>
 
@@ -24,11 +25,11 @@ Result App::process()
 {
     MSS_BEGIN(Result, logns);
 
-    log_.set_level(options_.verbosity);
+    log::set_level(options_.verbosity);
 
-    auto scope = log_.scope("process", 3);
+    auto ss = log::scope("App::process", -2, [&](auto &n){n.attr("verbosity", options_.verbosity);});
 
-    options_.stream(scope, 2);
+    options_.stream();
 
     // initialize the kitchen
     MSS(kitchen_.initialize());
@@ -38,33 +39,33 @@ Result App::process()
         MSS(kitchen_.set_variable(v.first, v.second));
 
     {
-        auto scop = scope.scope("Loading recipes", 3);
+        auto ss = log::scope("Loading recipes", -2);
         // process all files
         MSS(load_recipes_());
     }
 
     std::list<model::Recipe*> root_recipes;
     {
-        auto scop = scope.scope("root_recipes", 3);
+        auto ss = log::scope("Extracting root recipes", -2);
         MSS(extract_root_recipes_(root_recipes));
         for (auto rr: root_recipes)
-            rr->stream(scop);
+            rr->stream();
     }
 
     {
-        auto scop = scope.scope("menu", 3);
+        auto ss = log::scope("Preparing menu", -2);
         Result rc = kitchen_.initialize_menu(root_recipes);
 
         if (!rc)
             MSS(process_generators_());
 
-        kitchen_.menu().stream(scop, 3);
+        kitchen_.menu().stream();
 
         MSS(rc);
     }
 
     {
-        auto scop = scope.scope("Process with chef", 3);
+        auto ss = log::scope("Process with chef", -2);
         // process the menu with the chef
         {
             process::chef::LinkArchiveChef lac("default");
@@ -75,7 +76,7 @@ Result App::process()
     }
 
     {
-        auto scop = scope.scope("Process with generators", 3);
+        auto ss = log::scope("Process with generators", -2);
         // and now process all the requested visualizations
         MSS(process_generators_());
     }
@@ -87,9 +88,7 @@ Result App::process_generator_(const std::string & name, const std::string & val
 {
     MSS_BEGIN(Result);
 
-    log::Scope::top().scope("process_generator", 3, [&](auto & n) {
-        n.attr("name", name).attr("value", value);
-    });
+    auto ss = log::scope("process_generator", -2, [&](auto &n){n.attr("name", name).attr("value", value);});
 
     Context::GeneratorPtr ptr = kitchen_.get_generator(name);
     MSG_MSS(!!ptr, Error, "unknown visualizer '" << name << "'");

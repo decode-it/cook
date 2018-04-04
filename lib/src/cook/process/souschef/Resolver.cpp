@@ -11,7 +11,7 @@ std::string Resolver::description() const
 Result Resolver::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
 {
     MSS_BEGIN(Result);
-    auto scope = log::Scope::top().scope("process");
+    auto ss = log::scope("process");
     for (const auto &globber: recipe.globbings())
     {
         MSG_MSS(process_one(recipe, globber), Error, "Could not resolve " << globber << " for " << recipe.uri());
@@ -63,20 +63,18 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
 {
     MSS_BEGIN(bool);
 
-    auto scope = log::Scope::top().scope("process_one");
-    globber.stream(scope);
+    auto ss = log::scope("process_one");
+    globber.stream();
 
     // get the directory
     std::filesystem::path dir = globber.dir;
     {
-
         if (dir.is_relative())
             dir = recipe.working_directory() / dir;
 
-        scope.scope("directory", [&](auto & n) {
+        auto ss = log::scope_("directory", [&](auto & n) {
             n.attr("dir", dir);
         });
-
     }
 
     bool error_occured = false;
@@ -92,7 +90,7 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
         extract_dir(gubg::make_range(fn), gubg::make_range(dir), f_dir, f_rel);
 
         // some logging
-        scope.scope("file", [&](auto & n) {
+        auto ss = log::scope_("file", [&](auto & n) {
             n.attr("full_name", fn).attr("dir", f_dir).attr("rel", f_rel);
         });
 

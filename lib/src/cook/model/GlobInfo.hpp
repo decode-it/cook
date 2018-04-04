@@ -29,11 +29,9 @@ namespace cook { namespace model {
         std::optional<Overwrite> overwrite;
         std::function<bool (LanguageTypePair &, ingredient::File &)> filter_and_adaptor;
 
-        void stream(log::Scope &log, int level = 2) const
+        void stream(log::Importance imp = log::Importance{}) const
         {
-            log.scope("GlobInfo", [&](auto & node) {
-                node.attr("dir", dir).attr("pattern", pattern);
-            });
+            auto ss = log::scope("GlobInfo", imp, [&](auto &n){n.attr("dir", dir).attr("pattern", pattern);});
         }
     };
 

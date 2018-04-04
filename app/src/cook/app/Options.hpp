@@ -27,7 +27,7 @@ namespace cook { namespace app {
 
         bool parse(int argc, const char **argv);
         bool valid() const;
-        void stream(log::Scope &, int level = 2) const;
+        void stream(log::Importance importance = log::Importance{}) const;
 
     private:
         bool parsed_ = false;

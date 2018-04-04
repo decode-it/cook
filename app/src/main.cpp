@@ -30,6 +30,7 @@ int main(int argc, const char ** argv)
     MSS(app.initialize(options), std::cerr << "Error initializing application" << std::endl);
     MSS(app.process());
 
+    std::cout << std::endl;
 
     MSS_END();
 }

@@ -46,7 +46,7 @@ public:
     const RecipeFilteredGraph * recipe_filtered_graph(model::Recipe *recipe) const;
     RecipeFilteredGraph * recipe_filtered_graph(model::Recipe * recipe);
 
-    void stream(log::Scope &, int level) const;
+    void stream(log::Importance = log::Importance{}) const;
 
 private:
     Menu(const Menu &) = delete;

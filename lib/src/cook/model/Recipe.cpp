@@ -84,43 +84,43 @@ void Recipe::set_working_directory(const std::filesystem::path & wd)
     wd_ = wd;
 }
 
-void Recipe::stream(log::Scope &log, int level) const
+void Recipe::stream(log::Importance importance) const
 {
-    auto scope = log.scope("recipe", [&](auto & n) {
-        n.attr("name", name()).attr("uri", uri()).attr("type", type());
-    });
+    const auto imp = log::importance(importance);
 
-    if (scope(4+level))
+    auto ss = log::scope("recipe", imp, [&](auto &n){
+            n.attr("name", name()).attr("uri", uri()).attr("type", type());
+            });
+
+    if (log::do_log(imp-1))
     {
         {
-            auto scop = scope.scope("files");
+            auto ss = log::scope("files", imp);
             for (const auto &p: files_)
             {
-                auto sco = scop.scope("entry");
-                p.first.stream(sco);
+                auto ss = log::scope("entry", imp);
+                p.first.stream(imp);
                 for (const auto &e: p.second)
                 {
-                    sco.scope("file", [&](auto & n) {
-                        n.attr("full_name", e.key()).attr("dir", e.dir()).attr("rel", e.rel());
-                    });
-
+                    auto ss = log::scope("file", imp, [&](auto &n){
+                            n.attr("full_name", e.key()).attr("dir", e.dir()).attr("rel", e.rel());
+                            });
                 }
             }
         }
         {
-            auto scop = scope.scope("key_values");
+            auto ss = log::scope("key_values", imp);
             for (const auto &p: key_values_)
             {
-                auto sco = scop.scope("entry");
-                p.first.stream(sco);
+                auto ss = log::scope("entry", imp);
+                p.first.stream(imp);
                 for (const auto &e: p.second)
                 {
-                    sco.scope("key_value", [&](auto & n) {
-                        n.attr("key", e.key());
-                        if (e.has_value())
+                    auto ss = log::scope("key_value", imp, [&](auto &n){
+                            n.attr("key", e.key());
+                            if (e.has_value())
                             n.attr("value", e.value());
-                    });
-
+                            });
                 }
             }
         }

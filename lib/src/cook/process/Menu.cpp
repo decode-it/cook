@@ -136,11 +136,13 @@ const std::list<model::Recipe*> & Menu::root_recipes() const
     return root_recipes_;
 }
 
-void Menu::stream(log::Scope &scope, int level) const
+void Menu::stream(log::Importance imp) const
 {
-    auto scop = scope.scope("topological_order", level);
+    auto ss = log::scope("topological_order", imp);
     for (auto r: topological_order_)
-        scop.scope("recipe", level, [&](auto & n) { n.attr("uri", r->uri()); });
+    {
+        auto ss = log::scope("recipe", imp, [&](auto & n) { n.attr("uri", r->uri()); });
+    }
 }
 
 } }
