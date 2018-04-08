@@ -188,7 +188,7 @@ task :old_doc do
 end
 
 desc "Test"
-task :test, [:filter] => "b1:build" do |t,args|
+task :test, [:filter] => "build" do |t,args|
     FileList.new("scenario/*.rb").each{|fn|require_relative(fn)}
     GUBG::Catch::run(args[:filter])
 end

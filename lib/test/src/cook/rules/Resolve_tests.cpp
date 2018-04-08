@@ -2,7 +2,6 @@
 #include "cook/model/GlobInfo.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
-#include "cook/log/Root.hpp"
 #include "cook/process/souschef/Resolver.hpp"
 #include "cook/rules/C_family.hpp"
 #include "gubg/mss.hpp"
@@ -62,7 +61,6 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
 
     create_files();
 
-    cook::log::Root log;
     cook::model::GlobInfo globber;
 
     Scenario scn;
