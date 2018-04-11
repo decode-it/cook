@@ -1,13 +1,36 @@
 #include "cook/chai/Context.hpp"
 #include "cook/chai/Book.hpp"
 #include "cook/chai/Recipe.hpp"
-#include "cook/chai/Logger.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
 #include "chaiscript/chaiscript.hpp"
 #include <stack>
 
 namespace cook { namespace chai {
+
+namespace {
+
+struct Error : public chaiscript::exception::eval_error
+{
+    explicit Error(const Result & result)
+        : chaiscript::exception::eval_error(""),
+        result(result)
+    {
+    }
+
+    Result result;
+};
+
+struct Logger : public cook::Logger
+{
+    void log(const Result & result) const override
+    {
+        if (result.test_flag(Message::Error) || result.test_flag(Message::InternalError))
+            throw Error(result);
+    }
+};
+
+}
 
 struct Context::D
 {
@@ -30,10 +53,32 @@ struct Context::D
         auto & chai = engine;
 
         chai.add(chaiscript::fun(&Context::include_, kitchen), "include");
-        chai.add(book_module());
-        chai.add(recipe_module());
+        initialize_book();
+        initialize_recipe();
         chai.add(user_data_module());
         chai.add_global(chaiscript::var(root_book), "root");
+    }
+
+    void initialize_book()
+    {
+        engine.add(chaiscript::user_type<Book>(), "Book");
+        engine.add(chaiscript::fun(&Book::book), "book");
+        engine.add(chaiscript::fun(&Book::recipe_2), "recipe");
+        engine.add(chaiscript::fun(&Book::recipe_3), "recipe");
+        engine.add(chaiscript::fun(&Book::data), "data");
+
+    }
+
+    void initialize_recipe()
+    {
+        engine.add(chaiscript::user_type<Recipe>(), "Recipe");
+        engine.add(chaiscript::fun(&Recipe::add), "add");
+        engine.add(chaiscript::fun(&Recipe::depends_on), "depends_on");
+        engine.add(chaiscript::fun(&Recipe::set_type), "set_type");
+        engine.add(chaiscript::fun(&Recipe::library), "library");
+        engine.add(chaiscript::fun(&Recipe::library_path), "library_path");
+        engine.add(chaiscript::fun(&Recipe::include_path), "include_path");
+        engine.add(chaiscript::fun(&Recipe::data), "data");
     }
 
     std::filesystem::path top_level_path() const
@@ -68,14 +113,20 @@ Result Context::set_variable(const std::string & name, const std::string & value
     MSS_END();
 }
 
-bool Context::load(const std::string & recipe)
+Result Context::load(const std::string & recipe)
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     try
     {
         // create and initialize the engine
         include_(recipe);
+    }
+    // TODO: add better error handling
+    catch(Error & error)
+    {
+        std::cout << error.pretty_print();
+        MSS(error.result);
     }
     catch(chaiscript::exception::eval_error & error)
     {

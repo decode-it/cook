@@ -2,7 +2,6 @@
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/Context.hpp"
 #include "cook/Log.hpp"
-#include "gubg/chai/Module.hpp"
 
 namespace cook { namespace chai {
 
@@ -34,7 +33,6 @@ void Book::book(const std::string & uri_str, const std::function<void (Book)> &f
 void Book::recipe_2(const std::string & uri_str, const std::function<void (Recipe)> &functor)
 {
     recipe_3(uri_str, "", functor);
-
 }
 
 void Book::recipe_3(const std::string & uri_str, const std::string & type_str, const std::function<void (Recipe)> & functor)
@@ -53,27 +51,12 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
     else if (type_str == "executable") { type = Type::Executable; }
     else if (type_str == "library") { type = Type::Library; }
 
-
-
     {
         Recipe r(recipe, context_, logger_);
         r.set_type(type);
         r.set_working_directory(context_->current_working_directory().string());
         functor(r);
     }
-}
-
-gubg::chai::ModulePtr book_module()
-{
-    gubg::chai::ModulePtr ptr = std::make_unique<chaiscript::Module>();
-
-    ptr->add(chaiscript::user_type<Book>(), "Book");
-    ptr->add(chaiscript::fun(&Book::book), "book");
-    ptr->add(chaiscript::fun(&Book::recipe_2), "recipe");
-    ptr->add(chaiscript::fun(&Book::recipe_3), "recipe");
-    ptr->add(chaiscript::fun(&Book::data), "data");
-
-    return ptr;
 }
 
 } }

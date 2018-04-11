@@ -14,7 +14,7 @@ struct Context : public cook::Context
     const cook::Logger & logger() const override;
     Result set_variable(const std::string & name, const std::string & value) override;
 
-    bool load(const std::string &recipe);
+    Result load(const std::string &recipe);
     std::filesystem::path current_working_directory() const;
 
 

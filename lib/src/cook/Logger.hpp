@@ -13,11 +13,11 @@ public:
     virtual ~Logger() {}
 
     virtual void log(const Result & result) const = 0;
-    virtual void log(Message::Type type, const std::string & msg)
+    void log(Message::Type type, const std::string & msg)
     {
         log(Result() << Message(type, msg));
     }
-    virtual void log(Message::Type type, const std::string & msg, log::Ptr node)
+    void log(Message::Type type, const std::string & msg, log::Ptr node)
     {
         log(Result() << Message(type, node, msg));
     }

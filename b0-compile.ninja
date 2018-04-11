@@ -60,8 +60,6 @@ build .b0/lib/src/cook/chai/Book.cpp.obj: compile lib/src/cook/chai/Book.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/Context.cpp.obj: compile lib/src/cook/chai/Context.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/Logger.cpp.obj: compile lib/src/cook/chai/Logger.cpp
-    include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/Recipe.cpp.obj: compile lib/src/cook/chai/Recipe.cpp
     include_paths = $cook_lib_include_paths $chai_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/UserData.cpp.obj: compile lib/src/cook/chai/UserData.cpp
@@ -300,7 +298,6 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/algo/Book.cpp.obj $
     .b0/lib/src/cook/chai/Book.cpp.obj $
     .b0/lib/src/cook/chai/Context.cpp.obj $
-    .b0/lib/src/cook/chai/Logger.cpp.obj $
     .b0/lib/src/cook/chai/Recipe.cpp.obj $
     .b0/lib/src/cook/chai/UserData.cpp.obj $
     .b0/lib/src/cook/generator/CMake.cpp.obj $

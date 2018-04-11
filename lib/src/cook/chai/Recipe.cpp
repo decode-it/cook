@@ -71,14 +71,7 @@ gubg::chai::ModulePtr recipe_module()
 {
     gubg::chai::ModulePtr ptr = std::make_unique<chaiscript::Module>();
 
-    ptr->add(chaiscript::user_type<Recipe>(), "Recipe");
-    ptr->add(chaiscript::fun(&Recipe::add), "add");
-    ptr->add(chaiscript::fun(&Recipe::depends_on), "depends_on");
-    ptr->add(chaiscript::fun(&Recipe::set_type), "set_type");
-    ptr->add(chaiscript::fun(&Recipe::library), "library");
-    ptr->add(chaiscript::fun(&Recipe::library_path), "library_path");
-    ptr->add(chaiscript::fun(&Recipe::include_path), "include_path");
-    ptr->add(chaiscript::fun(&Recipe::data), "data");
+
 
     return ptr;
 }

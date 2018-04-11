@@ -4,7 +4,6 @@
 #include "cook/chai/UserData.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/Logger.hpp"
-#include "gubg/chai/ModuleFwd.hpp"
 
 namespace cook { namespace chai {
 
@@ -32,8 +31,6 @@ private:
     Logger * logger_;
     UserData data_;
 };
-
-gubg::chai::ModulePtr recipe_module();
 
 } }
 

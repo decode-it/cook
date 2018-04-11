@@ -8,8 +8,6 @@
 
 namespace cook { namespace chai {
 
-
-
 class UserData
 {
     struct D;
