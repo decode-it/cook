@@ -72,7 +72,7 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
         if (dir.is_relative())
             dir = recipe.working_directory() / dir;
 
-        auto ss = log::scope_("directory", [&](auto & n) {
+        auto ss = log::scope("directory", [&](auto & n) {
             n.attr("dir", dir);
         });
     }
@@ -90,7 +90,7 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
         extract_dir(gubg::make_range(fn), gubg::make_range(dir), f_dir, f_rel);
 
         // some logging
-        auto ss = log::scope_("file", [&](auto & n) {
+        auto ss = log::scope("file", [&](auto & n) {
             n.attr("full_name", fn).attr("dir", f_dir).attr("rel", f_rel);
         });
 

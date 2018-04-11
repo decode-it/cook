@@ -33,9 +33,11 @@ void Recipe::add(const std::string & dir, const std::string & pattern)
 
 void Recipe::depends_on(const std::string & dependency)
 {
+    auto s = log::scope("depends on", [&](auto & n) { n.attr("uri", recipe_->uri().string()).attr("dependency", dependency); });
+
     std::pair<model::Uri, bool> p = model::Uri::recipe_uri(dependency);
     if (!p.second)
-        logger_->LOG(Error, "bad uri");
+        logger_->log(Message::Error, "bad uri");
 
     recipe_->add_dependency(p.first);
 }

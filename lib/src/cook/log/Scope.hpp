@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_log_Scope_hpp_ALREADY_INCLUDED
-#define HEADER_cook_log_Scope_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_log_scopehpp_ALREADY_INCLUDED
+#define HEADER_cook_log_scopehpp_ALREADY_INCLUDED
 
 #include "cook/log/Node.hpp"
 #include <string>
@@ -36,7 +36,7 @@ namespace cook { namespace log {
     class Scope
     {
     public:
-        Scope(const Node::Ptr &node);
+        Scope(const Ptr &node);
         Scope(Scope &&dying);
         ~Scope();
 
@@ -46,12 +46,13 @@ namespace cook { namespace log {
 
         static std::ostream &indent_(std::ostream &os, bool increase);
 
-        Node::Ptr node_;
+        Ptr node_;
         bool do_log_ = false;
         bool is_open_ = true;
     };
 
     Scope scope(const std::string &tag, Importance importance);
+    Scope scope(const std::string &tag, unsigned int importance);
     Scope scope(const std::string &tag);
 
     template <typename Ftor>
@@ -65,7 +66,7 @@ namespace cook { namespace log {
         return Scope{Node::top().add(oss.str(), importance)};
     }
     template <typename Ftor>
-    Scope scope_(const std::string &tag, Ftor &&ftor) { return scope(tag, Importance{}, ftor); }
+    Scope scope(const std::string &tag, Ftor &&ftor, std::result_of_t<Ftor(details::Header &)> * /*dummy*/ = nullptr) { return scope(tag, Importance{}, ftor); }
 
     //TODO: Add variadic templates to allow a more flexible scope
     /*

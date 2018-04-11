@@ -8,11 +8,12 @@
 
 namespace cook { namespace log { 
 
+    class Node;
+    using Ptr = std::shared_ptr<Node>;
+
     class Node: public std::enable_shared_from_this<Node>
     {
     public:
-        using Ptr = std::shared_ptr<Node>;
-
         static Ptr &top_ptr()
         {
             static Ptr ptr;

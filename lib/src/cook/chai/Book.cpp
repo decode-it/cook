@@ -1,7 +1,8 @@
 #include "cook/chai/Book.hpp"
 #include "cook/chai/Recipe.hpp"
-#include "gubg/chai/Module.hpp"
 #include "cook/chai/Context.hpp"
+#include "cook/Log.hpp"
+#include "gubg/chai/Module.hpp"
 
 namespace cook { namespace chai {
 
@@ -15,9 +16,11 @@ Book::Book(model::Book * book, Context * context, Logger * logger)
 
 void Book::book(const std::string & uri_str, const std::function<void (Book)> &functor)
 {
+    auto ss = log::scope("goc book", [&](auto & n) {n.attr("parent uri", book_->uri()).attr("uri", uri_str); });
+
     std::pair<model::Uri, bool> uri = model::Uri::book_uri(uri_str);
     if (!uri.second)
-        logger_->LOG(Error, "Bad uri");
+        logger_->log(Message::Error, "Bad uri");
 
     model::Book * subbook = nullptr;
     Result rc = model::Book::goc_relative(subbook, uri.first, book_);
@@ -38,7 +41,7 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
 {
     std::pair<model::Uri, bool> uri = model::Uri::recipe_uri(uri_str);
     if (!uri.second)
-        logger_->LOG(Error, "Bad uri");
+        logger_->log(Message::Error, "Bad uri");
 
     model::Recipe * recipe = nullptr;
     Result rc = model::Book::goc_relative(recipe, uri.first, book_);

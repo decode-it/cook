@@ -1,9 +1,9 @@
 #include "catch.hpp"
-#include "cook/Result.hpp"
+#include "cook/Log.hpp"
 
 namespace {
 
-    template <typename T> T mss_result_to_T(cook::MessageType t)
+    template <typename T> T mss_result_to_T(cook::Message::Type t)
     {
         MSS_BEGIN(T);
         cook::Result res;
@@ -28,10 +28,9 @@ namespace {
 
     template <typename T> void test_result_to_T()
     {
-        REQUIRE(mss_result_to_T<T>(cook::MessageType::Success) == gubg::mss::detail::Traits<T>::Ok());
-        REQUIRE(mss_result_to_T<T>(cook::MessageType::Warning) == gubg::mss::detail::Traits<T>::Ok());
-        REQUIRE(mss_result_to_T<T>(cook::MessageType::Error) == gubg::mss::detail::Traits<T>::Error());
-        REQUIRE(mss_result_to_T<T>(cook::MessageType::InternalError) == gubg::mss::detail::Traits<T>::Error());
+        REQUIRE(mss_result_to_T<T>(cook::Message::Type::Warning) == gubg::mss::detail::Traits<T>::Ok());
+        REQUIRE(mss_result_to_T<T>(cook::Message::Type::Error) == gubg::mss::detail::Traits<T>::Error());
+        REQUIRE(mss_result_to_T<T>(cook::Message::Type::InternalError) == gubg::mss::detail::Traits<T>::Error());
     }
 
     struct Scenario
@@ -41,28 +40,22 @@ namespace {
         unsigned int expected_value = 1;
         unsigned int count = 0;
 
-        const static unsigned int SUCCESS_MULTIPLIER = 2;
         const static unsigned int WARNING_MULTIPLIER = 3;
         const static unsigned int ERROR_MULTIPLIER = 5;
 
 
-        void add(cook::MessageType type, unsigned int & calculated_value)
+        void add(cook::Message::Type type, unsigned int & calculated_value)
         {
             switch(type)
             {
-                case cook::MessageType::Success:
-                    expected_value *= SUCCESS_MULTIPLIER;
-                    messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= SUCCESS_MULTIPLIER; } ));
-                    break;
-
-                case cook::MessageType::Warning:
+                case cook::Message::Type::Warning:
                     expected_value *= WARNING_MULTIPLIER;
-                    messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= WARNING_MULTIPLIER; } ));
+                    messages.push_back(cook::Message(type, gubg::stream([&](auto & os) { calculated_value *= WARNING_MULTIPLIER; } )));
                     break;
 
-                case cook::MessageType::Error:
+                case cook::Message::Type::Error:
                     expected_value *= ERROR_MULTIPLIER;
-                    messages.push_back(cook::Message(type, [&](auto & os) { calculated_value *= ERROR_MULTIPLIER; } ));
+                    messages.push_back(cook::Message(type, gubg::stream([&](auto & os) { calculated_value *= ERROR_MULTIPLIER; } )));
                     break;
             }
         }
@@ -85,20 +78,14 @@ TEST_CASE("Result functionality", "[ut][result]")
         SECTION("no message") {}
         SECTION("warning")
         {
-            scn.add(cook::MessageType::Warning, multiply_result);
-            scn.count = 1;
-        }
-        SECTION("success")
-        {
-            scn.add(cook::MessageType::Success, multiply_result);
+            scn.add(cook::Message::Type::Warning, multiply_result);
             scn.count = 1;
         }
         SECTION("combination")
         {
-            scn.add(cook::MessageType::Success, multiply_result);
-            scn.add(cook::MessageType::Warning, multiply_result);
-            scn.add(cook::MessageType::Success, multiply_result);
-            scn.count = 3;
+            scn.add(cook::Message::Type::Warning, multiply_result);
+            scn.add(cook::Message::Type::Warning, multiply_result);
+            scn.count = 2;
         }
     }
 
@@ -108,38 +95,30 @@ TEST_CASE("Result functionality", "[ut][result]")
 
         SECTION("single failure")
         {
-            scn.add(cook::MessageType::Error, multiply_result);
+            scn.add(cook::Message::Type::Error, multiply_result);
             scn.count = 1;
         }
 
         SECTION("multiple failures")
         {
-            scn.add(cook::MessageType::Error, multiply_result);
-            scn.add(cook::MessageType::Error, multiply_result);
-            scn.add(cook::MessageType::Error, multiply_result);
+            scn.add(cook::Message::Type::Error, multiply_result);
+            scn.add(cook::Message::Type::Error, multiply_result);
+            scn.add(cook::Message::Type::Error, multiply_result);
             scn.count = 3;
         }
 
         SECTION("warning + failure")
         {
-            scn.add(cook::MessageType::Warning, multiply_result);
-            scn.add(cook::MessageType::Error, multiply_result);
-            scn.count = 2;
-        }
-        SECTION("failure + success")
-        {
-            scn.add(cook::MessageType::Error, multiply_result);
-            scn.add(cook::MessageType::Success, multiply_result);
+            scn.add(cook::Message::Type::Warning, multiply_result);
+            scn.add(cook::Message::Type::Error, multiply_result);
             scn.count = 2;
         }
         SECTION("combination with failure")
         {
-            scn.add(cook::MessageType::Success, multiply_result);
-            scn.add(cook::MessageType::Error, multiply_result);
-            scn.add(cook::MessageType::Warning, multiply_result);
-            scn.add(cook::MessageType::Success, multiply_result);
-            scn.add(cook::MessageType::Error, multiply_result);
-            scn.count = 5;
+            scn.add(cook::Message::Type::Error, multiply_result);
+            scn.add(cook::Message::Type::Warning, multiply_result);
+            scn.add(cook::Message::Type::Error, multiply_result);
+            scn.count = 3;
         }
     }
 
@@ -153,11 +132,11 @@ TEST_CASE("Result functionality", "[ut][result]")
         // visit all the messages
         {
             unsigned int counted = 0;
-            res.each_message([&](cook::MessageType type, cook::Message::Reporter reporter)
+            res.each_message([&](const cook::Message & msg)
                     {
                     ++counted;
-                    REQUIRE(reporter);
-                    reporter(std::cout);
+                    if (!msg.msg_.empty())
+                        std::cout << msg.msg_ << std::endl;
                     });
             REQUIRE(counted == scn.count);
         }
@@ -200,11 +179,11 @@ namespace {
 
 struct AggregationScenario
 {
-    std::vector<cook::MessageType> types;
+    std::vector<cook::Message::Type> types;
     std::optional<unsigned int> first_error_position;
 };
 
-cook::Result create(cook::MessageType type)
+cook::Result create(cook::Message::Type type)
 {
     cook::Result res;
     res << cook::Message(type);
@@ -231,10 +210,8 @@ TEST_CASE("aggregation test", "[ut][mss][result]")
 
     SECTION("only positive message")
     {
-        SECTION("single success")   { scn.types = {cook::MessageType::Success }; }
-        SECTION("single warning")   { scn.types = {cook::MessageType::Warning}; }
-        SECTION("single info")      { scn.types = {cook::MessageType::Info }; }
-        SECTION("combination")      { scn.types = {cook::MessageType::Info, cook::MessageType::Info, cook::MessageType::Warning, cook::MessageType::Success, cook::MessageType::Info }; }
+        SECTION("single warning")   { scn.types = {cook::Message::Type::Warning}; }
+        SECTION("combination")      { scn.types = {cook::Message::Type::Warning, cook::Message::Warning }; }
     }
 
     SECTION("failure")
@@ -242,8 +219,8 @@ TEST_CASE("aggregation test", "[ut][mss][result]")
         SECTION("at first")
         {
             scn.first_error_position = 0;
-            SECTION("error")            { scn.types = {cook::MessageType::Error}; }
-            SECTION("internal_error")   { scn.types = {cook::MessageType::InternalError}; }
+            SECTION("error")            { scn.types = {cook::Message::Type::Error}; }
+            SECTION("internal_error")   { scn.types = {cook::Message::Type::InternalError}; }
         }
     }
 
@@ -256,7 +233,7 @@ TEST_CASE("aggregation test", "[ut][mss][result]")
 
     // count all the messages
     unsigned int cnt = 0;
-    res.each_message([&cnt](auto t, const auto & rep) {++cnt; });
+    res.each_message([&cnt](const cook::Message & ) { ++cnt; });
 
     if (res)
         REQUIRE(cnt == scn.types.size());

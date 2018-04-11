@@ -40,7 +40,7 @@ namespace cook { namespace generator {
             process::RecipeFilteredGraph::OrderedVertices commands;
             MSS(build_graph.topological_commands(commands));
 
-            auto ss = log::scope_("commands", [&](auto & node) {
+            auto ss = log::scope("commands", [&](auto & node) {
                 node.attr("size", commands.size());
             });
 
@@ -52,20 +52,20 @@ namespace cook { namespace generator {
                 MSS(!!command_ptr);
                 auto &command = *command_ptr;
 
-                auto ss = log::scope_("vertex", [&](auto & n) {
+                auto ss = log::scope("vertex", [&](auto & n) {
                     n.attr("name", command->name());
                 });
 
                 process::RecipeFilteredGraph::Vertices inputs, outputs;
                 build_graph.input_output(inputs, outputs, vertex);
                 {
-                    auto ss = log::scope_("inputs", [&](auto & n) {
+                    auto ss = log::scope("inputs", [&](auto & n) {
                         for (auto v: inputs)
                             n.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
                     });
                 }
                 {
-                    auto ss = log::scope_("outputs", [&](auto & n) {
+                    auto ss = log::scope("outputs", [&](auto & n) {
                         for (auto v: outputs)
                             n.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
                     });

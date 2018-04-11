@@ -1,29 +1,15 @@
+#include "cook/Result.hpp"
 #include "cook/chai/Logger.hpp"
 #include "chaiscript/chaiscript.hpp"
 #include "gubg/stream.hpp"
 
 namespace cook { namespace chai {
 
-void Logger::log(LogType type, const Logger::LogFunction & function) const
-{
-    switch(type)
-    {
-    case LogType::Error:
-        throw chaiscript::exception::eval_error(gubg::stream(function));
-
-    default:
-        std::cout << type << ": " << gubg::stream(function) << std::endl;
-    }
-}
-
 void Logger::log(const Result & result) const
 {
-    result.each_message([](const auto & type, const auto & reporter)
+    result.each_message([](const Message & msg)
     {
-        std::cout << type << ": ";
-        if (reporter)
-            reporter(std::cout);
-        std::cout << std::endl;
+        std::cout << msg.type_ << ": " << msg.msg_ << std::endl;
     });
 }
 

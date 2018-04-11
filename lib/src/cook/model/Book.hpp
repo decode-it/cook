@@ -17,8 +17,6 @@ class Book : public Element
     using RecipeMap = std::map<Part, std::shared_ptr<Recipe>>;
 
 public:
-
-
     struct ExtractPointer
     {
         model::Book * operator()(const BookMap::value_type & p) const       { return p.second.get(); }

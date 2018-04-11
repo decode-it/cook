@@ -2,7 +2,7 @@
 
 namespace cook { namespace log { 
 
-    Scope::Scope(const Node::Ptr &node): node_(node), do_log_(log::do_log(node_->importance()))
+    Scope::Scope(const Ptr &node): node_(node), do_log_(log::do_log(node_->importance()))
     {
         if (do_log_)
             indent_(std::cout, true) << node_->header();
@@ -48,6 +48,11 @@ namespace cook { namespace log {
             is_open = false;
         }
         return os;
+    }
+
+    Scope scope(const std::string &tag, unsigned int importance)
+    {
+        return scope(tag, Importance(importance));
     }
 
     Scope scope(const std::string &tag, Importance importance)

@@ -9,7 +9,7 @@ Result Chef::mis_en_place(Context & context)
 {
     MSS_BEGIN(Result);
 
-    auto ss = log::scope("mis_en_place");
+    auto s = log::scope("mis_en_place");
 
     Menu & menu = context.menu();
 
@@ -20,16 +20,18 @@ Result Chef::mis_en_place(Context & context)
     // process every recipe in topological order
     for(model::Recipe * recipe : order)
     {
+        auto ss = log::scope("recipe", [&](auto & n) {n.attr(recipe->uri().string()); });
+
         // get the brigade for this recipe
-        const Brigade * brigaqde = nullptr;
-        MSS(find_brigade(brigaqde, recipe));
-        MSS(!!brigaqde);
+        const Brigade * brigade = nullptr;
+        MSS(find_brigade(brigade, recipe));
+        MSS(!!brigade);
 
         // get the graph
         RecipeFilteredGraph * graph = menu.recipe_filtered_graph(recipe);
         MSS(!!graph);
 
-        MSS(mis_en_place_(*recipe, *graph, context, *brigaqde));
+        MSS(mis_en_place_(*recipe, *graph, context, *brigade));
 
         recipe->stream(-1);
     }
@@ -41,11 +43,10 @@ Result Chef::mis_en_place_(model::Recipe & recipe, RecipeFilteredGraph & file_co
 {
     MSS_BEGIN(Result);
 
-    const std::string & name = recipe.uri().string();
 
     for(SouschefPtr souschef : brigade.souschefs)
     {
-        context.logger().LOG(Info, "[" << name << "]: " << souschef->description());
+        auto ss = log::scope("souschef", [&](auto & n) {n.attr("description", souschef->description()); });
         MSS(souschef->process(recipe, file_command_graph, context));
     }
 
@@ -55,6 +56,8 @@ Result Chef::mis_en_place_(model::Recipe & recipe, RecipeFilteredGraph & file_co
 Result Chef::find_brigade(const Brigade *& brigade, model::Recipe * recipe) const
 {
     MSS_BEGIN(Result);
+
+    auto s = log::scope("find brigade");
 
     for(auto it = brigade_priority_map_.begin(); it != brigade_priority_map_.end(); ++it)
     {

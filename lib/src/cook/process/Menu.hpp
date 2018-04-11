@@ -5,7 +5,7 @@
 #include "cook/process/RecipeFilteredGraph.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
-#include "cook/log/Scope.hpp"
+#include "cook/Log.hpp"
 #include <unordered_map>
 
 namespace cook { namespace process {
