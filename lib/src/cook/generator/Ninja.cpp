@@ -48,7 +48,7 @@ namespace cook { namespace generator {
             {
 
                 const auto &label = build_graph[vertex];
-                auto command_ptr = std::get_if<process::build::CommandPtr>(&label);
+                auto command_ptr = std::get_if<process::build::Graph::CommandLabel>(&label);
                 MSS(!!command_ptr);
                 auto &command = *command_ptr;
 

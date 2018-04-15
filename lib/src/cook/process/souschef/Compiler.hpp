@@ -2,7 +2,7 @@
 #define HEADER_cook_process_souschef_Compiler_hpp_ALREADY_INCLUDED
 
 #include "cook/process/souschef/Interface.hpp"
-#include "cook/process/build/Command.hpp"
+#include "cook/process/command/Interface.hpp"
 #include "gubg/stream.hpp"
 
 namespace cook { namespace process { namespace souschef {
@@ -17,7 +17,7 @@ public:
 
 private:
     virtual ingredient::File construct_object_file(const ingredient::File & source, model::Recipe &recipe, const Context &context) const;
-    virtual build::CommandPtr compile_command(const Context & context) const;
+    virtual command::Ptr compile_command(const Context & context) const;
 
 
     Language language_;

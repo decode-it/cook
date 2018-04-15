@@ -1,7 +1,7 @@
 #ifndef HEADER_cook_process_build_Graph_hpp_ALREADY_INCLUDED
 #define HEADER_cook_process_build_Graph_hpp_ALREADY_INCLUDED
 
-#include "cook/process/build/Command.hpp"
+#include "cook/process/command/Interface.hpp"
 #include "cook/model/Uri.hpp"
 #include "boost/graph/adjacency_list.hpp"
 #include <variant>
@@ -16,7 +16,7 @@ namespace config {
 struct Graph
 {
     using FileLabel = std::filesystem::path;
-    using CommandLabel = CommandPtr;
+    using CommandLabel = command::Ptr;
 
     using Label = std::variant<FileLabel, CommandLabel>;
     using graph_type = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, Label>;

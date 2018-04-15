@@ -15,7 +15,7 @@ namespace cook { namespace rules {
 
     bool C_family::accepts_file(const LanguageTypePair & key, const ingredient::File & file) const
     {
-        MSS_BEGIN(bool, "");
+        MSS_BEGIN(bool);
 
         if (key.language == language())
             //Language is already known and matches with ours: we accept always
