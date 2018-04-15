@@ -17,7 +17,7 @@ public:
 
 private:
     virtual ingredient::File construct_object_file(const ingredient::File & source, model::Recipe &recipe, const Context &context) const;
-    virtual command::Ptr compile_command(const Context & context) const;
+    virtual command::Ptr compile_command(const model::Recipe &recipe, const Context & context) const;
 
 
     Language language_;

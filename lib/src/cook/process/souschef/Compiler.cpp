@@ -1,4 +1,5 @@
 #include "cook/process/souschef/Compiler.hpp"
+#include "cook/process/command/gcclike/Compiler.hpp"
 
 namespace cook { namespace process { namespace souschef {
 
@@ -10,6 +11,11 @@ struct DummyCompiler : public command::Interface
     Result process(const std::list<std::filesystem::path> & input, const std::list<std::filesystem::path> & output) override
     {
         return Result();
+    }
+
+    void to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override
+    {
+
     }
 };
 
@@ -35,7 +41,7 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         MSS_RETURN_OK();
     L("Found source files for " << language_);
 
-    command::Ptr cc = compile_command(context);
+    command::Ptr cc = compile_command(recipe, context);
 
     for (const ingredient::File & source : it->second)
     {
@@ -74,9 +80,27 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
     return object;
 }
 
-command::Ptr Compiler::compile_command(const Context & context) const
+command::Ptr Compiler::compile_command(const model::Recipe & recipe, const Context & context) const
 {
-    return std::make_shared<DummyCompiler>();
+    std::shared_ptr<command::Compiler> cp = std::make_shared<command::gcclike::Compiler>();
+
+    std::set<Language> languages = { language_, Language::Undefined };
+
+    for (const auto & language : languages)
+    {
+        // add the include paths
+        for (const ingredient::File & f : recipe.files().range(LanguageTypePair(language_, Type::IncludePath)))
+            cp->add_include_path(f.dir());
+
+        // add the defines
+        for (const ingredient::KeyValue & f : recipe.key_values().range(LanguageTypePair(language_, Type::Define)))
+            if (f.has_value())
+                cp->add_define(f.key(), f.value());
+            else
+                cp->add_define(f.key());
+    }
+
+    return cp;
 }
 
 } } }

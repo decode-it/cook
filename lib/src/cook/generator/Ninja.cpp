@@ -1,6 +1,7 @@
 #include "cook/generator/Ninja.hpp"
 #include "cook/Context.hpp"
 #include "cook/log/Scope.hpp"
+#include "boost/iterator/function_output_iterator.hpp"
 
 namespace cook { namespace generator { 
 
@@ -56,30 +57,34 @@ namespace cook { namespace generator {
                     n.attr("name", command->name());
                 });
 
-                process::RecipeFilteredGraph::Vertices inputs, outputs;
-                build_graph.input_output(inputs, outputs, vertex);
+                std::list<std::filesystem::path> input_files, output_files;
+                auto input_it = boost::make_function_output_iterator([&](const auto & v) { input_files.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v])); });
+                auto output_it = boost::make_function_output_iterator([&](const auto & v) { output_files.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v])); });
+
+                build_graph.input_output(input_it, output_it, vertex);
+
                 {
                     auto ss = log::scope("inputs", [&](auto & n) {
-                        for (auto v: inputs)
-                            n.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                        for (const auto & f: input_files)
+                            n.attr("file", f);
                     });
                 }
                 {
                     auto ss = log::scope("outputs", [&](auto & n) {
-                        for (auto v: outputs)
-                            n.attr("file", std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                        for (const auto & f: output_files)
+                            n.attr("file", f);
                     });
 
                 }
 
                 //Lambdas that stream the input and output files, prepended with a space.
                 auto stream_inputs = [&](){
-                    for (auto v: inputs)
-                        ofs << " " << std::get<process::build::config::Graph::FileLabel>(build_graph[v]).string();
+                    for (const auto & f: input_files)
+                        ofs << " " << f.string();
                 };
                 auto stream_outputs = [&](){
-                    for (auto v: outputs)
-                        ofs << " " << std::get<process::build::config::Graph::FileLabel>(build_graph[v]).string();
+                    for (const auto & f: output_files)
+                        ofs << " " << f.string();
                 };
 
                 const auto cmd = command->name();
@@ -93,14 +98,8 @@ namespace cook { namespace generator {
 
                 //For each build, we have to specify the full $process_command
                 ofs << "    process_command = ";
+
                 if (false) {}
-                else if (cmd == "compile")
-                {
-                    ofs << "g++ -std=c++17 -c";
-                    stream_inputs();
-                    ofs <<  " -o";
-                    stream_outputs();
-                }
                 else if (cmd == "archive")
                 {
                     ofs << "ar crf";
@@ -112,6 +111,10 @@ namespace cook { namespace generator {
                     ofs << "g++ -std=c++17 -o";
                     stream_outputs();
                     stream_inputs();
+                }
+                else
+                {
+                    command->to_stream(ofs, input_files, output_files);
                 }
                 ofs << std::endl;
             }

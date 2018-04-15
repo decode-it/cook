@@ -51,14 +51,7 @@ gubg::Range<RecipeFilteredGraph::CommandVertexIterator> RecipeFilteredGraph::com
     return gubg::make_range(command_vertices_);
 }
 
-void RecipeFilteredGraph::input_output(Vertices &inputs, Vertices &outputs, vertex_descriptor command) const
-{
-    inputs.clear();
-    outputs.clear();
-    if (command_vertices_.find(command) == command_vertices_.end())
-        return;
-    ptr_->input_output(inputs, outputs, command);
-}
+
 
 } }
 

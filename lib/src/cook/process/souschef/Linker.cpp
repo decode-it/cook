@@ -13,6 +13,11 @@ struct DummyLinker : public command::Interface
     {
         return Result();
     }
+
+    void to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override
+    {
+
+    }
 };
 
 }

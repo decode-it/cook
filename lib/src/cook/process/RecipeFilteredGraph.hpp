@@ -29,7 +29,14 @@ public:
 
     gubg::Range<CommandVertexIterator> command_vertices() const;
 
-    void input_output(Vertices &inputs, Vertices &outputs, vertex_descriptor command) const;
+    template <typename InIt, typename OutIt>
+    void input_output(InIt in, OutIt out, vertex_descriptor command) const
+    {
+        if (command_vertices_.find(command) == command_vertices_.end())
+            return;
+
+        ptr_->input_output(in, out, command);
+    }
 
 private:
     std::unordered_set<vertex_descriptor> command_vertices_;

@@ -24,7 +24,6 @@ struct Graph
     using adjacent_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
 
     using OrderedVertices = std::vector<vertex_descriptor>;
-    using Vertices = std::list<vertex_descriptor>;
 };
 
 }
@@ -43,7 +42,15 @@ struct Graph : public config::Graph
 
     const Label & operator[](vertex_descriptor vd) const;
 
-    void input_output(Vertices &inputs, Vertices &outputs, vertex_descriptor command) const;
+    template <typename InIt, typename OutIt>
+    void input_output(InIt in, OutIt out, vertex_descriptor command) const
+    {
+        for(auto v : gubg::make_range(boost::adjacent_vertices(command, g_)))
+                *in++ = v;
+
+        for(auto v : gubg::make_range(boost::inv_adjacent_vertices(command, g_)))
+                *out++ = v;
+    }
 
 private:
     Graph(const Graph &) = delete;

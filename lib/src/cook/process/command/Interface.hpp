@@ -15,6 +15,7 @@ public:
 
     virtual std::string name() const = 0;
     virtual Result process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) = 0;
+    virtual void to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) = 0;
 };
 
 using Ptr = std::shared_ptr<Interface>;
