@@ -14,8 +14,7 @@ public:
     Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
 
 private:
-    virtual ingredient::File construct_archive_file(model::Recipe & recipe, const Context &context) const;
-    virtual command::Ptr archive_command(const Context & context) const;
+    virtual command::Ptr archive_command(const model::Recipe &recipe, const Context & context) const;
 };
 
 } } }

@@ -14,7 +14,7 @@ Result merge_(const model::Recipe & src_recipe, model::Recipe & dst_recipe, cons
 
     return src_ingredients.each([&](const LanguageTypePair & key, const auto & ingredient)
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(Result);
 
         if (ingredient.propagation() == Propagation::Public && selection(key))
             MSS(dst_ingredients.insert_or_merge(key, ingredient));
@@ -47,6 +47,11 @@ Result DependentPropagator::process(model::Recipe & recipe, RecipeFilteredGraph 
 
     for (const model::Recipe * src_recipe: recipe.dependencies())
     {
+        auto ss = log::scope("Merging recipes", [&](auto & n)
+        {
+            n.attr("src", src_recipe->uri()).attr("tgt", recipe.uri());
+        });
+
         MSS( merge_(*src_recipe, recipe, selection_, model::tag::File_t() ) );
         MSS( merge_(*src_recipe, recipe, selection_, model::tag::KeyValue_t() ) );
     }

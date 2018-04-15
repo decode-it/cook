@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_process_command_PriorityBased_hpp_ALREADY_INCLUDED
-#define HEADER_cook_process_command_PriorityBased_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_process_command_OrderedCommand_hpp_ALREADY_INCLUDED
+#define HEADER_cook_process_command_OrderedCommand_hpp_ALREADY_INCLUDED
 
 #include "cook/process/command/Interface.hpp"
 #include <list>

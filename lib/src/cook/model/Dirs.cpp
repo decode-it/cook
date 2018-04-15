@@ -2,6 +2,13 @@
 
 namespace cook { namespace model {
 
+Dirs::Dirs()
+{
+    set_recipe("./");
+    set_output("build");
+    set_temporary(".cook");
+}
+
 void Dirs::set_recipe(const std::filesystem::path & dir)
 {
     recipe_ = dir;

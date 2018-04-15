@@ -1,4 +1,4 @@
-#include "cook/process/command/PriorityBased.hpp"
+#include "cook/process/command/OrderedCommand.hpp"
 
 namespace cook { namespace process { namespace command {
 
@@ -44,7 +44,7 @@ void OrderedCommand::to_stream(std::ostream & oss, const ArgumentDesc & input_de
         }
     };
 
-    oss << command_ << " ";
+    oss << command_.string() << " ";
 
     // the first set of arguments
     each_argument(to_stream, std::make_pair(0, f1.priority));

@@ -11,13 +11,17 @@ class App
 {
 public:
     bool initialize(const app::Options & options);
-    Result process();
+    bool process();
 
 private:
+    Result process_();
+
     Result extract_root_recipes_(std::list<model::Recipe *> & result) const;
     Result load_recipes_();
     Result process_generators_() const;
     Result process_generator_(const std::string & name, const std::string & value) const;
+
+    void write_(const Result & result);
 
     app::Options options_;
     cook::chai::Context kitchen_;

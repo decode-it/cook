@@ -19,7 +19,12 @@ struct Graph
     using CommandLabel = command::Ptr;
 
     using Label = std::variant<FileLabel, CommandLabel>;
-    using graph_type = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, Label>;
+    enum EdgeType
+    {
+        Explicit = 0x01,
+        Implicit = 0x02,
+    };
+    using graph_type = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, Label, EdgeType>;
     using vertex_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
     using adjacent_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
 
@@ -36,20 +41,26 @@ struct Graph : public config::Graph
 
     vertex_descriptor goc_vertex(const FileLabel & path);
     vertex_descriptor add_vertex(CommandLabel ptr);
-    Result add_edge(vertex_descriptor consumer, vertex_descriptor producer);
+    Result add_edge(vertex_descriptor consumer, vertex_descriptor producer, EdgeType type = Explicit);
 
     Result topological_commands(std::vector<vertex_descriptor> & commands) const;
 
     const Label & operator[](vertex_descriptor vd) const;
 
-    template <typename InIt, typename OutIt>
-    void input_output(InIt in, OutIt out, vertex_descriptor command) const
+    template <typename It>
+    void input(It it, vertex_descriptor command, EdgeType required = EdgeType()) const
     {
-        for(auto v : gubg::make_range(boost::adjacent_vertices(command, g_)))
-                *in++ = v;
+        for(auto e : gubg::make_range(boost::out_edges(command, g_)))
+            if ((g_[e] & required) == required)
+                *it++ = boost::target(e, g_);
+    }
 
-        for(auto v : gubg::make_range(boost::inv_adjacent_vertices(command, g_)))
-                *out++ = v;
+    template <typename It>
+    void output(It it, vertex_descriptor command, EdgeType required = EdgeType()) const
+    {
+        for(auto e : gubg::make_range(boost::in_edges(command, g_)))
+            if ((g_[e] & required) == required)
+                *it++ = boost::source(e, g_);
     }
 
 private:

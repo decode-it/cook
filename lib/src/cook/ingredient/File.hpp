@@ -2,6 +2,7 @@
 #define HEADER_cook_ingredient_File_hpp_ALREADY_INCLUDED
 
 #include "cook/ingredient/Base.hpp"
+#include "cook/Log.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <ostream>
 
@@ -28,12 +29,31 @@ public:
     {
         MSS_BEGIN(Result);
 
+        auto ss = log::scope("merge ingredient");
+        {
+            auto s = log::scope("source");
+            rhs.stream();
+        }
+        {
+            auto s = log::scope("target");
+            stream();
+        }
+
         MSS(merge_(*this, rhs));
 
         dir_ = rhs.dir();
         rel_ = rhs.rel();
 
         MSS_END();
+    }
+
+    log::Scope stream(log::Importance importance = log::Importance()) const
+    {
+        const auto imp = log::importance(importance);
+
+        return log::scope("file", imp, [&](auto &n) {
+            n.attr("full_name", key()).attr("dir", dir()).attr("rel", rel());
+        });
     }
 
     const std::filesystem::path & dir() const { return dir_; }
@@ -49,6 +69,7 @@ inline std::ostream &operator<<(std::ostream &os, const File &file)
     os << "File" << file.dir() << " | " << file.rel();
     return os;
 }
+
 
 } }
 

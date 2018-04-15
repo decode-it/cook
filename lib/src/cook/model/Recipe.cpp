@@ -3,8 +3,6 @@
 
 namespace cook { namespace model {
 
-static int counter = 0;
-
 namespace  {
 
 Uri append_part(const Uri & uri, const Part & part)
@@ -18,8 +16,8 @@ Uri append_part(const Uri & uri, const Part & part)
 
 Recipe::Recipe(Book * book, const Part & part)
     : Element(append_part(book->uri(), part)),
-      type_(Type::Undefined),
-      allows_early_globbing_(counter++%2 == 0),
+      type_(Type::Archive),
+      allows_early_globbing_(false),
       build_target_(uri().as_relative().string('.'))
 {
     set_parent(book);
@@ -64,12 +62,12 @@ bool Recipe::add_dependency(const Dependency &dependency)
     MSS_END();
 }
 
-void Recipe::set_type(const Type & type)
+void Recipe::set_type(const Type &type)
 {
     type_ = type;
 }
 
-Type Recipe::type() const
+Recipe::Type Recipe::type() const
 {
     return type_;
 }

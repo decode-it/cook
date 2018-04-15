@@ -35,9 +35,23 @@ public:
     std::string msg_;
 };
 
+
+inline std::ostream & operator<<(std::ostream & oss, Message::Type type)
+{
+    switch(type)
+    {
+#define L_CASE(TYPE) case Message::TYPE: return oss << #TYPE
+    L_CASE(Info);
+    L_CASE(Warning);
+    L_CASE(Error);
+    L_CASE(InternalError);
+#undef L_CASE
+    }
+
+    return oss << "<unknown>";
+}
+
 #define MESSAGE(TYPE, STREAM) ::cook::Message(::cook::Message::TYPE, gubg::stream([&](auto & os) { os << STREAM; } ))
-
-
 
 class Result
 {

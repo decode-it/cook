@@ -21,9 +21,9 @@ RecipeFilteredGraph::vertex_descriptor RecipeFilteredGraph::add_vertex(CommandLa
     return vd;
 }
 
-Result RecipeFilteredGraph::add_edge(vertex_descriptor consumer, vertex_descriptor producer)
+Result RecipeFilteredGraph::add_edge(vertex_descriptor consumer, vertex_descriptor producer, EdgeType type)
 {
-    return ptr_->add_edge(consumer, producer);
+    return ptr_->add_edge(consumer, producer, type);
 }
 
 Result RecipeFilteredGraph::topological_commands(OrderedVertices & commands) const

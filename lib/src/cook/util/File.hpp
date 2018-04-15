@@ -11,10 +11,10 @@ namespace cook { namespace util {
 inline Result open_file(const std::filesystem::path & path, std::ofstream & ofs)
 {
     MSS_BEGIN(Result);
-    log::scope("open file", [&](auto & n) { n.attr("path", path); });
+    auto s = log::scope("open file", [&](auto & n) { n.attr("path", path); });
 
     std::filesystem::path parent = path.parent_path();
-    if (!parent.empty())
+    if (!parent.empty() && !std::filesystem::is_directory(parent))
         MSG_MSS(std::filesystem::create_directories(parent), Error, "Unable to create directory '" << parent.string() << "'");
 
     ofs.open(path.string());

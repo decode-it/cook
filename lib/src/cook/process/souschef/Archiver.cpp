@@ -1,26 +1,8 @@
 #include "cook/process/souschef/Archiver.hpp"
-#include "boost/predef.h"
+#include "cook/process/command/gcclike/Archiver.hpp"
 #include "gubg/stream.hpp"
 
 namespace cook { namespace process { namespace souschef {
-
-namespace  {
-
-struct DummyArchiver : public command::Interface
-{
-    std::string name() const override { return "archive"; }
-    Result process(const std::list<std::filesystem::path> & input, const std::list<std::filesystem::path> & output) override
-    {
-        return Result();
-    }
-
-    void to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override
-    {
-
-    }
-};
-
-}
 
 Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
 {
@@ -36,7 +18,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         MSS_RETURN_OK();
     }
 
-    auto archive_vertex = g.add_vertex(archive_command(context));
+    auto archive_vertex = g.add_vertex(archive_command(recipe, context));
 
     // stop the propagation, this file is contained in the library
     for(ingredient::File & object : objects)
@@ -45,35 +27,48 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         MSS(g.add_edge(archive_vertex, g.goc_vertex(object.key())));
     }
 
-    // create the archive
-    MSS(!!recipe.build_target().filename, "No filename has been set for this build target");
-    const ingredient::File archive = construct_archive_file(recipe, context);
-    const LanguageTypePair key(Language::Binary, Type::Library);
-    MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << recipe.uri());
+    // add the dependency to this graph
+    {
+        MSS(!!recipe.build_target().filename);
+        ingredient::File dep(context.dirs().output(), *recipe.build_target().filename);
+        dep.set_overwrite(Overwrite::IfSame);
+        dep.set_owner(&recipe);
+        dep.set_propagation(Propagation::Public);
+        const LanguageTypePair key(Language::Binary, Type::Dependency);
+        MSG_MSS(files.insert(key,dep).second, Error, "Dependency " << dep << " already present in " << recipe.uri());
 
-    // add the link in the execution graph
-    MSS(g.add_edge(g.goc_vertex(archive.key()), archive_vertex));
+        // add the link in the execution graph
+        MSS(g.add_edge(g.goc_vertex(dep.key()), archive_vertex));
+    }
+
+
+    // add the library
+    {
+        ingredient::File ar("", recipe.build_target().name);
+        ar.set_overwrite(Overwrite::IfSame);
+        ar.set_owner(&recipe);
+        ar.set_propagation(Propagation::Public);
+        const LanguageTypePair key(Language::Binary, Type::Library);
+        MSG_MSS(files.insert(key,ar).second, Error, "Archive " << ar << " already present in " << recipe.uri());
+    }
+
+    // add the library
+    {
+        ingredient::File ar(context.dirs().output(), "");
+        ar.set_overwrite(Overwrite::Always);
+        ar.set_owner(&recipe);
+        ar.set_propagation(Propagation::Public);
+        const LanguageTypePair key(Language::Binary, Type::LibraryPath);
+        files.insert(key,ar);
+    }
 
     MSS_END();
 }
 
 
-ingredient::File Archiver::construct_archive_file(model::Recipe &recipe, const Context &context) const
+command::Ptr Archiver::archive_command(const model::Recipe & recipe, const Context & context) const
 {
-    const std::filesystem::path dir = context.dirs().output();
-    const std::filesystem::path rel = *recipe.build_target().filename;
-
-    ingredient::File archive(dir, rel);
-    archive.set_overwrite(Overwrite::IfSame);
-    archive.set_owner(&recipe);
-    archive.set_propagation(Propagation::Public);
-
-    return archive;
-}
-
-command::Ptr Archiver::archive_command(const Context & context) const
-{
-    return std::make_shared<DummyArchiver>();
+    return std::make_shared<command::gcclike::Archiver>();
 }
 
 } } }

@@ -1,26 +1,9 @@
 #include "cook/process/souschef/Linker.hpp"
+#include "cook/process/command/gcclike/Linker.hpp"
 #include "gubg/stream.hpp"
 #include "boost/predef.h"
 
 namespace cook { namespace process { namespace souschef {
-
-namespace  {
-
-struct DummyLinker : public command::Interface
-{
-    std::string name() const override { return "link"; }
-    Result process(const std::list<std::filesystem::path> & input, const std::list<std::filesystem::path> & output) override
-    {
-        return Result();
-    }
-
-    void to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override
-    {
-
-    }
-};
-
-}
 
 Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
 {
@@ -31,6 +14,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
 
     auto objects = files.range(LanguageTypePair(Language::Binary, Type::Object));
     auto libs = files.range(LanguageTypePair(Language::Binary, Type::Library));
+    auto deps = files.range(LanguageTypePair(Language::Binary, Type::Dependency));
 
     if (objects.empty() && libs.empty())
     {
@@ -38,7 +22,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
         MSS_RETURN_OK();
     }
 
-    const auto link_vertex = g.add_vertex(link_command(context));
+    const auto link_vertex = g.add_vertex(link_command(recipe, context));
 
     // link the objects
     for(ingredient::File & object : objects)
@@ -53,9 +37,14 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     {
         // stop the propagation, this file is contained in the library
         lib.set_propagation(Propagation::Private);
+    }
 
-        if (lib.owner() != nullptr)
-            MSS(g.add_edge(link_vertex, g.goc_vertex(lib.key())));
+    for(ingredient::File & dep : deps)
+    {
+        // stop the propagation, this file is contained in the library
+        dep.set_propagation(Propagation::Private);
+
+        MSS(g.add_edge(link_vertex, g.goc_vertex(dep.key()), RecipeFilteredGraph::Implicit));
     }
 
     // create the archive
@@ -83,9 +72,20 @@ ingredient::File Linker::construct_archive_file(model::Recipe & recipe, const Co
     return archive;
 }
 
-command::Ptr Linker::link_command(const Context & context) const
+command::Ptr Linker::link_command(const model::Recipe & recipe, const Context & context) const
 {
-    return std::make_shared<DummyLinker>();
+    std::shared_ptr<command::Linker> ptr = std::make_shared<command::gcclike::Linker>();
+
+    // set the libraries
+    for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::Library)))
+       ptr->add_library(lib.rel());
+
+    // set the library paths
+    for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::LibraryPath)))
+       ptr->add_library_path(lib.dir());
+
+
+    return ptr;
 }
 
 } } }

@@ -46,10 +46,13 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
     if (!rc)
         logger_->log(rc);
 
-    cook::Type type = Type::Undefined;
+    using T = model::Recipe::Type;
+
+    T type = T::Archive;
     if (false) {}
-    else if (type_str == "executable") { type = Type::Executable; }
-    else if (type_str == "library") { type = Type::Library; }
+    else if (type_str == "executable")      { type = T::Executable; }
+    else if (type_str == "library")         { type = T::Archive; }
+    else if (type_str == "shared_library")  { type = T::SharedLibrary; }
 
     {
         Recipe r(recipe, context_, logger_);

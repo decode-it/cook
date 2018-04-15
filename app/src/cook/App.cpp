@@ -21,7 +21,19 @@ bool App::initialize(const app::Options & options)
     MSS_END();
 }
 
-Result App::process()
+bool App::process()
+{
+    MSS_BEGIN(bool);
+
+    Result rc = process_();
+    write_(rc);
+
+    MSS(rc);
+
+    MSS_END();
+}
+
+Result App::process_()
 {
     MSS_BEGIN(Result, logns);
 
@@ -158,6 +170,17 @@ Result App::extract_root_recipes_(std::list<model::Recipe*> & result) const
     }
 
     MSS_END();
+}
+
+void App::write_(const Result & result)
+{
+    result.each_message([&](const Message & msg) {
+
+        std::cout << msg.type_ << ": " << msg.msg_ << std::endl;
+        for(log::Ptr p = msg.node_; p; p = p->parent())
+            std::cout << "  * " << p->header() << std::endl;
+
+    });
 }
 
 }

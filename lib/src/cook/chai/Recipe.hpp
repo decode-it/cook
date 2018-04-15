@@ -16,7 +16,7 @@ public:
 
     void add(const std::string & dir, const std::string & pattern);
     void depends_on(const std::string & dependency);
-    void set_type(cook::Type type);
+    void set_type(model::Recipe::Type type);
     void set_working_directory(const std::string & dir);
 
     void library(const std::string & library);

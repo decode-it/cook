@@ -30,7 +30,7 @@ Result CMake::process(std::ostream & ofs, const Context & context)
     for(const model::Recipe * recipe : recipe_list)
     {
         if (false) {}
-        else if (recipe->type() == Type::Executable)
+        else if (recipe->type() == model::Recipe::Type::Executable)
             add_executable_(ofs, *recipe);
         else if (contains_sources_(*recipe))
             add_library_(ofs, *recipe);

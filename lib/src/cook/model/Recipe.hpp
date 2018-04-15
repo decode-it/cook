@@ -24,9 +24,18 @@ namespace cook { namespace model {
 
 class Book;
 
+
+
 class Recipe : public Element
 {
 public:
+    enum class Type
+    {
+        Archive,
+        SharedLibrary,
+        Executable
+    };
+
     using Dependency = Uri;
     using Dependencies = std::map<Uri, Recipe *>;
 
@@ -67,7 +76,7 @@ public:
     bool add_dependency(const Dependency & dependency);
     bool resolve_dependency(const Uri & uri, Recipe * recipe);
 
-    void set_type(const Type & type);
+    void set_type(const Type &type);
     Type type() const;
 
     void stream(log::Importance = log::Importance{}) const;
@@ -87,6 +96,20 @@ private:
     BuildTarget build_target_;
 };
 
+inline std::ostream & operator<<(std::ostream & oss, Recipe::Type t)
+{
+    switch(t)
+    {
+#define L_CASE(NAME) case Recipe::Type::NAME: return oss << #NAME
+    L_CASE(Archive);
+    L_CASE(Executable);
+    L_CASE(SharedLibrary);
+#undef L_CASE
+    }
+    return oss << "<unknown>";
+}
+
 } }
+
 
 #endif

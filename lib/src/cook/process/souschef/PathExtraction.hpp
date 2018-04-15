@@ -11,6 +11,9 @@ inline Result add_derived_path(const LanguageTypePair & key, const ingredient::F
 {
     MSS_BEGIN(Result);
 
+    if (file.dir().empty())
+        MSS_RETURN_OK();
+
     // create a file object for the path
     ingredient::File path(file.dir(), {});
 

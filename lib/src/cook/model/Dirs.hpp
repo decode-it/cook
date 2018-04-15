@@ -7,6 +7,8 @@ namespace cook { namespace model {
 
 struct Dirs
 {
+    Dirs();
+
     void set_recipe(const std::filesystem::path & dir);
     void set_output(const std::filesystem::path & dir);
     void set_temporary(const std::filesystem::path & dir);

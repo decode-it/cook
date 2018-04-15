@@ -44,15 +44,15 @@ Result RecipeNamer::process(model::Recipe & recipe, RecipeFilteredGraph & /*file
 
     switch(recipe.type())
     {
-        case Type::Undefined:
+        case model::Recipe::Type::Archive:
             recipe.build_target().filename = static_library_filename(recipe.build_target().name);
             break;
 
-        case Type::Executable:
+        case model::Recipe::Type::Executable:
             recipe.build_target().filename = executable_filename(recipe.build_target().name);
             break;
 
-        case Type::Library:
+        case model::Recipe::Type::SharedLibrary:
             recipe.build_target().filename = dynamic_library_filename(recipe.build_target().name);
             break;
 

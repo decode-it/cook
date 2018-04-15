@@ -2,6 +2,7 @@
 #define HEADER_cook_ingredient_KeyValue_hpp_ALREADY_INCLUDED
 
 #include "cook/ingredient/Base.hpp"
+#include "cook/Log.hpp"
 #include <string>
 #include <optional>
 
@@ -30,6 +31,17 @@ public:
     {
         MSS_BEGIN(Result);
 
+        auto ss = log::scope("merge ingredient");
+        {
+            auto s = log::scope("source");
+            rhs.stream();
+        }
+        {
+            auto s = log::scope("target");
+            stream();
+        }
+
+
         MSS(merge_(*this, rhs));
 
         value_ = rhs.value_;
@@ -48,6 +60,18 @@ public:
         else
             return key() + "=" + value();
     }
+
+    log::Scope stream(log::Importance importance = log::Importance()) const
+    {
+        const auto imp = log::importance(importance);
+
+        return log::scope("key_value", imp, [&](auto &n) {
+            n.attr("key", key());
+            if (has_value())
+                n.attr("value", value());
+        });
+    }
+
 
 private:
     std::optional<std::string> value_;

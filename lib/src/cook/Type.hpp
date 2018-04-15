@@ -15,6 +15,7 @@ enum class Type
     IncludePath,
     LibraryPath,
     Library,
+    Dependency,
     Define,
     Executable,
 
@@ -34,6 +35,7 @@ inline std::ostream & operator<<(std::ostream & os, Type type)
         L_CASE(IncludePath);
         L_CASE(LibraryPath);
         L_CASE(Library);
+        L_CASE(Dependency);
         L_CASE(Define);
         L_CASE(Executable);
 #undef L_CASE

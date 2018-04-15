@@ -21,7 +21,7 @@ public:
 
     vertex_descriptor goc_vertex(const FileLabel & path);
     vertex_descriptor add_vertex(CommandLabel ptr);
-    Result add_edge(vertex_descriptor consumer, vertex_descriptor producer);
+    Result add_edge(vertex_descriptor consumer, vertex_descriptor producer, EdgeType type = Explicit);
 
     Result topological_commands(OrderedVertices & commands) const;
 
@@ -29,13 +29,22 @@ public:
 
     gubg::Range<CommandVertexIterator> command_vertices() const;
 
-    template <typename InIt, typename OutIt>
-    void input_output(InIt in, OutIt out, vertex_descriptor command) const
+    template <typename It>
+    void input(It it, vertex_descriptor command, EdgeType required = EdgeType()) const
     {
         if (command_vertices_.find(command) == command_vertices_.end())
             return;
 
-        ptr_->input_output(in, out, command);
+        ptr_->input(it, command, required);
+    }
+
+    template <typename It>
+    void output(It it, vertex_descriptor command, EdgeType required = EdgeType()) const
+    {
+        if (command_vertices_.find(command) == command_vertices_.end())
+            return;
+
+        ptr_->output(it, command, required);
     }
 
 private:

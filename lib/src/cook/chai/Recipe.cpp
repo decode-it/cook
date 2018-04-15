@@ -12,7 +12,7 @@ Recipe::Recipe(model::Recipe * recipe, Context *context, Logger *logger)
 {
 }
 
-void Recipe::set_type(Type type)
+void Recipe::set_type(model::Recipe::Type type)
 {
     recipe_->set_type(type);
 }
@@ -47,6 +47,7 @@ void Recipe::library(const std::string & library)
 {
     auto lib = ingredient::File("", library);
     lib.set_propagation(Propagation::Public);
+    lib.set_overwrite(Overwrite::IfSame);
 
     recipe_->files().insert(LanguageTypePair(Language::Binary, Type::Library), lib);
 }
@@ -55,6 +56,7 @@ void Recipe::library_path(const std::string & path)
 {
     auto lib_path = ingredient::File(path, "");
     lib_path.set_propagation(Propagation::Public);
+    lib_path.set_overwrite(Overwrite::IfSame);
 
     recipe_->files().insert(LanguageTypePair(Language::Binary, Type::LibraryPath), lib_path);
 }
@@ -63,6 +65,7 @@ void Recipe::include_path(const std::string & path)
 {
     auto inc_path = ingredient::File(path, "");
     inc_path.set_propagation(Propagation::Public);
+    inc_path.set_overwrite(Overwrite::IfSame);
 
     recipe_->files().insert(LanguageTypePair(Language::CXX, Type::IncludePath), inc_path);
 }
@@ -70,8 +73,6 @@ void Recipe::include_path(const std::string & path)
 gubg::chai::ModulePtr recipe_module()
 {
     gubg::chai::ModulePtr ptr = std::make_unique<chaiscript::Module>();
-
-
 
     return ptr;
 }
