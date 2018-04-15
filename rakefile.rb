@@ -99,12 +99,9 @@ namespace :b1 do
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
     task :build => ["b0:update", "b0:build"] do
-        if true
-            cp "b0-cook.exe", "b1-cook.exe"
-        else
-            sh "./b0-cook.exe"
-            sh "ninja -v"
-        end
+        sh "./b0-cook.exe -f ./ -g ninja cook/app/exe"
+        sh "ninja -f build/build.ninja"
+        cp "build/cook.app.exe", "b1-cook.exe"
     end
 
     desc "bootstrap-level1: Clean"
