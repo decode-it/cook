@@ -82,6 +82,22 @@ void Recipe::set_working_directory(const std::filesystem::path & wd)
     wd_ = wd;
 }
 
+const std::set<Language> & Recipe::languages() const
+{
+    return languages_;
+}
+
+void Recipe::add_language(Language language)
+{
+    languages_.insert(language);
+}
+
+void Recipe::set_language(Language language)
+{
+    languages_.clear();
+    languages_.insert(language);
+}
+
 void Recipe::stream(log::Importance importance) const
 {
     const auto imp = log::importance(importance);

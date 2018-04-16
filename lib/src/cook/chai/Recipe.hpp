@@ -22,10 +22,14 @@ public:
     void library(const std::string & library);
     void library_path(const std::string & path);
     void include_path(const std::string & path);
+    void define_1(const std::string & name);
+    void define_2(const std::string & name, const std::string & value);
 
     UserData data() const { return data_; }
 
 private:
+    Language guess_language_() const;
+
     model::Recipe * recipe_;
     Context * context_;
     Logger * logger_;

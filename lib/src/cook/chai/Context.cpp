@@ -96,6 +96,8 @@ struct Context::D
         engine.add(chaiscript::fun(&Recipe::library), "library");
         engine.add(chaiscript::fun(&Recipe::library_path), "library_path");
         engine.add(chaiscript::fun(&Recipe::include_path), "include_path");
+        engine.add(chaiscript::fun(&Recipe::define_1), "define");
+        engine.add(chaiscript::fun(&Recipe::define_2), "define");
         engine.add(chaiscript::fun(&Recipe::data), "data");
     }
 

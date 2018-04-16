@@ -20,9 +20,9 @@ Result Resolver::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_co
 }
 
 
-bool Resolver::process_(model::Recipe & recipe, LanguageTypePair & key, ingredient::File & file) const
+Result Resolver::process_(model::Recipe & recipe, LanguageTypePair & key, ingredient::File & file) const
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     auto accepts = [&](const rules::Interface & interface) { return interface.accepts_file(key, file); };
     const rules::Interface & interface = rule_set_->find(accepts);
@@ -59,12 +59,12 @@ void extract_dir(
 
 }
 
-bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globber) const
+Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globber) const
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     auto ss = log::scope("process_one");
-    globber.stream();
+//    globber.stream();
 
     // get the directory
     std::filesystem::path dir = globber.dir;
@@ -77,12 +77,12 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
         });
     }
 
-    bool error_occured = false;
+    Result rc;
 
     // find all dirs matching the pattern
     auto file_callback = [&](const std::filesystem::path & fn)
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(Result);
         L(C(fn));
 
         // extract the dir and the fn part
@@ -101,20 +101,20 @@ bool Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globb
         auto accepts = [&](const rules::Interface & interface) { return interface.accepts_file(key, file); };
         const rules::Interface & interface = rule_set_->find(accepts);
 
-        MSS(interface.resolve_file(key, file), error_occured = true);
+        MSS(rc.merge(interface.resolve_file(key, file)));
 
         // overwrite the specifications
         if (globber.propagation)    file.set_propagation(*globber.propagation);
         if (globber.overwrite)      file.set_overwrite(*globber.overwrite);
 
         if (!globber.filter_and_adaptor || globber.filter_and_adaptor(key, file))
-            MSS(interface.add_file(recipe, key, file), error_occured = true);
+            MSS(rc.merge(interface.add_file(recipe, key, file)));
 
-        return true;
+        MSS_END();
     };
 
-    MSS(gubg::file::each_glob(globber.pattern, file_callback, dir));
-    MSS(!error_occured);
+    gubg::file::each_glob(globber.pattern, file_callback, dir);
+    MSS(rc);
 
     MSS_END();
 

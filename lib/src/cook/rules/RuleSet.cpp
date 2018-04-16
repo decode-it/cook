@@ -15,13 +15,14 @@ class DefaultSink : public Interface
     {
         return true;
     }
-    bool resolve_file(LanguageTypePair & key, ingredient::File & file) const override
+    Result resolve_file(LanguageTypePair & key, ingredient::File & file) const override
     {
-        return true;
+        MSS_BEGIN(Result);
+        MSS_END();
     }
-    bool add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const
+    Result add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(Result);
         MSS(recipe.files().insert_or_merge(key, file));
         MSS_END();
     }

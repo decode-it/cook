@@ -61,6 +61,16 @@ void Recipe::library_path(const std::string & path)
     recipe_->files().insert(LanguageTypePair(Language::Binary, Type::LibraryPath), lib_path);
 }
 
+Language Recipe::guess_language_() const
+{
+    const auto & langs = recipe_->languages();
+
+    if (langs.size() == 1)
+        return *langs.begin();
+    else
+        return Language::Undefined;
+}
+
 void Recipe::include_path(const std::string & path)
 {
     auto inc_path = ingredient::File(gubg::filesystem::combine(recipe_->working_directory(), path), "");
@@ -68,7 +78,25 @@ void Recipe::include_path(const std::string & path)
     inc_path.set_propagation(Propagation::Public);
     inc_path.set_overwrite(Overwrite::IfSame);
 
-    recipe_->files().insert(LanguageTypePair(Language::CXX, Type::IncludePath), inc_path);
+    recipe_->files().insert(LanguageTypePair(guess_language_(), Type::IncludePath), inc_path);
+}
+
+void Recipe::define_1(const std::string & name)
+{
+    auto kv = ingredient::KeyValue(name);
+    kv.set_propagation(Propagation::Public);
+    kv.set_overwrite(Overwrite::IfSame);
+
+    recipe_->key_values().insert(LanguageTypePair(guess_language_(), Type::Define), kv);
+}
+
+void Recipe::define_2(const std::string & name, const std::string & value)
+{
+    auto kv = ingredient::KeyValue(name, value);
+    kv.set_propagation(Propagation::Public);
+    kv.set_overwrite(Overwrite::IfSame);
+
+    recipe_->key_values().insert(LanguageTypePair(guess_language_(), Type::Define), kv);
 }
 
 gubg::chai::ModulePtr recipe_module()

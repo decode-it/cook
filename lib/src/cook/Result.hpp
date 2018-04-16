@@ -118,10 +118,27 @@ private:
 
 namespace mss {
 
+inline void append_if_possible(Result & res, Result & src)
+{
+    res.merge(src);
+}
+
+inline void append_if_possible(Result & res, Result && src)
+{
+    res.merge(std::move(src));
+}
+
+template <typename T>
+void append_if_possible(Result & res, T & src)
+{
+
+}
+
 template <typename MSG> auto msg(MSG && msg, typename std::enable_if<std::is_same<cook::Message, std::decay_t<MSG>>::value>::type * /*dummy*/ = nullptr)
 {
     return [=](Result & res, auto && src)
     {
+        append_if_possible(res, src);
         if (!gubg::mss::is_ok(src))
             res << msg;
     };

@@ -27,15 +27,15 @@ namespace cook { namespace rules {
         {
             const std::filesystem::path & fn = file.key();
             MSS_Q(std::filesystem::is_regular_file(fn));
-            MSS(extensions_.is_known(fn.extension()));
+            MSS_Q(extensions_.is_known(fn.extension()));
         }
 
         MSS_END();
     }
 
-    bool C_family::resolve_file(LanguageTypePair & key, ingredient::File & file) const
+    Result C_family::resolve_file(LanguageTypePair & key, ingredient::File & file) const
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(Result);
 
         MSS(key.language == language() || key.language == Language::Undefined);
         key.language = language();
@@ -58,9 +58,13 @@ namespace cook { namespace rules {
         MSS_END();
     }
 
-    bool C_family::add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const
+    Result C_family::add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(Result);
+
+        auto ss = log::scope("add file", [&](auto & n) {
+            n.attr("recipe", recipe.uri().string()).attr("file", file.key());
+        });
 
         MSS(key.language == language());
         MSS(recipe.files().insert_or_merge(key, file));

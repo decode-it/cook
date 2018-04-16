@@ -20,10 +20,10 @@ namespace cook { namespace process { namespace souschef {
         Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
         std::string description() const override;
 
-        bool process_one(model::Recipe & recipe, const model::GlobInfo & globber) const;
+        Result process_one(model::Recipe & recipe, const model::GlobInfo & globber) const;
 
     private:
-        bool process_(model::Recipe & recipe, LanguageTypePair & key, ingredient::File & file) const;
+        Result process_(model::Recipe & recipe, LanguageTypePair & key, ingredient::File & file) const;
 
         rules::RuleSet::Ptr rule_set_;
     };

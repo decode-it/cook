@@ -12,6 +12,7 @@
 #include "cook/log/Scope.hpp"
 #include "gubg/Range.hpp"
 #include "boost/iterator/transform_iterator.hpp"
+#include <set>
 
 namespace cook { namespace model {
 
@@ -81,6 +82,11 @@ public:
 
     void stream(log::Importance = log::Importance{}) const;
 
+    const std::set<Language> & languages() const;
+    void add_language(Language language);
+    void set_language(Language language);
+    template <typename It> void set_languages(It first, It last) { languages_ = std::set<Language>(first, last); }
+
 private:
     Recipe(Recipe &&) = delete;
     Recipe & operator=(const Recipe &) = delete;
@@ -94,6 +100,7 @@ private:
     Dependencies dependencies_;
     bool allows_early_globbing_;
     BuildTarget build_target_;
+    std::set<Language> languages_;
 };
 
 inline std::ostream & operator<<(std::ostream & oss, Recipe::Type t)

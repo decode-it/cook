@@ -30,9 +30,9 @@ bool ASM::accepts_file(const LanguageTypePair & key, const ingredient::File & fi
     MSS_END();
 }
 
-bool ASM::resolve_file(LanguageTypePair & key, ingredient::File & file) const
+Result ASM::resolve_file(LanguageTypePair & key, ingredient::File & file) const
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     MSS(key.language == language() || key.language == Language::Undefined);
     key.language = language();
@@ -53,9 +53,9 @@ bool ASM::resolve_file(LanguageTypePair & key, ingredient::File & file) const
     MSS_END();
 }
 
-bool ASM::add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const
+Result ASM::add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
 
     MSS(key.language == language());
     MSS(recipe.files().insert_or_merge(key, file));
