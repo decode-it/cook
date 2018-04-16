@@ -2,6 +2,7 @@ include("dependencies.chai")
 
 root.recipe("boost/all", fun[boosts](r) {
     for_each(boosts, fun[r](b) {
-        r.add("modules/${b}/include", "boost/**.hpp")
+        #r.add("modules/${b}/include", "boost/**.hpp")
+        r.include_path("modules/${b}/include")
     })
 })

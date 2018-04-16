@@ -99,9 +99,27 @@ namespace :b1 do
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
     task :build => ["b0:update", "b0:build"] do
-        sh "./b0-cook.exe -f ./ -g ninja -o b1_build -O .b1_cook cook/app/exe"
-        sh "ninja -f b1_build/build.ninja"
-        cp "b1_build/cook.app.exe", "b1-cook.exe"
+        odir = File.join("build", "b1", "ninja")
+        tdir = File.join(".cook", "b1", "ninja")
+        
+        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} cook/app/exe"
+        sh "ninja -f #{odir}/build.ninja"
+        cp "#{odir}/cook.app.exe", "b1-cook.exe"
+    end
+    
+    desc "bootstrap-level1-cmake: Build b1-cook.exe using b0-cook.exe"
+    task :build_cmake => ["b0:update", "b0:build"] do
+        odir = File.join("build", "b1", "cmake")
+        tdir = File.join(".cook", "b1", "cmake")
+        
+        sh "./b0-cook.exe -f ./ -g CMake -o #{odir} -O #{tdir} cook/app/exe"
+        Dir::chdir(odir) do
+            sh "cmake ./"
+            sh "make -j8"
+        end
+        cp "#{odir}/cook_app_exe", "b1-cook.exe"
+        
+        
     end
 
     desc "bootstrap-level1: Clean"
