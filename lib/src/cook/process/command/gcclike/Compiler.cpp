@@ -2,14 +2,22 @@
 
 namespace cook { namespace process { namespace command { namespace gcclike {
 
-Compiler::Compiler()
+Compiler::Compiler(Language language)
     : input_(10),
       output_(20, "-o"),
       define_(30, "-D"),
       include_(40, "-I")
 {
-    set_command("g++");
-    add_argument(ArgumentDesc(0, "-std=c++17"), std::string());
+    switch (language)
+    {
+        case Language::CXX:
+            set_command("g++");
+            add_argument(ArgumentDesc(0, "-std=c++17"), std::string());
+            break;
+        case Language::C:
+            set_command("gcc");
+            break;
+    }
     add_argument(ArgumentDesc(1, "-c"), std::string());
 }
 

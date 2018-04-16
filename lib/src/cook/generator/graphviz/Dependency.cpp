@@ -5,6 +5,7 @@
 #include "cook/algo/TopologicalOrder.hpp"
 #include "cook/util/File.hpp"
 #include <unordered_map>
+#include <algorithm>
 
 using namespace cook::model;
 
@@ -16,7 +17,9 @@ static const char special_separator = '_';
 
 std::string node_name(Recipe * recipe)
 {
-    return recipe->uri().string('_');
+    auto str = recipe->uri().string('_');
+    std::replace(RANGE(str), '-', '_');
+    return str;
 }
 
 std::string unexisting_node_name(Recipe * recipe, const Uri & uri)

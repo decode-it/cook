@@ -3,24 +3,6 @@
 
 namespace cook { namespace process { namespace souschef {
 
-namespace  {
-
-struct DummyCompiler : public command::Interface
-{
-    std::string name() const override { return "compile"; }
-    Result process(const std::list<std::filesystem::path> & input, const std::list<std::filesystem::path> & output) override
-    {
-        return Result();
-    }
-
-    void to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override
-    {
-
-    }
-};
-
-}
-
 Compiler::Compiler(Language language)
     : language_(language)
 {
@@ -82,7 +64,7 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
 
 command::Ptr Compiler::compile_command(const model::Recipe & recipe, const Context & context) const
 {
-    std::shared_ptr<command::Compiler> cp = std::make_shared<command::gcclike::Compiler>();
+    std::shared_ptr<command::Compiler> cp = std::make_shared<command::gcclike::Compiler>(language_);
 
     std::set<Language> languages = { language_, Language::Undefined };
 

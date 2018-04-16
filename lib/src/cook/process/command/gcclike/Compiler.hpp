@@ -2,13 +2,14 @@
 #define HEADER_cook_process_command_gcclike_Compiler_hpp_ALREADY_INCLUDED
 
 #include "cook/process/command/Compiler.hpp"
+#include "cook/Language.hpp"
 
 namespace cook { namespace process { namespace command { namespace gcclike {
 
 class Compiler : public command::Compiler
 {
 public:
-    Compiler();
+    Compiler(Language);
 
     std::string name() const override;
     Result process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override;
