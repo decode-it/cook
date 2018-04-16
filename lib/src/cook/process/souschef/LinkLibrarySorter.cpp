@@ -34,22 +34,23 @@ Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collectio
     const unsigned int prev_size = libraries.size();
     libraries.clear();
 
-    // add the non-owned
-    for(const auto & file : non_owned_libraries)
-        libraries.insert(file);
-
     // get a topological order for this recipe
     std::list<model::Recipe *> top_order;
     MSS(menu.topological_order_recipes(&recipe, top_order));
 
     // add the owned in topological inverse order
-    for (model::Recipe * cur : top_order)
+    for (auto it = top_order.rbegin(); it != top_order.rend(); ++it)
     {
-        auto it = owned_libraries.find(cur);
-        if (it != owned_libraries.end())
-            for(const auto & file : it->second)
+        model::Recipe * cur = *it;
+        auto it2 = owned_libraries.find(cur);
+        if (it2 != owned_libraries.end())
+            for(const auto & file : it2->second)
                 libraries.insert(file);
     }
+
+    // add the non-owned
+    for(const auto & file : non_owned_libraries)
+        libraries.insert(file);
 
     MSS(prev_size == libraries.size());
 

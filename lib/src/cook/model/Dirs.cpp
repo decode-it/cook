@@ -5,8 +5,8 @@ namespace cook { namespace model {
 Dirs::Dirs()
 {
     set_recipe("./");
-    set_output("build");
-    set_temporary(".cook");
+    set_output("new_build");
+    set_temporary(".new_cook");
 }
 
 void Dirs::set_recipe(const std::filesystem::path & dir)

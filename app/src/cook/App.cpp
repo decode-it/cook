@@ -43,6 +43,10 @@ Result App::process_()
 
     options_.stream();
 
+    // set the directories
+    kitchen_.dirs().set_output(options_.output_path);
+    kitchen_.dirs().set_temporary(options_.temp_path);
+
     // initialize the kitchen
     MSS(kitchen_.initialize());
 
