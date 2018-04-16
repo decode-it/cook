@@ -54,7 +54,7 @@ void Recipe::library(const std::string & library)
 
 void Recipe::library_path(const std::string & path)
 {
-    auto lib_path = ingredient::File(path, "");
+    auto lib_path = ingredient::File(gubg::filesystem::combine(recipe_->working_directory(), path), "");
     lib_path.set_propagation(Propagation::Public);
     lib_path.set_overwrite(Overwrite::IfSame);
 
@@ -63,7 +63,8 @@ void Recipe::library_path(const std::string & path)
 
 void Recipe::include_path(const std::string & path)
 {
-    auto inc_path = ingredient::File(path, "");
+    auto inc_path = ingredient::File(gubg::filesystem::combine(recipe_->working_directory(), path), "");
+
     inc_path.set_propagation(Propagation::Public);
     inc_path.set_overwrite(Overwrite::IfSame);
 
