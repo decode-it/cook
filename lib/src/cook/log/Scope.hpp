@@ -68,46 +68,6 @@ namespace cook { namespace log {
     template <typename Ftor>
     Scope scope(const std::string &tag, Ftor &&ftor, std::result_of_t<Ftor(details::Header &)> * /*dummy*/ = nullptr) { return scope(tag, Importance{}, ftor); }
 
-    //TODO: Add variadic templates to allow a more flexible scope
-    /*
-#include <type_traits>
-#include <iostream>
-
-template <typename Ftor, typename T>
-void process(std::true_type, Ftor &&ftor, T v){ftor(v);}
-template <typename Ftor, typename T>
-void process(std::false_type, Ftor &&ftor, T v){}
-
-template <typename Wanted, typename Ftor>
-void iterate(Ftor &&ftor) { }
-template <typename Wanted, typename Ftor, typename T, typename... Rest>
-void iterate(Ftor &&ftor, T v, Rest... rest)
-{
-    using DoProcess = std::bool_constant<std::is_convertible<T,Wanted>::value>;
-    process(DoProcess{}, ftor, v);
-    iterate<Wanted>(ftor, rest...);
-}
-
-template <typename Wanted, typename... Rest>
-void print(Rest... rest)
-{
-    iterate<Wanted>([](auto v){std::cout << v << std::endl;}, rest...);
-}
-
-template <typename... Rest>
-void f(Rest... rest)
-{
-    print<std::string>(rest...);
-    print<int>(rest...);
-}
-
-int main()
-{
-    f(42, "abc", 24);
-    return 0;
-}
-     * */
-
 } } 
 
 #endif
