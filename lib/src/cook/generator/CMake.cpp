@@ -57,6 +57,15 @@ void CMake::add_interface_(std::ostream &ofs, const model::Recipe & recipe, cons
     add_source_and_header_(ofs, recipe, false, output_to_source);
     ofs << ")" << std::endl;
 
+    ofs << "target_sources(" << recipe_name_(recipe) << " INTERFACE" << std::endl;
+    recipe.files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
+    {
+        if (ltp.type == Type::Header)
+            ofs << "  " << gubg::filesystem::combine(output_to_source, file.key()) << std::endl;
+        return true;
+    });
+    ofs << ")" << std::endl;
+
     set_target_properties_(ofs, recipe, "INTERFACE", output_to_source);
 
 
@@ -71,7 +80,7 @@ void CMake::add_library_(std::ostream & ofs, const model::Recipe & recipe, const
         set_link_paths_(ofs, recipe, output_to_source);
 
         ofs << "add_library(" << recipe_name_(recipe) << " " << deduce_library_type_(recipe) << std::endl;
-        add_source_and_header_(ofs, recipe, false, output_to_source);
+        add_source_and_header_(ofs, recipe, true, output_to_source);
         ofs << ")" << std::endl;
         set_target_properties_(ofs, recipe, "PRIVATE", output_to_source);
     }

@@ -32,6 +32,22 @@ struct Logger : public cook::Logger
 
 }
 
+struct Cook
+{
+    Cook(model::Book * book, Context * context, Logger * logger)
+        : root(book, context, logger)
+    {
+
+    }
+
+    Book operator[](const std::string & uri)
+    {
+        return root.subbook(uri);
+    }
+
+    Book root;
+};
+
 struct Context::D
 {
     using Parser = chaiscript::parser::ChaiScript_Parser<chaiscript::eval::Noop_Tracer, chaiscript::optimizer::Optimizer_Default>;
@@ -39,14 +55,14 @@ struct Context::D
 
     D(model::Book * book, Context * context)
         : engine(chaiscript::Std_Lib::library(), std::make_unique<Parser>()),
-          root_book(book, context, &logger)
+          cook(book, context, &logger)
     {
     }
 
     Logger logger;
     Engine engine;
     std::stack<std::filesystem::path> scripts;
-    Book root_book;
+    Cook cook;
 
     void initialize_engine_(Context * kitchen)
     {
@@ -56,7 +72,9 @@ struct Context::D
         initialize_book();
         initialize_recipe();
         chai.add(user_data_module());
-        chai.add_global(chaiscript::var(root_book), "root");
+        chai.add_global(chaiscript::var(cook.root), "root");
+        chai.add_global(chaiscript::var(cook), "cook");
+        chai.add(chaiscript::fun(&Cook::operator []), "[]");
     }
 
     void initialize_book()

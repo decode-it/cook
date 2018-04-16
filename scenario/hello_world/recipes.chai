@@ -1,8 +1,9 @@
-root.book("book", fun(book){
-    book.recipe("foobar", fun(r){
+cook["book"].recipe("foobar", fun(r){
         r.add("", "foo.*")
         r.add("", "bar.*")
-    })
+})
+
+root.book("book", fun(book) {
     book.recipe("main", "executable", fun(r){
         r.add("", "main.cpp")
         r.depends_on("foobar")

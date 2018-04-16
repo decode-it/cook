@@ -13,6 +13,22 @@ Book::Book(model::Book * book, Context * context, Logger * logger)
 {
 }
 
+Book Book::subbook(const std::string & uri_str)
+{
+    auto ss = log::scope("goc book", [&](auto & n) {n.attr("parent uri", book_->uri()).attr("uri", uri_str); });
+
+    std::pair<model::Uri, bool> uri = model::Uri::book_uri(uri_str);
+    if (!uri.second)
+        logger_->log(Message::Error, "Bad uri");
+
+    model::Book * subbook = nullptr;
+    Result rc = model::Book::goc_relative(subbook, uri.first, book_);
+    if (!rc)
+        logger_->log(rc);
+
+    return Book(subbook, context_, logger_);
+}
+
 void Book::book(const std::string & uri_str, const std::function<void (Book)> &functor)
 {
     auto ss = log::scope("goc book", [&](auto & n) {n.attr("parent uri", book_->uri()).attr("uri", uri_str); });
