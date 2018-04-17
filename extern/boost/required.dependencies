@@ -29,7 +29,6 @@ move
 mpi
 mpl
 multi_index
-numeric~conversion
 optional
 parameter
 predef
@@ -53,5 +52,6 @@ type_traits
 typeof
 unordered
 utility
+variant
 winapi
 xpressive

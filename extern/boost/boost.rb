@@ -2,16 +2,42 @@ namespace :boost do
     cur_dir = File.dirname(__FILE__)
     module_dir = File.join(cur_dir, "modules")
     tag = "boost-1.66.0"
-
-    desc "boost: Update the boost modules to the required git hashes"
-    task :update do
-        sh "git submodule update --init --recursive #{module_dir}"
+    dep_file = File.join(cur_dir, 'required.dependencies')
+    
+    require 'set'
+    
+    def extract_boost_modules(dir, src_dir)
+        Dir::chdir(dir) do
+            mods = Set.new
+            IO.popen("dist/bin/boostdep --track-sources --subset-for #{src_dir}").each do |line|
+                m = /^([a-zA-Z_]+):/.match(line) 
+                mods.add(m[1]) if m
+            end
+            mods
+        end
     end
     
+    def extract_all_boost_modules(dir, root_dir)
+        mods = Set.new()
+        ["lib", "app"].each { |p| mods += extract_boost_modules(dir, File.join(root_dir, p)) }
+        return mods
+    end
+    
+    $boost_modules = nil
+        
+    desc "boost: Recreate the boost dependency list"
+    task :deps, [:path] do |t,args|
+        sh "git submodule update --init --recursive #{module_dir}"
+        if $boost_modules == nil
+            $boost_modules = extract_all_boost_modules(args[:path], File.join(cur_dir, "..", "..")).to_a
+            File.open(dep_file, 'w') do |os|
+                $boost_modules.each { |m| os << "#{m}\n" }
+            end
+        end
+    end
+       
     desc "boost: Loads the boost module names into $boost_modules"
-    task :load do
-        dep_file = File.join(cur_dir, 'required.dependencies')
-
+    task :load do       
         # Keep this global, this is used in b0-compile.ninja
         $boost_modules = File.open(dep_file).map { |line| line.chomp.sub("~", "_") }
     end
@@ -21,6 +47,23 @@ namespace :boost do
         File.open(File.join(cur_dir, 'dependencies.chai'), 'w') do |f|
             ar = $boost_modules.map { |k| "\"#{k}\"" }.join(", ")
             f << "auto boosts = [#{ar}]\n" 
+        end
+    end
+    
+    desc "boost: Update the modules"
+    task :update => [:load] do
+        Dir.chdir(module_dir) do
+            $boost_modules.each do |k| 
+                if !File.exists?(k)
+                    sh "git submodule add -f https://github.com/boostorg/#{k}"
+                end
+                
+                Dir.chdir(k) do
+                    sh "git fetch origin"
+                    sh "git checkout #{tag}" 
+                end
+
+            end
         end
     end
     

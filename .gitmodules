@@ -193,3 +193,6 @@
 [submodule "extern/boost/modules/xpressive"]
 	path = extern/boost/modules/xpressive
 	url = https://github.com/boostorg/xpressive.git
+[submodule "extern/boost/modules/variant"]
+	path = extern/boost/modules/variant
+	url = https://github.com/boostorg/variant
