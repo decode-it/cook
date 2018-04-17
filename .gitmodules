@@ -24,175 +24,175 @@
 	branch = master
 [submodule "extern/boost/modules/algorithm"]
 	path = extern/boost/modules/algorithm
-	url = https://github.com/boostorg/algorithm.git
+	url = https://github.com/boostorg/algorithm
 [submodule "extern/boost/modules/any"]
 	path = extern/boost/modules/any
-	url = https://github.com/boostorg/any.git
+	url = https://github.com/boostorg/any
 [submodule "extern/boost/modules/array"]
 	path = extern/boost/modules/array
-	url = https://github.com/boostorg/array.git
+	url = https://github.com/boostorg/array
 [submodule "extern/boost/modules/assert"]
 	path = extern/boost/modules/assert
-	url = https://github.com/boostorg/assert.git
+	url = https://github.com/boostorg/assert
 [submodule "extern/boost/modules/atomic"]
 	path = extern/boost/modules/atomic
-	url = https://github.com/boostorg/atomic.git
+	url = https://github.com/boostorg/atomic
 [submodule "extern/boost/modules/bind"]
 	path = extern/boost/modules/bind
-	url = https://github.com/boostorg/bind.git
+	url = https://github.com/boostorg/bind
 [submodule "extern/boost/modules/chrono"]
 	path = extern/boost/modules/chrono
-	url = https://github.com/boostorg/chrono.git
+	url = https://github.com/boostorg/chrono
 [submodule "extern/boost/modules/concept_check"]
 	path = extern/boost/modules/concept_check
-	url = https://github.com/boostorg/concept_check.git
+	url = https://github.com/boostorg/concept_check
 [submodule "extern/boost/modules/config"]
 	path = extern/boost/modules/config
-	url = https://github.com/boostorg/config.git
+	url = https://github.com/boostorg/config
 [submodule "extern/boost/modules/container"]
 	path = extern/boost/modules/container
-	url = https://github.com/boostorg/container.git
+	url = https://github.com/boostorg/container
 [submodule "extern/boost/modules/conversion"]
 	path = extern/boost/modules/conversion
-	url = https://github.com/boostorg/conversion.git
+	url = https://github.com/boostorg/conversion
 [submodule "extern/boost/modules/core"]
 	path = extern/boost/modules/core
-	url = https://github.com/boostorg/core.git
+	url = https://github.com/boostorg/core
 [submodule "extern/boost/modules/date_time"]
 	path = extern/boost/modules/date_time
-	url = https://github.com/boostorg/date_time.git
+	url = https://github.com/boostorg/date_time
 [submodule "extern/boost/modules/detail"]
 	path = extern/boost/modules/detail
-	url = https://github.com/boostorg/detail.git
+	url = https://github.com/boostorg/detail
 [submodule "extern/boost/modules/exception"]
 	path = extern/boost/modules/exception
-	url = https://github.com/boostorg/exception.git
+	url = https://github.com/boostorg/exception
 [submodule "extern/boost/modules/foreach"]
 	path = extern/boost/modules/foreach
-	url = https://github.com/boostorg/foreach.git
+	url = https://github.com/boostorg/foreach
 [submodule "extern/boost/modules/function"]
 	path = extern/boost/modules/function
-	url = https://github.com/boostorg/function.git
+	url = https://github.com/boostorg/function
 [submodule "extern/boost/modules/function_types"]
 	path = extern/boost/modules/function_types
-	url = https://github.com/boostorg/function_types.git
+	url = https://github.com/boostorg/function_types
 [submodule "extern/boost/modules/functional"]
 	path = extern/boost/modules/functional
-	url = https://github.com/boostorg/functional.git
+	url = https://github.com/boostorg/functional
 [submodule "extern/boost/modules/fusion"]
 	path = extern/boost/modules/fusion
-	url = https://github.com/boostorg/fusion.git
+	url = https://github.com/boostorg/fusion
 [submodule "extern/boost/modules/graph"]
 	path = extern/boost/modules/graph
-	url = https://github.com/boostorg/graph.git
+	url = https://github.com/boostorg/graph
 [submodule "extern/boost/modules/graph_parallel"]
 	path = extern/boost/modules/graph_parallel
-	url = https://github.com/boostorg/graph_parallel.git
+	url = https://github.com/boostorg/graph_parallel
 [submodule "extern/boost/modules/integer"]
 	path = extern/boost/modules/integer
-	url = https://github.com/boostorg/integer.git
+	url = https://github.com/boostorg/integer
 [submodule "extern/boost/modules/intrusive"]
 	path = extern/boost/modules/intrusive
-	url = https://github.com/boostorg/intrusive.git
+	url = https://github.com/boostorg/intrusive
 [submodule "extern/boost/modules/iterator"]
 	path = extern/boost/modules/iterator
-	url = https://github.com/boostorg/iterator.git
+	url = https://github.com/boostorg/iterator
 [submodule "extern/boost/modules/lexical_cast"]
 	path = extern/boost/modules/lexical_cast
-	url = https://github.com/boostorg/lexical_cast.git
+	url = https://github.com/boostorg/lexical_cast
 [submodule "extern/boost/modules/math"]
 	path = extern/boost/modules/math
-	url = https://github.com/boostorg/math.git
+	url = https://github.com/boostorg/math
 [submodule "extern/boost/modules/move"]
 	path = extern/boost/modules/move
-	url = https://github.com/boostorg/move.git
+	url = https://github.com/boostorg/move
 [submodule "extern/boost/modules/mpi"]
 	path = extern/boost/modules/mpi
-	url = https://github.com/boostorg/mpi.git
+	url = https://github.com/boostorg/mpi
 [submodule "extern/boost/modules/mpl"]
 	path = extern/boost/modules/mpl
-	url = https://github.com/boostorg/mpl.git
+	url = https://github.com/boostorg/mpl
 [submodule "extern/boost/modules/multi_index"]
 	path = extern/boost/modules/multi_index
-	url = https://github.com/boostorg/multi_index.git
-[submodule "extern/boost/modules/numeric_conversion"]
-	path = extern/boost/modules/numeric_conversion
-	url = https://github.com/boostorg/numeric_conversion.git
+	url = https://github.com/boostorg/multi_index
 [submodule "extern/boost/modules/optional"]
 	path = extern/boost/modules/optional
-	url = https://github.com/boostorg/optional.git
+	url = https://github.com/boostorg/optional
 [submodule "extern/boost/modules/parameter"]
 	path = extern/boost/modules/parameter
-	url = https://github.com/boostorg/parameter.git
+	url = https://github.com/boostorg/parameter
 [submodule "extern/boost/modules/predef"]
 	path = extern/boost/modules/predef
-	url = https://github.com/boostorg/predef.git
+	url = https://github.com/boostorg/predef
 [submodule "extern/boost/modules/preprocessor"]
 	path = extern/boost/modules/preprocessor
-	url = https://github.com/boostorg/preprocessor.git
+	url = https://github.com/boostorg/preprocessor
 [submodule "extern/boost/modules/property_map"]
 	path = extern/boost/modules/property_map
-	url = https://github.com/boostorg/property_map.git
+	url = https://github.com/boostorg/property_map
 [submodule "extern/boost/modules/proto"]
 	path = extern/boost/modules/proto
-	url = https://github.com/boostorg/proto.git
+	url = https://github.com/boostorg/proto
 [submodule "extern/boost/modules/range"]
 	path = extern/boost/modules/range
-	url = https://github.com/boostorg/range.git
+	url = https://github.com/boostorg/range
 [submodule "extern/boost/modules/ratio"]
 	path = extern/boost/modules/ratio
-	url = https://github.com/boostorg/ratio.git
+	url = https://github.com/boostorg/ratio
 [submodule "extern/boost/modules/rational"]
 	path = extern/boost/modules/rational
-	url = https://github.com/boostorg/rational.git
+	url = https://github.com/boostorg/rational
 [submodule "extern/boost/modules/serialization"]
 	path = extern/boost/modules/serialization
-	url = https://github.com/boostorg/serialization.git
+	url = https://github.com/boostorg/serialization
 [submodule "extern/boost/modules/smart_ptr"]
 	path = extern/boost/modules/smart_ptr
-	url = https://github.com/boostorg/smart_ptr.git
+	url = https://github.com/boostorg/smart_ptr
 [submodule "extern/boost/modules/spirit"]
 	path = extern/boost/modules/spirit
-	url = https://github.com/boostorg/spirit.git
+	url = https://github.com/boostorg/spirit
 [submodule "extern/boost/modules/static_assert"]
 	path = extern/boost/modules/static_assert
-	url = https://github.com/boostorg/static_assert.git
+	url = https://github.com/boostorg/static_assert
 [submodule "extern/boost/modules/system"]
 	path = extern/boost/modules/system
-	url = https://github.com/boostorg/system.git
+	url = https://github.com/boostorg/system
 [submodule "extern/boost/modules/thread"]
 	path = extern/boost/modules/thread
-	url = https://github.com/boostorg/thread.git
+	url = https://github.com/boostorg/thread
 [submodule "extern/boost/modules/throw_exception"]
 	path = extern/boost/modules/throw_exception
-	url = https://github.com/boostorg/throw_exception.git
+	url = https://github.com/boostorg/throw_exception
 [submodule "extern/boost/modules/tti"]
 	path = extern/boost/modules/tti
-	url = https://github.com/boostorg/tti.git
+	url = https://github.com/boostorg/tti
 [submodule "extern/boost/modules/tuple"]
 	path = extern/boost/modules/tuple
-	url = https://github.com/boostorg/tuple.git
+	url = https://github.com/boostorg/tuple
 [submodule "extern/boost/modules/type_index"]
 	path = extern/boost/modules/type_index
-	url = https://github.com/boostorg/type_index.git
+	url = https://github.com/boostorg/type_index
 [submodule "extern/boost/modules/type_traits"]
 	path = extern/boost/modules/type_traits
-	url = https://github.com/boostorg/type_traits.git
+	url = https://github.com/boostorg/type_traits
 [submodule "extern/boost/modules/typeof"]
 	path = extern/boost/modules/typeof
-	url = https://github.com/boostorg/typeof.git
+	url = https://github.com/boostorg/typeof
 [submodule "extern/boost/modules/unordered"]
 	path = extern/boost/modules/unordered
-	url = https://github.com/boostorg/unordered.git
+	url = https://github.com/boostorg/unordered
 [submodule "extern/boost/modules/utility"]
 	path = extern/boost/modules/utility
-	url = https://github.com/boostorg/utility.git
-[submodule "extern/boost/modules/winapi"]
-	path = extern/boost/modules/winapi
-	url = https://github.com/boostorg/winapi.git
-[submodule "extern/boost/modules/xpressive"]
-	path = extern/boost/modules/xpressive
-	url = https://github.com/boostorg/xpressive.git
+	url = https://github.com/boostorg/utility
 [submodule "extern/boost/modules/variant"]
 	path = extern/boost/modules/variant
 	url = https://github.com/boostorg/variant
+[submodule "extern/boost/modules/winapi"]
+	path = extern/boost/modules/winapi
+	url = https://github.com/boostorg/winapi
+[submodule "extern/boost/modules/xpressive"]
+	path = extern/boost/modules/xpressive
+	url = https://github.com/boostorg/xpressive
+[submodule "extern/boost/modules/numeric_conversion"]
+	path = extern/boost/modules/numeric_conversion
+	url = https://github.com/boostorg/numeric_conversion

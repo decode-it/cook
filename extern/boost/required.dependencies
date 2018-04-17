@@ -29,6 +29,7 @@ move
 mpi
 mpl
 multi_index
+numeric~conversion
 optional
 parameter
 predef

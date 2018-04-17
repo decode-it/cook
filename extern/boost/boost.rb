@@ -10,7 +10,7 @@ namespace :boost do
         Dir::chdir(dir) do
             mods = Set.new
             IO.popen("dist/bin/boostdep --track-sources --subset-for #{src_dir}").each do |line|
-                m = /^([a-zA-Z_]+):/.match(line) 
+                m = /^([a-zA-Z_~]+):/.match(line) 
                 mods.add(m[1]) if m
             end
             mods
