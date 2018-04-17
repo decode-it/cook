@@ -31,10 +31,13 @@ inline std::ostream & operator<<(std::ostream & str, Interface::Type type)
     switch(type)
     {
 #define L_CASE(TYPE, STR) case Interface::TYPE: return str << STR
-    L_CASE(Compile, "compile");
-    L_CASE(Archive, "archive");
-    L_CASE(Link, "link");
+        L_CASE(Compile, "compile");
+        L_CASE(Archive, "archive");
+        L_CASE(Link, "link");
 #undef L_CASE
+
+        default:
+            break;
     }
 
     if (type >= Interface::UserDefined)

@@ -48,7 +48,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     }
 
     // create the archive
-    MSS(!!recipe.build_target().filename, "No filename has been set for this build target");
+    MSG_MSS(!!recipe.build_target().filename, Error, "No filename has been set for build target " << recipe.uri());
     const ingredient::File archive = construct_archive_file(recipe, context);
     const LanguageTypePair key(Language::Binary, Type::Library);
     MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << recipe.uri());

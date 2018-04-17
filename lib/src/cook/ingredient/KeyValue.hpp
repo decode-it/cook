@@ -51,8 +51,8 @@ public:
 
     bool has_value() const                      { return value_.has_value(); }
     const std::string & value() const           { return *value_; }
-    bool set_value(const std::string & value)   { value_ = value; }
-    bool clear_value()                          { value_.reset(); }
+    void set_value(const std::string & value)   { value_ = value; }
+    void clear_value()                          { value_.reset(); }
     std::string to_string() const
     {
         if (!value_)
@@ -69,6 +69,7 @@ public:
             n.attr("key", key());
             if (has_value())
                 n.attr("value", value());
+            n.attr("prop", propagation());
         });
     }
 

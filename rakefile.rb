@@ -73,6 +73,13 @@ namespace :b0 do
     task :build do
         sh("ninja -f #{b0_ninja_fn} b0-cook.exe -v")
     end
+    
+    task :install => :build do
+        case GUBG::os
+        when :linux then sh("sudo cp b0-cook.exe /usr/local/bin/cook.exe")
+        when :windows then cp("b0-cook.exe", "../bin/")
+        end
+    end
 
     desc "bootstrap-level0: Clean"
     task :clean do

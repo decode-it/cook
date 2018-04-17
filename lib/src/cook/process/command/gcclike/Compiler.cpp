@@ -12,7 +12,7 @@ Compiler::Compiler(Language language)
     {
         case Language::CXX:
             set_command("g++");
-            add_argument(ArgumentDesc(0, "-std=c++17"), std::string());
+            add_argument(ArgumentDesc(0, "-std=c++14"), std::string());
             break;
         case Language::C:
             set_command("gcc");

@@ -63,12 +63,7 @@ void Recipe::library_path(const std::string & path)
 
 Language Recipe::guess_language_() const
 {
-    const auto & langs = recipe_->languages();
-
-    if (langs.size() == 1)
-        return *langs.begin();
-    else
-        return Language::Undefined;
+    return Language::Undefined;
 }
 
 void Recipe::include_path(const std::string & path)

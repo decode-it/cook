@@ -117,7 +117,7 @@ void Recipe::stream(log::Importance importance) const
                 for (const auto &e: p.second)
                 {
                     auto ss = log::scope("file", imp, [&](auto &n){
-                            n.attr("full_name", e.key()).attr("dir", e.dir()).attr("rel", e.rel());
+                            n.attr("full_name", e.key()).attr("dir", e.dir()).attr("rel", e.rel()).attr("propagation", e.propagation());
                             });
                 }
             }

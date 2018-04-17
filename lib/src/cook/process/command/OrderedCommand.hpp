@@ -48,6 +48,8 @@ public:
         for(const auto & p : gubg::make_range(first, second))
             for(const auto & a : p.second)
                 functor(p.first.option, a);
+
+        MSS_END();
     }
 
     void to_stream(std::ostream & oss, const ArgumentDesc &input_desc, const std::list<std::filesystem::path> & input_files, const ArgumentDesc &output_desc, const std::list<std::filesystem::path> & output_files) const;

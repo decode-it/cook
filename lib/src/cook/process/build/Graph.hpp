@@ -4,7 +4,7 @@
 #include "cook/process/command/Interface.hpp"
 #include "cook/model/Uri.hpp"
 #include "boost/graph/adjacency_list.hpp"
-#include <variant>
+#include "boost/variant.hpp"
 #include <memory>
 #include <vector>
 #include <list>
@@ -18,7 +18,8 @@ struct Graph
     using FileLabel = std::filesystem::path;
     using CommandLabel = command::Ptr;
 
-    using Label = std::variant<FileLabel, CommandLabel>;
+    using Label = boost::variant<FileLabel, CommandLabel>;
+
     enum EdgeType
     {
         Explicit = 0x01,

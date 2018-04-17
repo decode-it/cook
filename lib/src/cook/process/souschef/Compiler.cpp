@@ -66,21 +66,16 @@ command::Ptr Compiler::compile_command(const model::Recipe & recipe, const Conte
 {
     std::shared_ptr<command::Compiler> cp = std::make_shared<command::gcclike::Compiler>(language_);
 
-    std::set<Language> languages = { language_, Language::Undefined };
+    // add the include paths
+    for (const ingredient::File & f : recipe.files().range(LanguageTypePair(language_, Type::IncludePath)))
+        cp->add_include_path(f.dir());
 
-    for (const auto & language : languages)
-    {
-        // add the include paths
-        for (const ingredient::File & f : recipe.files().range(LanguageTypePair(language_, Type::IncludePath)))
-            cp->add_include_path(f.dir());
-
-        // add the defines
-        for (const ingredient::KeyValue & f : recipe.key_values().range(LanguageTypePair(language_, Type::Define)))
-            if (f.has_value())
-                cp->add_define(f.key(), f.value());
-            else
-                cp->add_define(f.key());
-    }
+    // add the defines
+    for (const ingredient::KeyValue & f : recipe.key_values().range(LanguageTypePair(Language::Undefined, Type::Define)))
+        if (f.has_value())
+            cp->add_define(f.key(), f.value());
+        else
+            cp->add_define(f.key());
 
     return cp;
 }

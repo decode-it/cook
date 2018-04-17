@@ -75,7 +75,7 @@ Result Ninja::process(std::ostream & ofs, const Context & context)
         {
 
             const auto &label = build_graph[vertex];
-            auto command_ptr = std::get_if<process::build::Graph::CommandLabel>(&label);
+            auto command_ptr = boost::get<process::build::Graph::CommandLabel>(&label);
             MSS(!!command_ptr);
             auto &command = *command_ptr;
 
@@ -83,7 +83,10 @@ Result Ninja::process(std::ostream & ofs, const Context & context)
 
             std::list<std::filesystem::path> input_files;
             {
-                auto it = boost::make_function_output_iterator([&](const auto & v) { input_files.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v])); });
+                auto it = boost::make_function_output_iterator([&](const auto & v)
+                {
+                    input_files.push_back(boost::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                });
                 build_graph.input(it, vertex, cook::process::RecipeFilteredGraph::Explicit);
 
                 auto ss = log::scope("inputs", [&](auto & n) {
@@ -94,7 +97,10 @@ Result Ninja::process(std::ostream & ofs, const Context & context)
 
             std::list<std::filesystem::path> input_dependencies;
             {
-                auto it = boost::make_function_output_iterator([&](const auto & v) { input_dependencies.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v])); });
+                auto it = boost::make_function_output_iterator([&](const auto & v)
+                {
+                    input_dependencies.push_back(boost::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                });
                 build_graph.input(it, vertex, cook::process::RecipeFilteredGraph::Implicit);
 
                 auto ss = log::scope("implicit inputs", [&](auto & n) {
@@ -105,7 +111,10 @@ Result Ninja::process(std::ostream & ofs, const Context & context)
 
             std::list<std::filesystem::path> output_files;
             {
-                auto it = boost::make_function_output_iterator([&](const auto & v) { output_files.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v])); });
+                auto it = boost::make_function_output_iterator([&](const auto & v)
+                {
+                    output_files.push_back(boost::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                });
                 build_graph.output(it, vertex);
 
                 auto ss = log::scope("outputs", [&](auto & n) {

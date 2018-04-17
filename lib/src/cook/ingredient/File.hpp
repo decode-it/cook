@@ -52,7 +52,7 @@ public:
         const auto imp = log::importance(importance);
 
         return log::scope("file", imp, [&](auto &n) {
-            n.attr("full_name", key()).attr("dir", dir()).attr("rel", rel());
+            n.attr("full_name", key()).attr("dir", dir()).attr("rel", rel()).attr("prop", propagation());
         });
     }
 

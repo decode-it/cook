@@ -9,7 +9,7 @@ Linker::Linker()
       library_path_(40, "-L")
 {  
     set_command("g++");
-    add_argument(ArgumentDesc(0, "-std=c++17"), std::string());
+    add_argument(ArgumentDesc(0, "-std=c++14"), std::string());
 }
 
 

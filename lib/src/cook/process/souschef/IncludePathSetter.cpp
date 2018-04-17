@@ -7,13 +7,17 @@ namespace cook { namespace process { namespace souschef {
 IncludePathSetter::IncludePathSetter(Language language)
     : language_(language)
 {
-    }
+}
 
 Result IncludePathSetter::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
 {
     MSS_BEGIN(Result);
 
     auto & files = recipe.files();
+
+    if (language_ == Language::CXX)
+        for(const auto & file : files.range(LanguageTypePair(Language::C, Type::Header)))
+            MSS(add_derived_path(LanguageTypePair(language_, Type::IncludePath), file, recipe));
 
     for(const auto & file : files.range(LanguageTypePair(language_, Type::Header)))
         MSS(add_derived_path(LanguageTypePair(language_, Type::IncludePath), file, recipe));
