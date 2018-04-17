@@ -24,24 +24,8 @@ namespace :boost do
     end
     
     $boost_modules = nil
-        
-    desc "boost: Recreate the boost dependency list"
-    task :deps, [:path] do |t,args|
-        sh "git submodule update --init --recursive #{module_dir}"
-        if $boost_modules == nil
-            $boost_modules = extract_all_boost_modules(args[:path], File.join(cur_dir, "..", "..")).to_a
-            File.open(dep_file, 'w') do |os|
-                $boost_modules.each { |m| os << "#{m}\n" }
-            end
-        end
-    end
-       
-    desc "boost: Loads the boost module names into $boost_modules"
-    task :load do       
-        # Keep this global, this is used in b0-compile.ninja
-        $boost_modules = File.open(dep_file).map { |line| line.chomp.sub("~", "_") }
-    end
     
+        
     desc "boost: Create chai script with the boost modules in the \"boosts\" variable"
     task :create_recipe => [:load] do
         File.open(File.join(cur_dir, 'dependencies.chai'), 'w') do |f|
@@ -50,6 +34,25 @@ namespace :boost do
         end
     end
     
+        
+    desc "boost: Recreate the boost dependency list"
+    task :deps, [:path] do |t,args|
+        if $boost_modules == nil
+            $boost_modules = extract_all_boost_modules(args[:path], File.join(cur_dir, "..", "..")).to_a
+            File.open(dep_file, 'w') do |os|
+                $boost_modules.each { |m| os << "#{m}\n" }
+            end
+        end
+        
+        Rake::Task["boost:create_recipe"].invoke
+    end
+       
+    desc "boost: Loads the boost module names into $boost_modules"
+    task :load do       
+        # Keep this global, this is used in b0-compile.ninja
+        $boost_modules = File.open(dep_file).map { |line| line.chomp.sub("~", "_") }
+    end
+
     desc "boost: Update the modules"
     task :update => [:load] do
         Dir.chdir(module_dir) do
