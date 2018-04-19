@@ -15,6 +15,7 @@ Result recurse_all_files(const std::filesystem::path & directory, const std::str
     MSS_BEGIN(Result);
     auto ss = log::scope("recurse", [&](auto & n) { n.attr("dir", directory).attr("pattern", pattern); });
 
+    if (std::filesystem::is_directory(directory))
     {
         auto chdir = gubg::filesystem::change_directory(directory);
         std::regex regex(pattern);

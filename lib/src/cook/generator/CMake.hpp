@@ -10,6 +10,8 @@ namespace cook { namespace generator {
 class CMake : public Interface
 {
 public:
+    CMake();
+
     std::string name() const override { return "CMake"; }
 
     Result set_option(const std::string & option) override;
@@ -32,6 +34,8 @@ private:
     void set_link_paths_(std::ostream & oss, const model::Recipe & recipe, const std::filesystem::path & output_to_source) const;
 
     bool contains_sources_(const model::Recipe & recipe) const;
+
+    std::filesystem::path output_path_;
 };
 
 } }

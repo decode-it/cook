@@ -54,7 +54,7 @@ void Recipe::library(const std::string & library)
 
 void Recipe::library_path(const std::string & path)
 {
-    auto lib_path = ingredient::File(gubg::filesystem::combine(recipe_->working_directory(), path), "");
+    auto lib_path = ingredient::File(path, {});
     lib_path.set_propagation(Propagation::Public);
     lib_path.set_overwrite(Overwrite::IfSame);
 
@@ -68,7 +68,7 @@ Language Recipe::guess_language_() const
 
 void Recipe::include_path(const std::string & path)
 {
-    auto inc_path = ingredient::File(gubg::filesystem::combine(recipe_->working_directory(), path), "");
+    auto inc_path = ingredient::File(path, {});
 
     inc_path.set_propagation(Propagation::Public);
     inc_path.set_overwrite(Overwrite::IfSame);
