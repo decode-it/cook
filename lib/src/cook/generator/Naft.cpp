@@ -84,14 +84,17 @@ bool Naft::can_process(const Context & context) const
     return context.menu().is_valid();
 }
 
-Result Naft::process(std::ostream & oss, const Context & context)
+Result Naft::process(const Context & context)
 {
     MSS_BEGIN(Result);
+
+    std::ofstream ofs;
+    MSS(open_output_stream(context, ofs));
 
     Processor p(context);
     p.construct_book_list();;
 
-    auto n = gubg::naft::Document(oss).node("structure");
+    auto n = gubg::naft::Document(ofs).node("structure");
 
     p.process(n, context.root_book());
 

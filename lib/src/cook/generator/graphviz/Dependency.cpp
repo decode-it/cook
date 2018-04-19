@@ -34,9 +34,12 @@ using NodeMap = std::unordered_map<Recipe *, Dependency::Color>;
 
 }
 
-Result Dependency::process(std::ostream & oss, const Context  & context)
+Result Dependency::process(const Context  & context)
 {
     MSS_BEGIN(Result);
+
+    std::ofstream ofs;
+    MSS(open_output_stream(context, ofs));
 
     NodeMap nodes;
 
@@ -74,14 +77,14 @@ Result Dependency::process(std::ostream & oss, const Context  & context)
         nodes.emplace(recipe, Dependency::Color::OutsideTree);
 
     // and now write out all the information
-    write_header_(oss);
+    write_header_(ofs);
 
     // write out the nodes
     for(const auto & p1 : nodes)
     {
         Recipe * recipe = p1.first;
         Color color = p1.second;
-        write_node_desc_(oss, node_name(recipe), recipe->uri().string(), color);
+        write_node_desc_(ofs, node_name(recipe), recipe->uri().string(), color);
     }
 
     for(const auto & p1 : nodes)
@@ -102,7 +105,7 @@ Result Dependency::process(std::ostream & oss, const Context  & context)
                 dst_id = unexisting_node_name(src, p.first);
                 dst_color = Color::Undefined;
 
-                write_node_desc_(oss, dst_id, p.first.string(), dst_color);
+                write_node_desc_(ofs, dst_id, p.first.string(), dst_color);
             }
             else
             {
@@ -111,11 +114,11 @@ Result Dependency::process(std::ostream & oss, const Context  & context)
             }
 
             const std::string options = color_property_string_(color_property_map(src_color, dst_color));
-            oss << src_id << " -> " << dst_id << " [" << options << "];" << std::endl;
+            ofs << src_id << " -> " << dst_id << " [" << options << "];" << std::endl;
         }
     }
 
-    write_footer_(oss);
+    write_footer_(ofs);
 
     MSS_END();
 }

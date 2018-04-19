@@ -2,14 +2,10 @@
 #define HEADER_cook_generator_Interface_hpp_ALREADY_INCLUDED
 
 #include "cook/Result.hpp"
-#include "cook/model/Dirs.hpp"
+#include "cook/Context.hpp"
+#include "cook/util/File.hpp"
 #include "gubg/std/filesystem.hpp"
-
-namespace cook {
-
-class Context;
-
-}
+#include <fstream>
 
 namespace cook { namespace generator {
 
@@ -23,7 +19,7 @@ public:
     virtual Result set_option(const std::string & option) = 0;
 
     virtual bool can_process(const Context & context) const = 0;
-    virtual Result process(std::ostream & ofs, const Context & context) = 0;
+    virtual Result process(const Context & context) = 0;
 
     virtual std::filesystem::path output_filename(const model::Dirs & dirs) const
     {
@@ -38,6 +34,18 @@ public:
             return std::filesystem::path(filename_);
     }
 protected:
+    Result open_output_stream(const Context & context, std::ofstream & ofs)
+    {
+        MSS_BEGIN(Result);
+        MSS(!ofs.is_open());
+
+        std::filesystem::path path = output_filename(context.dirs());
+        MSS(util::open_file(path, ofs));
+
+        MSS_END();
+    }
+
+
     void set_filename(const std::string & filename)
     {
         filename_ = filename;

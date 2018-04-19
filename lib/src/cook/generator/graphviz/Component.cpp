@@ -21,9 +21,12 @@ bool Component::can_process(const Context & context) const
     return context.menu().is_valid();
 }
 
-Result Component::process(std::ostream & ofs, const Context & context)
+Result Component::process(const Context & context)
 {
     MSS_BEGIN(Result);
+
+    std::ofstream ofs;
+    MSS(open_output_stream(context, ofs));
 
     const auto & comp_g = context.menu().component_graph().graph;
 

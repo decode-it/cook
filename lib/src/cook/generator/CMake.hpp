@@ -15,7 +15,7 @@ public:
     Result set_option(const std::string & option) override;
 
     bool can_process(const Context & context) const override;
-    Result process(std::ostream & ofs, const Context & context) override;
+    Result process(const Context & context) override;
 
 private:
     std::string default_filename() const override;

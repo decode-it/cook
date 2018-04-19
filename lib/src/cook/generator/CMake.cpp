@@ -17,9 +17,12 @@ bool CMake::can_process(const Context & context) const
     return context.menu().is_valid();
 }
 
-Result CMake::process(std::ostream & ofs, const Context & context)
+Result CMake::process(const Context & context)
 {
     MSS_BEGIN(Result);
+
+    std::ofstream ofs;
+    MSS(open_output_stream(context, ofs));
 
     const auto & recipe_list = context.menu().topological_order_recipes();
 

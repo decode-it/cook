@@ -17,12 +17,15 @@ bool Ninja::can_process(const Context & context) const
     return context.menu().is_valid();
 }
 
-Result Ninja::process(std::ostream & ofs, const Context & context)
+Result Ninja::process(const Context & context)
 {
     using vertex_descriptor = process::build::config::Graph::vertex_descriptor;
 
     MSS_BEGIN(Result);
     auto ss = log::scope("process");
+
+    std::ofstream ofs;
+    MSS(open_output_stream(context, ofs));
 
 
     std::map<cook::process::command::Ptr, std::string> command_map;

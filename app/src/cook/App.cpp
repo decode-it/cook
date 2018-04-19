@@ -3,6 +3,7 @@
 #include "cook/algo/Book.hpp"
 #include "cook/util/File.hpp"
 #include "cook/log/Scope.hpp"
+#include "cook/generator/Interface.hpp"
 #include "gubg/mss.hpp"
 #include <unordered_set>
 
@@ -113,10 +114,8 @@ Result App::process_generator_(const std::string & name, const std::string & val
 
     if (ptr->can_process(kitchen_))
     {
-        std::ofstream ofs;
-        std::filesystem::path path = ptr->output_filename(kitchen_.dirs());
-        MSS(util::open_file(path, ofs));
-        MSS(ptr->process(ofs, kitchen_));
+
+        MSS(ptr->process(kitchen_));
     }
 
     MSS_END();
