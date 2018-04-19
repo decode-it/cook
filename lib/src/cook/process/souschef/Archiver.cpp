@@ -1,6 +1,8 @@
 #include "cook/process/souschef/Archiver.hpp"
 #include "cook/process/command/gcclike/Archiver.hpp"
+#include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
+
 
 namespace cook { namespace process { namespace souschef {
 
@@ -27,10 +29,12 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         MSS(g.add_edge(archive_vertex, g.goc_vertex(object.key())));
     }
 
-    // add the dependency to this graph
+    // get the library dir (local to the path)
+    const std::filesystem::path & library_dir = util::make_local_to_recipe(util::make_recipe_adj_path(recipe), context.dirs().output());
     {
         MSS(!!recipe.build_target().filename);
-        ingredient::File dep(context.dirs().output(), *recipe.build_target().filename);
+        ingredient::File dep(library_dir, *recipe.build_target().filename);
+
         dep.set_overwrite(Overwrite::IfSame);
         dep.set_owner(&recipe);
         dep.set_propagation(Propagation::Public);
@@ -38,24 +42,27 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         MSG_MSS(files.insert(key,dep).second, Error, "Dependency " << dep << " already present in " << recipe.uri());
 
         // add the link in the execution graph
-        MSS(g.add_edge(g.goc_vertex(dep.key()), archive_vertex));
+        {
+            const std::filesystem::path & lib_fn = util::make_global_from_recipe(recipe, dep.key());
+            MSS(g.add_edge(g.goc_vertex(lib_fn), archive_vertex));
+        }
     }
 
-
-    // add the library
+    // add the library type
     {
-        ingredient::File ar("", recipe.build_target().name);
+        ingredient::KeyValue ar(recipe.build_target().name);
         ar.set_overwrite(Overwrite::IfSame);
         ar.set_owner(&recipe);
         ar.set_propagation(Propagation::Public);
+
         const LanguageTypePair key(Language::Binary, Type::Library);
-        MSG_MSS(files.insert(key,ar).second, Error, "Archive " << ar << " already present in " << recipe.uri());
+        MSG_MSS(recipe.key_values().insert(key,ar).second, Error, "Archive " << ar << " already present in " << recipe.uri());
     }
 
-    // add the library
+    // add the library dir
     {
-        ingredient::File ar(context.dirs().output(), "");
-        ar.set_overwrite(Overwrite::Always);
+        ingredient::File ar(library_dir, {});
+        ar.set_overwrite(Overwrite::IfSame);
         ar.set_owner(&recipe);
         ar.set_propagation(Propagation::Public);
         const LanguageTypePair key(Language::Binary, Type::LibraryPath);

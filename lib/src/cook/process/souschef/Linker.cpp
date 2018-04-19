@@ -1,5 +1,6 @@
 #include "cook/process/souschef/Linker.hpp"
 #include "cook/process/command/gcclike/Linker.hpp"
+#include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
 #include "boost/predef.h"
 
@@ -12,54 +13,123 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     model::Recipe::Files & files = recipe.files();
     auto & g = file_command_graph;
 
-    auto objects = files.range(LanguageTypePair(Language::Binary, Type::Object));
-    auto libs = files.range(LanguageTypePair(Language::Binary, Type::Library));
-    auto deps = files.range(LanguageTypePair(Language::Binary, Type::Dependency));
+    auto stop_progagation = [](auto & ingredients)
+    {
+        for(auto & ingredient : ingredients)
+            ingredient.set_propagation(Propagation::Private);
+    };
 
-    if (objects.empty() && libs.empty())
+    auto objects    = recipe.files().range(LanguageTypePair(Language::Binary, Type::Object));
+    auto libs       = recipe.key_values().range(LanguageTypePair(Language::Binary, Type::Library));
+    auto deps       = recipe.files().range(LanguageTypePair(Language::Binary, Type::Dependency));
+
+    stop_progagation(objects);
+    stop_progagation(libs);
+    stop_progagation(deps);
+
+    if (objects.empty() && deps.empty())
     {
         MSS_RC << MESSAGE(Warning, "archive for " << recipe.uri() << " is not created as it contains no object code");
         MSS_RETURN_OK();
     }
 
-    const auto link_vertex = g.add_vertex(link_command(recipe, context));
+    // make the link vertex
+    build::Graph::vertex_descriptor link_vertex;
+    {
+        std::shared_ptr<command::Linker> ptr = std::make_shared<command::gcclike::Linker>();
+
+        // set the libraries
+        for(const ingredient::KeyValue & lib : libs)
+           ptr->add_library(lib.key());
+
+        // set the library paths
+        for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::LibraryPath)))
+            ptr->add_library_path(util::make_global_from_recipe(recipe, lib.dir()));
+
+        link_vertex = g.add_vertex(ptr);
+    }
 
     // link the objects
     for(ingredient::File & object : objects)
-    {
-        // stop the propagation, this file is contained in the library
-        object.set_propagation(Propagation::Private);
         MSS(g.add_edge(link_vertex, g.goc_vertex(object.key())));
-    }
 
-    // link the libraries
-    for(ingredient::File & lib: libs)
-    {
-        // stop the propagation, this file is contained in the library
-        lib.set_propagation(Propagation::Private);
-    }
-
+    // link the dependencies
     for(ingredient::File & dep : deps)
     {
-        // stop the propagation, this file is contained in the library
-        dep.set_propagation(Propagation::Private);
-
-        MSS(g.add_edge(link_vertex, g.goc_vertex(dep.key()), RecipeFilteredGraph::Implicit));
+        const std::filesystem::path & fn = util::make_global_from_recipe(recipe, dep.key());
+        MSS(g.add_edge(link_vertex, g.goc_vertex(fn), RecipeFilteredGraph::Implicit));
     }
 
-    // create the archive
-    MSG_MSS(!!recipe.build_target().filename, Error, "No filename has been set for build target " << recipe.uri());
-    const ingredient::File archive = construct_archive_file(recipe, context);
-    const LanguageTypePair key(Language::Binary, Type::Library);
-    MSG_MSS(files.insert(key,archive).second, Error, "Archive " << archive << " already present in " << recipe.uri());
 
-    // add the link in the execution graph
-    MSS(g.add_edge(g.goc_vertex(archive.key()), link_vertex));
+    // create the local link dir
+    const std::filesystem::path & library_dir = util::make_local_to_recipe(util::make_recipe_adj_path(recipe), context.dirs().output());
+
+    // create the linked file
+    {
+        MSG_MSS(!!recipe.build_target().filename, Error, "No filename has been set for build target " << recipe.uri());
+
+        // only if it is an shared library
+        if(recipe.type() == model::Recipe::Type::SharedLibrary)
+        {
+            // add a dependency to the project
+            {
+                ingredient::File dep(library_dir, *recipe.build_target().filename);
+                dep.set_overwrite(Overwrite::IfSame);
+                dep.set_owner(&recipe);
+                dep.set_propagation(Propagation::Public);
+                const LanguageTypePair key(Language::Binary, Type::Dependency);
+                MSG_MSS(files.insert(key,dep).second, Error, "Dependency " << dep << " already present in " << recipe.uri());
+            }
+
+            // add the link include path
+            {
+                ingredient::File ar(library_dir, {});
+                ar.set_overwrite(Overwrite::IfSame);
+                ar.set_owner(&recipe);
+                ar.set_propagation(Propagation::Public);
+                const LanguageTypePair key(Language::Binary, Type::LibraryPath);
+                files.insert(key,ar);
+            }
+        }
+
+        // add the link in the execution graph
+        {
+            const std::filesystem::path & lib_fn = util::make_global_from_recipe(recipe, library_dir) / *recipe.build_target().filename;
+            MSS(g.add_edge(g.goc_vertex(lib_fn), link_vertex));
+        }
+
+        // add the link type
+        {
+            ingredient::KeyValue ar(recipe.build_target().name);
+            ar.set_overwrite(Overwrite::IfSame);
+            ar.set_owner(&recipe);
+            ar.set_propagation(Propagation::Public);
+
+            Type t;
+            switch(recipe.type())
+            {
+            case model::Recipe::Type::Executable:
+                t = Type::Executable;
+                break;
+
+            case model::Recipe::Type::SharedLibrary:
+                t = Type::Library;
+                break;
+
+            default:
+                MSG_MSS(false, Error, "Unknown link type " << recipe.type());
+            }
+
+
+            const LanguageTypePair key(Language::Binary, t);
+            MSG_MSS(recipe.key_values().insert(key,ar).second, Error, t << " " << ar << " already present in " << recipe.uri());
+        }
+    }
 
     MSS_END();
 }
 
-ingredient::File Linker::construct_archive_file(model::Recipe & recipe, const Context &context) const
+ingredient::File Linker::construct_link_file(model::Recipe & recipe, const Context &context) const
 {
     const std::filesystem::path dir = context.dirs().output();
     const std::filesystem::path rel = *recipe.build_target().filename;

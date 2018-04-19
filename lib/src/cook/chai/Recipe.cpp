@@ -45,11 +45,11 @@ void Recipe::depends_on(const std::string & dependency)
 
 void Recipe::library(const std::string & library)
 {
-    auto lib = ingredient::File("", library);
+    auto lib = ingredient::KeyValue(library);
     lib.set_propagation(Propagation::Public);
     lib.set_overwrite(Overwrite::IfSame);
 
-    recipe_->files().insert(LanguageTypePair(Language::Binary, Type::Library), lib);
+    recipe_->key_values().insert(LanguageTypePair(Language::Binary, Type::Library), lib);
 }
 
 void Recipe::library_path(const std::string & path)

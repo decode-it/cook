@@ -37,7 +37,7 @@ namespace :setup do
 end
 
 desc "Update submodules to head"
-task :uth do
+task :uth => "boost:load" do
     GUBG::each_submod(submods: gubg_submods) do |info|
         sh "git checkout #{info[:branch]}"
         sh "git pull --rebase"
@@ -56,7 +56,7 @@ namespace :b0 do
     end
 
     desc "bootstrap-level0: Update the ninja scripts (depends on gubg.build)"
-    task :update => ["boost:load"] do
+    task :update => ["boost:update"] do
         require("gubg/build/expand_templates")
         GUBG::Build::expand_templates("b0-compile.ninja")
     end

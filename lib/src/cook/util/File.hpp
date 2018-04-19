@@ -3,25 +3,18 @@
 
 #include "cook/Result.hpp"
 #include "cook/log/Scope.hpp"
+#include "cook/model/Recipe.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <fstream>
 
 namespace cook { namespace util {
 
-inline Result open_file(const std::filesystem::path & path, std::ofstream & ofs)
-{
-    MSS_BEGIN(Result);
-    auto s = log::scope("open file", [&](auto & n) { n.attr("path", path); });
-
-    std::filesystem::path parent = path.parent_path();
-    if (!parent.empty() && !std::filesystem::is_directory(parent))
-        MSG_MSS(std::filesystem::create_directories(parent), Error, "Unable to create directory '" << parent.string() << "'");
-
-    ofs.open(path.string());
-    MSG_MSS(ofs.good(), Error, "Unable to create file '" << path.string() << "'");
-
-    MSS_END();
-}
+Result open_file(const std::filesystem::path & path, std::ofstream & ofs);
+std::filesystem::path make_recipe_adj_path(const model::Recipe & old_recipe, const model::Recipe & new_recipe);
+std::filesystem::path make_recipe_adj_path(const model::Recipe & recipe);
+std::filesystem::path make_local_to_recipe(const std::filesystem::path & adj_path, const std::filesystem::path & path);
+ingredient::File make_local_to_recipe(const std::filesystem::path & adj_path, const ingredient::File & file);
+std::filesystem::path make_global_from_recipe(const model::Recipe & recipe, const std::filesystem::path & path);
 
 } }
 

@@ -13,17 +13,11 @@ Result IncludePathSetter::process(model::Recipe & recipe, RecipeFilteredGraph & 
 {
     MSS_BEGIN(Result);
 
-    auto & files = recipe.files();
-
     if (language_ == Language::CXX)
-        for(const auto & file : files.range(LanguageTypePair(Language::C, Type::Header)))
-            MSS(add_derived_path(LanguageTypePair(language_, Type::IncludePath), file, recipe));
+        MSS(add_derived_paths(recipe, LanguageTypePair(Language::C, Type::Header), LanguageTypePair(language_, Type::IncludePath)));
 
-    for(const auto & file : files.range(LanguageTypePair(language_, Type::Header)))
-        MSS(add_derived_path(LanguageTypePair(language_, Type::IncludePath), file, recipe));
-
-    for(const auto & file : files.range(LanguageTypePair(Language::Undefined, Type::IncludePath)))
-        MSS(files.insert_or_merge(LanguageTypePair(language_, Type::IncludePath), file));
+    MSS(add_derived_paths(recipe, LanguageTypePair(language_, Type::Header), LanguageTypePair(language_, Type::IncludePath)));
+    MSS(add_derived_paths(recipe, LanguageTypePair(Language::Undefined, Type::Header), LanguageTypePair(language_, Type::IncludePath)));
 
     MSS_END();
 }

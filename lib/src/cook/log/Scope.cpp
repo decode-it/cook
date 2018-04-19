@@ -19,6 +19,7 @@ namespace cook { namespace log {
             return;
         if (do_log_)
             indent_(std::cout, false);
+
         Node::top_ptr() = node_->parent();
     }
 
@@ -26,11 +27,14 @@ namespace cook { namespace log {
     {
         static unsigned int level = 0;
         static bool is_open = true;
+
+
+
         static std::string str;
         if (increase)
         {
             str.resize(level*2, ' ');
-            if (level > 0)
+            if (level >= 0)
             {
                 if (is_open)
                     os << "{";

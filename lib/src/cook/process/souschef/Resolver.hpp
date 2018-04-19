@@ -24,6 +24,7 @@ namespace cook { namespace process { namespace souschef {
 
     private:
         Result process_(model::Recipe & recipe, LanguageTypePair & key, ingredient::File & file) const;
+        std::string glob_to_regex_(const std::string & pattern) const;
 
         rules::RuleSet::Ptr rule_set_;
     };

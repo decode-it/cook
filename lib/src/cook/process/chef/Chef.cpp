@@ -33,7 +33,7 @@ Result Chef::mis_en_place(Context & context)
 
         MSS(mis_en_place_(*recipe, *graph, context, *brigade));
 
-        recipe->stream(-1);
+        recipe->stream();
     }
 
     MSS_END();

@@ -1,30 +1,16 @@
 #ifndef HEADER_cook_process_souschef_PathExtraction_hpp_ALREADY_INCLUDED
 #define HEADER_cook_process_souschef_PathExtraction_hpp_ALREADY_INCLUDED
 
-#include "cook/Result.hpp"
+#include "cook/model/Recipe.hpp"
 #include "cook/LanguageTypePair.hpp"
-#include "cook/ingredient/File.hpp"
+#include "cook/Result.hpp"
 
 namespace cook { namespace process { namespace souschef {
 
-inline Result add_derived_path(const LanguageTypePair & key, const ingredient::File & file, model::Recipe & recipe)
-{
-    MSS_BEGIN(Result);
+Result add_derived_path(const LanguageTypePair & key, const ingredient::File & file, model::Recipe & recipe);
+Result add_derived_paths(model::Recipe & recipe, const LanguageTypePair & src_pair, const LanguageTypePair & dst_pair);
 
-    if (file.dir().empty())
-        MSS_RETURN_OK();
 
-    // create a file object for the path
-    ingredient::File path(file.dir(), {});
-
-    path.set_overwrite(Overwrite::Always);
-    path.set_owner(&recipe);
-    path.set_propagation( file.propagation() );
-
-    MSS(recipe.files().insert_or_merge(key, path));
-
-    MSS_END();
-}
 
 } } }
 

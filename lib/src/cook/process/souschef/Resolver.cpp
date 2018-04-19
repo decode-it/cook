@@ -1,5 +1,7 @@
 #include "cook/process/souschef/Resolver.hpp"
 #include "cook/log/Scope.hpp"
+#include "cook/util/System.hpp"
+#include "gubg/string_algo/substitute.hpp"
 
 namespace cook { namespace process { namespace souschef { 
 
@@ -83,19 +85,9 @@ Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & glo
     auto file_callback = [&](const std::filesystem::path & fn)
     {
         MSS_BEGIN(Result);
-        L(C(fn));
-
-        // extract the dir and the fn part
-        std::filesystem::path f_dir, f_rel;
-        extract_dir(gubg::make_range(fn), gubg::make_range(dir), f_dir, f_rel);
-
-        // some logging
-        auto ss = log::scope("file", [&](auto & n) {
-            n.attr("full_name", fn).attr("dir", f_dir).attr("rel", f_rel);
-        });
 
         // resolve the file if possible
-        ingredient::File file(f_dir, f_rel);
+        ingredient::File file(globber.dir, fn);
         LanguageTypePair key(globber.language, globber.type);
 
         auto accepts = [&](const rules::Interface & interface) { return interface.accepts_file(key, file); };
@@ -113,11 +105,34 @@ Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & glo
         MSS_END();
     };
 
-    gubg::file::each_glob(globber.pattern, file_callback, dir);
+    std::string regex = glob_to_regex_(globber.pattern);
+    MSS(util::recurse_all_files(dir, regex, file_callback));
+
+
+//    gubg::file::each_glob(globber.pattern, file_callback, dir);
     MSS(rc);
 
     MSS_END();
 
+}
+
+
+
+std::string Resolver::glob_to_regex_(const std::string & pattern) const
+{
+    std::string pattern_re = pattern;
+
+    if (std::filesystem::path::preferred_separator == '\\')
+        gubg::string_algo::substitute(pattern_re, pattern_re, std::string("/"), std::string("\\\\"));
+    gubg::string_algo::substitute(pattern_re, pattern_re, std::string("."), std::string("\\."));
+    //We use \0 to represent * temporarily
+    gubg::string_algo::substitute(pattern_re, pattern_re, std::string("**"), std::string(".\0", 2));
+    gubg::string_algo::substitute(pattern_re, pattern_re, std::string("*"), std::string("[^/\\\\]\0", 7));
+
+    //Replace \0 with *
+    gubg::string_algo::substitute(pattern_re, pattern_re, std::string("\0", 1), std::string("*"));
+
+    return pattern_re;
 }
 
 } } }

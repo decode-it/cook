@@ -1,11 +1,13 @@
 #include "cook/process/souschef/DependencyPropagator.hpp"
+#include "cook/util/File.hpp"
 
 namespace cook { namespace process { namespace souschef {
 
 namespace  {
 
-template <typename Tag>
-Result merge_(const model::Recipe & src_recipe, model::Recipe & dst_recipe, const DependentPropagator::SelectionFunction & selection, Tag tag)
+
+template <typename Tag, typename Transformer>
+Result merge_(const model::Recipe & src_recipe, model::Recipe & dst_recipe, const DependentPropagator::SelectionFunction & selection, Transformer && transform, Tag tag)
 {
     MSS_BEGIN(Result);
 
@@ -17,7 +19,9 @@ Result merge_(const model::Recipe & src_recipe, model::Recipe & dst_recipe, cons
         MSS_BEGIN(Result);
 
         if (ingredient.propagation() == Propagation::Public && selection(key))
-            MSS(dst_ingredients.insert_or_merge(key, ingredient));
+        {
+            MSS(dst_ingredients.insert_or_merge(key, transform(ingredient)));
+        }
 
         MSS_END();
     });
@@ -52,8 +56,15 @@ Result DependentPropagator::process(model::Recipe & recipe, RecipeFilteredGraph 
             n.attr("src", src_recipe->uri()).attr("tgt", recipe.uri());
         });
 
-        MSS( merge_(*src_recipe, recipe, selection_, model::tag::File_t() ) );
-        MSS( merge_(*src_recipe, recipe, selection_, model::tag::KeyValue_t() ) );
+        {
+            const std::filesystem::path & tr = util::make_recipe_adj_path(*src_recipe, recipe);
+            auto transform = [&](const ingredient::File & f) { return util::make_local_to_recipe(tr, f); };
+            MSS( merge_(*src_recipe, recipe, selection_, transform, model::tag::File_t() ) );
+        }
+        {
+            auto transform = [&](const auto & f) { return f; };
+            MSS( merge_(*src_recipe, recipe, selection_, transform, model::tag::KeyValue_t() ) );
+        }
     }
 
 

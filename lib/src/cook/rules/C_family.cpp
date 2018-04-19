@@ -23,12 +23,8 @@ namespace cook { namespace rules {
 
         MSS_Q(key.language == Language::Undefined);
 
-        //Language is not known, check if the file exists and we recognise it
-        {
-            const std::filesystem::path & fn = file.key();
-            MSS_Q(std::filesystem::is_regular_file(fn));
-            MSS_Q(extensions_.is_known(fn.extension()));
-        }
+        //Language is not known, check if we recognise it
+        MSS_Q(extensions_.is_known(file.key().extension()));
 
         MSS_END();
     }

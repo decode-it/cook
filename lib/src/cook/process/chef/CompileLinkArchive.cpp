@@ -2,7 +2,6 @@
 #include "cook/process/souschef/Resolver.hpp"
 #include "cook/process/souschef/DependencyPropagator.hpp"
 #include "cook/process/souschef/IncludePathSetter.hpp"
-#include "cook/process/souschef/LibraryPathSetter.hpp"
 #include "cook/process/souschef/Compiler.hpp"
 #include "cook/process/souschef/Archiver.hpp"
 #include "cook/process/souschef/Linker.hpp"
@@ -36,16 +35,16 @@ Result LinkArchiveChef::initialize()
 {
     MSS_BEGIN(Result);
 
-    // the linker
+    // the library linker
     {
         Brigade set;
 
-        set.name = "Link executable or dynamic library";
+        set.name = "Link dynamic library";
         set.can_cook = [](const model::Recipe * recipe, std::string & reason) {
             if (recipe->type() == model::Recipe::Type::SharedLibrary || recipe->type() == model::Recipe::Type::Executable)
                 return true;
 
-            reason = gubg::stream([](auto & os) { os << "Only recipes of type " << Type::Library << " or " << Type::Executable << " will be linked"; });
+            reason = gubg::stream([](auto & os) { os << "Only recipes of type " << model::Recipe::Type::SharedLibrary << " or " << model::Recipe::Type::Executable << " will be linked"; });
             return false;
         };
 
@@ -112,8 +111,6 @@ std::list<SouschefPtr> LinkArchiveChef::generate_compile_only_steps_() const
 
     for (const auto & p : compilers_)
         result.push_back(std::make_shared<souschef::IncludePathSetter>(p.first));
-
-    result.push_back(std::make_shared<souschef::LibraryPathSetter>());
 
     for (const auto & p : compilers_)
         result.push_back(p.second);

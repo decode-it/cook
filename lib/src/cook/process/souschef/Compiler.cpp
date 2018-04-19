@@ -1,5 +1,6 @@
 #include "cook/process/souschef/Compiler.hpp"
 #include "cook/process/command/gcclike/Compiler.hpp"
+#include "cook/util/File.hpp"
 
 namespace cook { namespace process { namespace souschef {
 
@@ -17,6 +18,9 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     auto & g = file_command_graph;
 
     model::Recipe::Files & files = recipe.files();
+
+    for(auto & file : files.range(LanguageTypePair(language_, Type::Header)))
+        file.set_propagation(Propagation::Private);
 
     auto it = files.find(LanguageTypePair(language_, Type::Source));
     if (it == files.end())
@@ -37,7 +41,8 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         L("Adding compile command");
         auto compile_vertex = g.add_vertex(cc);
         {
-            auto source_vertex = g.goc_vertex(source.key());
+            const std::filesystem::path & src_fn = util::make_global_from_recipe(recipe, source.key());
+            auto source_vertex = g.goc_vertex(src_fn);
             MSS(g.add_edge(compile_vertex, source_vertex));
         }
         {
@@ -51,7 +56,7 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 
 ingredient::File Compiler::construct_object_file(const ingredient::File & source, model::Recipe & recipe, const Context & context) const
 {
-    const std::filesystem::path dir = gubg::filesystem::combine(context.dirs().temporary(), source.dir());
+    const std::filesystem::path dir = gubg::filesystem::normalize(context.dirs().temporary() / recipe.working_directory() /source.dir());
     const std::filesystem::path rel = source.rel().string() + ".obj";
 
     ingredient::File object(dir, rel);
@@ -68,7 +73,7 @@ command::Ptr Compiler::compile_command(const model::Recipe & recipe, const Conte
 
     // add the include paths
     for (const ingredient::File & f : recipe.files().range(LanguageTypePair(language_, Type::IncludePath)))
-        cp->add_include_path(f.dir());
+        cp->add_include_path(util::make_global_from_recipe(recipe, f.dir()));
 
     // add the defines
     for (const ingredient::KeyValue & f : recipe.key_values().range(LanguageTypePair(Language::Undefined, Type::Define)))

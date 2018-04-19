@@ -2,14 +2,14 @@
 
 namespace cook { namespace process { namespace souschef {
 
+using LibType = ingredient::KeyValue;
+
 Result LinkLibrarySorter::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & context) const
 {
     MSS_BEGIN(Result);
 
-    model::Recipe::Files & files = recipe.files();
-
-    auto it = files.find(LanguageTypePair(Language::Binary, Type::Library));
-    if (it == files.end())
+    auto it = recipe.key_values().find(LanguageTypePair(Language::Binary, Type::Library));
+    if (it == recipe.key_values().end())
         MSS_RETURN_OK();
 
     MSS(process_(recipe, it->second, context.menu()));
@@ -17,15 +17,15 @@ Result LinkLibrarySorter::process(model::Recipe & recipe, RecipeFilteredGraph & 
     MSS_END();
 }
 
-Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collection<ingredient::File> & libraries, const process::Menu & menu) const
+Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collection<LibType> & libraries, const process::Menu & menu) const
 {
     MSS_BEGIN(Result);
 
-    std::list<ingredient::File> non_owned_libraries;
-    std::unordered_map<model::Recipe *, std::list<ingredient::File>> owned_libraries;
+    std::list<LibType> non_owned_libraries;
+    std::unordered_map<model::Recipe *, std::list<LibType>> owned_libraries;
 
     // store all the libraries, either as non-owned or as owned
-    for(const auto & file : libraries)
+    for(const LibType & file : libraries)
         if (file.owner() == nullptr)
             non_owned_libraries.push_back(file);
         else
