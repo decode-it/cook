@@ -42,17 +42,17 @@ Result RecipeNamer::process(model::Recipe & recipe, RecipeFilteredGraph & /*file
 
     update_build_target_name(recipe);
 
-    switch(recipe.type())
+    switch(recipe.build_target().type)
     {
-        case model::Recipe::Type::Archive:
+        case TargetType::Archive:
             recipe.build_target().filename = static_library_filename(recipe.build_target().name);
             break;
 
-        case model::Recipe::Type::Executable:
+        case TargetType::Executable:
             recipe.build_target().filename = executable_filename(recipe.build_target().name);
             break;
 
-        case model::Recipe::Type::SharedLibrary:
+        case TargetType::SharedLibrary:
             recipe.build_target().filename = dynamic_library_filename(recipe.build_target().name);
             break;
 

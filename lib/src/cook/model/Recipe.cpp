@@ -16,7 +16,6 @@ Uri append_part(const Uri & uri, const Part & part)
 
 Recipe::Recipe(Book * book, const Part & part)
     : Element(append_part(book->uri(), part)),
-      type_(Type::Archive),
       allows_early_globbing_(false),
       build_target_(uri().as_relative().string('.'))
 {
@@ -62,16 +61,6 @@ bool Recipe::add_dependency(const Dependency &dependency)
     MSS_END();
 }
 
-void Recipe::set_type(const Type &type)
-{
-    type_ = type;
-}
-
-Recipe::Type Recipe::type() const
-{
-    return type_;
-}
-
 const std::filesystem::path & Recipe::working_directory() const
 {
     return wd_;
@@ -103,7 +92,7 @@ void Recipe::stream(log::Importance importance) const
     const auto imp = log::importance(importance);
 
     auto ss = log::scope("recipe", imp, [&](auto &n){
-            n.attr("name", name()).attr("uri", uri()).attr("type", type());
+            n.attr("name", name()).attr("uri", uri()).attr("type", build_target().type);
             });
 
     if (log::do_log(imp-1))

@@ -37,7 +37,7 @@ namespace :setup do
 end
 
 desc "Update submodules to head"
-task :uth => "boost:load" do
+task :uth => ["boost:load", "boost:update"] do
     GUBG::each_submod(submods: gubg_submods) do |info|
         sh "git checkout #{info[:branch]}"
         sh "git pull --rebase"
@@ -54,12 +54,13 @@ namespace :b0 do
         when :windows then "b0-msvc.ninja"
         end
     end
-
-    desc "bootstrap-level0: Update the ninja scripts (depends on gubg.build)"
-    task :update => ["boost:update"] do
+    
+    desc "bootstrap-level0: generater the ninja scripts (depends on gubg.build)"
+    task :generate => "boost:load" do
         require("gubg/build/expand_templates")
         GUBG::Build::expand_templates("b0-compile.ninja")
     end
+
 
     desc "bootstrap-level0: Build and run the unit tests"
     task :ut, [:filter] do |t,args|
@@ -70,7 +71,7 @@ namespace :b0 do
     end
 
     desc "bootstrap-level0: Build b0-cook.exe"
-    task :build do
+    task :build => :generate do
         sh("ninja -f #{b0_ninja_fn} b0-cook.exe -v")
     end
     

@@ -34,11 +34,13 @@ public:
 
     // getters and setter
     model::Book * root_book() const;
-    model::Dirs & dirs()                { return dirs_; }
-    const model::Dirs & dirs() const    { return dirs_; }
-    const process::Menu & menu() const  { return menu_; }
-    process::Menu & menu()              { return menu_; }
-    const model::Library & lib() const  { return lib_; }
+    model::Dirs & dirs()                        { return dirs_; }
+    const model::Dirs & dirs() const            { return dirs_; }
+    const process::Menu & menu() const          { return menu_; }
+    process::Menu & menu()                      { return menu_; }
+    const model::Library & lib() const          { return lib_; }
+    const std::string & project_name() const    { return project_name_; }
+    void set_project_name(const std::string & name) { project_name_ = name; }
 
     Result register_generator(GeneratorPtr generator);
     GeneratorPtr get_generator(const std::string & name) const;
@@ -52,6 +54,7 @@ private:
     model::Library lib_;
     model::Dirs dirs_;
     process::Menu menu_;
+    std::string project_name_;
 };
 
 }

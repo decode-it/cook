@@ -41,10 +41,10 @@ Result LinkArchiveChef::initialize()
 
         set.name = "Link dynamic library";
         set.can_cook = [](const model::Recipe * recipe, std::string & reason) {
-            if (recipe->type() == model::Recipe::Type::SharedLibrary || recipe->type() == model::Recipe::Type::Executable)
+            if (recipe->build_target().type == TargetType::SharedLibrary || recipe->build_target().type == TargetType::Executable)
                 return true;
 
-            reason = gubg::stream([](auto & os) { os << "Only recipes of type " << model::Recipe::Type::SharedLibrary << " or " << model::Recipe::Type::Executable << " will be linked"; });
+            reason = gubg::stream([](auto & os) { os << "Only recipes of type " << TargetType::SharedLibrary << " or " << TargetType::Executable << " will be linked"; });
             return false;
         };
 
@@ -61,10 +61,10 @@ Result LinkArchiveChef::initialize()
 
         set.name = "Archive static library";
         set.can_cook = [](const model::Recipe * recipe, std::string & reason) {
-            if (recipe->type() == model::Recipe::Type::Archive)
+            if (recipe->build_target().type == TargetType::Archive)
                 return true;
 
-            reason = gubg::stream([](auto & os) { os << "Only recipes of type " << Type::Undefined << " will be archived"; });
+            reason = gubg::stream([](auto & os) { os << "Only recipes of type " << TargetType::Archive << " will be archived"; });
             return false;
         };
 

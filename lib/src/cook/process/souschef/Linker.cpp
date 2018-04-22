@@ -69,7 +69,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
         MSG_MSS(!!recipe.build_target().filename, Error, "No filename has been set for build target " << recipe.uri());
 
         // only if it is an shared library
-        if(recipe.type() == model::Recipe::Type::SharedLibrary)
+        if(recipe.build_target().type == TargetType::SharedLibrary)
         {
             // add a dependency to the project
             {
@@ -106,18 +106,18 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
             ar.set_propagation(Propagation::Public);
 
             Type t;
-            switch(recipe.type())
+            switch(recipe.build_target().type)
             {
-            case model::Recipe::Type::Executable:
+            case TargetType::Executable:
                 t = Type::Executable;
                 break;
 
-            case model::Recipe::Type::SharedLibrary:
+            case TargetType::SharedLibrary:
                 t = Type::Library;
                 break;
 
             default:
-                MSG_MSS(false, Error, "Unknown link type " << recipe.type());
+                MSG_MSS(false, Error, "Unknown link type " << recipe.build_target().type);
             }
 
 

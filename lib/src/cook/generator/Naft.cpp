@@ -66,8 +66,8 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
     n.attr("tag", uri.name());
     n.attr("display_name", recipe->name());
     n.attr("path", recipe->working_directory().string());
-    n.attr("type", recipe->type());
-    n.attr("build_target", "");
+    n.attr("type", recipe->build_target().type);
+    n.attr("build_target", recipe->build_target().name);
 }
 
 }

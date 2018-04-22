@@ -84,7 +84,7 @@ Result CMake::process(const Context & context)
         std::filesystem::path output_to_source = gubg::filesystem::get_relative_to(output_path_ / recipe->working_directory(), recipe->working_directory());
 
         if (false) {}
-        else if (recipe->type() == model::Recipe::Type::Executable)
+        else if (recipe->build_target().type == TargetType::Executable)
             add_executable_(*str, *recipe, output_to_source);
         else if (contains_sources_(*recipe))
             add_library_(*str, *recipe, output_to_source);

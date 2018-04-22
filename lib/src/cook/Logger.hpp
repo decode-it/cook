@@ -13,6 +13,10 @@ public:
     virtual ~Logger() {}
 
     virtual void log(const Result & result) const = 0;
+    void log(const Message & msg)
+    {
+        log(Result() << msg);
+    }
     void log(Message::Type type, const std::string & msg)
     {
         log(Result() << Message(type, msg));

@@ -1,48 +1,46 @@
 #include "cook/chai/Book.hpp"
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/Context.hpp"
+#include "cook/chai/mss.hpp"
 #include "cook/Log.hpp"
 
 namespace cook { namespace chai {
 
-Book::Book(model::Book * book, Context * context, Logger * logger)
+Book::Book(model::Book * book, Context * context)
     : book_(book),
       context_(context),
-      logger_(logger),
       data_(from_any(book->user_data()))
 {
 }
 
 Book Book::subbook(const std::string & uri_str)
 {
+    CHAI_MSS_BEGIN();
+
     auto ss = log::scope("goc book", [&](auto & n) {n.attr("parent uri", book_->uri()).attr("uri", uri_str); });
 
-    std::pair<model::Uri, bool> uri = model::Uri::book_uri(uri_str);
-    if (!uri.second)
-        logger_->log(Message::Error, "Bad uri");
+    model::Uri uri;
+    CHAI_MSS(model::Uri::book_uri(uri_str, uri));
 
     model::Book * subbook = nullptr;
-    Result rc = model::Book::goc_relative(subbook, uri.first, book_);
-    if (!rc)
-        logger_->log(rc);
+    CHAI_MSS(model::Book::goc_relative(subbook, uri, book_));
 
-    return Book(subbook, context_, logger_);
+    return Book(subbook, context_);
 }
 
 void Book::book(const std::string & uri_str, const std::function<void (Book)> &functor)
 {
+    CHAI_MSS_BEGIN();
+
     auto ss = log::scope("goc book", [&](auto & n) {n.attr("parent uri", book_->uri()).attr("uri", uri_str); });
 
-    std::pair<model::Uri, bool> uri = model::Uri::book_uri(uri_str);
-    if (!uri.second)
-        logger_->log(Message::Error, "Bad uri");
+    model::Uri uri;
+    CHAI_MSS(model::Uri::book_uri(uri_str, uri));
 
     model::Book * subbook = nullptr;
-    Result rc = model::Book::goc_relative(subbook, uri.first, book_);
-    if (!rc)
-        logger_->log(rc);
+    CHAI_MSS(model::Book::goc_relative(subbook, uri, book_));
 
-    functor(Book(subbook, context_, logger_));
+    functor(Book(subbook, context_));
 }
 
 
@@ -53,16 +51,15 @@ void Book::recipe_2(const std::string & uri_str, const std::function<void (Recip
 
 void Book::recipe_3(const std::string & uri_str, const std::string & type_str, const std::function<void (Recipe)> & functor)
 {
-    std::pair<model::Uri, bool> uri = model::Uri::recipe_uri(uri_str);
-    if (!uri.second)
-        logger_->log(Message::Error, "Bad uri");
+    CHAI_MSS_BEGIN();
+
+    model::Uri uri;
+    CHAI_MSS(model::Uri::recipe_uri(uri_str, uri));
 
     model::Recipe * recipe = nullptr;
-    Result rc = model::Book::goc_relative(recipe, uri.first, book_);
-    if (!rc)
-        logger_->log(rc);
+    CHAI_MSS(model::Book::goc_relative(recipe, uri, book_));
 
-    using T = model::Recipe::Type;
+    using T = TargetType;
 
     T type = T::Archive;
     if (false) {}
@@ -71,7 +68,7 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
     else if (type_str == "shared_library")  { type = T::SharedLibrary; }
 
     {
-        Recipe r(recipe, context_, logger_);
+        Recipe r(recipe, context_);
         r.set_type(type);
         r.set_working_directory(context_->current_working_directory().string());
         functor(r);

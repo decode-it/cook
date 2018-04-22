@@ -14,7 +14,7 @@ struct Recipe;
 
 struct Book
 {
-    Book(model::Book * book, Context * context, Logger * logger);
+    Book(model::Book * book, Context * context);
 
     Book subbook(const std::string & uri_str);
     void book(const std::string & uri_str, const std::function<void (Book)> &functor);
@@ -26,7 +26,6 @@ struct Book
 private:
     model::Book * book_;
     Context * context_;
-    Logger * logger_;
     UserData data_;
 };
 

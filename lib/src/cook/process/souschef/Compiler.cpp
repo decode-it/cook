@@ -72,7 +72,7 @@ command::Ptr Compiler::compile_command(const model::Recipe & recipe, const Conte
     std::shared_ptr<command::Compiler> cp = std::make_shared<command::gcclike::Compiler>(language_);
 
     // add the include paths
-    for (const ingredient::File & f : recipe.files().range(LanguageTypePair(language_, Type::IncludePath)))
+    for (const ingredient::File & f : recipe.files().range(LanguageTypePair(Language::Undefined, Type::IncludePath)))
         cp->add_include_path(util::make_global_from_recipe(recipe, f.dir()));
 
     // add the defines

@@ -1,6 +1,7 @@
 #ifndef HEADER_cook_model_Uri_hpp_ALREADY_INCLUDED
 #define HEADER_cook_model_Uri_hpp_ALREADY_INCLUDED
 
+#include "cook/Result.hpp"
 #include "gubg/Range.hpp"
 #include <string>
 #include <list>
@@ -45,6 +46,8 @@ public:
 
     static std::pair<Uri, bool> recipe_uri(const std::string & uri_str);
     static std::pair<Uri, bool> book_uri(const std::string & uri_str);
+    static Result recipe_uri(const std::string & uri_str, Uri & uri);
+    static Result book_uri(const std::string & uri_str, Uri & uri);
 
     void clear();
 
