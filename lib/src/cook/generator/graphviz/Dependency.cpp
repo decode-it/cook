@@ -96,7 +96,7 @@ Result Dependency::process(const Context  & context)
         for(const auto & p : src->dependency_pairs())
         {
             // make sure we try to resolve it
-            Recipe * tgt = p.second;
+            Recipe * tgt = p.second.recipe;
             Color dst_color;
             std::string dst_id;
 

@@ -41,20 +41,22 @@ Result make_DependencyGraph(const gubg::Range<It> & roots, Graph & g, RecipeVert
 
         for (const auto & uri_dep_pair : recipe->dependency_pairs())
         {
-            if (uri_dep_pair.second == nullptr)
+            model::Recipe * dep = uri_dep_pair.second.recipe;
+
+            if (dep == nullptr)
                 rc << MESSAGE(Error, "Recipe " << recipe->uri() << " has a unresolved dependency on " << uri_dep_pair.first);
             else
             {
                 // insert  a dummy
-                auto it_bool_pair = translation_map.emplace(uri_dep_pair.second, boost::graph_traits<Graph>::null_vertex());
+                auto it_bool_pair = translation_map.emplace(dep, boost::graph_traits<Graph>::null_vertex());
 
                 // it is a new entry
                 if (it_bool_pair.second)
-                    it_bool_pair.first->second = boost::add_vertex(uri_dep_pair.second, g);
+                    it_bool_pair.first->second = boost::add_vertex(dep, g);
 
                 boost::add_edge(vd, it_bool_pair.first->second, g);
 
-                stack.push(uri_dep_pair.second);
+                stack.push(dep);
             }
         }
 

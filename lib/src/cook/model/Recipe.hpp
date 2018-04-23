@@ -25,16 +25,28 @@ namespace cook { namespace model {
 
 class Book;
 
-
-
 class Recipe : public Element
 {
 public:
+    using DependencyFileFilter = std::function<bool (const ingredient::File &)>;
+    using DependencyKeyValueFilter = std::function<bool (const ingredient::KeyValue &)>;
+
+    struct DependencyValue
+    {
+        Recipe * recipe = nullptr;
+        DependencyFileFilter file_filter;
+        DependencyKeyValueFilter key_value_filter;
+    };
     using Dependency = Uri;
-    using Dependencies = std::map<Uri, Recipe *>;
+    using Dependencies = std::map<Uri, DependencyValue>;
+
+    struct DependencyExtractor
+    {
+        Recipe * operator()(const Dependencies::value_type & vt) const { return vt.second.recipe; }
+    };
 
     using DependencyPairIterator = Dependencies::const_iterator;
-    using DependencyIterator = boost::transform_iterator<util::ElementAt<1>, DependencyPairIterator>;
+    using DependencyIterator = boost::transform_iterator<DependencyExtractor, Dependencies::const_iterator>;
 
     using Files = ingredient::Ingredients<ingredient::File>;
     using KeyValues = ingredient::Ingredients<ingredient::KeyValue>;
@@ -67,7 +79,7 @@ public:
     gubg::Range<DependencyPairIterator> dependency_pairs() const;
     gubg::Range<DependencyIterator> dependencies() const;
 
-    bool add_dependency(const Dependency & dependency);
+    bool add_dependency(const Dependency & dependency, const DependencyFileFilter & file_filter = DependencyFileFilter(), const DependencyKeyValueFilter & key_value_filter = DependencyKeyValueFilter());
     bool resolve_dependency(const Uri & uri, Recipe * recipe);
 
     void stream(log::Importance = log::Importance{}) const;

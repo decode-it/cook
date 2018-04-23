@@ -57,7 +57,7 @@ Result Library::resolve(bool * all_resolved) const
     {
         for(const auto & p : recipe->dependency_pairs())
         {
-            Recipe * dep = p.second;
+            Recipe * dep = p.second.recipe;
             const Uri & uri = p.first;
             if (dep != nullptr)
                 continue;

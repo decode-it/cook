@@ -29,7 +29,7 @@ gubg::Range<Recipe::DependencyPairIterator> Recipe::dependency_pairs() const
 
 gubg::Range<Recipe::DependencyIterator> Recipe::dependencies() const
 {
-    using Functor = util::ElementAt<1>;
+    using Functor = DependencyExtractor;
 
     //    DependencyIterator begin()
 
@@ -45,19 +45,27 @@ bool Recipe::resolve_dependency(const Uri & uri, Recipe * recipe)
 
     auto it = dependencies_.find(uri);
     MSS(it != dependencies_.end());
-    MSS(it->second == nullptr);
-    it->second = recipe;
+    MSS(it->second.recipe == nullptr);
+    it->second.recipe = recipe;
 
     MSS_END();
 
 }
 
-bool Recipe::add_dependency(const Dependency &dependency)
+bool Recipe::add_dependency(const Dependency & dependency, const DependencyFileFilter & file_filter, const DependencyKeyValueFilter & key_value_filter)
 {
     MSS_BEGIN(bool);
     MSS(dependency.has_name());
 
-    MSS(dependencies_.emplace(dependency, nullptr).second);
+    {
+        DependencyValue dep_value;
+        dep_value.recipe = nullptr;
+        dep_value.file_filter = file_filter;
+        dep_value.key_value_filter = key_value_filter;
+
+        MSS(dependencies_.emplace(dependency, std::move(dep_value)).second);
+    }
+
     MSS_END();
 }
 
