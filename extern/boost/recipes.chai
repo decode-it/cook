@@ -5,4 +5,6 @@ root.recipe("boost/all", fun[boosts](r) {
         r.add("modules/${b}/include", "boost/**.hpp")
         #r.include_path("modules/${b}/include")
     })
+    
+    r.define("BOOST_ERROR_CODE_HEADER_ONLY")
 })

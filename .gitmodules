@@ -196,3 +196,18 @@
 [submodule "extern/boost/modules/numeric_conversion"]
 	path = extern/boost/modules/numeric_conversion
 	url = https://github.com/boostorg/numeric_conversion
+[submodule "extern/boost/modules/asio"]
+	path = extern/boost/modules/asio
+	url = https://github.com/boostorg/asio
+[submodule "extern/boost/modules/filesystem"]
+	path = extern/boost/modules/filesystem
+	url = https://github.com/boostorg/filesystem
+[submodule "extern/boost/modules/io"]
+	path = extern/boost/modules/io
+	url = https://github.com/boostorg/io
+[submodule "extern/boost/modules/process"]
+	path = extern/boost/modules/process
+	url = https://github.com/boostorg/process
+[submodule "extern/boost/modules/tokenizer"]
+	path = extern/boost/modules/tokenizer
+	url = https://github.com/boostorg/tokenizer

@@ -11,6 +11,7 @@ enum class TargetType
     Archive,
     SharedLibrary,
     Executable,
+    Script,
     UserDefined
 };
 
@@ -23,6 +24,7 @@ inline std::ostream & operator<<(std::ostream & os, TargetType type)
         L_CASE(Archive);
         L_CASE(SharedLibrary);
         L_CASE(Executable);
+        L_CASE(Script);
 #undef L_CASE
         default:
             break;

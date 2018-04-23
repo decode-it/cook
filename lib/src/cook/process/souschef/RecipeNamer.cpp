@@ -56,6 +56,9 @@ Result RecipeNamer::process(model::Recipe & recipe, RecipeFilteredGraph & /*file
             recipe.build_target().filename = dynamic_library_filename(recipe.build_target().name);
             break;
 
+    case TargetType::Undefined:
+        break;
+
         default:
             MSS(false);
     }

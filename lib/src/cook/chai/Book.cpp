@@ -61,11 +61,12 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
 
     using T = TargetType;
 
-    T type = T::Archive;
+    T type = T::Undefined;
     if (false) {}
     else if (type_str == "executable")      { type = T::Executable; }
     else if (type_str == "library")         { type = T::Archive; }
     else if (type_str == "shared_library")  { type = T::SharedLibrary; }
+    else if (type_str == "script")          { type = T::Script; }
 
     {
         Recipe r(recipe);

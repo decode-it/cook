@@ -29,11 +29,13 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 
     command::Ptr cc = compile_command(recipe, context);
 
+    const std::filesystem::path & adj = util::make_recipe_adj_path(recipe);
+
     for (const ingredient::File & source : it->second)
     {
         MSG_MSS(source.propagation() == Propagation::Private, Warning, "Source file '" << source << "' in " << recipe.uri() << " has public propagation and will (probably) result into multiple defined symbols");
 
-        const ingredient::File & object = construct_object_file(source, recipe, context);
+        const ingredient::File & object = construct_object_file(source, recipe, context, adj);
         const LanguageTypePair key(Language::Binary, Type::Object);
 
         MSG_MSS(files.insert(key, object).second, Error, "Object file '" << object << "' already present in " << recipe.uri());
@@ -54,14 +56,14 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     MSS_END();
 }
 
-ingredient::File Compiler::construct_object_file(const ingredient::File & source, model::Recipe & recipe, const Context & context) const
+ingredient::File Compiler::construct_object_file(const ingredient::File & source, model::Recipe & recipe, const Context & context, const std::filesystem::path & adj_path) const
 {
-    const std::filesystem::path dir = gubg::filesystem::normalize(context.dirs().temporary() / recipe.working_directory() /source.dir());
+    const std::filesystem::path dir = util::make_local_to_recipe(adj_path, gubg::filesystem::normalize(context.dirs().temporary() / recipe.working_directory() /source.dir()));
     const std::filesystem::path rel = source.rel().string() + ".obj";
 
     ingredient::File object(dir, rel);
     object.set_owner(&recipe);
-    object.set_overwrite(Overwrite::Never);
+    object.set_overwrite(Overwrite::IfSame);
     object.set_propagation(Propagation::Public);
 
     return object;

@@ -1,6 +1,7 @@
 algorithm
 any
 array
+asio
 assert
 atomic
 bind
@@ -13,6 +14,7 @@ core
 date_time
 detail
 exception
+filesystem
 foreach
 function
 function_types
@@ -22,6 +24,7 @@ graph
 graph_parallel
 integer
 intrusive
+io
 iterator
 lexical_cast
 math
@@ -34,6 +37,7 @@ optional
 parameter
 predef
 preprocessor
+process
 property_map
 proto
 range
@@ -46,6 +50,7 @@ static_assert
 system
 thread
 throw_exception
+tokenizer
 tti
 tuple
 type_index

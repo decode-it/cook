@@ -7,6 +7,7 @@
 #include "cook/process/souschef/Linker.hpp"
 #include "cook/process/souschef/RecipeNamer.hpp"
 #include "cook/process/souschef/LinkLibrarySorter.hpp"
+#include "cook/process/souschef/ScriptRunner.hpp"
 #include "cook/rules/C_family.hpp"
 #include "cook/rules/ASM.hpp"
 #include "gubg/stream.hpp"
@@ -72,6 +73,48 @@ Result LinkArchiveChef::initialize()
         set.souschefs.push_back(archiver_);
 
         this->add_brigade(default_priority, std::move(set));
+    }
+
+    // the compiler
+    {
+        Brigade set;
+
+        set.name = "Compile object files";
+        set.can_cook = [](const model::Recipe * recipe, std::string & reason) {
+            if (recipe->build_target().type == TargetType::Undefined)
+                return true;
+
+            return false;
+        };
+
+        set.souschefs = generate_compile_only_steps_();
+
+        this->add_brigade(default_priority-1, std::move(set));
+    }
+
+    // the script executor
+    {
+        Brigade set;
+        set.name = "Script executor";
+        set.can_cook = [](const model::Recipe * recipe, std::string & reason) {
+
+            if (recipe->build_target().type != TargetType::Script)
+            {
+                reason = gubg::stream([](auto & os) {os << "Only recipes of type " << TargetType::Script << " can be executed"; });
+                return false;
+            }
+
+            if (!recipe->dependency_pairs().empty())
+            {
+                reason = gubg::stream([](auto & os) {os << "A script recipe cannot have dependencies"; });
+                return false;
+            }
+
+            return true;
+        };
+
+        set.souschefs.push_back(std::make_shared<souschef::ScriptRunner>());
+        this->add_brigade(default_priority-2, std::move(set));
     }
 
     MSS_END();

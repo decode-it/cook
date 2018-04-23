@@ -16,8 +16,8 @@ public:
     Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
 
 private:
-    virtual ingredient::File construct_object_file(const ingredient::File & source, model::Recipe &recipe, const Context &context) const;
-    virtual command::Ptr compile_command(const model::Recipe &recipe, const Context & context) const;
+    ingredient::File construct_object_file(const ingredient::File & source, model::Recipe &recipe, const Context &context, const std::filesystem::path &adj_path) const;
+    command::Ptr compile_command(const model::Recipe &recipe, const Context & context) const;
 
 
     Language language_;
