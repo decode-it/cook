@@ -6,6 +6,7 @@
 #include "cook/chai/Flags.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
+#include "gubg/chai/inject.hpp"
 #include "chaiscript/chaiscript.hpp"
 #include <stack>
 
@@ -66,6 +67,7 @@ struct Context::D
           cook(book, context, &logger)
     {
         set_logger(&logger);
+        gubg::chai::inject<gubg::chai::Regex>(engine);
     }
 
     Logger logger;
