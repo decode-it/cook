@@ -57,6 +57,7 @@ namespace :boost do
     task :update => [:load] do
         Dir.chdir(module_dir) do
             $boost_modules.each do |k| 
+                puts ">> #{k}"
                 if !File.exists?(k)
                     sh "git submodule add -f https://github.com/boostorg/#{k}"
                 end
@@ -65,7 +66,7 @@ namespace :boost do
                     sh "git fetch origin"
                     sh "git checkout #{tag}" 
                 end
-
+                puts "<< #{k}"
             end
         end
     end
