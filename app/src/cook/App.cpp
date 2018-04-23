@@ -179,10 +179,31 @@ void App::write_(const Result & result)
 {
     result.each_message([&](const Message & msg) {
 
-        std::cout << msg.type_ << ": " << msg.msg_ << std::endl;
-        for(log::Ptr p = msg.node_; p; p = p->parent())
-            std::cout << "  * " << p->header() << std::endl;
+        bool should_print = false;
 
+        switch(msg.type_)
+        {
+        case Message::Info:
+            should_print = options_.verbosity > 2;
+            break;
+        case Message::Warning:
+            should_print = options_.verbosity > 1;
+            break;
+        case Message::Error:
+        case Message::InternalError:
+            should_print = true;
+            break;
+
+        default:
+            should_print = false;
+        }
+
+        if (should_print)
+        {
+            std::cout << msg.type_ << ": " << msg.msg_ << std::endl;
+            for(log::Ptr p = msg.node_; p; p = p->parent())
+                std::cout << "  * " << p->header() << std::endl;
+        }
     });
 }
 

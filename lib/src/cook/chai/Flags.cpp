@@ -1,4 +1,5 @@
 #include "cook/chai/Flags.hpp"
+#include "cook/log/Scope.hpp"
 
 namespace cook { namespace chai {
 
@@ -17,16 +18,30 @@ std::ostream & operator<<(std::ostream & str, Flag flag)
     }
 }
 
-bool Flags::only(const std::initializer_list<Flag> & lst) const
+Flags::Flags()
+    : flags_(0)
 {
-    MSS_BEGIN(bool);
+
+}
+
+Result Flags::only(const std::initializer_list<Flag> & lst) const
+{
+    MSS_BEGIN(Result);
+
+    auto s = cook::log::scope("Check flags", [&](auto & n) {
+        for(Flag f : lst)
+            n.attr("allowed", f);
+    });
 
     unsigned int flags = flags_;
 
     for(auto fl : lst)
         flags &= (~(1u << static_cast<unsigned int>(fl)));
 
-    MSS(flags == 0);
+    for(int i = 0; i < static_cast<int>(Flag::_End); ++i)
+        MSG_MSS((flags & (1u<<i)) == 0, Error, "Flag " << static_cast<Flag>(i) << " should not be set");
+
+    MSG_MSS(flags == 0, Error, "Unknown flag has been set");
 
     MSS_END();
 }
@@ -41,6 +56,7 @@ Flags & Flags::operator|(const Flags & rhs)
     SET_IF(TargetType);
     SET_IF(Overwrite);
     SET_IF(Propagation);
+#undef SET_IF
 
     return *this;
 }

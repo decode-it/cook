@@ -19,8 +19,12 @@ namespace cook { namespace model {
 
     struct GlobInfo
     {
+        enum Mode {Add, Remove };
+
         std::string dir;
         std::string pattern;
+        Mode mode = Add;
+
 
         Language language = Language::Undefined;
         Type type = Type::Undefined;
@@ -31,7 +35,9 @@ namespace cook { namespace model {
 
         void stream(log::Importance imp = log::Importance{}) const
         {
-            auto ss = log::scope("GlobInfo", imp, [&](auto &n){n.attr("dir", dir).attr("pattern", pattern);});
+            auto ss = log::scope("GlobInfo", imp, [&](auto &n){
+                n.attr("dir", dir).attr("pattern", pattern).attr("mode", mode == Add ? "add" : "remove");
+            });
         }
     };
 

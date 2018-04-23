@@ -15,7 +15,8 @@ class Recipe
 public:
     Recipe(model::Recipe * recipe, Context * context);
 
-    void add(const std::string & dir, const std::string & pattern);
+    void add(const std::string & dir, const std::string & pattern, const Flags & flags = Flags());
+    void remove(const std::string & dir, const std::string & pattern, const Flags & flags = Flags());
     void depends_on(const std::string & dependency);
     void set_type(TargetType type);
     void set_working_directory(const std::string & dir);

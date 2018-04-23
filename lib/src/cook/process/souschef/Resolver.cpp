@@ -35,38 +35,12 @@ Result Resolver::process_(model::Recipe & recipe, LanguageTypePair & key, ingred
     MSS_END();
 }
 
-namespace  {
-
-template <typename It>
-void extract_dir(
-        gubg::Range<It> fn_rng,
-        gubg::Range<It> dir_rng,
-        std::filesystem::path & actual_dir,
-        std::filesystem::path & actual_rel)
-{
-    // process both filesystems until a difference is found
-    while(!dir_rng.empty() && !fn_rng.empty() && dir_rng.front() == fn_rng.front())
-    {
-        // add to this directory
-        actual_dir /= (*dir_rng.begin());
-
-        dir_rng.pop_front();
-        fn_rng.pop_front();
-    }
-
-    // match the end
-    for(const auto & part : fn_rng)
-        actual_rel /= (part);
-}
-
-}
-
 Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globber) const
 {
     MSS_BEGIN(Result);
 
     auto ss = log::scope("process_one");
-//    globber.stream();
+    //    globber.stream();
 
     // get the directory
     std::filesystem::path dir = globber.dir;
@@ -79,10 +53,10 @@ Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & glo
         });
     }
 
-    Result rc;
+    const bool should_add = globber.mode == model::GlobInfo::Add;
 
     // find all dirs matching the pattern
-    auto file_callback = [&](const std::filesystem::path & fn)
+    auto cb = [&](const std::filesystem::path & fn)
     {
         MSS_BEGIN(Result);
 
@@ -93,27 +67,27 @@ Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & glo
         auto accepts = [&](const rules::Interface & interface) { return interface.accepts_file(key, file); };
         const rules::Interface & interface = rule_set_->find(accepts);
 
-        MSS(rc.merge(interface.resolve_file(key, file)));
+        MSS(interface.resolve_file(key, file));
 
         // overwrite the specifications
         if (globber.propagation)    file.set_propagation(*globber.propagation);
         if (globber.overwrite)      file.set_overwrite(*globber.overwrite);
 
         if (!globber.filter_and_adaptor || globber.filter_and_adaptor(key, file))
-            MSS(rc.merge(interface.add_file(recipe, key, file)));
+        {
+            if (should_add)
+                MSS(interface.add_file(recipe, key, file));
+            else
+                interface.remove_file(recipe, key, file);
+        }
 
         MSS_END();
     };
 
     std::string regex = glob_to_regex_(globber.pattern);
-    MSS(util::recurse_all_files(dir, regex, file_callback));
-
-
-//    gubg::file::each_glob(globber.pattern, file_callback, dir);
-    MSS(rc);
+    MSS(util::recurse_all_files(dir, regex, cb));
 
     MSS_END();
-
 }
 
 

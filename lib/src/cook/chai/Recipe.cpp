@@ -9,6 +9,7 @@ Recipe::Recipe(model::Recipe * recipe, Context *context)
       context_(context),
       data_(from_any(recipe->user_data()))
 {
+    set_type(TargetType::Archive);
 }
 
 void Recipe::set_type(TargetType type)
@@ -21,11 +22,37 @@ void Recipe::set_working_directory(const std::string & dir)
     recipe_->set_working_directory(dir);
 }
 
-void Recipe::add(const std::string & dir, const std::string & pattern)
+void Recipe::add(const std::string & dir, const std::string & pattern, const Flags & flags)
 {
     model::GlobInfo info;
     info.dir = dir;
     info.pattern = pattern;
+    info.mode = model::GlobInfo::Add;
+
+    info.language = flags.get_or(Language::Undefined);
+    info.type = flags.get_or(Type::Undefined);
+
+    {
+        auto p = flags.overwrite();
+        if (p.second)
+            info.overwrite = p.first;
+    }
+
+    {
+        auto p = flags.propagation();
+        if (p.second)
+            info.propagation = p.first;
+    }
+
+    recipe_->add_globber(info);
+}
+
+void Recipe::remove(const std::string & dir, const std::string & pattern, const Flags & flags)
+{
+    model::GlobInfo info;
+    info.dir = dir;
+    info.pattern = pattern;
+    info.mode = model::GlobInfo::Remove;
 
     recipe_->add_globber(info);
 }

@@ -69,23 +69,6 @@ namespace cook { namespace rules {
         MSS(key.language == language());
         MSS(recipe.files().insert_or_merge(key, file));
 
-//        switch (key.type)
-//        {
-//            case Type::Header:
-//            case Type::ForceInclude:
-//                MSS(add_additional_path_(recipe, file, Type::IncludePath, Propagation::Public));
-//                break;
-
-//            case Type::Object:
-//            case Type::Library:
-//                // add also the dir part with same propagation as the file itself
-//                MSS(add_additional_path_(recipe, file, Type::LibraryPath, file.propagation()));
-//                break;
-
-//            default:
-//                break;
-//        }
-
         MSS_END();
     }
 

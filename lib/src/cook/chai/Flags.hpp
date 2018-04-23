@@ -17,7 +17,7 @@ enum class Flag
     TargetType,
     Overwrite,
     Propagation,
-    __END
+    _End
 };
 
 std::ostream & operator<<(std::ostream & str, Flag flag);
@@ -25,17 +25,9 @@ std::ostream & operator<<(std::ostream & str, Flag flag);
 class Flags
 {
 public:
+    Flags();
 
-
-    Flags() : flags_(0) { }
-
-#define CONSTRUCTOR(TYPE) Flags(TYPE val) { set(val); }
-    CONSTRUCTOR(Language)
-    CONSTRUCTOR(Type)
-    CONSTRUCTOR(TargetType)
-    CONSTRUCTOR(Overwrite)
-    CONSTRUCTOR(Propagation)
-#undef CONSTRUCTOR
+    template <typename T> Flags(T val) { set(val); }
 
     Flags & operator|(const Flags & rhs);
     bool is_set(Flag flag) const;
@@ -48,15 +40,23 @@ public:
     SET(Propagation)
 #undef SET
 
-#define GET_IF(TYPE) TYPE get_or(TYPE fallback) const { return is_set(Flag::TYPE) ? t##TYPE##_ : fallback; }
-    GET_IF(Language)
-    GET_IF(Type)
-    GET_IF(TargetType)
-    GET_IF(Overwrite)
-    GET_IF(Propagation)
-#undef GET_IF
+#define GET_OR(TYPE) TYPE get_or(TYPE fallback) const { return is_set(Flag::TYPE) ? t##TYPE##_ : fallback; }
+    GET_OR(Language)
+    GET_OR(Type)
+    GET_OR(TargetType)
+    GET_OR(Overwrite)
+    GET_OR(Propagation)
+#undef GET_OR
 
-    bool only(const std::initializer_list<Flag> & lst) const;
+#define GET(TYPE, NAME) std::pair<TYPE, bool> NAME() const{ return std::make_pair(t##TYPE##_, is_set(Flag::TYPE)); }
+    GET(Language, language)
+    GET(Type, type)
+    GET(TargetType, target_type)
+    GET(Overwrite, overwrite)
+    GET(Propagation, propagation)
+#undef GET
+
+    Result only(const std::initializer_list<Flag> & lst) const;
 
 private:
     unsigned int flags_;
