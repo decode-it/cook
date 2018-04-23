@@ -1,0 +1,9 @@
+root.book("regex", fun(book) {
+    book.recipe("exe_fail", "executable", fun(r){
+        r.add("./", "*.cpp")
+    })
+    book.recipe("exe_pass", "executable", fun(r){
+        auto re = Regex("broken")
+        r.add("./", "*.cpp", fun[re](f){return !re.matches(f.rel())})
+    })
+})

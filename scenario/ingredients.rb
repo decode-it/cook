@@ -17,10 +17,10 @@ test_case("ingredients") do
             end
         end
     end
-    sh(cmd.flatten*' ') do |t,args|
+    sh(cmd.flatten*' ') do |ok, res|
         case should
-        when :pass then must(t)
-        when :fail then must(!t)
+        when :pass then must(ok)
+        when :fail then must(!ok)
         else raise("Unknown should #{should}") end
     end
 end
