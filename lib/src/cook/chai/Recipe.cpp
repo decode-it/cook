@@ -72,7 +72,7 @@ void Recipe::remove(const std::string & dir, const std::string & pattern, const 
     recipe_->add_globber(info);
 }
 
-void Recipe::depends_on(const std::string & dependency)
+void Recipe::depends_on(const std::string & dependency, const DepFileFilter & file_filter, const DepKeyValueFilter & key_value_filter)
 {
     CHAI_MSS_BEGIN();
 
@@ -80,7 +80,7 @@ void Recipe::depends_on(const std::string & dependency)
 
     model::Uri uri;
     CHAI_MSS(model::Uri::recipe_uri(dependency, uri));
-    CHAI_MSS(recipe_->add_dependency(uri));
+    CHAI_MSS(recipe_->add_dependency(uri, file_filter, key_value_filter));
 }
 
 void Recipe::library(const std::string & library, const Flags & flags)

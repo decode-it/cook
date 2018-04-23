@@ -7,6 +7,9 @@ cook["book"].recipe("foobar", fun(r) {
 root.book("book", fun(book) {
     book.recipe("main", "executable", fun(r){
         r.add("", "main.cpp")
-        r.depends_on("foobar")
+        r.depends_on("foobar", fun(b) {
+            print("${b.key()}: [${b.flags()}]")
+            return true
+        })
     })
 })

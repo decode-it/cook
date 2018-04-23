@@ -131,7 +131,7 @@ std::string Flags::to_string() const
     auto p = NAME(); \
     if (p.second) { \
         if(started) \
-            oss << " | "; \
+            oss << "|"; \
     oss << p.first; started = true; } }
     GET_IF(language)
     GET_IF(type);

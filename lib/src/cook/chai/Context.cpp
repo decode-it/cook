@@ -140,13 +140,36 @@ struct Context::D
     {
         engine.add(chaiscript::user_type<Recipe>(), "Recipe");
         engine.add(chaiscript::fun(&Recipe::add), "add");
-        engine.add(chaiscript::fun(&Recipe::depends_on), "depends_on");
         engine.add(chaiscript::fun(&Recipe::set_type), "set_type");
+
+        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dep) { recipe.depends_on(dep); }), "depends_on");
+
+        {
+            using DepFunction = std::function<bool (const chaiscript::Boxed_Value & vt)>;
+            auto lambda = [](Recipe & recipe, const std::string & dep, DepFunction function)
+            {
+                auto file_dep = [=](const LanguageTypePair & ltp, const ingredient::File & file)
+                {
+                    File f(ltp, file);
+                    return function(chaiscript::var(f));
+                };
+
+                auto key_value_dep = [=](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
+                {
+                    KeyValue kv(ltp, key_value);
+                    return function(chaiscript::var(kv));
+                };
+
+                recipe.depends_on(dep, file_dep, key_value_dep);
+            };
+            engine.add(chaiscript::fun(lambda), "depends_on");
+        }
+
 
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern) { recipe.add(dir, pattern); }), "add");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, Recipe::GlobFunctor functor) { recipe.add(dir, pattern, Flags(), functor); }), "add");
-//        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags) { recipe.add(dir, pattern, flags); }), "add");
-//        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags, Recipe::GlobFunctor functor) { recipe.add(dir, pattern, flags, functor); }), "add");
+        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags) { recipe.add(dir, pattern, flags); }), "add");
+        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags, Recipe::GlobFunctor functor) { recipe.add(dir, pattern, flags, functor); }), "add");
 
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern) { recipe.remove(dir, pattern); }), "remove");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags) { recipe.remove(dir, pattern, flags); }), "remove");
@@ -192,21 +215,22 @@ struct Context::D
     {
         engine.add(chaiscript::user_type<KeyValue>(), "KeyValue");
 
-        engine.add(chaiscript::fun([](const File & f) { return f.flags(); }), "flags");
-        engine.add(chaiscript::fun([](const File & f) { return f.has_owner(); }), "has_owner");
-        engine.add(chaiscript::fun([](const File & f) { return f.owner(); }), "owner");
+        engine.add(chaiscript::fun([](const KeyValue & f) { return f.flags(); }), "flags");
+        engine.add(chaiscript::fun([](const KeyValue & f) { return f.has_owner(); }), "has_owner");
+        engine.add(chaiscript::fun([](const KeyValue & f) { return f.owner(); }), "owner");
+        engine.add(chaiscript::fun(&KeyValue::key), "key");
         engine.add(chaiscript::fun(&KeyValue::has_value), "has_value");
         engine.add(chaiscript::fun(&KeyValue::value), "value");
         engine.add(chaiscript::fun(&KeyValue::is_file), "is_file");
         engine.add(chaiscript::fun(&KeyValue::is_key_value), "is_key_value");
 
-//        {
-//            auto lambda = [](const std::string & dir, const std::string & rel)
-//            {
-//                return File(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::File(dir, rel));
-//            };
-//            engine.add(chaiscript::fun(lambda), "KeyValue");
-//        }
+        {
+            auto lambda = [](const std::string & dir, const std::string & rel)
+            {
+                return File(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::File(dir, rel));
+            };
+            engine.add(chaiscript::fun(lambda), "KeyValue");
+        }
     }
 
 

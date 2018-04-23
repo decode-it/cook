@@ -26,7 +26,7 @@ class Flags
 public:
     Flags();
 
-    template <typename T> Flags(T val) { set(val); }
+    template <typename T> Flags(T val) : flags_(0) { set(val); }
 
     Flags & operator|(const Flags & rhs);
     bool is_set(Flag flag) const;

@@ -17,12 +17,15 @@ class Recipe
 {
 public:
     using GlobFunctor = std::function<bool (File &)>;
+    using DepFileFilter = model::Recipe::DependencyFileFilter;
+    using DepKeyValueFilter = model::Recipe::DependencyKeyValueFilter;
+
 
     Recipe(model::Recipe * recipe);
 
     void add(const std::string & dir, const std::string & pattern, const Flags & flags = Flags(), GlobFunctor functor = GlobFunctor());
     void remove(const std::string & dir, const std::string & pattern, const Flags & flags = Flags(), GlobFunctor functor = GlobFunctor());
-    void depends_on(const std::string & dependency);
+    void depends_on(const std::string & dependency, const DepFileFilter & file_filter = DepFileFilter(), const DepKeyValueFilter & key_value_filter = DepKeyValueFilter());
     void set_type(TargetType type);
     void set_working_directory(const std::string & dir);
 

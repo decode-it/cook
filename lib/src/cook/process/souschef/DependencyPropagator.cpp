@@ -6,8 +6,8 @@ namespace cook { namespace process { namespace souschef {
 namespace  {
 
 
-template <typename Tag, typename Transformer>
-Result merge_(const model::Recipe & src_recipe, model::Recipe & dst_recipe, const DependentPropagator::SelectionFunction & selection, Transformer && transform, Tag tag)
+template <typename Tag, typename Functor, typename Transformer>
+Result merge_(const model::Recipe & src_recipe, model::Recipe & dst_recipe, const DependentPropagator::SelectionFunction & selection, Functor && functor, Transformer && transform, Tag tag)
 {
     MSS_BEGIN(Result);
 
@@ -20,7 +20,8 @@ Result merge_(const model::Recipe & src_recipe, model::Recipe & dst_recipe, cons
 
         if (ingredient.propagation() == Propagation::Public && selection(key))
         {
-            MSS(dst_ingredients.insert_or_merge(key, transform(ingredient)));
+            if (functor && functor(key, ingredient))
+                MSS(dst_ingredients.insert_or_merge(key, transform(ingredient)));
         }
 
         MSS_END();
@@ -49,8 +50,10 @@ Result DependentPropagator::process(model::Recipe & recipe, RecipeFilteredGraph 
 
     MSS(!!selection_);
 
-    for (const model::Recipe * src_recipe: recipe.dependencies())
+    for (const model::Recipe::Dependencies::value_type & p: recipe.dependency_pairs())
     {
+        const model::Recipe * src_recipe = p.second.recipe;
+
         auto ss = log::scope("Merging recipes", [&](auto & n)
         {
             n.attr("src", src_recipe->uri()).attr("tgt", recipe.uri());
@@ -59,11 +62,11 @@ Result DependentPropagator::process(model::Recipe & recipe, RecipeFilteredGraph 
         {
             const std::filesystem::path & tr = util::make_recipe_adj_path(*src_recipe, recipe);
             auto transform = [&](const ingredient::File & f) { return util::make_local_to_recipe(tr, f); };
-            MSS( merge_(*src_recipe, recipe, selection_, transform, model::tag::File_t() ) );
+            MSS( merge_(*src_recipe, recipe, selection_, p.second.file_filter, transform, model::tag::File_t() ) );
         }
         {
             auto transform = [&](const auto & f) { return f; };
-            MSS( merge_(*src_recipe, recipe, selection_, transform, model::tag::KeyValue_t() ) );
+            MSS( merge_(*src_recipe, recipe, selection_, p.second.key_value_filter, transform, model::tag::KeyValue_t() ) );
         }
     }
 
