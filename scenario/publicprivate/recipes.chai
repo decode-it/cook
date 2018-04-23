@@ -1,0 +1,16 @@
+cook["lib"].recipe("func", fun(r) {
+    r.add("src", "*.[hc]pp")
+    r.add("inc", "*.[hc]")
+})
+
+cook["lib"].recipe("api", fun(r) {
+    r.depends_on("func", fun(d) {
+        return !(d.flags() & Type.include_path)
+    })
+    r.include_path("inc")
+})
+
+cook["app"].recipe("exe", fun(r) {
+    r.depends_on("lib/api")
+    r.add("app", "main.cpp")
+})

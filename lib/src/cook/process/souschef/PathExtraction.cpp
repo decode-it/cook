@@ -31,9 +31,6 @@ Result add_derived_paths(model::Recipe & recipe, const LanguageTypePair & src_pa
     for(const auto & file : recipe.files().range(src_pair))
     {
         const std::filesystem::path d = file.dir();
-        if (d.empty())
-            continue;
-
         auto it = dirs.insert(std::make_pair(d, file.propagation())).first;
         MSS(merge(it->second, file.propagation()));
     }
