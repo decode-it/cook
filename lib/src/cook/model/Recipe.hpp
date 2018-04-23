@@ -28,8 +28,8 @@ class Book;
 class Recipe : public Element
 {
 public:
-    using DependencyFileFilter = std::function<bool (const LanguageTypePair &, const ingredient::File &)>;
-    using DependencyKeyValueFilter = std::function<bool (const LanguageTypePair &, const ingredient::KeyValue &)>;
+    using DependencyFileFilter = std::function<bool (LanguageTypePair &, ingredient::File &)>;
+    using DependencyKeyValueFilter = std::function<bool (LanguageTypePair &, ingredient::KeyValue &)>;
 
     struct DependencyValue
     {

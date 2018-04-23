@@ -16,6 +16,7 @@ Result IncludePathSetter::process(model::Recipe & recipe, RecipeFilteredGraph & 
     if (language_ == Language::CXX)
         MSS(add_derived_paths(recipe, LanguageTypePair(Language::C, Type::Header), LanguageTypePair(Language::Undefined, Type::IncludePath)));
 
+
     MSS(add_derived_paths(recipe, LanguageTypePair(language_, Type::Header), LanguageTypePair(Language::Undefined, Type::IncludePath)));
     MSS(add_derived_paths(recipe, LanguageTypePair(Language::Undefined, Type::Header), LanguageTypePair(Language::Undefined, Type::IncludePath)));
 

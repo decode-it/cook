@@ -1,6 +1,6 @@
 cook["book"].recipe("foobar", fun(r) {
     r.add("", "*", fun(f) {
-        return (f.flags() & Language.CXX)
+        return true
     })
 })
 

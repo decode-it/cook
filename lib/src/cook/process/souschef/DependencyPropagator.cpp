@@ -14,13 +14,13 @@ Result merge_(const model::Recipe & src_recipe, model::Recipe & dst_recipe, cons
     const auto & src_ingredients = src_recipe.ingredients(tag);
     auto & dst_ingredients = dst_recipe.ingredients(tag);
 
-    return src_ingredients.each([&](const LanguageTypePair & key, const auto & ingredient)
+    return src_ingredients.each([&](LanguageTypePair key, auto ingredient)
     {
         MSS_BEGIN(Result);
 
         if (ingredient.propagation() == Propagation::Public && selection(key))
         {
-            if (functor && functor(key, ingredient))
+            if (!functor || functor(key, ingredient))
                 MSS(dst_ingredients.insert_or_merge(key, transform(ingredient)));
         }
 

@@ -148,16 +148,26 @@ struct Context::D
             using DepFunction = std::function<bool (const chaiscript::Boxed_Value & vt)>;
             auto lambda = [](Recipe & recipe, const std::string & dep, DepFunction function)
             {
-                auto file_dep = [=](const LanguageTypePair & ltp, const ingredient::File & file)
+                auto file_dep = [=](LanguageTypePair & ltp, ingredient::File & file)
                 {
                     File f(ltp, file);
-                    return function(chaiscript::var(f));
+                    if (!function(chaiscript::var(f)))
+                        return false;
+
+                    ltp = f.language_type_pair();
+                    file = f.element();
+                    return true;
+
                 };
 
-                auto key_value_dep = [=](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
+                auto key_value_dep = [=](LanguageTypePair & ltp, ingredient::KeyValue & key_value)
                 {
                     KeyValue kv(ltp, key_value);
                     return function(chaiscript::var(kv));
+
+                    ltp = kv.language_type_pair();
+                    key_value = kv.element();
+                    return true;
                 };
 
                 recipe.depends_on(dep, file_dep, key_value_dep);
