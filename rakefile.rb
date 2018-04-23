@@ -95,7 +95,7 @@ namespace :b0 do
     end
 
     desc "bootstrap-level0: Update rtags"
-    task :dia => [:update, :rtags, :build, :ut]
+    task :dia => [:rtags, :build, :ut]
 end
 #Bootstrap level 1: uses output from bootstrap level 0
 namespace :b1 do
@@ -106,7 +106,7 @@ namespace :b1 do
     end
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
-    task :build => ["b0:update", "b0:build"] do
+    task :build => ["b0:build"] do
         odir = File.join("build", "b1", "ninja")
         tdir = File.join(".cook", "b1", "ninja")
         

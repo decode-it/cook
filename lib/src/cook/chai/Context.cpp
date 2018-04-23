@@ -1,6 +1,8 @@
 #include "cook/chai/Context.hpp"
 #include "cook/chai/Book.hpp"
 #include "cook/chai/Recipe.hpp"
+#include "cook/chai/File.hpp"
+#include "cook/chai/KeyValue.hpp"
 #include "cook/chai/Flags.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
@@ -53,7 +55,6 @@ struct W_Propagation { };
 struct W_Overwrite { };
 struct W_Type { };
 struct W_Language { };
-struct W_TargetType { };
 
 struct Context::D
 {
@@ -78,6 +79,8 @@ struct Context::D
         initialize_book();
         initialize_recipe();
         initialize_flags();
+        initialize_file();
+        initialize_key_value();
         engine.add(user_data_module());
         engine.add_global(chaiscript::var(cook.root), "root");
         engine.add_global(chaiscript::var(cook), "cook");
@@ -91,7 +94,6 @@ struct Context::D
         EXPOSE_TOP(Overwrite);
         EXPOSE_TOP(Type);
         EXPOSE_TOP(Language);
-        EXPOSE_TOP(TargetType);
 #undef EXPOSE_TOP
 
 #define EXPOSE(TYPE, NAME, CHAINAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return Flags(TYPE::NAME); }), CHAINAME)
@@ -117,12 +119,12 @@ struct Context::D
         EXPOSE(Language, CXX, "CXX");
         EXPOSE(Language, ASM, "ASM");
         EXPOSE(Language, UserDefined, "user_defined");
-        EXPOSE(TargetType, Undefined , "undefined");
-        EXPOSE(TargetType, Archive , "archive");
-        EXPOSE(TargetType, SharedLibrary , "shared_library");
-        EXPOSE(TargetType, Executable , "executable");
-        EXPOSE(TargetType, UserDefined , "user_defined");
 #undef EXPOSE
+
+        engine.add(chaiscript::fun(&Flags::to_string), "to_string");
+        engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs&rhs; } ), "&");
+        engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs|rhs; } ), "|");
+        engine.add(chaiscript::type_conversion<Flags, bool>());
     }
 
     void initialize_book()
@@ -142,12 +144,13 @@ struct Context::D
         engine.add(chaiscript::fun(&Recipe::set_type), "set_type");
 
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern) { recipe.add(dir, pattern); }), "add");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags) { recipe.add(dir, pattern, flags); }), "add");
+        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, Recipe::GlobFunctor functor) { recipe.add(dir, pattern, Flags(), functor); }), "add");
+//        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags) { recipe.add(dir, pattern, flags); }), "add");
+//        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags, Recipe::GlobFunctor functor) { recipe.add(dir, pattern, flags, functor); }), "add");
 
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern) { recipe.remove(dir, pattern); }), "remove");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags) { recipe.remove(dir, pattern, flags); }), "remove");
 
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name) { recipe.library(name); } ), "library");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name) { recipe.library(name); } ), "library");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & path) { recipe.library_path(path); } ), "library_path");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & path) { recipe.include_path(path); } ), "include_path");
@@ -160,6 +163,50 @@ struct Context::D
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name, const std::string & value, const Flags & flags) { recipe.define(name, value, flags); } ), "define");
 
         engine.add(chaiscript::fun(&Recipe::data), "data");
+    }
+
+    void initialize_file()
+    {
+        engine.add(chaiscript::user_type<File>(), "File");
+
+        engine.add(chaiscript::fun([](const File & f) { return f.flags(); }), "flags");
+        engine.add(chaiscript::fun([](const File & f) { return f.has_owner(); }), "has_owner");
+        engine.add(chaiscript::fun([](const File & f) { return f.owner(); }), "owner");
+        engine.add(chaiscript::fun(&File::key), "key");
+        engine.add(chaiscript::fun(&File::dir), "dir");
+        engine.add(chaiscript::fun(&File::rel), "rel");
+        engine.add(chaiscript::fun(&File::is_file), "is_file");
+        engine.add(chaiscript::fun(&File::is_key_value), "is_key_value");
+
+
+        {
+            auto lambda = [](const std::string & dir, const std::string & rel)
+            {
+                return File(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::File(dir, rel));
+            };
+            engine.add(chaiscript::fun(lambda), "File");
+        }
+    }
+
+    void initialize_key_value()
+    {
+        engine.add(chaiscript::user_type<KeyValue>(), "KeyValue");
+
+        engine.add(chaiscript::fun([](const File & f) { return f.flags(); }), "flags");
+        engine.add(chaiscript::fun([](const File & f) { return f.has_owner(); }), "has_owner");
+        engine.add(chaiscript::fun([](const File & f) { return f.owner(); }), "owner");
+        engine.add(chaiscript::fun(&KeyValue::has_value), "has_value");
+        engine.add(chaiscript::fun(&KeyValue::value), "value");
+        engine.add(chaiscript::fun(&KeyValue::is_file), "is_file");
+        engine.add(chaiscript::fun(&KeyValue::is_key_value), "is_key_value");
+
+//        {
+//            auto lambda = [](const std::string & dir, const std::string & rel)
+//            {
+//                return File(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::File(dir, rel));
+//            };
+//            engine.add(chaiscript::fun(lambda), "KeyValue");
+//        }
     }
 
 

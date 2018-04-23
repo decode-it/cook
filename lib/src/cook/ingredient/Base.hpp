@@ -48,8 +48,7 @@ protected:
     bool equal_(const Base<KeyType> & rhs) const
     {
         return key_ == rhs.key_
-                && propagation_ == rhs.propagation_
-                && owner_ == rhs.owner_;
+                && propagation_ == rhs.propagation_;
     }
 
     template <typename Ingredient>

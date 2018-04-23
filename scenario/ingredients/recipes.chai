@@ -1,0 +1,12 @@
+cook["book"].recipe("foobar", fun(r) {
+    r.add("", "*", fun(f) {
+        return (f.flags() & Language.CXX)
+    })
+})
+
+root.book("book", fun(book) {
+    book.recipe("main", "executable", fun(r){
+        r.add("", "main.cpp")
+        r.depends_on("foobar")
+    })
+})

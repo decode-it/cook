@@ -68,7 +68,7 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
     else if (type_str == "shared_library")  { type = T::SharedLibrary; }
 
     {
-        Recipe r(recipe, context_);
+        Recipe r(recipe);
         r.set_type(type);
         r.set_working_directory(context_->current_working_directory().string());
         functor(r);
