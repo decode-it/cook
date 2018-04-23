@@ -12,15 +12,17 @@ test_case(name) do
         should = :pass
         section("input file") do
             cmd << "-f scenario/#{name}/recipes.chai"
+            cmd << "-g ninja"
+            cmd << "-o scenario/#{name}"
             section("recipe /app/exe") do
                 cmd << "/app/exe"
             end
         end
     end
-    sh(cmd.flatten*' ') do |t,args|
+    sh(cmd.flatten*' ') do |ok, res|
         case should
-        when :pass then must(t)
-        when :fail then must(!t)
+        when :pass then must(ok)
+        when :fail then must(!ok)
         else raise("Unknown should #{should}") end
     end
 end

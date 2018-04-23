@@ -23,6 +23,8 @@
 * `-c`: Clean all data for the specified generators.
 * `-D <key[=value]>`: Define global chai-script variable to influence the process.
   * `config`=`debug|release`
+  * `c_lang`=`99`
+  * `cxx_lang`=`03|11|14|17`
   * `profile`
 * `-h`: Prints this help
 * `-v <level>`: Verbosity level

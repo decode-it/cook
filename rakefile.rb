@@ -144,7 +144,7 @@ desc "Clean"
 task :clean do
     rm(FileList.new("**/*.obj"))
     rm(FileList.new("*.exe"))
-    rm(FileList.new("compile_commands.json"))
+    rm_f(FileList.new("compile_commands.json"))
     Rake::Task["b0:clean"].invoke
     Rake::Task["b1:clean"].invoke
 end
