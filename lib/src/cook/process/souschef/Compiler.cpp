@@ -52,7 +52,8 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
             MSS(g.add_edge(compile_vertex, source_vertex));
         }
         {
-            auto object_vertex = g.goc_vertex(object.key());
+            const std::filesystem::path & obj_fn = util::make_global_from_recipe(recipe, object.key());
+            auto object_vertex = g.goc_vertex(obj_fn);
             MSS(g.add_edge(object_vertex, compile_vertex));
         }
     }
