@@ -34,6 +34,7 @@ public:
     void include_path(const std::string & path, const Flags & flags= Flags());
     void define(const std::string & name, const Flags & flags= Flags());
     void define(const std::string & name, const std::string & value, const Flags & flags = Flags());
+    void add_script(const std::string & script_fn, const std::list<std::string> & args);
 
     UserData data() const { return data_; }
 

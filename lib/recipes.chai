@@ -4,6 +4,7 @@ root.book("cook/lib", fun(b) {
 		for_each(["std", "io", "algo", "chaiscript"], fun[r](d) { r.depends_on("gubg/${d}/func") })
 		r.depends_on("boost/all")
 		r.library("stdc++fs")
+		r.define("BOOST_ERROR_CODE_HEADER_ONLY")
 	})
 
 	b.recipe("ut", "executable", fun(r) {
@@ -11,5 +12,6 @@ root.book("cook/lib", fun(b) {
 		r.depends_on("/catch/func")
 		r.depends_on("func")
 		r.library("stdc++fs")
+		r.define("BOOST_ERROR_CODE_HEADER_ONLY")
 	})
 })

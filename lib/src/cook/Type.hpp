@@ -18,8 +18,7 @@ enum class Type
     Dependency,
     Define,
     Executable,
-    Script,
-    ScriptArgument,
+    Argument,
     UserDefined
 };
 
@@ -39,8 +38,7 @@ inline std::ostream & operator<<(std::ostream & os, Type type)
         L_CASE(Dependency);
         L_CASE(Define);
         L_CASE(Executable);
-        L_CASE(Script);
-        L_CASE(ScriptArgument);
+        L_CASE(Argument);
 #undef L_CASE
         default:
             break;

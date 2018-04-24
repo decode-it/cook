@@ -1,10 +1,10 @@
-#include "cook/generator/Naft.hpp"
+#include "cook/generator/qt/Cook.hpp"
 #include "cook/util/File.hpp"
 #include "cook/algo/TopologicalOrder.hpp"
 #include "cook/Context.hpp"
 #include "gubg/naft/Document.hpp"
 
-namespace cook { namespace generator {
+namespace cook { namespace generator { namespace qt {
 
 namespace  {
 
@@ -59,62 +59,82 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
     if (used_recipes_.find(recipe) == used_recipes_.end())
         return;
 
+    std::filesystem::path comb = gubg::filesystem::combine({ std::filesystem::current_path(), context.dirs().recipe(), recipe->working_directory() });
+    auto make_absolute = [&](const std::filesystem::path & p)
+    {
+        return gubg::filesystem::combine(comb, p).string();
+    };
+
     const auto & uri = recipe->uri();
 
     auto n = node.node("recipe");
     n.attr("uri", uri);
     n.attr("tag", uri.name());
     n.attr("display_name", recipe->name());
-    n.attr("path", gubg::filesystem::combine({ std::filesystem::current_path(), context.dirs().recipe(), recipe->working_directory() }).string());
+    n.attr("path", make_absolute(recipe->working_directory().string()));
     n.attr("type", recipe->build_target().type);
-    n.attr("build_target", recipe->build_target().name);
 
-    recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
-        n.node("file").attr("type", ltp.type).attr("language", ltp.language).attr("propagation", file.propagation()).attr("overwrite", file.overwrite()).attr("dir", file.dir()).attr("rel", file.rel());
-        return true;
-    });
+        const auto & fn = recipe->build_target().filename;
+        n.attr("build_target", fn ? make_absolute(*fn) : "");
+    }
 
-    recipe->key_values().each([&](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
+
+
+    auto write_files = [&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
-        auto nn = n.node("key_value");
-        nn.attr("type", ltp.type).attr("language", ltp.language).attr("propagation", key_value.propagation()).attr("overwrite", key_value.overwrite()).attr("key", key_value.key());
-        if (key_value.has_value())
-            nn.attr("value", key_value.value());
+        if (false) {}
+        else if (ltp.type == Type::Source || ltp.type == Type::Header)
+            n.node("file").attr("type", (ltp.type == Type::Source ? 2 : 1)).attr("path", make_absolute(file.key()));
+        else if (ltp.type == Type::IncludePath)
+            n.node("include_path").attr("path", make_absolute(file.key()));
 
         return true;
-    });
+    };
+    recipe->files().each(write_files);
+
+
+    auto write_key_values = [&](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
+    {
+        if (false) {}
+        else if (ltp.type == Type::Define)
+        {
+            auto nn = n.node("define");
+            nn.attr("name", key_value.key());
+            if (key_value.has_value())
+                nn.attr("value", key_value.value());
+        }
+
+        return true;
+    };
+    recipe->key_values().each(write_key_values);
 }
 
 }
 
-Result Naft::set_option(const std::string & option)
+Result Cook::set_option(const std::string & option)
 {
     MSS_BEGIN(Result);
-    set_filename(option);
     MSS_END();
 }
 
-bool Naft::can_process(const Context & context) const
+bool Cook::can_process(const Context & context) const
 {
     return context.menu().is_valid();
 }
 
-Result Naft::process(const Context & context)
+Result Cook::process(const Context & context)
 {
     MSS_BEGIN(Result);
-
-    std::ofstream ofs;
-    MSS(open_output_stream(context, ofs));
 
     Processor p(context);
     p.construct_book_list();;
 
-    auto n = gubg::naft::Document(ofs).node("structure");
+    auto n = gubg::naft::Document(std::cout).node("structure");
 
     p.process(n, context.root_book());
 
     MSS_END();
 }
 
-} }
+} } }

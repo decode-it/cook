@@ -12,6 +12,7 @@ enum class Language
     C,
     CXX,
     ASM,
+    Script,
     UserDefined
 };
 
@@ -25,6 +26,7 @@ inline std::ostream & operator<<(std::ostream & os, Language type)
         L_CASE(C);
         L_CASE(CXX);
         L_CASE(ASM);
+        L_CASE(Script);
 #undef L_CASE
         default:
             break;

@@ -144,5 +144,24 @@ void Recipe::define(const std::string & name, const std::string & value, const F
     recipe_->key_values().insert(LanguageTypePair(flags.get_or(Language::Undefined), flags.get_or(Type::Define)), kv);
 }
 
+void Recipe::add_script(const std::string & script_fn, const std::list<std::string> & args)
+{
+    {
+    auto script = ingredient::File({}, script_fn);
+    script.set_propagation(Propagation::Private);
+    script.set_overwrite(Overwrite::Never);
+    recipe_->files().insert(LanguageTypePair(Language::Script, Type::Executable), script);
+    }
+
+    for(const std::string & arg : args)
+    {
+        auto arg_kv = ingredient::KeyValue(arg);
+        arg_kv.set_propagation(Propagation::Private);
+        arg_kv.set_overwrite(Overwrite::Never);
+        recipe_->key_values().insert(LanguageTypePair(Language::Script, Type::Argument), arg_kv);
+    }
+
+}
+
 
 } }

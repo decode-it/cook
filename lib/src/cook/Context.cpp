@@ -3,6 +3,7 @@
 #include "cook/generator/graphviz/Dependency.hpp"
 #include "cook/generator/graphviz/Component.hpp"
 #include "cook/generator/qt/Generic.hpp"
+#include "cook/generator/qt/Cook.hpp"
 #include "cook/generator/CMake.hpp"
 #include "cook/generator/Naft.hpp"
 #include "cook/generator/Ninja.hpp"
@@ -24,6 +25,7 @@ bool Context::initialize()
     MSS(register_generator(std::make_shared<generator::graphviz::Dependency>()));
     MSS(register_generator(std::make_shared<generator::graphviz::Component>()));
     MSS(register_generator(std::make_shared<generator::qt::Generic>()));
+    MSS(register_generator(std::make_shared<generator::qt::Cook>()));
     MSS(register_generator(std::make_shared<generator::CMake>()));
     MSS(register_generator(std::make_shared<generator::Naft>()));
     MSS(register_generator(std::make_shared<generator::Ninja>()));
