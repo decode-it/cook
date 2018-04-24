@@ -10,6 +10,9 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 {
     MSS_BEGIN(Result);
 
+    log::Importance importance{0};
+    auto ss = log::scope("Archiver::process", importance, [&](auto &node){node.attr("graph", &file_command_graph);});
+
     model::Recipe::Files & files = recipe.files();
     auto & g = file_command_graph;
 
@@ -26,6 +29,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     for(ingredient::File & object : objects)
     {
         object.set_propagation(Propagation::Private);
+        auto ss = log::scope("object", importance, [&](auto &node){node.attr("file", object);});
         MSS(g.add_edge(archive_vertex, g.goc_vertex(object.key())));
     }
 
