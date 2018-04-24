@@ -14,7 +14,7 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 {
     MSS_BEGIN(Result);
     log::Importance importance{0};
-    auto ss = log::scope("Compiler::process", importance);
+    auto ss = log::scope("Compiler::process", importance, [&](auto &node){node.attr("graph", &file_command_graph);});
     L(C(&file_command_graph)C(file_command_graph.num_vertices()));
 
     auto & g = file_command_graph;

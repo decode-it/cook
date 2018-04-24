@@ -11,7 +11,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     MSS_BEGIN(Result);
 
     log::Importance importance{0};
-    auto ss = log::scope("Archiver::process", importance);
+    auto ss = log::scope("Archiver::process", importance, [&](auto &node){node.attr("graph", &file_command_graph);});
 
     model::Recipe::Files & files = recipe.files();
     auto & g = file_command_graph;
