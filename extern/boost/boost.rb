@@ -58,6 +58,9 @@ namespace :boost do
         Dir.chdir(module_dir) do
             $boost_modules.each do |k| 
                 puts ">> #{k}"
+                if Dir["#{k}/*"].empty?
+                    FileUtils.rm_rf(k)
+                end
                 if !File.exists?(k)
                     sh "git submodule add -f https://github.com/boostorg/#{k}"
                 end
