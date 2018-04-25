@@ -13,8 +13,7 @@ Compiler::Compiler(Language language)
 Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
 {
     MSS_BEGIN(Result);
-    log::Importance importance{0};
-    auto ss = log::scope("Compiler::process", importance, [&](auto &node){node.attr("graph", &file_command_graph);});
+    auto ss = log::scope("Compiler::process", [&](auto &node){node.attr("graph", &file_command_graph);});
     L(C(&file_command_graph)C(file_command_graph.num_vertices()));
 
     auto & g = file_command_graph;
@@ -39,7 +38,7 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         MSG_MSS(source.propagation() == Propagation::Private, Warning, "Source file '" << source << "' in " << recipe.uri() << " has public propagation and will (probably) result into multiple defined symbols");
 
         const ingredient::File object = construct_object_file(source, recipe, context, adj);
-        auto ss = log::scope("Compiler::process", importance, [&](auto &node){node.attr("source", source).attr("object", object);});
+        auto ss = log::scope("Compiler::process", [&](auto &node){node.attr("source", source).attr("object", object);});
         const LanguageTypePair key(Language::Binary, Type::Object);
 
         MSG_MSS(files.insert(key, object).second, Error, "Object file '" << object << "' already present in " << recipe.uri());

@@ -20,3 +20,7 @@ compile_commands.json
 fontconfig/
 CMakeLists.txt
 recipes.naft
+turtle.svg
+output.txt
+*.user
+test.svg

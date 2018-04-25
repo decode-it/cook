@@ -77,7 +77,7 @@ namespace :b0 do
     
     task :install => :build do
         case GUBG::os
-        when :linux then sh("sudo cp b0-cook.exe /usr/local/bin/cook.exe")
+        when :linux then sh("sudo cp b0-cook.exe /usr/local/bin/cook")
         when :windows then cp("b0-cook.exe", "../bin/")
         end
     end
@@ -157,7 +157,7 @@ task :install, [:path] => "build" do |task, args|
         sh("cp cook.exe #{path}")
     else
         case GUBG::os
-        when :linux then sh("sudo cp cook.exe /usr/local/bin/cook.exe")
+        when :linux then sh("sudo cp cook.exe /usr/local/bin/cook")
         when :windows then cp("cook.exe", "../bin/")
         end
     end

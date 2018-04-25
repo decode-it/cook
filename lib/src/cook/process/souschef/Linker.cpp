@@ -10,8 +10,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
 {
     MSS_BEGIN(Result);
 
-    log::Importance importance{0};
-    auto ss = log::scope("Linker::process", importance);
+    auto ss = log::scope("Linker::process");
 
     model::Recipe::Files & files = recipe.files();
     auto & g = file_command_graph;
@@ -55,8 +54,9 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     // link the objects
     for(ingredient::File & object : objects)
     {
-        auto ss = log::scope("object", importance, [&](auto &node){node.attr("file", object);});
-        MSS(g.add_edge(link_vertex, g.goc_vertex(object.key())));
+        auto ss = log::scope("object", [&](auto &node){node.attr("file", object);});
+        const std::filesystem::path & obj_fn = util::make_global_from_recipe(recipe, object.key());
+        MSS(g.add_edge(link_vertex, g.goc_vertex(obj_fn)));
     }
 
     // link the dependencies

@@ -120,7 +120,7 @@ Result Ninja::process(const Context & context)
                 });
                 build_graph.output(it, vertex);
 
-                auto ss = log::scope("outputs", log::Importance{0}, [&](auto & n) {
+                auto ss = log::scope("outputs", [&](auto & n) {
                     for (const auto & f: output_files)
                         n.attr("file", f);
                 });
