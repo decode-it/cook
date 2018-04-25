@@ -10,7 +10,6 @@ Recipe::Recipe(model::Recipe * recipe, const Context *context)
       context_(context),
       data_(from_any(recipe->user_data()))
 {
-    set_type(TargetType::Archive);
 }
 
 void Recipe::set_type(TargetType type)

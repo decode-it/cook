@@ -53,17 +53,14 @@ Recipe Book::recipe(const std::string & uri_str, const std::string & type_str)
     model::Recipe * recipe = nullptr;
     CHAI_MSS(model::Book::goc_relative(recipe, uri, book_));
 
-    using T = TargetType;
-
-    T type = T::Undefined;
-    if (false) {}
-    else if (type_str == "executable")      { type = T::Executable; }
-    else if (type_str == "library")         { type = T::Archive; }
-    else if (type_str == "shared_library")  { type = T::SharedLibrary; }
-    else if (type_str == "script")          { type = T::Script; }
-
     Recipe r(recipe, context_);
-    r.set_type(type);
+
+    if (false) {}
+    else if (type_str == "executable")      { r.set_type(TargetType::Executable); }
+    else if (type_str == "library")         { r.set_type(TargetType::Archive); }
+    else if (type_str == "shared_library")  { r.set_type(TargetType::SharedLibrary); }
+    else if (type_str == "script")          { r.set_type(TargetType::Script); }
+
     r.set_working_directory(context_->current_working_directory().string());
 
     return r;
