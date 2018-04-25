@@ -18,12 +18,14 @@ public:
     void add_define(const std::string & name, const std::string & value) override;
     void add_define(const std::string & name) override;
     void add_include_path(const std::filesystem::path & path) override;
+    void add_force_include(const std::filesystem::path & path) override;
 
 private:
     ArgumentDesc input_;
     ArgumentDesc output_;
     ArgumentDesc define_;
     ArgumentDesc include_;
+    ArgumentDesc force_include_;
 
 
 };

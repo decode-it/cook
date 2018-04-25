@@ -9,7 +9,7 @@ namespace cook { namespace chai {
 class File : public Ingredient<ingredient::File>
 {
 public:
-    File(const LanguageTypePair & ltp, const ingredient::File & file);
+    File(const LanguageTypePair & ltp, const ingredient::File & file, const Context * context);
 
     bool is_file() const        { return true; }
     bool is_key_value() const   { return false; }

@@ -6,7 +6,8 @@ Compiler::Compiler(Language language)
     : input_(10),
       output_(20, "-o"),
       define_(30, "-D"),
-      include_(40, "-I")
+      include_(40, "-I"),
+      force_include_(50, "-include")
 {
     switch (language)
     {
@@ -34,6 +35,11 @@ void Compiler::add_define(const std::string & name)
 void Compiler::add_include_path(const std::filesystem::path &path)
 {
     add_argument(include_, path.string());
+}
+
+void Compiler::add_force_include(const std::filesystem::path & path)
+{
+    add_argument(force_include_, path.string());
 }
 
 std::string Compiler::name() const

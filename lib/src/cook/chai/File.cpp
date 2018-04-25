@@ -2,8 +2,8 @@
 
 namespace cook { namespace chai {
 
-File::File(const LanguageTypePair & ltp, const ingredient::File & file)
-    : Ingredient<ingredient::File>(ltp, file)
+File::File(const LanguageTypePair & ltp, const ingredient::File & file, const Context *context)
+    : Ingredient<ingredient::File>(ltp, file, context)
 {
 }
 

@@ -29,6 +29,7 @@ public:
     template <typename T> Flags(T val) : flags_(0) { set(val); }
 
     Flags & operator|(const Flags & rhs);
+    friend Flags operator||(const Flags & lhs, const Flags & rhs);
     bool is_set(Flag flag) const;
 
 #define SET(TYPE) void set(TYPE value) { flags_ |= (1u << static_cast<int>(Flag::TYPE)); t##TYPE##_ = value; }

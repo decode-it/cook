@@ -45,17 +45,25 @@ Result Flags::only(const std::initializer_list<Flag> & lst) const
     MSS_END();
 }
 
-Flags & Flags::operator|(const Flags & rhs)
+Flags operator||(const Flags & lhs, const Flags & rhs)
 {
     CHAI_MSS_BEGIN();
 
-#define SET_IF(NAME) if(rhs.is_set(Flag::NAME)) { CHAI_MSS_MSG(!is_set(Flag::NAME) , Error, "Flag " << #NAME << " is set in both values"); set(rhs.t##NAME##_); }
+    Flags f = lhs;
+
+#define SET_IF(NAME) if(rhs.is_set(Flag::NAME)) { CHAI_MSS_MSG(!f.is_set(Flag::NAME) , Error, "Flag " << #NAME << " is set in both values"); f.set(rhs.t##NAME##_); }
     SET_IF(Language)
     SET_IF(Type);
     SET_IF(Overwrite);
     SET_IF(Propagation);
 #undef SET_IF
 
+    return f;
+}
+
+Flags & Flags::operator|(const Flags & rhs)
+{
+    (*this) = (*this) || rhs;
     return *this;
 }
 

@@ -6,7 +6,7 @@
 
 namespace cook { namespace chai {
 
-Book::Book(model::Book * book, Context * context)
+Book::Book(model::Book * book, const Context *context)
     : book_(book),
       context_(context),
       data_(from_any(book->user_data()))
@@ -62,7 +62,7 @@ Recipe Book::recipe(const std::string & uri_str, const std::string & type_str)
     else if (type_str == "shared_library")  { type = T::SharedLibrary; }
     else if (type_str == "script")          { type = T::Script; }
 
-    Recipe r(recipe);
+    Recipe r(recipe, context_);
     r.set_type(type);
     r.set_working_directory(context_->current_working_directory().string());
 

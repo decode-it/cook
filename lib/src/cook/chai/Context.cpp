@@ -39,7 +39,8 @@ struct Logger : public cook::Logger
 struct Cook
 {
     Cook(model::Book * book, Context * context, Logger * logger)
-        : root(book, context)
+        : root(book, context),
+          context_(context)
     {
 
     }
@@ -49,7 +50,21 @@ struct Cook
         return root.book(uri);
     }
 
+    std::string working_directory() const
+    {
+        return context_->current_working_directory().string();
+    }
+
+    std::string working_directory(bool absolute) const
+    {
+        if (absolute)
+            return gubg::filesystem::combine(std::filesystem::current_path(), context_->current_working_directory()).string();
+        else
+            return working_directory();
+    }
+
     Book root;
+    const Context * context_;
 };
 
 struct W_Propagation { };
@@ -69,6 +84,7 @@ struct Context::D
         set_logger(&logger);
         gubg::chai::inject<gubg::chai::Regex>(engine);
         gubg::chai::inject<std::string>(engine);
+        gubg::chai::inject<gubg::chai::File>(engine);
     }
 
     Logger logger;
@@ -81,14 +97,16 @@ struct Context::D
         engine.add(chaiscript::fun(&Context::include_, kitchen), "include");
         initialize_uri();
         initialize_book();
-        initialize_recipe();
+        initialize_recipe(kitchen);
         initialize_flags();
-        initialize_file();
-        initialize_key_value();
+        initialize_file(kitchen);
+        initialize_key_value(kitchen);
         engine.add(user_data_module());
         engine.add_global(chaiscript::var(cook.root), "root");
         engine.add_global(chaiscript::var(cook), "cook");
         engine.add(chaiscript::fun(&Cook::operator []), "[]");
+        engine.add(chaiscript::fun([](const Cook & c) { return c.working_directory(); }), "working_directory");
+        engine.add(chaiscript::fun([](const Cook & c, bool absolute) { return c.working_directory(absolute); }), "working_directory");
     }
 
     void initialize_flags()
@@ -127,7 +145,7 @@ struct Context::D
 
         engine.add(chaiscript::fun(&Flags::to_string), "to_string");
         engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs&rhs; } ), "&");
-        engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs|rhs; } ), "|");
+        engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs||rhs; } ), "|");
         engine.add(chaiscript::type_conversion<Flags, bool>());
     }
 
@@ -155,23 +173,24 @@ struct Context::D
         engine.add(chaiscript::fun(&Book::uri), "uri");
     }
 
-    void initialize_recipe()
+    void initialize_recipe(Context * context)
     {
         engine.add(chaiscript::user_type<Recipe>(), "Recipe");
         engine.add(chaiscript::constructor<Recipe(const Recipe &)>(), "Recipe");
 
         engine.add(chaiscript::fun(&Recipe::add), "add");
         engine.add(chaiscript::fun(&Recipe::set_type), "set_type");
+        engine.add(chaiscript::fun(&Recipe::working_directory), "working_dir");
 
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dep) { recipe.depends_on(dep); }), "depends_on");
 
         {
             using DepFunction = std::function<bool (const chaiscript::Boxed_Value & vt)>;
-            auto lambda = [](Recipe & recipe, const std::string & dep, DepFunction function)
+            auto lambda = [=](Recipe & recipe, const std::string & dep, DepFunction function)
             {
                 auto file_dep = [=](LanguageTypePair & ltp, ingredient::File & file)
                 {
-                    File f(ltp, file);
+                    File f(ltp, file, context);
                     if (!function(chaiscript::var(f)))
                         return false;
 
@@ -183,7 +202,7 @@ struct Context::D
 
                 auto key_value_dep = [=](LanguageTypePair & ltp, ingredient::KeyValue & key_value)
                 {
-                    KeyValue kv(ltp, key_value);
+                    KeyValue kv(ltp, key_value, context);
                     return function(chaiscript::var(kv));
 
                     ltp = kv.language_type_pair();
@@ -221,7 +240,7 @@ struct Context::D
         engine.add(chaiscript::fun(&Recipe::data), "data");
     }
 
-    void initialize_file()
+    void initialize_file(const Context * context)
     {
         engine.add(chaiscript::user_type<File>(), "File");
 
@@ -236,15 +255,15 @@ struct Context::D
 
 
         {
-            auto lambda = [](const std::string & dir, const std::string & rel)
+            auto lambda = [=](const std::string & dir, const std::string & rel)
             {
-                return File(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::File(dir, rel));
+                return File(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::File(dir, rel), context);
             };
             engine.add(chaiscript::fun(lambda), "File");
         }
     }
 
-    void initialize_key_value()
+    void initialize_key_value(const Context * context)
     {
         engine.add(chaiscript::user_type<KeyValue>(), "KeyValue");
 
@@ -258,9 +277,17 @@ struct Context::D
         engine.add(chaiscript::fun(&KeyValue::is_key_value), "is_key_value");
 
         {
-            auto lambda = [](const std::string & dir, const std::string & rel)
+            auto lambda = [=](const std::string & key)
             {
-                return File(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::File(dir, rel));
+                return KeyValue(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::KeyValue(key), context);
+            };
+            engine.add(chaiscript::fun(lambda), "KeyValue");
+        }
+
+        {
+            auto lambda = [=](const std::string & key, const std::string & value)
+            {
+                return KeyValue(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::KeyValue(key, value), context);
             };
             engine.add(chaiscript::fun(lambda), "KeyValue");
         }
@@ -306,16 +333,20 @@ Result recursive_process_(Error & error, StackIt it, Functor && f)
 {
     MSS_BEGIN(Result);
 
-    if (it < error.call_stack.begin())
+    if (it < error.call_stack.begin() || error.call_stack.empty())
+    {
         MSS(f(error));
+    }
+    else
+    {
+        const chaiscript::AST_Node_Trace & t =  *it;
 
-    const chaiscript::AST_Node_Trace & t =  *it;
+        auto s = log::scope("chai script", [&](auto & n) {
+            n.attr("type", chaiscript::ast_node_type_to_string(t.identifier)).attr("filename", t.filename()).attr("start_line", t.start().line).attr("start_col", t.start().column).attr("end_line", t.end().line).attr("end_col", t.end().column);
+        });
 
-    auto s = log::scope("chai script", [&](auto & n) {
-        n.attr("type", chaiscript::ast_node_type_to_string(t.identifier)).attr("filename", t.filename()).attr("start_line", t.start().line).attr("start_col", t.start().column).attr("end_line", t.end().line).attr("end_col", t.end().column);
-    });
-
-    MSS(recursive_process_(error, --it, std::forward<Functor>(f)));
+        MSS(recursive_process_(error, --it, std::forward<Functor>(f)));
+    }
 
     MSS_END();
 }
@@ -350,11 +381,13 @@ Result Context::load(const std::string & recipe)
     // TODO: add better error handling
     catch(Error & error)
     {
-        MSS(recursive_process_(error, error.call_stack.end()-1, &process_Error));
+        auto it = error.call_stack.empty() ? error.call_stack.begin() : error.call_stack.end();
+        MSS(recursive_process_(error, it - 1, &process_Error));
     }
     catch(chaiscript::exception::eval_error & error)
     {
-        MSS(recursive_process_(error, error.call_stack.end()-1, &process_chai_error_));
+        auto it = error.call_stack.empty() ? error.call_stack.begin() : error.call_stack.end();
+        MSS(recursive_process_(error, it - 1, &process_chai_error_));
     }
     catch(std::runtime_error & error)
     {

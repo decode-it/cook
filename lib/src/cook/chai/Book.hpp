@@ -17,7 +17,7 @@ struct Book
     using RecipeFunctor = std::function<void (Recipe)>;
     using BookFunctor = std::function<void (Book)>;
 
-    Book(model::Book * book, Context * context);
+    Book(model::Book * book, const Context * context);
 
     Book book(const std::string & uri_str);
     void book(const std::string & uri_str, const BookFunctor &functor);
@@ -30,7 +30,7 @@ struct Book
 
 private:
     model::Book * book_;
-    Context * context_;
+    const Context * context_;
     UserData data_;
 };
 

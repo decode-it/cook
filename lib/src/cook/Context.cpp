@@ -40,7 +40,6 @@ bool Context::initialize()
         }
     }
 
-
     MSS_END();
 }
 

@@ -9,7 +9,7 @@ namespace cook { namespace chai {
 class KeyValue : public Ingredient<ingredient::KeyValue>
 {
 public:
-    KeyValue(const LanguageTypePair & ltp, const ingredient::KeyValue & key_value);
+    KeyValue(const LanguageTypePair & ltp, const ingredient::KeyValue & key_value, const Context * context);
 
     bool is_file() const        { return true; }
     bool is_key_value() const   { return false; }

@@ -11,6 +11,7 @@ public:
     virtual void add_define(const std::string & name, const std::string & value) = 0;
     virtual void add_define(const std::string & name) = 0;
     virtual void add_include_path(const std::filesystem::path & path) = 0;
+    virtual void add_force_include(const std::filesystem::path & path) = 0;
 
     virtual Type type() const { return Compile; }
 };

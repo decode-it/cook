@@ -21,13 +21,14 @@ public:
     using DepKeyValueFilter = model::Recipe::DependencyKeyValueFilter;
 
 
-    Recipe(model::Recipe * recipe);
+    Recipe(model::Recipe * recipe, const Context *context);
 
     void add(const std::string & dir, const std::string & pattern, const Flags & flags = Flags(), GlobFunctor functor = GlobFunctor());
     void remove(const std::string & dir, const std::string & pattern, const Flags & flags = Flags(), GlobFunctor functor = GlobFunctor());
     void depends_on(const std::string & dependency, const DepFileFilter & file_filter = DepFileFilter(), const DepKeyValueFilter & key_value_filter = DepKeyValueFilter());
     void set_type(TargetType type);
     void set_working_directory(const std::string & dir);
+    std::string working_directory() const;
 
     void library(const std::string & library, const Flags & flags = Flags());
     void library_path(const std::string & path, const Flags & flags= Flags());
@@ -41,6 +42,7 @@ public:
 
 private:
     model::Recipe * recipe_;
+    const Context * context_;
     UserData data_;
 };
 

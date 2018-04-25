@@ -12,10 +12,10 @@ namespace cook { namespace chai {
 template <typename T> class Ingredient
 {
 public:
-    Ingredient(const LanguageTypePair & language_type_pair, const T & element) : ltp_(language_type_pair), element_(element) {}
+    Ingredient(const LanguageTypePair & language_type_pair, const T & element, const Context * context) : ltp_(language_type_pair), element_(element), context_(context) {}
 
     bool has_owner() const { return element_.owner(); }
-    Recipe owner() const    { return Recipe(element_.owner()); }
+    Recipe owner() const    { return Recipe(element_.owner(), context_); }
     Flags flags() const { return Flags(ltp_.language) | Flags(ltp_.type) | Flags(element_.overwrite()) | Flags(element_.propagation()); }
 
     T & element()                                           { return element_; }
@@ -25,6 +25,7 @@ public:
 
 private:
     LanguageTypePair ltp_;
+    const Context * context_;
     T element_;
 };
 

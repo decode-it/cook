@@ -5,8 +5,9 @@
 
 namespace cook { namespace chai {
 
-Recipe::Recipe(model::Recipe * recipe)
+Recipe::Recipe(model::Recipe * recipe, const Context *context)
     : recipe_(recipe),
+      context_(context),
       data_(from_any(recipe->user_data()))
 {
     set_type(TargetType::Archive);
@@ -22,6 +23,11 @@ void Recipe::set_working_directory(const std::string & dir)
     recipe_->set_working_directory(dir);
 }
 
+std::string Recipe::working_directory() const
+{
+    return (context_->dirs().recipe() / recipe_->working_directory()).string();
+}
+
 void Recipe::add(const std::string & dir, const std::string & pattern, const Flags & flags, GlobFunctor functor)
 {
     model::GlobInfo info;
@@ -35,7 +41,7 @@ void Recipe::add(const std::string & dir, const std::string & pattern, const Fla
     {
         info.filter_and_adaptor = [=](LanguageTypePair & ltp, ingredient::File & file)
         {
-            File f(ltp, file);
+            File f(ltp, file, context_);
 
             auto p = functor(f);
             if (!p)

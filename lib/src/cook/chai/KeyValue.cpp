@@ -2,8 +2,8 @@
 
 namespace cook { namespace chai {
 
-KeyValue::KeyValue(const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
-    : Ingredient<ingredient::KeyValue>(ltp, key_value)
+KeyValue::KeyValue(const LanguageTypePair & ltp, const ingredient::KeyValue & key_value, const Context *context)
+    : Ingredient<ingredient::KeyValue>(ltp, key_value, context)
 {
 }
 
