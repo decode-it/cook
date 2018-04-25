@@ -75,8 +75,16 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
     n.attr("type", recipe->build_target().type);
 
     {
-        const auto & fn = recipe->build_target().filename;
-        n.attr("build_target", fn ? make_absolute(*fn) : "");
+        if (recipe->build_target().filename)
+        {
+            const auto & fn = gubg::filesystem::combine({ std::filesystem::current_path(), context.dirs().output(), *recipe->build_target().filename });
+            n.attr("build_target", fn.string());
+        }
+        else
+        {
+            n.attr("build_target");
+        }
+
     }
 
 

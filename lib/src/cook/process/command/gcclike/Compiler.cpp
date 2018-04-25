@@ -18,7 +18,8 @@ Compiler::Compiler(Language language)
             set_command("gcc");
             break;
     }
-    add_argument(ArgumentDesc(1, "-c"), std::string());
+    add_argument(ArgumentDesc(1, "-g"), std::string());
+    add_argument(ArgumentDesc(2, "-c"), std::string());
 }
 
 void Compiler::add_define(const std::string & name, const std::string & value)

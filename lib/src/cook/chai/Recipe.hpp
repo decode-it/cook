@@ -35,6 +35,7 @@ public:
     void define(const std::string & name, const Flags & flags= Flags());
     void define(const std::string & name, const std::string & value, const Flags & flags = Flags());
     void add_script(const std::string & script_fn, const std::list<std::string> & args);
+    const model::Uri & uri() const { return recipe_->uri(); }
 
     UserData data() const { return data_; }
 

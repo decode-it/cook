@@ -18,7 +18,7 @@ struct Error : public chaiscript::exception::eval_error
 {
     explicit Error(const Result & result)
         : chaiscript::exception::eval_error(""),
-        result(result)
+          result(result)
     {
     }
 
@@ -68,6 +68,7 @@ struct Context::D
     {
         set_logger(&logger);
         gubg::chai::inject<gubg::chai::Regex>(engine);
+        gubg::chai::inject<std::string>(engine);
     }
 
     Logger logger;
@@ -78,6 +79,7 @@ struct Context::D
     void initialize_engine_(Context * kitchen)
     {
         engine.add(chaiscript::fun(&Context::include_, kitchen), "include");
+        initialize_uri();
         initialize_book();
         initialize_recipe();
         initialize_flags();
@@ -129,18 +131,32 @@ struct Context::D
         engine.add(chaiscript::type_conversion<Flags, bool>());
     }
 
+    void initialize_uri()
+    {
+        engine.add(chaiscript::user_type<model::Uri>(), "Uri");
+        engine.add(chaiscript::fun([](const model::Uri & uri) { return uri.string(); }), "to_string");
+        engine.add(chaiscript::fun([](const model::Uri & uri, char c) { return uri.string(c); }), "to_string");
+        engine.add(chaiscript::fun(&model::Uri::as_absolute), "as_absolute");
+        engine.add(chaiscript::fun(&model::Uri::as_relative), "as_relative");
+    }
+
     void initialize_book()
     {
         engine.add(chaiscript::user_type<Book>(), "Book");
+        engine.add(chaiscript::constructor<Book(const Book &)>(), "Book");
+
         engine.add(chaiscript::fun(&Book::book), "book");
         engine.add(chaiscript::fun(&Book::recipe_2), "recipe");
         engine.add(chaiscript::fun(&Book::recipe_3), "recipe");
         engine.add(chaiscript::fun(&Book::data), "data");
+        engine.add(chaiscript::fun(&Book::uri), "uri");
     }
 
     void initialize_recipe()
     {
         engine.add(chaiscript::user_type<Recipe>(), "Recipe");
+        engine.add(chaiscript::constructor<Recipe(const Recipe &)>(), "Recipe");
+
         engine.add(chaiscript::fun(&Recipe::add), "add");
         engine.add(chaiscript::fun(&Recipe::set_type), "set_type");
 
@@ -197,6 +213,8 @@ struct Context::D
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name, const Flags & flags) { recipe.define(name, flags); } ), "define");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name, const std::string & value, const Flags & flags) { recipe.define(name, value, flags); } ), "define");
 
+
+        engine.add(chaiscript::fun(&Recipe::uri), "uri");
         engine.add(chaiscript::fun(&Recipe::data), "data");
     }
 
@@ -278,6 +296,45 @@ Result Context::set_variable(const std::string & name, const std::string & value
     MSS_END();
 }
 
+namespace  {
+
+template <typename Error, typename StackIt, typename Functor>
+Result recursive_process_(Error & error, StackIt it, Functor && f)
+{
+    MSS_BEGIN(Result);
+
+    if (it < error.call_stack.begin())
+        MSS(f(error));
+
+    const chaiscript::AST_Node_Trace & t =  *it;
+
+    auto s = log::scope("chai script", [&](auto & n) {
+        n.attr("type", chaiscript::ast_node_type_to_string(t.identifier)).attr("filename", t.filename()).attr("line", t.start().line).attr("col", t.start().column);
+    });
+
+    MSS(recursive_process_(error, --it, std::forward<Functor>(f)));
+
+    MSS_END();
+}
+
+Result process_chai_error_(chaiscript::exception::eval_error & error)
+{
+    MSS_BEGIN(Result);
+
+    MSG_MSS(false, Error, error.reason << std::endl << error.detail);
+
+    MSS_END();
+}
+
+Result process_Error(Error & error)
+{
+    return error.result;
+}
+
+
+}
+
+
 Result Context::load(const std::string & recipe)
 {
     MSS_BEGIN(Result);
@@ -290,18 +347,16 @@ Result Context::load(const std::string & recipe)
     // TODO: add better error handling
     catch(Error & error)
     {
-        std::cout << error.pretty_print();
-        MSS(error.result);
+        MSS(recursive_process_(error, error.call_stack.end()-1, &process_Error));
     }
     catch(chaiscript::exception::eval_error & error)
     {
-        std::cout << error.pretty_print();
-        MSS(false);
+        MSS(recursive_process_(error, error.call_stack.end()-1, &process_chai_error_));
     }
     catch(std::runtime_error & error)
     {
         std::cout << "caught error: " << error.what() << std::endl;
-        MSS(false);
+        MSG_MSS(false, InternalError, error.what());
     }
 
     MSS_END();
@@ -331,6 +386,13 @@ std::filesystem::path Context::current_working_directory() const
 void Context::include_(const std::string & file)
 {
     const std::filesystem::path script_fn = generate_file_path_(file);
+
+    auto ss = log::scope("chai script", [&](auto & n) {
+        n.attr("filename", script_fn.string());
+
+    });
+
+
 
     // push the script
     d->scripts.push(script_fn);
