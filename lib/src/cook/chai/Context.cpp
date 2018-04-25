@@ -46,7 +46,7 @@ struct Cook
 
     Book operator[](const std::string & uri)
     {
-        return root.subbook(uri);
+        return root.book(uri);
     }
 
     Book root;
@@ -145,9 +145,12 @@ struct Context::D
         engine.add(chaiscript::user_type<Book>(), "Book");
         engine.add(chaiscript::constructor<Book(const Book &)>(), "Book");
 
-        engine.add(chaiscript::fun(&Book::book), "book");
-        engine.add(chaiscript::fun(&Book::recipe_2), "recipe");
-        engine.add(chaiscript::fun(&Book::recipe_3), "recipe");
+        engine.add(chaiscript::fun([](Book & book, const std::string & uri) { return book.book(uri); } ), "book");
+        engine.add(chaiscript::fun([](Book & book, const std::string & uri, const Book::BookFunctor & functor) { book.book(uri, functor); } ), "book");
+        engine.add(chaiscript::fun([](Book & book, const std::string & uri) { return book.recipe(uri); }), "recipe");
+        engine.add(chaiscript::fun([](Book & book, const std::string & uri, const std::string & type) { return book.recipe(uri, type); }), "recipe");
+        engine.add(chaiscript::fun([](Book & book, const std::string & uri, const Book::RecipeFunctor & functor) { book.recipe(uri, functor); }), "recipe");
+        engine.add(chaiscript::fun([](Book & book, const std::string & uri, const std::string & type, const Book::RecipeFunctor & functor) { book.recipe(uri, type, functor); }), "recipe");
         engine.add(chaiscript::fun(&Book::data), "data");
         engine.add(chaiscript::fun(&Book::uri), "uri");
     }
@@ -309,7 +312,7 @@ Result recursive_process_(Error & error, StackIt it, Functor && f)
     const chaiscript::AST_Node_Trace & t =  *it;
 
     auto s = log::scope("chai script", [&](auto & n) {
-        n.attr("type", chaiscript::ast_node_type_to_string(t.identifier)).attr("filename", t.filename()).attr("line", t.start().line).attr("col", t.start().column);
+        n.attr("type", chaiscript::ast_node_type_to_string(t.identifier)).attr("filename", t.filename()).attr("start_line", t.start().line).attr("start_col", t.start().column).attr("end_line", t.end().line).attr("end_col", t.end().column);
     });
 
     MSS(recursive_process_(error, --it, std::forward<Functor>(f)));

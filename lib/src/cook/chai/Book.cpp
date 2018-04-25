@@ -13,7 +13,7 @@ Book::Book(model::Book * book, Context * context)
 {
 }
 
-Book Book::subbook(const std::string & uri_str)
+Book Book::book(const std::string & uri_str)
 {
     CHAI_MSS_BEGIN();
 
@@ -28,7 +28,7 @@ Book Book::subbook(const std::string & uri_str)
     return Book(subbook, context_);
 }
 
-void Book::book(const std::string & uri_str, const std::function<void (Book)> &functor)
+void Book::book(const std::string & uri_str, const BookFunctor &functor)
 {
     CHAI_MSS_BEGIN();
 
@@ -43,13 +43,7 @@ void Book::book(const std::string & uri_str, const std::function<void (Book)> &f
     functor(Book(subbook, context_));
 }
 
-
-void Book::recipe_2(const std::string & uri_str, const std::function<void (Recipe)> &functor)
-{
-    recipe_3(uri_str, "", functor);
-}
-
-void Book::recipe_3(const std::string & uri_str, const std::string & type_str, const std::function<void (Recipe)> & functor)
+Recipe Book::recipe(const std::string & uri_str, const std::string & type_str)
 {
     CHAI_MSS_BEGIN();
 
@@ -68,12 +62,21 @@ void Book::recipe_3(const std::string & uri_str, const std::string & type_str, c
     else if (type_str == "shared_library")  { type = T::SharedLibrary; }
     else if (type_str == "script")          { type = T::Script; }
 
-    {
-        Recipe r(recipe);
-        r.set_type(type);
-        r.set_working_directory(context_->current_working_directory().string());
-        functor(r);
-    }
+    Recipe r(recipe);
+    r.set_type(type);
+    r.set_working_directory(context_->current_working_directory().string());
+
+    return r;
+}
+
+void Book::recipe(const std::string & uri_str, const RecipeFunctor &functor)
+{
+    recipe(uri_str, "", functor);
+}
+
+void Book::recipe(const std::string & uri_str, const std::string & type_str, const RecipeFunctor& functor)
+{
+    functor(recipe(uri_str, type_str));
 }
 
 } }
