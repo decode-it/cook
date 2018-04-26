@@ -2,6 +2,9 @@
 #include "cook/process/command/gcclike/Compiler.hpp"
 #include "cook/process/command/gcclike/Archiver.hpp"
 #include "cook/process/command/gcclike/Linker.hpp"
+#include "cook/process/command/msvc/Compiler.hpp"
+#include "cook/process/command/msvc/Archiver.hpp"
+#include "cook/process/command/msvc/Linker.hpp"
 #include "cook/log/Scope.hpp"
 #include "cook/OS.hpp"
 
@@ -43,6 +46,7 @@ namespace cook { namespace process { namespace command {
         if (false) {}
         else if (brand_ == "gcc")   {ptr.reset(new command::gcclike::Compiler("gcc",   "g++",     language));}
         else if (brand_ == "clang") {ptr.reset(new command::gcclike::Compiler("clang", "clang++", language));}
+        else if (brand_ == "msvc") {ptr.reset(new command::msvc::Compiler(language));}
         MSS(!!ptr);
         MSS_END();
     }
@@ -62,6 +66,7 @@ namespace cook { namespace process { namespace command {
             }
             ptr.reset(new command::gcclike::Archiver(args));
         }
+        else if (brand_ == "msvc") {ptr.reset(new command::msvc::Archiver());}
         MSS(!!ptr);
         MSS_END();
     }
@@ -72,6 +77,7 @@ namespace cook { namespace process { namespace command {
         if (false) {}
         else if (brand_ == "gcc")   {ptr.reset(new command::gcclike::Linker("g++"));}
         else if (brand_ == "clang") {ptr.reset(new command::gcclike::Linker("clang++"));}
+        else if (brand_ == "msvc") {ptr.reset(new command::msvc::Linker());}
         MSS(!!ptr);
         MSS_END();
     }
