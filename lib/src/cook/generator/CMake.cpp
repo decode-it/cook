@@ -280,7 +280,7 @@ void CMake::set_target_properties_(std::ostream & ofs, const model::Recipe & rec
 
 
 
-    // the compile definitions libraries
+    // the compile definitions
     {
         std::set<std::string> definitions;
         recipe.key_values().each([&](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
@@ -291,6 +291,23 @@ void CMake::set_target_properties_(std::ostream & ofs, const model::Recipe & rec
         });
 
         write_elements_(ofs, [&](auto & os) { os << "target_compile_definitions(" << name << " " << keyword; }, definitions);
+    }
+
+    // the compile options
+    {
+        std::set<std::string> options;
+        recipe.files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
+        {
+            if (ltp.type == Type::ForceInclude)
+                options.insert(gubg::stream([&](auto & os)
+                {
+                    os << "-include " << gubg::filesystem::combine(output_to_source, file.rel()).string();
+                }));
+
+            return true;
+        });
+
+        write_elements_(ofs, [&](auto & os) { os << "target_compile_options(" << name << " " << keyword; }, options);
     }
 
     // the dependencies
