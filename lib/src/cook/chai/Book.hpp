@@ -9,11 +9,11 @@
 namespace cook { namespace chai {
 
 class Context;
+class Recipe;
 
-struct Recipe;
-
-struct Book
+class Book
 {
+public:
     using RecipeFunctor = std::function<void (Recipe)>;
     using BookFunctor = std::function<void (Book)>;
 

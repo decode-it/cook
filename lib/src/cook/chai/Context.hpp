@@ -6,8 +6,9 @@
 
 namespace cook { namespace chai {
 
-struct Context : public cook::Context
+class Context : public cook::Context
 {
+public:
     Context();
     virtual ~Context();
 
@@ -16,8 +17,6 @@ struct Context : public cook::Context
 
     Result load(const std::string &recipe);
     std::filesystem::path current_working_directory() const;
-
-
 
 private:
     void include_(const std::string & file);

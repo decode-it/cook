@@ -14,7 +14,7 @@ Result CMake::set_option(const std::string & option)
 {
     MSS_BEGIN(Result);
     output_path_ = option;
-    set_filename(gubg::filesystem::combine(output_path_, default_filename()));
+    set_filename(gubg::filesystem::combine(output_path_, default_filename()).string());
     MSS_END();
 }
 

@@ -86,6 +86,7 @@ namespace :b0 do
     desc "bootstrap-level0: Clean"
     task :clean do
         sh("ninja -f #{b0_ninja_fn} -t clean")
+        rm_rf(".b0")
     end
 
     desc "bootstrap-level0: Update rtags"

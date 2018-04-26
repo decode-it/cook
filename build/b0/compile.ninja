@@ -6,7 +6,9 @@
 #$cook_fns=FileList.new("lib/src/**/*.cpp").to_a
 #$cook_test_fns=FileList.new("lib/test/**/*_tests.cpp").to_a
 #$cook_app_fns=FileList.new("app/**/*.cpp").to_a
+#$boost_fns=FileList.new("extern/boost/modules/filesystem/src/*.cpp").to_a
 #$boost = $boost_modules
+#$obj = ->(fn){fn.gsub("/","_")+".obj"}
 #){
 #}
 
@@ -38,145 +40,145 @@ boost_include_paths =  -I extern/boost/modules/algorithm/include -I extern/boost
 
 #[output](script:
 #$gubg_fns.each do |fn|
-#  output.puts("build .b0/#{fn}.obj: compile #{fn}")
+#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
 #  output.puts("    include_paths = $gubg_include_paths")
 #end
 #){
-build .b0/gubg.std/src/gubg/platform/spawn.cpp.obj: compile gubg.std/src/gubg/platform/spawn.cpp
+build .b0/gubg.std_src_gubg_platform_spawn.cpp.obj: compile gubg.std/src/gubg/platform/spawn.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
+build .b0/gubg.io_src_gubg_OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
+build .b0/gubg.io_src_gubg_Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj: compile gubg.io/src/gubg/bitmagic/bitmagic.cpp
+build .b0/gubg.io_src_gubg_bitmagic_bitmagic.cpp.obj: compile gubg.io/src/gubg/bitmagic/bitmagic.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/file/File.cpp.obj: compile gubg.io/src/gubg/file/File.cpp
+build .b0/gubg.io_src_gubg_file_File.cpp.obj: compile gubg.io/src/gubg/file/File.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/file/Filesystem.cpp.obj: compile gubg.io/src/gubg/file/Filesystem.cpp
+build .b0/gubg.io_src_gubg_file_Filesystem.cpp.obj: compile gubg.io/src/gubg/file/Filesystem.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/file/Forest.cpp.obj: compile gubg.io/src/gubg/file/Forest.cpp
+build .b0/gubg.io_src_gubg_file_Forest.cpp.obj: compile gubg.io/src/gubg/file/Forest.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/hash/MD5.cpp.obj: compile gubg.io/src/gubg/hash/MD5.cpp
+build .b0/gubg.io_src_gubg_hash_MD5.cpp.obj: compile gubg.io/src/gubg/hash/MD5.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/parse/basic.cpp.obj: compile gubg.io/src/gubg/parse/basic.cpp
+build .b0/gubg.io_src_gubg_parse_basic.cpp.obj: compile gubg.io/src/gubg/parse/basic.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile gubg.io/src/gubg/parse/xml/Coding.cpp
+build .b0/gubg.io_src_gubg_parse_xml_Coding.cpp.obj: compile gubg.io/src/gubg/parse/xml/Coding.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/std/filesystem.cpp.obj: compile gubg.io/src/gubg/std/filesystem.cpp
+build .b0/gubg.io_src_gubg_std_filesystem.cpp.obj: compile gubg.io/src/gubg/std/filesystem.cpp
     include_paths = $gubg_include_paths
 #}
     
 #[output](script:
 #$cook_fns.each do |fn|
-#  output.puts("build .b0/#{fn}.obj: compile #{fn}")
+#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
 #  output.puts("    include_paths = $cook_lib_include_paths $boost_include_paths")
 #end
 #){
-build .b0/lib/src/cook/Context.cpp.obj: compile lib/src/cook/Context.cpp
+build .b0/lib_src_cook_Context.cpp.obj: compile lib/src/cook/Context.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/OS.cpp.obj: compile lib/src/cook/OS.cpp
+build .b0/lib_src_cook_OS.cpp.obj: compile lib/src/cook/OS.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/algo/Book.cpp.obj: compile lib/src/cook/algo/Book.cpp
+build .b0/lib_src_cook_algo_Book.cpp.obj: compile lib/src/cook/algo/Book.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/Book.cpp.obj: compile lib/src/cook/chai/Book.cpp
+build .b0/lib_src_cook_chai_Book.cpp.obj: compile lib/src/cook/chai/Book.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/Context.cpp.obj: compile lib/src/cook/chai/Context.cpp
+build .b0/lib_src_cook_chai_Context.cpp.obj: compile lib/src/cook/chai/Context.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/File.cpp.obj: compile lib/src/cook/chai/File.cpp
+build .b0/lib_src_cook_chai_File.cpp.obj: compile lib/src/cook/chai/File.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/Flags.cpp.obj: compile lib/src/cook/chai/Flags.cpp
+build .b0/lib_src_cook_chai_Flags.cpp.obj: compile lib/src/cook/chai/Flags.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/KeyValue.cpp.obj: compile lib/src/cook/chai/KeyValue.cpp
+build .b0/lib_src_cook_chai_KeyValue.cpp.obj: compile lib/src/cook/chai/KeyValue.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/Recipe.cpp.obj: compile lib/src/cook/chai/Recipe.cpp
+build .b0/lib_src_cook_chai_Recipe.cpp.obj: compile lib/src/cook/chai/Recipe.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/UserData.cpp.obj: compile lib/src/cook/chai/UserData.cpp
+build .b0/lib_src_cook_chai_UserData.cpp.obj: compile lib/src/cook/chai/UserData.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/mss.cpp.obj: compile lib/src/cook/chai/mss.cpp
+build .b0/lib_src_cook_chai_mss.cpp.obj: compile lib/src/cook/chai/mss.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/generator/CMake.cpp.obj: compile lib/src/cook/generator/CMake.cpp
+build .b0/lib_src_cook_generator_CMake.cpp.obj: compile lib/src/cook/generator/CMake.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/generator/Naft.cpp.obj: compile lib/src/cook/generator/Naft.cpp
+build .b0/lib_src_cook_generator_Naft.cpp.obj: compile lib/src/cook/generator/Naft.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/generator/Ninja.cpp.obj: compile lib/src/cook/generator/Ninja.cpp
+build .b0/lib_src_cook_generator_Ninja.cpp.obj: compile lib/src/cook/generator/Ninja.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/generator/graphviz/Component.cpp.obj: compile lib/src/cook/generator/graphviz/Component.cpp
+build .b0/lib_src_cook_generator_graphviz_Component.cpp.obj: compile lib/src/cook/generator/graphviz/Component.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/generator/graphviz/Dependency.cpp.obj: compile lib/src/cook/generator/graphviz/Dependency.cpp
+build .b0/lib_src_cook_generator_graphviz_Dependency.cpp.obj: compile lib/src/cook/generator/graphviz/Dependency.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/generator/qt/Cook.cpp.obj: compile lib/src/cook/generator/qt/Cook.cpp
+build .b0/lib_src_cook_generator_qt_Cook.cpp.obj: compile lib/src/cook/generator/qt/Cook.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/generator/qt/Generic.cpp.obj: compile lib/src/cook/generator/qt/Generic.cpp
+build .b0/lib_src_cook_generator_qt_Generic.cpp.obj: compile lib/src/cook/generator/qt/Generic.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/log/Node.cpp.obj: compile lib/src/cook/log/Node.cpp
+build .b0/lib_src_cook_log_Node.cpp.obj: compile lib/src/cook/log/Node.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/log/Scope.cpp.obj: compile lib/src/cook/log/Scope.cpp
+build .b0/lib_src_cook_log_Scope.cpp.obj: compile lib/src/cook/log/Scope.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/log/level.cpp.obj: compile lib/src/cook/log/level.cpp
+build .b0/lib_src_cook_log_level.cpp.obj: compile lib/src/cook/log/level.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/model/Book.cpp.obj: compile lib/src/cook/model/Book.cpp
+build .b0/lib_src_cook_model_Book.cpp.obj: compile lib/src/cook/model/Book.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/model/Dirs.cpp.obj: compile lib/src/cook/model/Dirs.cpp
+build .b0/lib_src_cook_model_Dirs.cpp.obj: compile lib/src/cook/model/Dirs.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/model/Element.cpp.obj: compile lib/src/cook/model/Element.cpp
+build .b0/lib_src_cook_model_Element.cpp.obj: compile lib/src/cook/model/Element.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/model/Library.cpp.obj: compile lib/src/cook/model/Library.cpp
+build .b0/lib_src_cook_model_Library.cpp.obj: compile lib/src/cook/model/Library.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/model/Recipe.cpp.obj: compile lib/src/cook/model/Recipe.cpp
+build .b0/lib_src_cook_model_Recipe.cpp.obj: compile lib/src/cook/model/Recipe.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/model/Uri.cpp.obj: compile lib/src/cook/model/Uri.cpp
+build .b0/lib_src_cook_model_Uri.cpp.obj: compile lib/src/cook/model/Uri.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/Menu.cpp.obj: compile lib/src/cook/process/Menu.cpp
+build .b0/lib_src_cook_process_Menu.cpp.obj: compile lib/src/cook/process/Menu.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/RecipeFilteredGraph.cpp.obj: compile lib/src/cook/process/RecipeFilteredGraph.cpp
+build .b0/lib_src_cook_process_RecipeFilteredGraph.cpp.obj: compile lib/src/cook/process/RecipeFilteredGraph.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/build/Graph.cpp.obj: compile lib/src/cook/process/build/Graph.cpp
+build .b0/lib_src_cook_process_build_Graph.cpp.obj: compile lib/src/cook/process/build/Graph.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/chef/Chef.cpp.obj: compile lib/src/cook/process/chef/Chef.cpp
+build .b0/lib_src_cook_process_chef_Chef.cpp.obj: compile lib/src/cook/process/chef/Chef.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/chef/CompileLinkArchive.cpp.obj: compile lib/src/cook/process/chef/CompileLinkArchive.cpp
+build .b0/lib_src_cook_process_chef_CompileLinkArchive.cpp.obj: compile lib/src/cook/process/chef/CompileLinkArchive.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/command/OrderedCommand.cpp.obj: compile lib/src/cook/process/command/OrderedCommand.cpp
+build .b0/lib_src_cook_process_command_OrderedCommand.cpp.obj: compile lib/src/cook/process/command/OrderedCommand.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/command/gcclike/Archiver.cpp.obj: compile lib/src/cook/process/command/gcclike/Archiver.cpp
+build .b0/lib_src_cook_process_command_gcclike_Archiver.cpp.obj: compile lib/src/cook/process/command/gcclike/Archiver.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/command/gcclike/Compiler.cpp.obj: compile lib/src/cook/process/command/gcclike/Compiler.cpp
+build .b0/lib_src_cook_process_command_gcclike_Compiler.cpp.obj: compile lib/src/cook/process/command/gcclike/Compiler.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/command/gcclike/Linker.cpp.obj: compile lib/src/cook/process/command/gcclike/Linker.cpp
+build .b0/lib_src_cook_process_command_gcclike_Linker.cpp.obj: compile lib/src/cook/process/command/gcclike/Linker.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/souschef/Archiver.cpp.obj: compile lib/src/cook/process/souschef/Archiver.cpp
+build .b0/lib_src_cook_process_souschef_Archiver.cpp.obj: compile lib/src/cook/process/souschef/Archiver.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/souschef/Compiler.cpp.obj: compile lib/src/cook/process/souschef/Compiler.cpp
+build .b0/lib_src_cook_process_souschef_Compiler.cpp.obj: compile lib/src/cook/process/souschef/Compiler.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/souschef/DependencyPropagator.cpp.obj: compile lib/src/cook/process/souschef/DependencyPropagator.cpp
+build .b0/lib_src_cook_process_souschef_DependencyPropagator.cpp.obj: compile lib/src/cook/process/souschef/DependencyPropagator.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/souschef/IncludePathSetter.cpp.obj: compile lib/src/cook/process/souschef/IncludePathSetter.cpp
+build .b0/lib_src_cook_process_souschef_IncludePathSetter.cpp.obj: compile lib/src/cook/process/souschef/IncludePathSetter.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/souschef/LinkLibrarySorter.cpp.obj: compile lib/src/cook/process/souschef/LinkLibrarySorter.cpp
+build .b0/lib_src_cook_process_souschef_LinkLibrarySorter.cpp.obj: compile lib/src/cook/process/souschef/LinkLibrarySorter.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/souschef/Linker.cpp.obj: compile lib/src/cook/process/souschef/Linker.cpp
+build .b0/lib_src_cook_process_souschef_Linker.cpp.obj: compile lib/src/cook/process/souschef/Linker.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/souschef/PathExtraction.cpp.obj: compile lib/src/cook/process/souschef/PathExtraction.cpp
+build .b0/lib_src_cook_process_souschef_PathExtraction.cpp.obj: compile lib/src/cook/process/souschef/PathExtraction.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/souschef/RecipeNamer.cpp.obj: compile lib/src/cook/process/souschef/RecipeNamer.cpp
+build .b0/lib_src_cook_process_souschef_RecipeNamer.cpp.obj: compile lib/src/cook/process/souschef/RecipeNamer.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/souschef/Resolver.cpp.obj: compile lib/src/cook/process/souschef/Resolver.cpp
+build .b0/lib_src_cook_process_souschef_Resolver.cpp.obj: compile lib/src/cook/process/souschef/Resolver.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/souschef/ScriptRunner.cpp.obj: compile lib/src/cook/process/souschef/ScriptRunner.cpp
+build .b0/lib_src_cook_process_souschef_ScriptRunner.cpp.obj: compile lib/src/cook/process/souschef/ScriptRunner.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/rules/ASM.cpp.obj: compile lib/src/cook/rules/ASM.cpp
+build .b0/lib_src_cook_rules_ASM.cpp.obj: compile lib/src/cook/rules/ASM.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/rules/Binary.cpp.obj: compile lib/src/cook/rules/Binary.cpp
+build .b0/lib_src_cook_rules_Binary.cpp.obj: compile lib/src/cook/rules/Binary.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/rules/C_family.cpp.obj: compile lib/src/cook/rules/C_family.cpp
+build .b0/lib_src_cook_rules_C_family.cpp.obj: compile lib/src/cook/rules/C_family.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/rules/Extensions.cpp.obj: compile lib/src/cook/rules/Extensions.cpp
+build .b0/lib_src_cook_rules_Extensions.cpp.obj: compile lib/src/cook/rules/Extensions.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/rules/Interface.cpp.obj: compile lib/src/cook/rules/Interface.cpp
+build .b0/lib_src_cook_rules_Interface.cpp.obj: compile lib/src/cook/rules/Interface.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/rules/RuleSet.cpp.obj: compile lib/src/cook/rules/RuleSet.cpp
+build .b0/lib_src_cook_rules_RuleSet.cpp.obj: compile lib/src/cook/rules/RuleSet.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/util/File.cpp.obj: compile lib/src/cook/util/File.cpp
+build .b0/lib_src_cook_util_File.cpp.obj: compile lib/src/cook/util/File.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 #}
 
@@ -184,299 +186,342 @@ build .b0/gubg.std/src/catch_runner.cpp.obj: compile gubg.std/src/catch_runner.c
     include_paths = $catch_include_paths
 #[output](script:
 #$gubg_test_fns.each do |fn|
-#  output.puts("build .b0/#{fn}.obj: compile #{fn}")
+#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
 #  output.puts("    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths")
 #end
 #){
-build .b0/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj: compile gubg.std/test/src/gubg/OnlyOnce_tests.cpp
+build .b0/gubg.std_test_src_gubg_OnlyOnce_tests.cpp.obj: compile gubg.std/test/src/gubg/OnlyOnce_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/Range_tests.cpp.obj: compile gubg.std/test/src/gubg/Range_tests.cpp
+build .b0/gubg.std_test_src_gubg_Range_tests.cpp.obj: compile gubg.std/test/src/gubg/Range_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/Transition_tests.cpp.obj: compile gubg.std/test/src/gubg/Transition_tests.cpp
+build .b0/gubg.std_test_src_gubg_Transition_tests.cpp.obj: compile gubg.std/test/src/gubg/Transition_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj: compile gubg.std/test/src/gubg/array/Pool_tests.cpp
+build .b0/gubg.std_test_src_gubg_array_Pool_tests.cpp.obj: compile gubg.std/test/src/gubg/array/Pool_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj: compile gubg.std/test/src/gubg/macro/variadic_tests.cpp
+build .b0/gubg.std_test_src_gubg_macro_variadic_tests.cpp.obj: compile gubg.std/test/src/gubg/macro/variadic_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/mss_tests.cpp.obj: compile gubg.std/test/src/gubg/mss_tests.cpp
+build .b0/gubg.std_test_src_gubg_mss_tests.cpp.obj: compile gubg.std/test/src/gubg/mss_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj: compile gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp
+build .b0/gubg.std_test_src_gubg_pattern_SignalSlot_tests.cpp.obj: compile gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj: compile gubg.std/test/src/gubg/thread/Semaphore_tests.cpp
+build .b0/gubg.std_test_src_gubg_thread_Semaphore_tests.cpp.obj: compile gubg.std/test/src/gubg/thread/Semaphore_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp
+build .b0/gubg.std_test_src_gubg_tmp_FindBaseByName_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/If_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/If_tests.cpp
+build .b0/gubg.std_test_src_gubg_tmp_If_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/If_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/IntType_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/IntType_tests.cpp
+build .b0/gubg.std_test_src_gubg_tmp_IntType_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/IntType_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp
+build .b0/gubg.std_test_src_gubg_tmp_SFINAE_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/TypeList_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/TypeList_tests.cpp
+build .b0/gubg.std_test_src_gubg_tmp_TypeList_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/TypeList_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tuple/ForEach_tests.cpp.obj: compile gubg.std/test/src/gubg/tuple/ForEach_tests.cpp
+build .b0/gubg.std_test_src_gubg_tuple_ForEach_tests.cpp.obj: compile gubg.std/test/src/gubg/tuple/ForEach_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp.obj: compile gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp
+build .b0/gubg.std_test_src_gubg_tuple_TypeTransform_tests.cpp.obj: compile gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/Integer_tests.cpp.obj: compile gubg.io/test/src/gubg/Integer_tests.cpp
+build .b0/gubg.io_test_src_gubg_Integer_tests.cpp.obj: compile gubg.io/test/src/gubg/Integer_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/Strange_tests.cpp.obj: compile gubg.io/test/src/gubg/Strange_tests.cpp
+build .b0/gubg.io_test_src_gubg_Strange_tests.cpp.obj: compile gubg.io/test/src/gubg/Strange_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp.obj: compile gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp
+build .b0/gubg.io_test_src_gubg_bitmagic_bitmagic_tests.cpp.obj: compile gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/file/Creater_tests.cpp.obj: compile gubg.io/test/src/gubg/file/Creater_tests.cpp
+build .b0/gubg.io_test_src_gubg_file_Creater_tests.cpp.obj: compile gubg.io/test/src/gubg/file/Creater_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/file/File_tests.cpp.obj: compile gubg.io/test/src/gubg/file/File_tests.cpp
+build .b0/gubg.io_test_src_gubg_file_File_tests.cpp.obj: compile gubg.io/test/src/gubg/file/File_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/file/Filesystem_tests.cpp.obj: compile gubg.io/test/src/gubg/file/Filesystem_tests.cpp
+build .b0/gubg.io_test_src_gubg_file_Filesystem_tests.cpp.obj: compile gubg.io/test/src/gubg/file/Filesystem_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj: compile gubg.io/test/src/gubg/file/Forest_tests.cpp
+build .b0/gubg.io_test_src_gubg_file_Forest_tests.cpp.obj: compile gubg.io/test/src/gubg/file/Forest_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj: compile gubg.io/test/src/gubg/hash/MD5_tests.cpp
+build .b0/gubg.io_test_src_gubg_hash_MD5_tests.cpp.obj: compile gubg.io/test/src/gubg/hash/MD5_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj: compile gubg.io/test/src/gubg/naft/Document_tests.cpp
+build .b0/gubg.io_test_src_gubg_naft_Document_tests.cpp.obj: compile gubg.io/test/src/gubg/naft/Document_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp
+build .b0/gubg.io_test_src_gubg_parse_naft_Parser_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp
+build .b0/gubg.io_test_src_gubg_parse_xml_Coding_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp
+build .b0/gubg.io_test_src_gubg_parse_xml_Parser_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj: compile gubg.io/test/src/gubg/svg/Turtle_tests.cpp
+build .b0/gubg.io_test_src_gubg_svg_Turtle_tests.cpp.obj: compile gubg.io/test/src/gubg/svg/Turtle_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj: compile gubg.io/test/src/gubg/xml/Builder_tests.cpp
+build .b0/gubg.io_test_src_gubg_xml_Builder_tests.cpp.obj: compile gubg.io/test/src/gubg/xml/Builder_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj: compile gubg.io/test/src/gubg/xml/SVG_tests.cpp
+build .b0/gubg.io_test_src_gubg_xml_SVG_tests.cpp.obj: compile gubg.io/test/src/gubg/xml/SVG_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj: compile gubg.algo/test/src/gubg/gp/World_tests.cpp
+build .b0/gubg.algo_test_src_gubg_gp_World_tests.cpp.obj: compile gubg.algo/test/src/gubg/gp/World_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/network/DAG_tests.cpp.obj: compile gubg.algo/test/src/gubg/network/DAG_tests.cpp
+build .b0/gubg.algo_test_src_gubg_network_DAG_tests.cpp.obj: compile gubg.algo/test/src/gubg/network/DAG_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp.obj: compile gubg.algo/test/src/gubg/optimization/SCG_tests.cpp
+build .b0/gubg.algo_test_src_gubg_optimization_SCG_tests.cpp.obj: compile gubg.algo/test/src/gubg/optimization/SCG_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/pid/Controller_tests.cpp.obj: compile gubg.algo/test/src/gubg/pid/Controller_tests.cpp
+build .b0/gubg.algo_test_src_gubg_pid_Controller_tests.cpp.obj: compile gubg.algo/test/src/gubg/pid/Controller_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj: compile gubg.algo/test/src/gubg/planning/Planning_tests.cpp
+build .b0/gubg.algo_test_src_gubg_planning_Planning_tests.cpp.obj: compile gubg.algo/test/src/gubg/planning/Planning_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj: compile gubg.algo/test/src/gubg/planning/Task_tests.cpp
+build .b0/gubg.algo_test_src_gubg_planning_Task_tests.cpp.obj: compile gubg.algo/test/src/gubg/planning/Task_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.math/test/src/gubg/Matrix_tests.cpp.obj: compile gubg.math/test/src/gubg/Matrix_tests.cpp
+build .b0/gubg.math_test_src_gubg_Matrix_tests.cpp.obj: compile gubg.math/test/src/gubg/Matrix_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj: compile gubg.math/test/src/gubg/RunningSum_tests.cpp
+build .b0/gubg.math_test_src_gubg_RunningSum_tests.cpp.obj: compile gubg.math/test/src/gubg/RunningSum_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj: compile gubg.math/test/src/gubg/decay/Average_tests.cpp
+build .b0/gubg.math_test_src_gubg_decay_Average_tests.cpp.obj: compile gubg.math/test/src/gubg/decay/Average_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj: compile gubg.math/test/src/gubg/decay/Sum_tests.cpp
+build .b0/gubg.math_test_src_gubg_decay_Sum_tests.cpp.obj: compile gubg.math/test/src/gubg/decay/Sum_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj: compile gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp
+build .b0/gubg.chaiscript_test_src_gubg_chai_Regex_tests.cpp.obj: compile gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp.obj: compile gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp
+build .b0/gubg.chaiscript_test_src_gubg_chai_inject_tests.cpp.obj: compile gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp.obj: compile gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp
+build .b0/gubg.chaiscript_test_src_gubg_chai_test_Engine.cpp.obj: compile gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 #}
 #[output](script:
 #$cook_test_fns.each do |fn|
-#  output.puts("build .b0/#{fn}.obj: compile #{fn}")
+#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
 #  output.puts("    include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths")
 #end
 #){
-build .b0/lib/test/src/cook/LanguageTypePair_tests.cpp.obj: compile lib/test/src/cook/LanguageTypePair_tests.cpp
+build .b0/lib_test_src_cook_LanguageTypePair_tests.cpp.obj: compile lib/test/src/cook/LanguageTypePair_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
-build .b0/lib/test/src/cook/Menu_tests.cpp.obj: compile lib/test/src/cook/Menu_tests.cpp
+build .b0/lib_test_src_cook_Menu_tests.cpp.obj: compile lib/test/src/cook/Menu_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
-build .b0/lib/test/src/cook/Result_tests.cpp.obj: compile lib/test/src/cook/Result_tests.cpp
+build .b0/lib_test_src_cook_Result_tests.cpp.obj: compile lib/test/src/cook/Result_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
-build .b0/lib/test/src/cook/ingredient/Collection_tests.cpp.obj: compile lib/test/src/cook/ingredient/Collection_tests.cpp
+build .b0/lib_test_src_cook_ingredient_Collection_tests.cpp.obj: compile lib/test/src/cook/ingredient/Collection_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
-build .b0/lib/test/src/cook/model/Uri_tests.cpp.obj: compile lib/test/src/cook/model/Uri_tests.cpp
+build .b0/lib_test_src_cook_model_Uri_tests.cpp.obj: compile lib/test/src/cook/model/Uri_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
-build .b0/lib/test/src/cook/rules/C_family_tests.cpp.obj: compile lib/test/src/cook/rules/C_family_tests.cpp
+build .b0/lib_test_src_cook_rules_C_family_tests.cpp.obj: compile lib/test/src/cook/rules/C_family_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
-build .b0/lib/test/src/cook/rules/Extensions_tests.cpp.obj: compile lib/test/src/cook/rules/Extensions_tests.cpp
+build .b0/lib_test_src_cook_rules_Extensions_tests.cpp.obj: compile lib/test/src/cook/rules/Extensions_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
-build .b0/lib/test/src/cook/rules/Resolve_tests.cpp.obj: compile lib/test/src/cook/rules/Resolve_tests.cpp
+build .b0/lib_test_src_cook_rules_Resolve_tests.cpp.obj: compile lib/test/src/cook/rules/Resolve_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
 #}
 
 #[output](script:
 #$cook_app_fns.each do |fn|
-#  output.puts("build .b0/#{fn}.obj: compile #{fn}")
+#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
 #  output.puts("    include_paths = $cook_app_include_paths $cook_lib_include_paths $boost_include_paths")
 #end
 #){
-build .b0/app/src/cook/App.cpp.obj: compile app/src/cook/App.cpp
+build .b0/app_src_cook_App.cpp.obj: compile app/src/cook/App.cpp
     include_paths = $cook_app_include_paths $cook_lib_include_paths $boost_include_paths
-build .b0/app/src/cook/app/Options.cpp.obj: compile app/src/cook/app/Options.cpp
+build .b0/app_src_cook_app_Options.cpp.obj: compile app/src/cook/app/Options.cpp
     include_paths = $cook_app_include_paths $cook_lib_include_paths $boost_include_paths
-build .b0/app/src/main.cpp.obj: compile app/src/main.cpp
+build .b0/app_src_main.cpp.obj: compile app/src/main.cpp
     include_paths = $cook_app_include_paths $cook_lib_include_paths $boost_include_paths
+#}
+
+#[output](script:
+#$boost_fns.each do |fn|
+#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
+#  output.puts("    include_paths = $boost_include_paths")
+#end
+#){
+build .b0/extern_boost_modules_filesystem_src_codecvt_error_category.cpp.obj: compile extern/boost/modules/filesystem/src/codecvt_error_category.cpp
+    include_paths = $boost_include_paths
+build .b0/extern_boost_modules_filesystem_src_operations.cpp.obj: compile extern/boost/modules/filesystem/src/operations.cpp
+    include_paths = $boost_include_paths
+build .b0/extern_boost_modules_filesystem_src_path.cpp.obj: compile extern/boost/modules/filesystem/src/path.cpp
+    include_paths = $boost_include_paths
+build .b0/extern_boost_modules_filesystem_src_path_traits.cpp.obj: compile extern/boost/modules/filesystem/src/path_traits.cpp
+    include_paths = $boost_include_paths
+build .b0/extern_boost_modules_filesystem_src_portability.cpp.obj: compile extern/boost/modules/filesystem/src/portability.cpp
+    include_paths = $boost_include_paths
+build .b0/extern_boost_modules_filesystem_src_unique_path.cpp.obj: compile extern/boost/modules/filesystem/src/unique_path.cpp
+    include_paths = $boost_include_paths
+build .b0/extern_boost_modules_filesystem_src_utf8_codecvt_facet.cpp.obj: compile extern/boost/modules/filesystem/src/utf8_codecvt_facet.cpp
+    include_paths = $boost_include_paths
+build .b0/extern_boost_modules_filesystem_src_windows_file_codecvt.cpp.obj: compile extern/boost/modules/filesystem/src/windows_file_codecvt.cpp
+    include_paths = $boost_include_paths
 #}
 
 #[output](script:
 #output.puts("build libb0-gubg.a: archive $")
 #$gubg_fns.each do |fn|
-#  output.puts("    .b0/#{fn}.obj $")
+#  output.puts("    .b0/#{$obj.call(fn)} $")
 #end
 #output.puts
 #){
 build libb0-gubg.a: archive $
-    .b0/gubg.std/src/gubg/platform/spawn.cpp.obj $
-    .b0/gubg.io/src/gubg/OptionParser.cpp.obj $
-    .b0/gubg.io/src/gubg/Strange.cpp.obj $
-    .b0/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
-    .b0/gubg.io/src/gubg/file/File.cpp.obj $
-    .b0/gubg.io/src/gubg/file/Filesystem.cpp.obj $
-    .b0/gubg.io/src/gubg/file/Forest.cpp.obj $
-    .b0/gubg.io/src/gubg/hash/MD5.cpp.obj $
-    .b0/gubg.io/src/gubg/parse/basic.cpp.obj $
-    .b0/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
-    .b0/gubg.io/src/gubg/std/filesystem.cpp.obj $
+    .b0/gubg.std_src_gubg_platform_spawn.cpp.obj $
+    .b0/gubg.io_src_gubg_OptionParser.cpp.obj $
+    .b0/gubg.io_src_gubg_Strange.cpp.obj $
+    .b0/gubg.io_src_gubg_bitmagic_bitmagic.cpp.obj $
+    .b0/gubg.io_src_gubg_file_File.cpp.obj $
+    .b0/gubg.io_src_gubg_file_Filesystem.cpp.obj $
+    .b0/gubg.io_src_gubg_file_Forest.cpp.obj $
+    .b0/gubg.io_src_gubg_hash_MD5.cpp.obj $
+    .b0/gubg.io_src_gubg_parse_basic.cpp.obj $
+    .b0/gubg.io_src_gubg_parse_xml_Coding.cpp.obj $
+    .b0/gubg.io_src_gubg_std_filesystem.cpp.obj $
 
 #}
 
 #[output](script:
 #output.puts("build libb0-cook.a: archive $")
 #$cook_fns.each do |fn|
-#  output.puts("    .b0/#{fn}.obj $")
+#  output.puts("    .b0/#{$obj.call(fn)} $")
 #end
 #output.puts
 #){
 build libb0-cook.a: archive $
-    .b0/lib/src/cook/Context.cpp.obj $
-    .b0/lib/src/cook/OS.cpp.obj $
-    .b0/lib/src/cook/algo/Book.cpp.obj $
-    .b0/lib/src/cook/chai/Book.cpp.obj $
-    .b0/lib/src/cook/chai/Context.cpp.obj $
-    .b0/lib/src/cook/chai/File.cpp.obj $
-    .b0/lib/src/cook/chai/Flags.cpp.obj $
-    .b0/lib/src/cook/chai/KeyValue.cpp.obj $
-    .b0/lib/src/cook/chai/Recipe.cpp.obj $
-    .b0/lib/src/cook/chai/UserData.cpp.obj $
-    .b0/lib/src/cook/chai/mss.cpp.obj $
-    .b0/lib/src/cook/generator/CMake.cpp.obj $
-    .b0/lib/src/cook/generator/Naft.cpp.obj $
-    .b0/lib/src/cook/generator/Ninja.cpp.obj $
-    .b0/lib/src/cook/generator/graphviz/Component.cpp.obj $
-    .b0/lib/src/cook/generator/graphviz/Dependency.cpp.obj $
-    .b0/lib/src/cook/generator/qt/Cook.cpp.obj $
-    .b0/lib/src/cook/generator/qt/Generic.cpp.obj $
-    .b0/lib/src/cook/log/Node.cpp.obj $
-    .b0/lib/src/cook/log/Scope.cpp.obj $
-    .b0/lib/src/cook/log/level.cpp.obj $
-    .b0/lib/src/cook/model/Book.cpp.obj $
-    .b0/lib/src/cook/model/Dirs.cpp.obj $
-    .b0/lib/src/cook/model/Element.cpp.obj $
-    .b0/lib/src/cook/model/Library.cpp.obj $
-    .b0/lib/src/cook/model/Recipe.cpp.obj $
-    .b0/lib/src/cook/model/Uri.cpp.obj $
-    .b0/lib/src/cook/process/Menu.cpp.obj $
-    .b0/lib/src/cook/process/RecipeFilteredGraph.cpp.obj $
-    .b0/lib/src/cook/process/build/Graph.cpp.obj $
-    .b0/lib/src/cook/process/chef/Chef.cpp.obj $
-    .b0/lib/src/cook/process/chef/CompileLinkArchive.cpp.obj $
-    .b0/lib/src/cook/process/command/OrderedCommand.cpp.obj $
-    .b0/lib/src/cook/process/command/gcclike/Archiver.cpp.obj $
-    .b0/lib/src/cook/process/command/gcclike/Compiler.cpp.obj $
-    .b0/lib/src/cook/process/command/gcclike/Linker.cpp.obj $
-    .b0/lib/src/cook/process/souschef/Archiver.cpp.obj $
-    .b0/lib/src/cook/process/souschef/Compiler.cpp.obj $
-    .b0/lib/src/cook/process/souschef/DependencyPropagator.cpp.obj $
-    .b0/lib/src/cook/process/souschef/IncludePathSetter.cpp.obj $
-    .b0/lib/src/cook/process/souschef/LinkLibrarySorter.cpp.obj $
-    .b0/lib/src/cook/process/souschef/Linker.cpp.obj $
-    .b0/lib/src/cook/process/souschef/PathExtraction.cpp.obj $
-    .b0/lib/src/cook/process/souschef/RecipeNamer.cpp.obj $
-    .b0/lib/src/cook/process/souschef/Resolver.cpp.obj $
-    .b0/lib/src/cook/process/souschef/ScriptRunner.cpp.obj $
-    .b0/lib/src/cook/rules/ASM.cpp.obj $
-    .b0/lib/src/cook/rules/Binary.cpp.obj $
-    .b0/lib/src/cook/rules/C_family.cpp.obj $
-    .b0/lib/src/cook/rules/Extensions.cpp.obj $
-    .b0/lib/src/cook/rules/Interface.cpp.obj $
-    .b0/lib/src/cook/rules/RuleSet.cpp.obj $
-    .b0/lib/src/cook/util/File.cpp.obj $
+    .b0/lib_src_cook_Context.cpp.obj $
+    .b0/lib_src_cook_OS.cpp.obj $
+    .b0/lib_src_cook_algo_Book.cpp.obj $
+    .b0/lib_src_cook_chai_Book.cpp.obj $
+    .b0/lib_src_cook_chai_Context.cpp.obj $
+    .b0/lib_src_cook_chai_File.cpp.obj $
+    .b0/lib_src_cook_chai_Flags.cpp.obj $
+    .b0/lib_src_cook_chai_KeyValue.cpp.obj $
+    .b0/lib_src_cook_chai_Recipe.cpp.obj $
+    .b0/lib_src_cook_chai_UserData.cpp.obj $
+    .b0/lib_src_cook_chai_mss.cpp.obj $
+    .b0/lib_src_cook_generator_CMake.cpp.obj $
+    .b0/lib_src_cook_generator_Naft.cpp.obj $
+    .b0/lib_src_cook_generator_Ninja.cpp.obj $
+    .b0/lib_src_cook_generator_graphviz_Component.cpp.obj $
+    .b0/lib_src_cook_generator_graphviz_Dependency.cpp.obj $
+    .b0/lib_src_cook_generator_qt_Cook.cpp.obj $
+    .b0/lib_src_cook_generator_qt_Generic.cpp.obj $
+    .b0/lib_src_cook_log_Node.cpp.obj $
+    .b0/lib_src_cook_log_Scope.cpp.obj $
+    .b0/lib_src_cook_log_level.cpp.obj $
+    .b0/lib_src_cook_model_Book.cpp.obj $
+    .b0/lib_src_cook_model_Dirs.cpp.obj $
+    .b0/lib_src_cook_model_Element.cpp.obj $
+    .b0/lib_src_cook_model_Library.cpp.obj $
+    .b0/lib_src_cook_model_Recipe.cpp.obj $
+    .b0/lib_src_cook_model_Uri.cpp.obj $
+    .b0/lib_src_cook_process_Menu.cpp.obj $
+    .b0/lib_src_cook_process_RecipeFilteredGraph.cpp.obj $
+    .b0/lib_src_cook_process_build_Graph.cpp.obj $
+    .b0/lib_src_cook_process_chef_Chef.cpp.obj $
+    .b0/lib_src_cook_process_chef_CompileLinkArchive.cpp.obj $
+    .b0/lib_src_cook_process_command_OrderedCommand.cpp.obj $
+    .b0/lib_src_cook_process_command_gcclike_Archiver.cpp.obj $
+    .b0/lib_src_cook_process_command_gcclike_Compiler.cpp.obj $
+    .b0/lib_src_cook_process_command_gcclike_Linker.cpp.obj $
+    .b0/lib_src_cook_process_souschef_Archiver.cpp.obj $
+    .b0/lib_src_cook_process_souschef_Compiler.cpp.obj $
+    .b0/lib_src_cook_process_souschef_DependencyPropagator.cpp.obj $
+    .b0/lib_src_cook_process_souschef_IncludePathSetter.cpp.obj $
+    .b0/lib_src_cook_process_souschef_LinkLibrarySorter.cpp.obj $
+    .b0/lib_src_cook_process_souschef_Linker.cpp.obj $
+    .b0/lib_src_cook_process_souschef_PathExtraction.cpp.obj $
+    .b0/lib_src_cook_process_souschef_RecipeNamer.cpp.obj $
+    .b0/lib_src_cook_process_souschef_Resolver.cpp.obj $
+    .b0/lib_src_cook_process_souschef_ScriptRunner.cpp.obj $
+    .b0/lib_src_cook_rules_ASM.cpp.obj $
+    .b0/lib_src_cook_rules_Binary.cpp.obj $
+    .b0/lib_src_cook_rules_C_family.cpp.obj $
+    .b0/lib_src_cook_rules_Extensions.cpp.obj $
+    .b0/lib_src_cook_rules_Interface.cpp.obj $
+    .b0/lib_src_cook_rules_RuleSet.cpp.obj $
+    .b0/lib_src_cook_util_File.cpp.obj $
+
+#}
+
+#[output](script:
+#output.puts("build libb0-boost.a: archive $")
+#$boost_fns.each do |fn|
+#  output.puts("    .b0/#{$obj.call(fn)} $")
+#end
+#output.puts
+#){
+build libb0-boost.a: archive $
+    .b0/extern_boost_modules_filesystem_src_codecvt_error_category.cpp.obj $
+    .b0/extern_boost_modules_filesystem_src_operations.cpp.obj $
+    .b0/extern_boost_modules_filesystem_src_path.cpp.obj $
+    .b0/extern_boost_modules_filesystem_src_path_traits.cpp.obj $
+    .b0/extern_boost_modules_filesystem_src_portability.cpp.obj $
+    .b0/extern_boost_modules_filesystem_src_unique_path.cpp.obj $
+    .b0/extern_boost_modules_filesystem_src_utf8_codecvt_facet.cpp.obj $
+    .b0/extern_boost_modules_filesystem_src_windows_file_codecvt.cpp.obj $
 
 #}
 
 #[output](script:
 #output.puts("build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $")
 #($cook_test_fns+$gubg_test_fns).each do |fn|
-#  output.puts("    .b0/#{fn}.obj $")
+#  output.puts("    .b0/#{$obj.call(fn)} $")
 #end
-#output.puts("    | libb0-cook.a libb0-gubg.a")
+#output.puts("    | libb0-cook.a libb0-gubg.a libb0-boost.a")
 #){
 build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
-    .b0/lib/test/src/cook/LanguageTypePair_tests.cpp.obj $
-    .b0/lib/test/src/cook/Menu_tests.cpp.obj $
-    .b0/lib/test/src/cook/Result_tests.cpp.obj $
-    .b0/lib/test/src/cook/ingredient/Collection_tests.cpp.obj $
-    .b0/lib/test/src/cook/model/Uri_tests.cpp.obj $
-    .b0/lib/test/src/cook/rules/C_family_tests.cpp.obj $
-    .b0/lib/test/src/cook/rules/Extensions_tests.cpp.obj $
-    .b0/lib/test/src/cook/rules/Resolve_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/Range_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/Transition_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/mss_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/If_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/IntType_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/TypeList_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tuple/ForEach_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/Integer_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/Strange_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/file/Creater_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/file/File_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/file/Filesystem_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/network/DAG_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/pid/Controller_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj $
-    .b0/gubg.math/test/src/gubg/Matrix_tests.cpp.obj $
-    .b0/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj $
-    .b0/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj $
-    .b0/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj $
-    .b0/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj $
-    .b0/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp.obj $
-    .b0/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp.obj $
-    | libb0-cook.a libb0-gubg.a
+    .b0/lib_test_src_cook_LanguageTypePair_tests.cpp.obj $
+    .b0/lib_test_src_cook_Menu_tests.cpp.obj $
+    .b0/lib_test_src_cook_Result_tests.cpp.obj $
+    .b0/lib_test_src_cook_ingredient_Collection_tests.cpp.obj $
+    .b0/lib_test_src_cook_model_Uri_tests.cpp.obj $
+    .b0/lib_test_src_cook_rules_C_family_tests.cpp.obj $
+    .b0/lib_test_src_cook_rules_Extensions_tests.cpp.obj $
+    .b0/lib_test_src_cook_rules_Resolve_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_OnlyOnce_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_Range_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_Transition_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_array_Pool_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_macro_variadic_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_mss_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_pattern_SignalSlot_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_thread_Semaphore_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_tmp_FindBaseByName_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_tmp_If_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_tmp_IntType_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_tmp_SFINAE_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_tmp_TypeList_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_tuple_ForEach_tests.cpp.obj $
+    .b0/gubg.std_test_src_gubg_tuple_TypeTransform_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_Integer_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_Strange_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_bitmagic_bitmagic_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_file_Creater_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_file_File_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_file_Filesystem_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_file_Forest_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_hash_MD5_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_naft_Document_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_parse_naft_Parser_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_parse_xml_Coding_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_parse_xml_Parser_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_svg_Turtle_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_xml_Builder_tests.cpp.obj $
+    .b0/gubg.io_test_src_gubg_xml_SVG_tests.cpp.obj $
+    .b0/gubg.algo_test_src_gubg_gp_World_tests.cpp.obj $
+    .b0/gubg.algo_test_src_gubg_network_DAG_tests.cpp.obj $
+    .b0/gubg.algo_test_src_gubg_optimization_SCG_tests.cpp.obj $
+    .b0/gubg.algo_test_src_gubg_pid_Controller_tests.cpp.obj $
+    .b0/gubg.algo_test_src_gubg_planning_Planning_tests.cpp.obj $
+    .b0/gubg.algo_test_src_gubg_planning_Task_tests.cpp.obj $
+    .b0/gubg.math_test_src_gubg_Matrix_tests.cpp.obj $
+    .b0/gubg.math_test_src_gubg_RunningSum_tests.cpp.obj $
+    .b0/gubg.math_test_src_gubg_decay_Average_tests.cpp.obj $
+    .b0/gubg.math_test_src_gubg_decay_Sum_tests.cpp.obj $
+    .b0/gubg.chaiscript_test_src_gubg_chai_Regex_tests.cpp.obj $
+    .b0/gubg.chaiscript_test_src_gubg_chai_inject_tests.cpp.obj $
+    .b0/gubg.chaiscript_test_src_gubg_chai_test_Engine.cpp.obj $
+    | libb0-cook.a libb0-gubg.a libb0-boost.a
 #}
     library_paths =  -L./
-    user_libs_gcc = -lb0-cook -lb0-gubg
-    user_libs_msvc = libb0-cook.a libb0-gubg.a
+    user_libs_gcc = -lb0-cook -lb0-gubg -lb0-boost
+    user_libs_msvc = libb0-cook.a libb0-gubg.a libb0-boost.a
 
 #[output](script:
 #output.puts("build b0-cook.exe: link $")
 #$cook_app_fns.each do |fn|
-#  output.puts("    .b0/#{fn}.obj $")
+#  output.puts("    .b0/#{$obj.call(fn)} $")
 #end
-#output.puts("    | libb0-cook.a libb0-gubg.a")
+#output.puts("    | libb0-cook.a libb0-gubg.a libb0-boost.a")
 #){
 build b0-cook.exe: link $
-    .b0/app/src/cook/App.cpp.obj $
-    .b0/app/src/cook/app/Options.cpp.obj $
-    .b0/app/src/main.cpp.obj $
-    | libb0-cook.a libb0-gubg.a
+    .b0/app_src_cook_App.cpp.obj $
+    .b0/app_src_cook_app_Options.cpp.obj $
+    .b0/app_src_main.cpp.obj $
+    | libb0-cook.a libb0-gubg.a libb0-boost.a
 #}
     library_paths =  -L./
-    user_libs_gcc = -lb0-cook -lb0-gubg
-    user_libs_msvc = libb0-cook.a libb0-gubg.a
+    user_libs_gcc = -lb0-cook -lb0-gubg -lb0-boost
+    user_libs_msvc = libb0-cook.a libb0-gubg.a libb0-boost.a

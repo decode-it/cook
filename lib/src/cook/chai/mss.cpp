@@ -14,7 +14,9 @@ namespace cook { namespace chai {
 
 Logger * log(const Result & rc)
 {
-    meyers_logger()->log(rc);
+    auto ptr = meyers_logger();
+    ptr->log(rc);
+    return ptr;
 }
 void set_logger(Logger * logger)
 {

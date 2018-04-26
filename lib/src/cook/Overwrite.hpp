@@ -2,6 +2,7 @@
 #define HEADER_cook_Overwrite_hpp_ALREADY_INCLUDED
 
 #include <ostream>
+#include <algorithm>
 
 namespace cook {
 

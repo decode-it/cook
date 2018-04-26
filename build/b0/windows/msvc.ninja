@@ -5,6 +5,7 @@ rule link
 rule archive
     command = lib /OUT:$out $in
 
+defines = -DNDEBUG -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_ALL_NO_LIB
 cflags = /nologo /EHsc /std:c++latest
 
 subninja build/b0/compile.ninja
