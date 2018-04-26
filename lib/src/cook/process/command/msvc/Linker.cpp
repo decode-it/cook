@@ -4,8 +4,8 @@ namespace cook { namespace process { namespace command { namespace msvc {
 
 Linker::Linker()
     : input_(10),
-      output_(20, "-o"),
-      library_(30, "-l"),
+      output_(20, "/OUT:"),
+      library_(30),
       library_path_(40, "-L")
 {  
     set_command("link");

@@ -4,7 +4,7 @@ namespace cook { namespace process { namespace command { namespace msvc {
 
     Compiler::Compiler(Language language):
         input_(10),
-        output_(20, "-o"),
+        output_(20, "/Fo:"),
         define_(30, "-D"),
         include_(40, "-I"),
         force_include_(50, "/FI")

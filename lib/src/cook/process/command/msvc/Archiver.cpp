@@ -4,7 +4,7 @@ namespace cook { namespace process { namespace command { namespace msvc {
 
 Archiver::Archiver()
     : input_(20),
-      output_(10)
+      output_(10, "/OUT:")
 {
     set_command("lib");
     /* add_argument(ArgumentDesc(0, args), std::string()); */
