@@ -7,8 +7,9 @@ namespace cook {
 
 enum class OS
 {
+    Linux,
     Windows,
-    Linux
+    MacOS
 };
 
 std::ostream & operator<<(std::ostream & str, OS os);

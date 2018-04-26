@@ -24,14 +24,17 @@ Proof-of-concept version.
 * Support for user data for books and recipes
 * Speed-up of file globbing
 * Support for stack-based error messages
+* Support for force includes
+* Support for chaiscript regular expressions, file io and os
 
 ## 1.1.1 (open)
 
+* [wip] Support for gcc, clang and msvc toolchains
+* [wip] Support for windows and osx
 
 ## Next
 
 * Support for `COOK_PATH` search for scripts
-* Toolchain configuration
 * Chaiscript-based toolchain
 * Internal #include-based dependency detection for compilers that cannot output dependencies
 * Arduino support: compilation, linking and programming

@@ -1,7 +1,7 @@
 #include "cook/process/command/Toolchain.hpp"
 #include "cook/process/command/gcclike/Compiler.hpp"
 #include "cook/log/Scope.hpp"
-#include "gubg/platform/os_api.h"
+#include "cook/OS.hpp"
 
 namespace cook { namespace process { namespace command { 
 
@@ -20,19 +20,17 @@ namespace cook { namespace process { namespace command {
     bool Toolchain::initialize()
     {
         MSS_BEGIN(bool);
+
+        //Default brand based on OS
         if (brand_.empty())
-        {
-            brand_ = "gcc";
-#ifdef GUBG_API_LINUX
-            brand_ = "gcc";
-#endif
-#ifdef GUBG_API_APPLE
-            brand_ = "clang";
-#endif
-#ifdef GUBG_API_WIN32
-            brand_ = "msvc";
-#endif
-        }
+            switch (get_os())
+            {
+                case OS::Linux: brand_ = "gcc"; break;
+                case OS::Windows: brand_ = "msvc"; break;
+                case OS::MacOS: brand_ = "clang"; break;
+                default: brand_ = "gcc"; break;
+            }
+
         MSS_END();
     }
 
