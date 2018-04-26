@@ -2,6 +2,7 @@
 #define HEADER_cook_Context_hpp_ALREADY_INCLUDED
 
 #include "cook/Logger.hpp"
+#include "cook/OS.hpp"
 #include "cook/model/Book.hpp"
 #include "cook/model/Library.hpp"
 #include "cook/model/Dirs.hpp"
@@ -41,6 +42,7 @@ public:
     const model::Library & lib() const          { return lib_; }
     const std::string & project_name() const    { return project_name_; }
     void set_project_name(const std::string & name) { project_name_ = name; }
+    OS os() const;
 
     Result register_generator(GeneratorPtr generator);
     GeneratorPtr get_generator(const std::string & name) const;

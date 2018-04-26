@@ -102,6 +102,11 @@ Result Context::find_recipe(model::Recipe *& recipe, const std::string & name) c
 
 }
 
+OS Context::os() const
+{
+    return get_os();
+}
+
 }
 
 

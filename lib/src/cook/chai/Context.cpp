@@ -63,14 +63,25 @@ struct Cook
             return working_directory();
     }
 
+    std::string project_name() const
+    {
+        return context_->project_name();
+    }
+    void set_project_name(const std::string & name)
+    {
+        context_->set_project_name(name);
+    }
+
+
     Book root;
-    const Context * context_;
+    Context * context_;
 };
 
 struct W_Propagation { };
 struct W_Overwrite { };
 struct W_Type { };
 struct W_Language { };
+struct W_OS {};
 
 struct Context::D
 {
@@ -85,6 +96,7 @@ struct Context::D
         gubg::chai::inject<gubg::chai::Regex>(engine);
         gubg::chai::inject<std::string>(engine);
         gubg::chai::inject<gubg::chai::File>(engine);
+        gubg::chai::inject<gubg::chai::Date>(engine);
     }
 
     Logger logger;
@@ -107,6 +119,8 @@ struct Context::D
         engine.add(chaiscript::fun(&Cook::operator []), "[]");
         engine.add(chaiscript::fun([](const Cook & c) { return c.working_directory(); }), "working_directory");
         engine.add(chaiscript::fun([](const Cook & c, bool absolute) { return c.working_directory(absolute); }), "working_directory");
+        engine.add(chaiscript::fun(&Cook::project_name), "project_name");
+        engine.add(chaiscript::fun(&Cook::set_project_name), "set_project_name");
     }
 
     void initialize_flags()
@@ -116,6 +130,7 @@ struct Context::D
         EXPOSE_TOP(Overwrite);
         EXPOSE_TOP(Type);
         EXPOSE_TOP(Language);
+        EXPOSE_TOP(OS);
 #undef EXPOSE_TOP
 
 #define EXPOSE(TYPE, NAME, CHAINAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return Flags(TYPE::NAME); }), CHAINAME)
@@ -142,6 +157,12 @@ struct Context::D
         EXPOSE(Language, ASM, "ASM");
         EXPOSE(Language, UserDefined, "user_defined");
 #undef EXPOSE
+
+#define EXPOSE(TYPE, NAME, CHAINAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return TYPE::NAME; }), CHAINAME)
+        EXPOSE(OS, Windows, "windows");
+        EXPOSE(OS, Linux, "linux");
+#undef EXPOSE
+
 
         engine.add(chaiscript::fun(&Flags::to_string), "to_string");
         engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs&rhs; } ), "&");
