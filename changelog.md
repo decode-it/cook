@@ -14,6 +14,20 @@ Proof-of-concept version.
 * DAG-based recipe dependencies with limited data exchange between recipes
 * Rough MSVC support
 
+## 1.1.0
+
+* Extensive rework, cleanup, restructuring and kitchen nomenclature
+* Split into library and app
+* Recipe and build graphs
+* Support for multiple chaiscript input files
+* Support for ninja, naft and cmake output
+* Support for user data for books and recipes
+* Speed-up of file globbing
+* Support for stack-based error messages
+
+## 1.1.1 (open)
+
+
 ## Next
 
 * Support for `COOK_PATH` search for scripts
@@ -21,5 +35,3 @@ Proof-of-concept version.
 * Chaiscript-based toolchain
 * Internal #include-based dependency detection for compilers that cannot output dependencies
 * Arduino support: compilation, linking and programming
-* Data communication between recipes
-* Data communication between books
