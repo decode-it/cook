@@ -1,10 +1,10 @@
 rule compile
     depfile = $out.d
-    command = clang++ -std=c++17 $cflags $defines $include_paths -c $in -o $out -MMD -MF $out.d
+    command = g++ -std=c++17 $cflags $defines $include_paths -c $in -o $out -MMD -MF $out.d
 rule archive
     command = ar $aflags $out $in
 rule link
-    command = clang++ -o $out $in $library_paths $user_libs_gcc $system_libs
+    command = g++ -o $out $in $library_paths $user_libs_gcc $system_libs
 
 defines = -DNDEBUG -DBOOST_ERROR_CODE_HEADER_ONLY
 cflags = -O3
@@ -16,4 +16,4 @@ system_libs = -ldl -lstdc++fs -lpthread
 
 aflags = crf
 
-subninja b0-compile.ninja
+subninja build/b0/compile.ninja

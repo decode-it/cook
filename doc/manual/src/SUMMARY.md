@@ -9,6 +9,7 @@ Analogously cook is a build system for constructing C/C++ libraries and executab
 
 
 
+- [Installation](./installation.md)
 - [Basic example](./basic_example.md)
 - [Propagation](./propagation.md)
 - [Command-line options](./cli_options.md)

@@ -7,4 +7,4 @@ rule archive
 
 cflags = /nologo /EHsc /std:c++latest
 
-subninja b0-compile.ninja
+subninja build/b0/compile.ninja

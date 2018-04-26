@@ -50,16 +50,16 @@ task :update => :uth
 namespace :b0 do
     def b0_ninja_fn()
         case GUBG::os
-        when :linux then "b0-gcc.ninja"
-        when :windows then "b0-msvc.ninja"
-        when :osx then "b0-clang.ninja"
+        when :linux then "build/b0/linux/gcc.ninja"
+        when :windows then "build/b0/windows/msvc.ninja"
+        when :osx then "build/b0/osx/clang.ninja"
         end
     end
     
     desc "bootstrap-level0: generater the ninja scripts (depends on gubg.build)"
     task :generate => "boost:load" do
         require("gubg/build/expand_templates")
-        GUBG::Build::expand_templates("b0-compile.ninja")
+        GUBG::Build::expand_templates("build/b0/compile.ninja")
     end
 
 
