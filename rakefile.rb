@@ -52,6 +52,7 @@ namespace :b0 do
         case GUBG::os
         when :linux then "b0-gcc.ninja"
         when :windows then "b0-msvc.ninja"
+        when :osx then "b0-clang.ninja"
         end
     end
     

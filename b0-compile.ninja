@@ -203,15 +203,9 @@ build .b0/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj: compile gubg.
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj: compile gubg.std/test/src/gubg/thread/Semaphore_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/Equal_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/Equal_tests.cpp
-    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/HasTypedef_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/HasTypedef_tests.cpp
-    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/gubg.std/test/src/gubg/tmp/If_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/If_tests.cpp
-    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/Inheritance_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/Inheritance_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/gubg.std/test/src/gubg/tmp/IntType_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/IntType_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
@@ -428,11 +422,8 @@ build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/gubg.std/test/src/gubg/mss_tests.cpp.obj $
     .b0/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj $
     .b0/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/Equal_tests.cpp.obj $
     .b0/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/HasTypedef_tests.cpp.obj $
     .b0/gubg.std/test/src/gubg/tmp/If_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/Inheritance_tests.cpp.obj $
     .b0/gubg.std/test/src/gubg/tmp/IntType_tests.cpp.obj $
     .b0/gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp.obj $
     .b0/gubg.std/test/src/gubg/tmp/TypeList_tests.cpp.obj $
