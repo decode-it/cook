@@ -1,5 +1,5 @@
 #include "cook/process/souschef/Linker.hpp"
-#include "cook/process/command/gcclike/Linker.hpp"
+#include "cook/process/command/Toolchain.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
 #include "boost/predef.h"
@@ -38,17 +38,9 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     // make the link vertex
     build::Graph::vertex_descriptor link_vertex;
     {
-        std::shared_ptr<command::Linker> ptr = std::make_shared<command::gcclike::Linker>();
-
-        // set the libraries
-        for(const ingredient::KeyValue & lib : libs)
-           ptr->add_library(lib.key());
-
-        // set the library paths
-        for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::LibraryPath)))
-            ptr->add_library_path(util::make_global_from_recipe(recipe, lib.dir()));
-
-        link_vertex = g.add_vertex(ptr);
+        command::Ptr lc;
+        MSS(link_command_(lc, recipe, libs, context));
+        link_vertex = g.add_vertex(lc);
     }
 
     // link the objects
@@ -148,20 +140,24 @@ ingredient::File Linker::construct_link_file(model::Recipe & recipe, const Conte
     return archive;
 }
 
-command::Ptr Linker::link_command(const model::Recipe & recipe, const Context & context) const
+Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, const model::Recipe::KeyValues::Range &libs, const Context & context) const
 {
-    std::shared_ptr<command::Linker> ptr = std::make_shared<command::gcclike::Linker>();
+    MSS_BEGIN(Result);
+
+    command::LinkerPtr lp;
+    MSS(context.toolchain().create_linker(lp));
 
     // set the libraries
-    for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::Library)))
-       ptr->add_library(lib.rel());
+    for(const ingredient::KeyValue & lib : libs)
+        lp->add_library(lib.key());
 
     // set the library paths
     for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::LibraryPath)))
-       ptr->add_library_path(lib.dir());
+        lp->add_library_path(util::make_global_from_recipe(recipe, lib.dir()));
 
+    ptr = lp;
 
-    return ptr;
+    MSS_END();
 }
 
 } } }

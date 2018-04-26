@@ -1,8 +1,7 @@
 #include "cook/process/souschef/Archiver.hpp"
-#include "cook/process/command/gcclike/Archiver.hpp"
+#include "cook/process/command/Toolchain.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
-
 
 namespace cook { namespace process { namespace souschef {
 
@@ -22,7 +21,9 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         MSS_RETURN_OK();
     }
 
-    auto archive_vertex = g.add_vertex(archive_command(recipe, context));
+    command::Ptr ac;
+    MSS(archive_command_(ac, recipe, context));
+    auto archive_vertex = g.add_vertex(ac);
 
     // stop the propagation, this file is contained in the library
     for(ingredient::File & object : objects)
@@ -77,10 +78,13 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     MSS_END();
 }
 
-
-command::Ptr Archiver::archive_command(const model::Recipe & recipe, const Context & context) const
+Result Archiver::archive_command_(command::Ptr &ptr, const model::Recipe & recipe, const Context & context) const
 {
-    return std::make_shared<command::gcclike::Archiver>();
+    MSS_BEGIN(Result);
+    process::command::ArchiverPtr ap;
+    MSS(context.toolchain().create_archiver(ap));
+    ptr = ap;
+    MSS_END();
 }
 
 } } }

@@ -1,13 +1,14 @@
 #include "cook/process/command/gcclike/Archiver.hpp"
+#include "cook/OS.hpp"
 
 namespace cook { namespace process { namespace command { namespace gcclike {
 
-Archiver::Archiver()
+Archiver::Archiver(std::string args)
     : input_(20),
       output_(10)
 {
     set_command("ar");
-    add_argument(ArgumentDesc(0, "crf"), std::string());
+    add_argument(ArgumentDesc(0, args), std::string());
 }
 
 std::string Archiver::name() const

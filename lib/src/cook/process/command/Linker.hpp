@@ -2,6 +2,7 @@
 #define HEADER_cook_process_command_Linker_hpp_ALREADY_INCLUDED
 
 #include "cook/process/command/OrderedCommand.hpp"
+#include <memory>
 
 namespace cook { namespace process { namespace command {
 
@@ -14,6 +15,7 @@ public:
     Type type() const override { return Link; }
 };
 
+using LinkerPtr = std::shared_ptr<Linker>;
 
 } } }
 

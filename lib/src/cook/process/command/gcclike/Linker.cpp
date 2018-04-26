@@ -2,13 +2,13 @@
 
 namespace cook { namespace process { namespace command { namespace gcclike {
 
-Linker::Linker()
+Linker::Linker(std::string cli)
     : input_(10),
       output_(20, "-o"),
       library_(30, "-l"),
       library_path_(40, "-L")
 {  
-    set_command("g++");
+    set_command(cli);
     add_argument(ArgumentDesc(0, "-std=c++17"), std::string());
 }
 

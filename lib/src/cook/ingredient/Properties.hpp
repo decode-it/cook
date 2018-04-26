@@ -86,7 +86,8 @@ public:
         MSS_END();
     }
 
-    gubg::Range<typename Collection<Ingredient>::iterator> range(const LanguageTypePair & collection_key)
+    using Range = gubg::Range<typename Collection<Ingredient>::iterator>;
+    Range range(const LanguageTypePair & collection_key)
     {
         auto it = find(collection_key);
         if (it == end())

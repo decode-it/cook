@@ -15,7 +15,7 @@ public:
 
 private:
     virtual ingredient::File construct_link_file(model::Recipe & recipe, const Context &context) const;
-    virtual command::Ptr link_command(const model::Recipe &recipe, const Context & context) const;
+    Result link_command_(command::Ptr &, const model::Recipe &recipe, const model::Recipe::KeyValues::Range &libs, const Context & context) const;
 };
 
 } } }
