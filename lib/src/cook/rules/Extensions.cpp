@@ -1,5 +1,7 @@
 #include "cook/rules/Extensions.hpp"
 #include "gubg/mss.hpp"
+#include <vector>
+#include <string>
 
 namespace cook { namespace rules { 
 
