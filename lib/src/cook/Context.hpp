@@ -12,52 +12,59 @@
 
 namespace cook {
 
-namespace generator {
+    namespace generator {
+        class Interface;
+    }
+    namespace process { namespace command { 
+        class Toolchain;
+    } } 
 
-class Interface;
+    class Context
+    {
+    public:
+        using GeneratorPtr = std::shared_ptr<generator::Interface>;
+        using Variable = std::pair<std::string, std::string>;
+        using ToolchainPtr = std::shared_ptr<process::command::Toolchain>;
 
-}
+        virtual ~Context() {}
 
-class Context
-{
-public:
-    using GeneratorPtr = std::shared_ptr<generator::Interface>;
-    using Variable = std::pair<std::string, std::string>;
+        bool initialize();
 
-    virtual ~Context() {}
+        virtual const Logger & logger() const = 0;
 
-    bool initialize();
-
-    virtual const Logger & logger() const = 0;
-
-    Result initialize_menu(const std::list<model::Recipe*> & root_recipes);
+        Result initialize_menu(const std::list<model::Recipe*> & root_recipes);
 
 
-    // getters and setter
-    model::Book * root_book() const;
-    model::Dirs & dirs()                        { return dirs_; }
-    const model::Dirs & dirs() const            { return dirs_; }
-    const process::Menu & menu() const          { return menu_; }
-    process::Menu & menu()                      { return menu_; }
-    const model::Library & lib() const          { return lib_; }
-    const std::string & project_name() const    { return project_name_; }
-    void set_project_name(const std::string & name) { project_name_ = name; }
-    OS os() const;
+        // getters and setter
+        model::Book * root_book() const;
+        model::Dirs & dirs()                        { return dirs_; }
+        const model::Dirs & dirs() const            { return dirs_; }
+        const process::Menu & menu() const          { return menu_; }
+        process::Menu & menu()                      { return menu_; }
+        const model::Library & lib() const          { return lib_; }
+        const std::string & project_name() const    { return project_name_; }
+        void set_project_name(const std::string & name) { project_name_ = name; }
+        OS os() const;
+        bool set_toolchain(const std::string &toolchain);
+        const process::command::Toolchain &toolchain() const;
 
-    Result register_generator(GeneratorPtr generator);
-    GeneratorPtr get_generator(const std::string & name) const;
+        Result register_generator(GeneratorPtr generator);
+        GeneratorPtr get_generator(const std::string & name) const;
 
-    Result find_recipe(model::Recipe *&recipe, const std::string & name) const;
+        Result find_recipe(model::Recipe *&recipe, const std::string & name) const;
 
-    virtual Result set_variable(const std::string & name, const std::string & value) = 0;
+        virtual Result set_variable(const std::string & name, const std::string & value) = 0;
 
-private:
-    std::map<std::string, GeneratorPtr> generators_;
-    model::Library lib_;
-    model::Dirs dirs_;
-    process::Menu menu_;
-    std::string project_name_;
-};
+    private:
+        std::map<std::string, GeneratorPtr> generators_;
+        model::Library lib_;
+        model::Dirs dirs_;
+        process::Menu menu_;
+        std::string project_name_;
+
+        mutable ToolchainPtr toolchain_ptr_;
+        process::command::Toolchain &toolchain_() const;
+    };
 
 }
 

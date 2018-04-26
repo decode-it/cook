@@ -7,6 +7,7 @@
 #include "cook/generator/CMake.hpp"
 #include "cook/generator/Naft.hpp"
 #include "cook/generator/Ninja.hpp"
+#include "cook/process/command/Toolchain.hpp"
 #include "gubg/mss.hpp"
 #include <cassert>
 
@@ -20,6 +21,8 @@ namespace cook {
 bool Context::initialize()
 {
     MSS_BEGIN(bool);
+
+    MSS(toolchain_().initialize());
 
     // add the generators
     MSS(register_generator(std::make_shared<generator::graphviz::Dependency>()));
@@ -105,6 +108,24 @@ Result Context::find_recipe(model::Recipe *& recipe, const std::string & name) c
 OS Context::os() const
 {
     return get_os();
+}
+
+bool Context::set_toolchain(const std::string &toolchain)
+{
+    MSS_BEGIN(bool);
+    MSS(toolchain_().set_brand(toolchain));
+    MSS_END();
+}
+
+process::command::Toolchain &Context::toolchain_() const
+{
+    if (!toolchain_ptr_)
+        toolchain_ptr_.reset(new process::command::Toolchain);
+    return *toolchain_ptr_;
+}
+const process::command::Toolchain &Context::toolchain() const
+{
+    return toolchain_();
 }
 
 }

@@ -2,6 +2,7 @@
 #define HEADER_cook_process_command_Compiler_hpp_ALREADY_INCLUDED
 
 #include "cook/process/command/OrderedCommand.hpp"
+#include <memory>
 
 namespace cook { namespace process { namespace command {
 
@@ -16,6 +17,7 @@ public:
     virtual Type type() const { return Compile; }
 };
 
+using CompilerPtr = std::shared_ptr<Compiler>;
 
 } } }
 

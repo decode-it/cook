@@ -3,13 +3,14 @@
 
 #include "cook/process/command/Compiler.hpp"
 #include "cook/Language.hpp"
+#include <string>
 
 namespace cook { namespace process { namespace command { namespace gcclike {
 
 class Compiler : public command::Compiler
 {
 public:
-    Compiler(Language);
+    Compiler(std::string cli_c, std::string cli_cxx, Language);
 
     std::string name() const override;
     Result process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override;
