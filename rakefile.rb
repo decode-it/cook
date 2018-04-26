@@ -101,6 +101,9 @@ namespace :b0 do
 end
 #Bootstrap level 1: uses output from bootstrap level 0
 namespace :b1 do
+    out_base = "build/b1"
+    tmp_base = ".cook/b1"
+
     desc "bootstrap-level1: Build and run the unit tests"
     task :ut do
         sh("ninja -f #{b0_ninja_fn} -v unit_tests.exe")
@@ -109,9 +112,9 @@ namespace :b1 do
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
     task :build => ["b0:build"] do
-        odir = File.join("build", "b1", "ninja")
-        tdir = File.join(".cook", "b1", "ninja")
-        
+        odir = File.join(out_base, "ninja")
+        tdir = File.join(tmp_base, "ninja")
+
         sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} cook/app/exe"
         sh "ninja -f #{odir}/build.ninja"
         cp "#{odir}/cook.app.exe", "b1-cook.exe"
@@ -119,8 +122,8 @@ namespace :b1 do
     
     desc "bootstrap-level1-cmake: Build b1-cook.exe using b0-cook.exe"
     task :build_cmake => ["b0:update", "b0:build"] do
-        odir = File.join("build", "b1", "cmake")
-        tdir = File.join(".cook", "b1", "cmake")
+        odir = File.join(out_base, "cmake")
+        tdir = File.join(tmp_base, "cmake")
         
         sh "./b0-cook.exe -f ./ -g CMake -o #{odir} -O #{tdir} cook/app/exe"
         Dir::chdir(odir) do
@@ -134,6 +137,8 @@ namespace :b1 do
 
     desc "bootstrap-level1: Clean"
     task :clean do
+        rm_rf out_base
+        rm_rf tmp_base
     end
 end
 
