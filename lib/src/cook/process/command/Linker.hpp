@@ -9,7 +9,7 @@ namespace cook { namespace process { namespace command {
 class Linker : public OrderedCommand
 {
 public:
-    virtual void add_library(const std::filesystem::path & library_prefix) = 0;
+    virtual void add_library(const std::string & library_prefix) = 0;
     virtual void add_library_path(const std::filesystem::path & path) = 0;
 
     Type type() const override { return Link; }

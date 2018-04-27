@@ -13,9 +13,9 @@ Linker::Linker()
 }
 
 
-void Linker::add_library(const std::filesystem::path & library_prefix)
+void Linker::add_library(const std::string &library_prefix)
 {
-    add_argument(library_, library_prefix.string());
+    add_argument(library_, library_prefix);
 }
 
 void Linker::add_library_path(const std::filesystem::path & path)

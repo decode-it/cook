@@ -15,7 +15,7 @@ public:
     Result process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override;
     void to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override;
 
-    void add_library(const std::filesystem::path & library_prefix) override;
+    void add_library(const std::string &library_prefix) override;
     void add_library_path(const std::filesystem::path & path) override;
 
 private:

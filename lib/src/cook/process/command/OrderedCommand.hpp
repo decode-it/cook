@@ -15,14 +15,16 @@ public:
 
     struct ArgumentDesc
     {
-        ArgumentDesc(order_type priority = 0, const std::string & option = std::string())
+        ArgumentDesc(order_type priority = 0, const std::string & option = std::string(), bool add_space = true)
             : priority(priority),
-              option(option)
+              option(option),
+              add_space(add_space)
         {
         }
 
         order_type priority;
         std::string option;
+        bool add_space;
     };
 
     void add_argument(const ArgumentDesc & desc, const std::string & value);
@@ -33,7 +35,7 @@ public:
     {
         for(const auto & p : arguments_)
             for(const auto & a : p.second)
-                functor(p.first.option, a);
+                functor(p.first.option, p.first.add_space, a);
     }
 
     template <typename Functor> bool each_argument(Functor && functor, const std::pair<order_type, order_type> & range = std::pair<order_type, order_type>(0, std::numeric_limits<order_type>::max())) const
@@ -47,7 +49,7 @@ public:
 
         for(const auto & p : gubg::make_range(first, second))
             for(const auto & a : p.second)
-                functor(p.first.option, a);
+                functor(p.first.option, p.first.add_space, a);
 
         MSS_END();
     }

@@ -26,9 +26,11 @@ void OrderedCommand::to_stream(std::ostream & oss, const ArgumentDesc & input_de
     const std::list<std::filesystem::path> & l2 = input_first ? output_files : input_files;
 
 
-    auto to_stream = [&](const std::string & option, const std::string & value) {
+
+    auto to_stream = [&](const std::string & option, bool add_space, const std::string & value)
+    {
         if (!option.empty())
-            oss << option << " ";
+            oss << option << (add_space ? " " : "");
         if (!value.empty())
             oss << value << " ";
     };
