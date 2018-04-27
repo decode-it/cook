@@ -88,6 +88,7 @@ Result App::process_()
     {
         auto ss = log::scope("Process with chef", -2);
         // process the menu with the chef
+        /* if (false) */
         {
             process::chef::LinkArchiveChef lac("default");
             MSS(lac.initialize());
@@ -158,17 +159,18 @@ Result App::extract_root_recipes_(std::list<model::Recipe*> & result) const
 
     if (options_.recipes.empty())
     {
+        //No recipes are specified by the user, we return all of them
         result = kitchen_.lib().list_all_recipes();
         MSS_RETURN_OK();
     }
     else
     {
-        // try to find all recipes
+        //Try to find all recipes specified by the user
         Result rc;
-        for(const auto & v : options_.recipes)
+        for(const auto & rcp : options_.recipes)
         {
             model::Recipe * recipe = nullptr;
-            rc.merge(kitchen_.find_recipe(recipe, v));
+            rc.merge(kitchen_.find_recipe(recipe, rcp));
 
             if (recipe)
                 result.push_back(recipe);
