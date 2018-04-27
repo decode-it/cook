@@ -163,7 +163,8 @@ struct Context::D
         EXPOSE(OS, Linux, "linux");
         EXPOSE(OS, MacOS, "macos");
 #undef EXPOSE
-
+        engine.add(chaiscript::fun([](const W_OS & ) { return get_os(); }), "my");
+        engine.add(chaiscript::fun([](OS lhs, OS rhs){return lhs == rhs;}), "==");
 
         engine.add(chaiscript::fun(&Flags::to_string), "to_string");
         engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs&rhs; } ), "&");
