@@ -36,11 +36,14 @@ void Recipe::add(const std::string & dir, const std::string & pattern, const Fla
     info.language = flags.get_or(Language::Undefined);
     info.type = flags.get_or(Type::Undefined);
 
+    // we should copy the context, it is a member variable and (*this) will be destroyed before this functor is called
+    const Context * context = context_;
+
     if (functor)
     {
         info.filter_and_adaptor = [=](LanguageTypePair & ltp, ingredient::File & file)
         {
-            File f(ltp, file, context_);
+            File f(ltp, file, context);
 
             auto p = functor(f);
             if (!p)
