@@ -8,11 +8,11 @@ rule link
 
 defines = -DNDEBUG -DBOOST_ERROR_CODE_HEADER_ONLY
 cflags = -O3
-system_libs = -ldl -lstdc++fs -lpthread
+system_libs = -L/usr/local/opt/llvm/lib -ldl -lc++experimental -lpthread
 
 #defines = -DBOOST_ERROR_CODE_HEADER_ONLY
 #cflags = -g
-#system_libs = -ldl -lstdc++fs -lpthread
+#system_libs = -L/usr/local/opt/llvm/lib -ldl -lc++experimental -lpthread
 
 aflags = crs
 
