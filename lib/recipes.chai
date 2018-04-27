@@ -7,6 +7,7 @@ root.book("cook/lib", fun(b) {
             r.library("stdc++fs")
         }
         if (my(OS) == macos(OS)) {
+            r.library_path("/usr/local/opt/llvm/lib")
             r.library("c++experimental")
         }
 		r.define("BOOST_ERROR_CODE_HEADER_ONLY")
