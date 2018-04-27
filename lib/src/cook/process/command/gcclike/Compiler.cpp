@@ -18,6 +18,9 @@ Compiler::Compiler(std::string cli_c, std::string cli_cxx, Language language)
         case Language::C:
             set_command(cli_c);
             break;
+
+    default:
+        break;
     }
     add_argument(ArgumentDesc(1, "-g"), std::string());
     add_argument(ArgumentDesc(2, "-c"), std::string());

@@ -12,7 +12,7 @@ Compiler::Compiler(Language language)
 
 Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
 {
-    MSS_BEGIN(Result, "");
+    MSS_BEGIN(Result);
     auto ss = log::scope("Compiler::process", [&](auto &node){node.attr("graph", &file_command_graph);});
     L(C(&file_command_graph)C(file_command_graph.num_vertices()));
 

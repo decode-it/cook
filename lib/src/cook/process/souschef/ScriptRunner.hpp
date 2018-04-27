@@ -9,7 +9,7 @@ class ScriptRunner : public Interface
 {
 public:
     Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
-    std::string description() const { return "scriptrunner"; }
+    std::string description() const override { return "scriptrunner"; }
 };
 
 } } }

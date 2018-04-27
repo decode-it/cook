@@ -17,6 +17,9 @@ namespace cook { namespace process { namespace command { namespace msvc {
             case Language::C:
                 add_argument(ArgumentDesc(0, "/TC"), std::string());
                 break;
+
+        default:
+            break;
         }
         add_argument(ArgumentDesc(2, "-c"), std::string());
     }

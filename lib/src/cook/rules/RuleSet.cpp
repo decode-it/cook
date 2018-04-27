@@ -20,7 +20,7 @@ class DefaultSink : public Interface
         MSS_BEGIN(Result);
         MSS_END();
     }
-    Result add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const
+    Result add_file(model::Recipe & recipe, const LanguageTypePair & key, const ingredient::File & file) const override
     {
         MSS_BEGIN(Result);
         MSS(recipe.files().insert_or_merge(key, file));
