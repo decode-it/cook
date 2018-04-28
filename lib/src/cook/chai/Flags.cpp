@@ -131,6 +131,20 @@ bool Flags::operator!=(const Flags & rhs) const
     return !operator ==(rhs);
 }
 
+namespace {
+
+}
+
+void Flags::set(const Flags & flags)
+{
+#define SET(NAME) { auto p = flags.NAME(); if (p.second) set(p.first); }
+    SET(language);
+    SET(type);
+    SET(overwrite);
+    SET(propagation);
+#undef SET
+}
+
 std::string Flags::to_string() const
 {
     std::ostringstream oss;

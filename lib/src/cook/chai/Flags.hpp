@@ -39,6 +39,8 @@ public:
     SET(Propagation)
 #undef SET
 
+    void set(const Flags & flags);
+
 #define GET_OR(TYPE) TYPE get_or(TYPE fallback) const { return is_set(Flag::TYPE) ? t##TYPE##_ : fallback; }
     GET_OR(Language)
     GET_OR(Type)

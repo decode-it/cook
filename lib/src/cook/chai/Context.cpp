@@ -9,6 +9,7 @@
 #include "gubg/chai/inject.hpp"
 #include "chaiscript/chaiscript.hpp"
 #include <stack>
+#include <functional>
 
 namespace cook { namespace chai {
 
@@ -114,8 +115,8 @@ struct Context::D
         initialize_file(kitchen);
         initialize_key_value(kitchen);
         engine.add(user_data_module());
-        engine.add_global(chaiscript::var(cook.root), "root");
-        engine.add_global(chaiscript::var(cook), "cook");
+        engine.add_global(chaiscript::var(std::ref(cook.root)), "root");
+        engine.add_global(chaiscript::var(std::ref(cook)), "cook");
         engine.add(chaiscript::fun(&Cook::operator []), "[]");
         engine.add(chaiscript::fun([](const Cook & c) { return c.working_directory(); }), "working_directory");
         engine.add(chaiscript::fun([](const Cook & c, bool absolute) { return c.working_directory(absolute); }), "working_directory");
@@ -164,17 +165,26 @@ struct Context::D
 #undef EXPOSE
 
 
+        engine.add(chaiscript::fun([](Flags & f, const Flags & to_set) { f.set(to_set); } ), "set");
         engine.add(chaiscript::fun(&Flags::to_string), "to_string");
         engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs&rhs; } ), "&");
         engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs||rhs; } ), "|");
+
         engine.add(chaiscript::type_conversion<Flags, bool>());
     }
 
     void initialize_uri()
     {
-        engine.add(chaiscript::user_type<model::Uri>(), "Uri");
+        using Uri = model::Uri;
+
+        engine.add(chaiscript::user_type<Uri>(), "Uri");
+        engine.add(chaiscript::constructor<Uri(const Uri &)>(), "Uri");
+        engine.add(chaiscript::type_conversion<std::string, Uri>());
         engine.add(chaiscript::fun([](const model::Uri & uri) { return uri.string(); }), "to_string");
         engine.add(chaiscript::fun([](const model::Uri & uri, char c) { return uri.string(c); }), "to_string");
+        engine.add(chaiscript::fun([](const model::Uri & uri, bool initial_separator) { return uri.string(initial_separator); }), "to_string");
+        engine.add(chaiscript::fun([](const model::Uri & uri, bool initial_separator, char c) { return uri.string(initial_separator, c); }), "to_string");
+        engine.add(chaiscript::fun([](const model::Uri & lhs, const model::Uri & rhs) { return lhs / rhs; }), "/");
         engine.add(chaiscript::fun(&model::Uri::as_absolute), "as_absolute");
         engine.add(chaiscript::fun(&model::Uri::as_relative), "as_relative");
     }
@@ -184,12 +194,12 @@ struct Context::D
         engine.add(chaiscript::user_type<Book>(), "Book");
         engine.add(chaiscript::constructor<Book(const Book &)>(), "Book");
 
-        engine.add(chaiscript::fun([](Book & book, const std::string & uri) { return book.book(uri); } ), "book");
-        engine.add(chaiscript::fun([](Book & book, const std::string & uri, const Book::BookFunctor & functor) { book.book(uri, functor); } ), "book");
-        engine.add(chaiscript::fun([](Book & book, const std::string & uri) { return book.recipe(uri); }), "recipe");
-        engine.add(chaiscript::fun([](Book & book, const std::string & uri, const std::string & type) { return book.recipe(uri, type); }), "recipe");
-        engine.add(chaiscript::fun([](Book & book, const std::string & uri, const Book::RecipeFunctor & functor) { book.recipe(uri, functor); }), "recipe");
-        engine.add(chaiscript::fun([](Book & book, const std::string & uri, const std::string & type, const Book::RecipeFunctor & functor) { book.recipe(uri, type, functor); }), "recipe");
+        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri) { return book.book(uri); } ), "book");
+        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const Book::BookFunctor & functor) { book.book(uri, functor); } ), "book");
+        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri) { return book.recipe(uri); }), "recipe");
+        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const std::string & type) { return book.recipe(uri, type); }), "recipe");
+        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const Book::RecipeFunctor & functor) { book.recipe(uri, functor); }), "recipe");
+        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const std::string & type, const Book::RecipeFunctor & functor) { book.recipe(uri, type, functor); }), "recipe");
         engine.add(chaiscript::fun(&Book::data), "data");
         engine.add(chaiscript::fun(&Book::uri), "uri");
     }
@@ -203,16 +213,16 @@ struct Context::D
         engine.add(chaiscript::fun(&Recipe::set_type), "set_type");
         engine.add(chaiscript::fun(&Recipe::working_directory), "working_dir");
 
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dep) { recipe.depends_on(dep); }), "depends_on");
+        engine.add(chaiscript::fun([](Recipe & recipe, const model::Uri & dep) { recipe.depends_on(dep); }), "depends_on");
 
         {
             using DepFunction = std::function<bool (const chaiscript::Boxed_Value & vt)>;
-            auto lambda = [=](Recipe & recipe, const std::string & dep, DepFunction function)
+            auto lambda = [=](Recipe & recipe, const model::Uri & dep, DepFunction function)
             {
                 auto file_dep = [=](LanguageTypePair & ltp, ingredient::File & file)
                 {
                     File f(ltp, file, context);
-                    if (!function(chaiscript::var(f)))
+                    if (!function(chaiscript::var(std::ref(f))))
                         return false;
 
                     ltp = f.language_type_pair();
@@ -224,7 +234,7 @@ struct Context::D
                 auto key_value_dep = [=](LanguageTypePair & ltp, ingredient::KeyValue & key_value)
                 {
                     KeyValue kv(ltp, key_value, context);
-                    return function(chaiscript::var(kv));
+                    return function(chaiscript::var(std::ref(kv)));
 
                     ltp = kv.language_type_pair();
                     key_value = kv.element();
@@ -255,7 +265,7 @@ struct Context::D
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & path, const Flags & flags) { recipe.include_path(path, flags); } ), "include_path");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name, const Flags & flags) { recipe.define(name, flags); } ), "define");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name, const std::string & value, const Flags & flags) { recipe.define(name, value, flags); } ), "define");
-
+        engine.add(chaiscript::fun(&Recipe::set_working_directory), "set_working_directory");
 
         engine.add(chaiscript::fun(&Recipe::uri), "uri");
         engine.add(chaiscript::fun(&Recipe::data), "data");
@@ -265,7 +275,8 @@ struct Context::D
     {
         engine.add(chaiscript::user_type<File>(), "File");
 
-        engine.add(chaiscript::fun([](const File & f) { return f.flags(); }), "flags");
+        engine.add(chaiscript::fun([](const File & f) -> const Flags &  { return f.flags(); }), "flags");
+        engine.add(chaiscript::fun([](File & f) -> Flags & { return f.flags(); }), "flags");
         engine.add(chaiscript::fun([](const File & f) { return f.has_owner(); }), "has_owner");
         engine.add(chaiscript::fun([](const File & f) { return f.owner(); }), "owner");
         engine.add(chaiscript::fun(&File::key), "key");
@@ -288,7 +299,8 @@ struct Context::D
     {
         engine.add(chaiscript::user_type<KeyValue>(), "KeyValue");
 
-        engine.add(chaiscript::fun([](const KeyValue & f) { return f.flags(); }), "flags");
+        engine.add(chaiscript::fun([](const KeyValue & f) -> const Flags & { return f.flags(); }), "flags");
+        engine.add(chaiscript::fun([](KeyValue & f) -> Flags & { return f.flags(); }), "flags");
         engine.add(chaiscript::fun([](const KeyValue & f) { return f.has_owner(); }), "has_owner");
         engine.add(chaiscript::fun([](const KeyValue & f) { return f.owner(); }), "owner");
         engine.add(chaiscript::fun(&KeyValue::key), "key");

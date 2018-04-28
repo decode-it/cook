@@ -21,7 +21,7 @@ std::string Element::name() const
     else if (!name_.empty())
         return name_;
     else if (!uri().path().empty())
-        return uri().path().back().string();
+        return uri().path().back();
     else return "";
 }
 

@@ -80,16 +80,15 @@ void Recipe::remove(const std::string & dir, const std::string & pattern, const 
     recipe_->add_globber(info);
 }
 
-void Recipe::depends_on(const std::string & dependency, const DepFileFilter & file_filter, const DepKeyValueFilter & key_value_filter)
+void Recipe::depends_on(const model::Uri & dependency, const DepFileFilter & file_filter, const DepKeyValueFilter & key_value_filter)
 {
     CHAI_MSS_BEGIN();
 
     auto s = log::scope("depends on", [&](auto & n) { n.attr("uri", recipe_->uri().string()).attr("dependency", dependency); });
 
-    model::Uri uri(dependency);
-    CHAI_MSS_MSG(!uri.path().empty(), Error, "The dependency cannot be empty");
+    CHAI_MSS_MSG(!dependency.path().empty(), Error, "The dependency cannot be empty");
 
-    CHAI_MSS(recipe_->add_dependency(uri, file_filter, key_value_filter));
+    CHAI_MSS(recipe_->add_dependency(dependency, file_filter, key_value_filter));
 }
 
 void Recipe::library(const std::string & library, const Flags & flags)

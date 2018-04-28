@@ -51,8 +51,7 @@ Book & Book::goc_book_(const Part & part)
     auto it = subbooks_.find(part);
     if (it == subbooks_.end())
     {
-        Uri child_uri = uri();
-        child_uri.add_path_part(part);
+        Uri child_uri = uri() / part;
         auto ptr = std::make_shared<Book>(child_uri);
 
         ptr->set_parent(this);

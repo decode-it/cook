@@ -19,11 +19,11 @@ public:
 
     Book(model::Book * book, const Context * context);
 
-    Book book(const std::string & uri_str);
-    void book(const std::string & uri_str, const BookFunctor &functor);
-    void recipe(const std::string & uri_str, const RecipeFunctor & functor);
-    void recipe(const std::string & uri_str, const std::string & type, const RecipeFunctor & functor);
-    Recipe recipe(const std::string & uri_str, const std::string & type = std::string());
+    Book book(const model::Uri & uri);
+    void book(const model::Uri & uri, const BookFunctor &functor);
+    void recipe(const model::Uri & uri, const RecipeFunctor & functor);
+    void recipe(const model::Uri & uri, const std::string & type, const RecipeFunctor & functor);
+    Recipe recipe(const model::Uri & uri, const std::string & type = std::string());
     const model::Uri & uri() const { return book_->uri(); }
 
     UserData data() const { return data_; }

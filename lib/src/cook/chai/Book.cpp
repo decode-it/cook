@@ -13,41 +13,40 @@ Book::Book(model::Book * book, const Context *context)
 {
 }
 
-Book Book::book(const std::string & uri_str)
+Book Book::book(const model::Uri &uri)
 {
     CHAI_MSS_BEGIN();
 
-    auto ss = log::scope("goc book", [&](auto & n) {n.attr("parent uri", book_->uri()).attr("uri", uri_str); });
+    auto ss = log::scope("goc book", [&](auto & n) {n.attr("parent uri", book_->uri()).attr("uri", uri); });
 
-    model::Uri uri(uri_str);
     model::Book * subbook = nullptr;
     CHAI_MSS(model::Book::goc_relative(subbook, uri, book_));
 
     return Book(subbook, context_);
 }
 
-void Book::book(const std::string & uri_str, const BookFunctor &functor)
+void Book::book(const model::Uri & uri, const BookFunctor &functor)
 {
-    CHAI_MSS_BEGIN();
-
-    auto ss = log::scope("goc book", [&](auto & n) {n.attr("parent uri", book_->uri()).attr("uri", uri_str); });
-
-    model::Uri uri(uri_str);
-    model::Book * subbook = nullptr;
-    CHAI_MSS(model::Book::goc_relative(subbook, uri, book_));
-
-    functor(Book(subbook, context_));
+    functor(book(uri));
 }
 
-Recipe Book::recipe(const std::string & uri_str, const std::string & type_str)
+Recipe Book::recipe(const model::Uri & uri, const std::string & type_str)
 {
     CHAI_MSS_BEGIN();
 
-    model::Uri uri(uri_str);
     CHAI_MSS_MSG(!uri.path().empty(), Error, "The recipe uri can not be empty");
 
+    // check whether this book already exists
     model::Recipe * recipe = nullptr;
-    CHAI_MSS(model::Book::goc_relative(recipe, uri, book_));
+    bool already_existing = false;
+
+    {
+        CHAI_MSS(model::Book::find_relative(recipe, uri, book_));
+        if (recipe)
+            already_existing = true;
+        else
+            CHAI_MSS(model::Book::goc_relative(recipe, uri, book_));
+    }
 
     Recipe r(recipe, context_);
 
@@ -57,19 +56,20 @@ Recipe Book::recipe(const std::string & uri_str, const std::string & type_str)
     else if (type_str == "shared_library")  { r.set_type(TargetType::SharedLibrary); }
     else if (type_str == "script")          { r.set_type(TargetType::Script); }
 
-    r.set_working_directory(context_->current_working_directory().string());
+    if (!already_existing)
+        r.set_working_directory(context_->current_working_directory().string());
 
     return r;
 }
 
-void Book::recipe(const std::string & uri_str, const RecipeFunctor &functor)
+void Book::recipe(const model::Uri & uri, const RecipeFunctor &functor)
 {
-    recipe(uri_str, "", functor);
+    recipe(uri, std::string(), functor);
 }
 
-void Book::recipe(const std::string & uri_str, const std::string & type_str, const RecipeFunctor& functor)
+void Book::recipe(const model::Uri & uri, const std::string & type_str, const RecipeFunctor& functor)
 {
-    functor(recipe(uri_str, type_str));
+    functor(recipe(uri, type_str));
 }
 
 } }

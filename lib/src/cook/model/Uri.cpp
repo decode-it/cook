@@ -39,24 +39,24 @@ Uri::Uri(const std::string & str)
 Uri Uri::operator/(const Uri & rhs) const
 {
     Uri result = *this;
-    result.path_.insert(result.path_.end(), rhs.path_.begin(), rhs.path_.end());
-    return result;
+    return result /= rhs;
 }
 
-void Uri::add_path_part(const Part & part)
+Uri Uri::operator/(const Part & rhs) const
 {
-    path_.push_back(part);
+    Uri result = *this;
+    return result /= rhs;
 }
 
-bool Uri::add_path_part_(const std::string & part)
+Uri & Uri::operator/=(const Uri & rhs)
 {
-    MSS_BEGIN(bool);
-
-    std::optional<Part> p = Part::make_part(part);
-    MSS(!!p);
-    path_.push_back(*p);
-
-    MSS_END();
+    path_.insert(path_.end(), rhs.path_.begin(), rhs.path_.end());
+    return *this;
+}
+Uri & Uri::operator/=(const Part & rhs)
+{
+    path_.push_back(rhs);
+    return *this;
 }
 
 void Uri::clear()
@@ -100,8 +100,14 @@ bool Uri::absolute() const
 
 std::string Uri::string(const char sep) const
 {
+    return string(absolute(), sep);
+
+}
+
+std::string Uri::string(bool initial_separator, const char sep) const
+{
     std::string result;
-    if (absolute_)
+    if (initial_separator)
         result += sep;
 
     for(auto it = path_.begin(); it != path_.end(); ++it)
@@ -109,7 +115,7 @@ std::string Uri::string(const char sep) const
         if (it != path_.begin())
             result += sep;
 
-        result += it->string();
+        result += *it;
     }
 
     return result;
@@ -160,7 +166,7 @@ std::ostream & operator<<(std::ostream & str, const Uri & uri)
 
 std::ostream & operator<<(std::ostream & str, const Part & part)
 {
-    return str << part.string();
+    return str << static_cast<const std::string &>(part);
 }
 
 bool Uri::operator==(const Uri & rhs) const
@@ -172,5 +178,7 @@ bool Uri::operator<(const Uri & rhs) const
 {
     return string() < rhs.string();
 }
+
+
 
 } }

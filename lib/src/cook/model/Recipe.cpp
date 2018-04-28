@@ -4,7 +4,7 @@
 namespace cook { namespace model {
 
 Recipe::Recipe(Book * book, const Part & part)
-    : Element(book->uri() / Uri(part.string())),
+    : Element(book->uri() / part),
       allows_early_globbing_(false),
       build_target_(uri().as_relative().string('.'))
 {

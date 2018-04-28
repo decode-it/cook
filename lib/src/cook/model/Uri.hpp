@@ -22,7 +22,7 @@ public:
 
     static std::optional<Part> make_part(const std::string & part);
 
-    const std::string & string() const { return value_; }
+    operator const std::string &() const { return value_; }
 
     bool operator==(const Part & rhs) const { return value_ == rhs.value_; }
     bool operator<(const Part & rhs) const { return value_ < rhs.value_; }
@@ -47,10 +47,14 @@ public:
     Uri(const std::string & str);
 
     Uri operator/(const Uri & rhs) const;
+    Uri operator/(const Part & rhs) const;
+    Uri & operator/=(const Uri & rhs);
+    Uri & operator/=(const Part & rhs);
+    bool operator==(const Uri & rhs) const;
+    bool operator<(const Uri & rhs) const;
 
     void clear();
 
-    void add_path_part(const Part & part);
     gubg::Range<iterator> path() const;
     bool pop_back(Part & part);
     bool pop_back();
@@ -59,18 +63,13 @@ public:
     void set_absolute(bool is_absolute);
 
     std::string string(const char sep = separator) const;
-
-    bool operator==(const Uri & rhs) const;
-    bool operator<(const Uri & rhs) const;
+    std::string string(bool initial_separator, const char sep = separator) const;
 
     Uri parent() const;
     Uri as_absolute() const;
     Uri as_relative() const;
 
-
 private:
-    bool add_path_part_(const std::string &part);
-
     PathContainer path_;
     bool absolute_;
 };
