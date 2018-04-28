@@ -51,7 +51,7 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
             SECTION(".cxx") { scn.file_to_create = "test.cxx"; }
 
             scn.resolved.type = Type::Source;
-            scn.resolved.overwrite = Overwrite::Never;
+            scn.resolved.overwrite = Overwrite::IfSame;
             scn.resolved.propagation = Propagation::Private;
             scn.num_added_files = 1;
         }
@@ -62,16 +62,9 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
             SECTION(".hxx") { scn.file_to_create = "test.hxx"; }
 
             scn.resolved.type = Type::Header;
-            scn.resolved.overwrite = Overwrite::Never;
-            scn.resolved.propagation = Propagation::Private;
-            scn.num_added_files = 2;
-
-            scn.additional_check = [](const model::Recipe & recipe) {
-                auto ptr = recipe.files().find(LanguageTypePair(Language::CXX, Type::IncludePath), "./");
-
-                REQUIRE(ptr);
-                REQUIRE(ptr->propagation() == Propagation::Public);
-            };
+            scn.resolved.overwrite = Overwrite::IfSame;
+            scn.resolved.propagation = Propagation::Public;
+            scn.num_added_files = 1;
         }
 
         scn.rel = scn.file_to_create;
@@ -86,11 +79,12 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
         std::ofstream ofs(str.c_str());
 
     // create the recipe
-    auto p = model::Uri::recipe_uri("test");
-    REQUIRE(p.second);
+    model::Uri uri("test");
 
     model::Book book;
-    model::Recipe & recipe = book.goc_recipe(p.first.name());
+    model::Recipe * recipe = nullptr;
+    REQUIRE(model::Book::goc_relative(recipe, uri, &book));
+    REQUIRE(!!recipe);
 
     {
         // check the accept function
@@ -111,12 +105,12 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
             if (scn.resolved.overwrite)     REQUIRE(file.overwrite() == *scn.resolved.overwrite);
             if (scn.resolved.propagation)   REQUIRE(file.propagation() == *scn.resolved.propagation);
 
-            REQUIRE(cxx.add_file(recipe, key, file));
+            REQUIRE(cxx.add_file(*recipe, key, file));
 
 
             {
                 unsigned int count = 0;
-                REQUIRE(recipe.files().each([&](const auto & key, const auto & file){
+                REQUIRE(recipe->files().each([&](const auto & key, const auto & file){
                             ++count; return true;
                             }));
 
@@ -125,7 +119,7 @@ TEST_CASE("CXX glob rules tests", "[ut][glob][CXX]")
 
 
             if (scn.additional_check)
-                scn.additional_check(recipe);
+                scn.additional_check(*recipe);
         }
     }
 

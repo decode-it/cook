@@ -42,10 +42,7 @@ struct Scenario
 
 Uri make_uri(const std::string & str)
 {
-    std::pair<Uri, bool> p = Uri::recipe_uri(str);
-    REQUIRE(p.second);
-
-    return p.first;
+    return Uri(str);
 }
 
 Recipe * goc(Library & lib, const std::string & str)

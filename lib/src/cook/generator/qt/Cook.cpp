@@ -69,7 +69,7 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
 
     auto n = node.node("recipe");
     n.attr("uri", uri);
-    n.attr("tag", uri.name());
+    n.attr("tag", uri.path().back());
     n.attr("display_name", recipe->name());
     n.attr("path", make_absolute(recipe->working_directory().string()));
     n.attr("type", recipe->build_target().type);

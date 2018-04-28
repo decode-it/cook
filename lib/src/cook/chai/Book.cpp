@@ -19,9 +19,7 @@ Book Book::book(const std::string & uri_str)
 
     auto ss = log::scope("goc book", [&](auto & n) {n.attr("parent uri", book_->uri()).attr("uri", uri_str); });
 
-    model::Uri uri;
-    CHAI_MSS(model::Uri::book_uri(uri_str, uri));
-
+    model::Uri uri(uri_str);
     model::Book * subbook = nullptr;
     CHAI_MSS(model::Book::goc_relative(subbook, uri, book_));
 
@@ -34,9 +32,7 @@ void Book::book(const std::string & uri_str, const BookFunctor &functor)
 
     auto ss = log::scope("goc book", [&](auto & n) {n.attr("parent uri", book_->uri()).attr("uri", uri_str); });
 
-    model::Uri uri;
-    CHAI_MSS(model::Uri::book_uri(uri_str, uri));
-
+    model::Uri uri(uri_str);
     model::Book * subbook = nullptr;
     CHAI_MSS(model::Book::goc_relative(subbook, uri, book_));
 
@@ -47,8 +43,8 @@ Recipe Book::recipe(const std::string & uri_str, const std::string & type_str)
 {
     CHAI_MSS_BEGIN();
 
-    model::Uri uri;
-    CHAI_MSS(model::Uri::recipe_uri(uri_str, uri));
+    model::Uri uri(uri_str);
+    CHAI_MSS_MSG(!uri.path().empty(), Error, "The recipe uri can not be empty");
 
     model::Recipe * recipe = nullptr;
     CHAI_MSS(model::Book::goc_relative(recipe, uri, book_));

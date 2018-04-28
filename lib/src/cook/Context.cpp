@@ -88,18 +88,17 @@ Result Context::find_recipe(model::Recipe *& recipe, const std::string & name) c
     MSS_BEGIN(Result, logns);
 
     // create the uri
-    std::pair<model::Uri, bool> p = model::Uri::recipe_uri(name);
-
-    MSG_MSS(p.second, Error, "Invalid recipe uri '" << name << "'");
+    model::Uri uri(name);
+    MSG_MSS(!uri.path().empty(), Error, "The supplied uri is empty");
 
     // forgive the fact that recipe is not absolute
-    p.first.set_absolute(true);
+    uri.set_absolute(true);
 
     // find the recipe in the root book
-    MSG_MSS(lib_.find_recipe(recipe, p.first), InternalError, "Error while finding uri '" << p.first << "'");
+    MSG_MSS(lib_.find_recipe(recipe, uri), InternalError, "Error while finding uri '" << uri << "'");
 
     // make sure the recipe is found
-    MSG_MSS(!!recipe, Error, "No recipe with name '" << p.first << "' exists ");
+    MSG_MSS(!!recipe, Error, "No recipe with name '" << uri << "' exists ");
 
     MSS_END();
 

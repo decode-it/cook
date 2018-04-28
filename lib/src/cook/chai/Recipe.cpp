@@ -86,8 +86,9 @@ void Recipe::depends_on(const std::string & dependency, const DepFileFilter & fi
 
     auto s = log::scope("depends on", [&](auto & n) { n.attr("uri", recipe_->uri().string()).attr("dependency", dependency); });
 
-    model::Uri uri;
-    CHAI_MSS(model::Uri::recipe_uri(dependency, uri));
+    model::Uri uri(dependency);
+    CHAI_MSS_MSG(!uri.path().empty(), Error, "The dependency cannot be empty");
+
     CHAI_MSS(recipe_->add_dependency(uri, file_filter, key_value_filter));
 }
 

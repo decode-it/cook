@@ -163,19 +163,20 @@ TEST_CASE("glob resolve tests", "[ut][glob]")
 
         // test the actual resolving
         {
-            auto p = cook::model::Uri::recipe_uri("test");
-            REQUIRE(p.second);
+            cook::model::Uri uri("test");
 
             cook::model::Book book;
-            cook::model::Recipe & recipe = book.goc_recipe(p.first.name());
+            cook::model::Recipe * recipe;
+            REQUIRE(cook::model::Book::goc_relative(recipe, uri, &book));
+            REQUIRE(!!recipe);
 
-            recipe.set_working_directory(std::filesystem::current_path());
+            recipe->set_working_directory(std::filesystem::current_path());
 
             auto ruleset = cook::rules::RuleSet::create();
             /* ruleset->add<cook::rules::CXX>(); */
             cook::process::souschef::Resolver resolver(ruleset);
 
-            REQUIRE(resolver.process_one(recipe, globber));
+            REQUIRE(resolver.process_one(*recipe, globber));
         }
 
         REQUIRE(files == scn.expected_files);

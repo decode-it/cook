@@ -3,19 +3,8 @@
 
 namespace cook { namespace model {
 
-namespace  {
-
-Uri append_part(const Uri & uri, const Part & part)
-{
-    Uri new_uri = uri;
-    new_uri.set_name(part);
-    return new_uri;
-}
-
-}
-
 Recipe::Recipe(Book * book, const Part & part)
-    : Element(append_part(book->uri(), part)),
+    : Element(book->uri() / Uri(part.string())),
       allows_early_globbing_(false),
       build_target_(uri().as_relative().string('.'))
 {
@@ -55,7 +44,6 @@ bool Recipe::resolve_dependency(const Uri & uri, Recipe * recipe)
 bool Recipe::add_dependency(const Dependency & dependency, const DependencyFileFilter & file_filter, const DependencyKeyValueFilter & key_value_filter)
 {
     MSS_BEGIN(bool);
-    MSS(dependency.has_name());
 
     {
         DependencyValue dep_value;

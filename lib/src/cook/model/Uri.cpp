@@ -20,58 +20,28 @@ Part::Part(const std::string & value)
 {
 }
 
-std::pair<Uri, bool> Uri::recipe_uri(const std::string & uri_str)
+Uri::Uri(const std::string & str)
 {
-    std::pair<Uri, bool> res(Uri(), true);
-    res.second = recipe_uri(uri_str, res.first);
-
-    return res;
-}
-
-Result Uri::recipe_uri(const std::string & uri_str, Uri & uri)
-{
-    MSS_BEGIN(Result);
-
-    uri.clear();
-
-    gubg::Strange strange(uri_str);
-    uri.absolute_ = strange.pop_if(separator);
+    gubg::Strange strange(str);
+    absolute_ = strange.pop_if(separator);
 
     std::string part;
-    while (strange.pop_until(part, separator))
-        MSS(uri.add_path_part_(part));
-
-    MSS(uri.set_name(strange.str()));
-
-    MSS_END();
-}
-
-Result Uri::book_uri(const std::string & uri_str, Uri & uri)
-{
-    MSS_BEGIN(Result);
-
-    gubg::Strange strange(uri_str);
-    uri.absolute_ = strange.pop_if(separator);
-
-    std::string part;
-    while (strange.pop_until(part, separator))
-        MSS(uri.add_path_part_(part));
+    while(strange.pop_until(part, separator))
+    {
+        if (!part.empty())
+            path_.push_back(Part(part));
+    }
 
     if (!strange.empty())
-        MSS(uri.add_path_part_(strange.str()));
-
-    MSS_END();
+        path_.push_back(Part(strange.str()));
 }
 
-std::pair<Uri, bool> Uri::book_uri(const std::string & uri_str)
+Uri Uri::operator/(const Uri & rhs) const
 {
-    std::pair<Uri, bool> res(Uri(), true);
-    res.second = book_uri(uri_str, res.first);
-
-
-    return res;
+    Uri result = *this;
+    result.path_.insert(result.path_.end(), rhs.path_.begin(), rhs.path_.end());
+    return result;
 }
-
 
 void Uri::add_path_part(const Part & part)
 {
@@ -89,30 +59,9 @@ bool Uri::add_path_part_(const std::string & part)
     MSS_END();
 }
 
-bool Uri::set_name(const std::string & name)
-{
-    MSS_BEGIN(bool);
-
-    name_ = Part::make_part(name);
-    MSS(!!name_);
-
-    MSS_END();
-}
-
-void Uri::set_name(const Part & name)
-{
-    name_ = name;
-}
-
-void Uri::clear_name()
-{
-    name_.reset();
-}
-
 void Uri::clear()
 {
     path_.clear();
-    name_.reset();
     absolute_ = false;
 }
 
@@ -155,27 +104,18 @@ std::string Uri::string(const char sep) const
     if (absolute_)
         result += sep;
 
-    for(const auto & part: path_)
+    for(auto it = path_.begin(); it != path_.end(); ++it)
     {
-        result += part.string();
-        result += sep;
-    }
+        if (it != path_.begin())
+            result += sep;
 
-    if (name_.has_value())
-        result += name_->string();
+        result += it->string();
+    }
 
     return result;
 }
 
-bool Uri::has_name() const
-{
-    return name_.has_value();
-}
 
-const Part & Uri::name() const
-{
-    return *name_;
-}
 
 void Uri::set_absolute(bool is_absolute)
 {
@@ -208,7 +148,6 @@ Uri Uri::parent() const
     Uri result = *this;
 
     if (false) {}
-    else if (result.has_name())         { result.clear_name(); }
     else if (!result.path().empty())    { result.pop_back();  }
 
     return result;

@@ -28,6 +28,7 @@ public:
     bool operator<(const Part & rhs) const { return value_ < rhs.value_; }
 
 private:
+    friend class Uri;
     Part(const std::string & value);
 
     std::string value_;
@@ -43,11 +44,9 @@ public:
     static const char separator;
 
     Uri() : absolute_(false) {}
+    Uri(const std::string & str);
 
-    static std::pair<Uri, bool> recipe_uri(const std::string & uri_str);
-    static std::pair<Uri, bool> book_uri(const std::string & uri_str);
-    static Result recipe_uri(const std::string & uri_str, Uri & uri);
-    static Result book_uri(const std::string & uri_str, Uri & uri);
+    Uri operator/(const Uri & rhs) const;
 
     void clear();
 
@@ -55,12 +54,6 @@ public:
     gubg::Range<iterator> path() const;
     bool pop_back(Part & part);
     bool pop_back();
-
-    bool set_name(const std::string & name);
-    void set_name(const Part & name);
-    bool has_name() const;
-    void clear_name();
-    const Part & name() const;
 
     bool absolute() const;
     void set_absolute(bool is_absolute);
@@ -79,7 +72,6 @@ private:
     bool add_path_part_(const std::string &part);
 
     PathContainer path_;
-    std::optional<Part> name_;
     bool absolute_;
 };
 

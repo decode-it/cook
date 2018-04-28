@@ -20,8 +20,6 @@ std::string Element::name() const
     if (false) {}
     else if (!name_.empty())
         return name_;
-    else if (uri().has_name())
-        return uri().name().string();
     else if (!uri().path().empty())
         return uri().path().back().string();
     else return "";

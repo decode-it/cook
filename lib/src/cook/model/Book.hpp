@@ -29,18 +29,10 @@ public:
     Book();
     explicit Book(const Uri & uri);
 
-    Book & goc_book(const Part & part);
-    Recipe & goc_recipe(const Part & part);
-    Book * find_book(const Part & part) const;
-    Recipe * find_recipe(const Part & part) const;
-
-    static Result find_relative(Recipe *& result, const Uri & uri, Book * relative);
-    static Result find_relative(Book *& result, const Uri & uri, Book * relative);
-    static Result goc_relative(Recipe *& result, const Uri & uri, Book * relative);
-    static Result goc_relative(Book *& result, const Uri & uri, Book * relative);
-
-
-
+    static Result find_relative(Recipe *& result, const Uri & uri, Book * ancestor);
+    static Result find_relative(Book *& result, const Uri & uri, Book * ancestor);
+    static Result goc_relative(Recipe *& result, const Uri & uri, Book * ancestor);
+    static Result goc_relative(Book *& result, const Uri & uri, Book * ancestor);
 
     bool is_root() const;
 
@@ -70,6 +62,11 @@ public:
 
 
 private:
+    Book & goc_book_(const Part & part);
+    Recipe & goc_recipe_(const Part & part);
+    Book * find_book_(const Part & part) const;
+    Recipe * find_recipe_(const Part & part) const;
+
     Book(const Book &) = delete;
     Book & operator=(const Book &) = delete;
     Book(Book &&) = default;
