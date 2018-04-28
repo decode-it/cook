@@ -162,8 +162,10 @@ struct Context::D
 #define EXPOSE(TYPE, NAME, CHAINAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return TYPE::NAME; }), CHAINAME)
         EXPOSE(OS, Windows, "windows");
         EXPOSE(OS, Linux, "linux");
+        EXPOSE(OS, MacOS, "macos");
 #undef EXPOSE
-
+        engine.add(chaiscript::fun([](const W_OS & ) { return get_os(); }), "my");
+        engine.add(chaiscript::fun([](OS lhs, OS rhs){return lhs == rhs;}), "==");
 
         engine.add(chaiscript::fun([](Flags & f, const Flags & to_set) { f.set(to_set); } ), "set");
         engine.add(chaiscript::fun(&Flags::to_string), "to_string");
