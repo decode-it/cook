@@ -5,7 +5,7 @@
 
 namespace cook { namespace process { namespace toolchain { 
 
-    Interface &Manager::compiler(Language language)
+    const Interface &Manager::compiler(Language language) const
     {
         auto it = compilers_.find(language);
         if (it == compilers_.end())
@@ -17,29 +17,9 @@ namespace cook { namespace process { namespace toolchain {
         return *it->second;
     }
 
-    Interface &Manager::archiver()
-    {
-        if (!archiver_)
-        {
-            archiver_.reset(new Archiver);
-            archiver_->set_brand(brand_);
-        }
-        return *archiver_;
-    }
-
-    Interface &Manager::linker()
-    {
-        if (!linker_)
-        {
-            linker_.reset(new Linker);
-            linker_->set_brand(brand_);
-        }
-        return *linker_;
-    }
-
     bool Manager::set_brand(const std::string &brand)
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(bool, "");
         if (brand != brand_)
         {
             brand_ = brand;
@@ -47,10 +27,30 @@ namespace cook { namespace process { namespace toolchain {
             {
                 MSS(p.second->set_brand(brand));
             }
-            MSS(archiver_->set_brand(brand));
-            MSS(linker_->set_brand(brand));
+            MSS(archiver_().set_brand(brand));
+            MSS(linker_().set_brand(brand));
         }
         MSS_END();
+    }
+
+    Interface &Manager::archiver_() const
+    {
+        if (!archiver_ptr_)
+        {
+            archiver_ptr_.reset(new Archiver);
+            archiver_ptr_->set_brand(brand_);
+        }
+        return *archiver_ptr_;
+    }
+
+    Interface &Manager::linker_() const
+    {
+        if (!linker_ptr_)
+        {
+            linker_ptr_.reset(new Linker);
+            linker_ptr_->set_brand(brand_);
+        }
+        return *linker_ptr_;
     }
 
 } } } 

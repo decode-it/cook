@@ -10,17 +10,20 @@ namespace cook { namespace process { namespace toolchain {
     class Manager
     {
     public:
-        Interface &compiler(Language);
-        Interface &archiver();
-        Interface &linker();
+        const Interface &compiler(Language) const;
+        const Interface &archiver() const {return archiver_();}
+        const Interface &linker() const {return linker_();}
 
         bool set_brand(const std::string &brand);
 
     private:
         std::string brand_;
-        std::map<Language, Interface::Ptr> compilers_;
-        Interface::Ptr archiver_;
-        Interface::Ptr linker_;
+        mutable std::map<Language, Interface::Ptr> compilers_;
+        mutable Interface::Ptr archiver_ptr_;
+        mutable Interface::Ptr linker_ptr_;
+
+        Interface &archiver_() const;
+        Interface &linker_() const;
     };
 
 } } } 

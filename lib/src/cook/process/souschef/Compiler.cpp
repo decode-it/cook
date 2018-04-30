@@ -1,5 +1,6 @@
 #include "cook/process/souschef/Compiler.hpp"
 #include "cook/process/command/Toolchain.hpp"
+#include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "cook/log/Scope.hpp"
 
@@ -78,11 +79,15 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
 
 Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recipe, const Context & context) const
 {
-    MSS_BEGIN(Result);
-    
+    MSS_BEGIN(Result, "");
+
+#if 1
+    process::command::Compile::Ptr cp;
+    MSS(context.manager().compiler(language_).create(cp));
+#else
     process::command::CompilerPtr cp;
     MSS(context.toolchain().create_compiler(cp, language_));
-    cp->set_recipe_uri(recipe.uri().string());
+#endif
 
     // add the include paths
     for (const ingredient::File & f : recipe.files().range(LanguageTypePair(Language::Undefined, Type::IncludePath)))
@@ -99,6 +104,7 @@ Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recip
         else
             cp->add_define(f.key());
 
+    cp->set_recipe_uri(recipe.uri().string());
     ptr = cp;
 
     MSS_END();

@@ -27,9 +27,6 @@ namespace cook { namespace process { namespace command {
         return std::make_pair(lhs.priority, lhs.option) < std::make_pair(rhs.priority, rhs.option);
     }
 
-    using Filename = std::filesystem::path;
-    using Filenames = std::list<Filename>;
-
     using FilenamesMap = std::map<ArgumentDesc, const Filenames *>;
 
     class OrderedCommand : public Interface

@@ -1,30 +1,11 @@
 #ifndef HEADER_cook_process_toolchain_Interface_hpp_ALREADY_INCLUDED
 #define HEADER_cook_process_toolchain_Interface_hpp_ALREADY_INCLUDED
 
-#include <memory>
-#include <ostream>
-#include <functional>
-#include <string>
-#include <utility>
-#include <vector>
-#include <map>
+#include "cook/process/toolchain/Types.hpp"
+#include "cook/process/command/Compile.hpp"
 
 namespace cook { namespace process { namespace toolchain { 
 
-    enum class Part
-    {
-        Begin_,
-        Cli = Begin_, Pre, Inputs, Outputs, DepFile, Options, Defines, IncludePaths, ForceIncludes, Libraries, LibraryPaths,
-        End_
-    };
-
-    using KeyValue = std::pair<std::string, std::string>;
-    using KeyValues = std::vector<KeyValue>;
-    using KeyValuesMap = std::map<Part, KeyValues>;
-
-    using Translator = std::function<std::string (const std::string &, const std::string &)>;
-    using TranslatorMap = std::map<Part, Translator>;
-    using TranslatorMapPtr = std::shared_ptr<TranslatorMap>;
 
     class Interface
     {
@@ -33,25 +14,26 @@ namespace cook { namespace process { namespace toolchain {
 
         Interface()
         {
-            kv_[Part::Cli].emplace_back("", "");
+            kvm_[Part::Cli].emplace_back("", "");
 
             trans_.reset(new TranslatorMap);
-            Translator default_trans = [](const std::string &, const std::string &){return "";};
-            for (unsigned int i = (unsigned int)Part::Begin_; i < (unsigned int)Part::End_; ++i)
-            {
-                auto part = (Part)i;
-                (*trans_)[part] = default_trans;
-            }
+
+            auto lambda = [&](toolchain::Part part){
+                (*trans_)[part] = [](const std::string &, const std::string &){return "";};
+            };
+            toolchain::each_part(lambda);
         }
         virtual ~Interface() {}
 
-        const KeyValuesMap &keyvalues_map() const { return kv_; }
+        const KeyValuesMap &keyvalues_map() const { return kvm_; }
         const TranslatorMapPtr &translator_map() const { return trans_; }
 
         virtual bool set_brand(const std::string &) = 0;
 
+        virtual bool create(command::Compile::Ptr &) const {return false;}
+
     protected:
-        KeyValuesMap kv_;
+        KeyValuesMap kvm_;
         TranslatorMapPtr trans_;
     };
 
