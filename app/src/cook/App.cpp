@@ -87,13 +87,25 @@ Result App::process_()
 
     {
         auto ss = log::scope("Process with chef", -2);
-        // process the menu with the chef
-        /* if (false) */
+        //Process the menu with the chef
         {
-            process::chef::CompileArchiveLink cal("default");
-            MSS(cal.initialize());
+            auto chef = options_.chef;
+            if (chef.empty())
+                //CompileArchiveLink chef is default
+                chef = "cal";
 
-            MSS(cal.mis_en_place(kitchen_));
+            if (false) {}
+            else if (chef == "void")
+            {
+                //No chef. This is useful when only the recipe names are needed, without the timeconsuming file resolving etc.
+            }
+            else if (chef == "cal")
+            {
+                //CompileArchiveLink chef.
+                process::chef::CompileArchiveLink cal("default");
+                MSS(cal.initialize());
+                MSS(cal.mis_en_place(kitchen_));
+            }
         }
     }
 
@@ -119,7 +131,6 @@ Result App::process_generator_(const std::string & name, const std::string & val
 
     if (ptr->can_process(kitchen_))
     {
-
         MSS(ptr->process(kitchen_));
     }
 
