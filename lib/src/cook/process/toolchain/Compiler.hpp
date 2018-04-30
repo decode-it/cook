@@ -56,11 +56,26 @@ namespace cook { namespace process { namespace toolchain {
                 if (language_ == Language::CXX)
                     kvm_[Part::Pre].emplace_back("-std", "c++17");
                 kvm_[Part::Pre].emplace_back("-c", "");
+                bool debug = false;
+                if (debug)
+                {
+                    kvm_[Part::Pre].emplace_back("-g", "");
+                }
+                else
+                {
+                    kvm_[Part::Pre].emplace_back("-O3", "");
+                    kvm_[Part::Define].emplace_back("NDEBUG", "");
+                }
             }
             else if (brand == "msvc")
             {
                 trans[Part::Cli] = [](const std::string &, const std::string &){return "cl";};
-                trans[Part::Pre] = [](const std::string &k, const std::string &v) { return k; };
+                trans[Part::Pre] = [](const std::string &k, const std::string &v)
+                {
+                    if (v.empty())
+                        return k;
+                    return k+":"+v;
+                };
                 trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
                 trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"/Fo:"}+k;};
                 /* trans[Part::DepFile] = [](const std::string &k, const std::string &v){return std::string{"-MMD -MF "}+k;}; */
@@ -75,7 +90,20 @@ namespace cook { namespace process { namespace toolchain {
 
                 if (language_ == Language::C)
                     kvm_[Part::Pre].emplace_back("/TC", "");
+                kvm_[Part::Pre].emplace_back("/std", "c++latest");
+                kvm_[Part::Pre].emplace_back("/nologo", "");
+                kvm_[Part::Pre].emplace_back("/EHsc", "");
                 kvm_[Part::Pre].emplace_back("-c", "");
+                bool debug = false;
+                if (debug)
+                {
+                    kvm_[Part::Pre].emplace_back("/Zi", "");
+                }
+                else
+                {
+                    kvm_[Part::Pre].emplace_back("/O3", "");
+                    kvm_[Part::Define].emplace_back("NDEBUG", "");
+                }
             }
             MSS_END();
         }
