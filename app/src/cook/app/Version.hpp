@@ -14,7 +14,16 @@ namespace cook { namespace app {
 
 inline const std::string & version()
 {
-    static std::string version = COOK_XSTR(COOK_VERSION_MAJOR) "." COOK_XSTR(COOK_VERSION_MINOR) "." COOK_XSTR(COOK_VERSION_PATCH);
+    static std::string version;
+    if (version.empty())
+    {
+        version = COOK_XSTR(COOK_VERSION_MAJOR) "." COOK_XSTR(COOK_VERSION_MINOR) "." COOK_XSTR(COOK_VERSION_PATCH);
+#ifdef NDEBUG
+        version += " (release build)";
+#else
+        version += " (debug build)";
+#endif
+    }
     return version;
 }
 

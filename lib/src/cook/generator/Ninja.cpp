@@ -43,12 +43,15 @@ Result Ninja::process(const Context & context)
             ofs << std::endl;
             ofs << "#Parent recipe: " << ptr->recipe_uri() << std::endl;
             ofs << "rule " << name << std::endl;
-            if (ptr->has_depfile())
-                ofs << "   depfile = $out.d" << std::endl;
-            ofs << "   command = ";
             std::list<std::filesystem::path> input = { "${in}" };
             std::list<std::filesystem::path> output = { "${out}" };
-            ptr->to_stream(ofs, input, output);
+            {
+                const auto depfile = ptr->depfile(input, output);
+                if (!depfile.empty())
+                    ofs << "   depfile = " << depfile << std::endl;
+            }
+            ofs << "   command = ";
+            ptr->stream_command(ofs, input, output);
             ofs << std::endl;
         }
 

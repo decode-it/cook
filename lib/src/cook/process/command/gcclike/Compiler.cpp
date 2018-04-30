@@ -1,4 +1,5 @@
 #include "cook/process/command/gcclike/Compiler.hpp"
+#include "gubg/debug.hpp"
 
 namespace cook { namespace process { namespace command { namespace gcclike {
 
@@ -63,16 +64,28 @@ std::string Compiler::name() const
 
 Result Compiler::process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files)
 {
+    S("");
     return Result();
 }
 
-void Compiler::to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files)
+void Compiler::stream_command(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const
 {
     OrderedCommand::to_stream(oss, input_, input_files, output_, output_files);
     if (output_files.size() == 1)
     {
         oss << " -MMD -MF " << output_files.front().string() << ".d";
     }
+}
+
+std::string Compiler::depfile(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const
+{
+    std::string fn;
+    if (output_files.size() == 1)
+    {
+        fn = output_files.front().string();
+        fn += ".d";
+    }
+    return fn;
 }
 
 } } } }

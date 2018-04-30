@@ -14,7 +14,7 @@ namespace cook { namespace process { namespace command { namespace msvc {
 
         std::string name() const override;
         Result process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override;
-        void to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override;
+        void stream_command(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const override;
 
         void add_define(const std::string & name, const std::string & value) override;
         void add_define(const std::string & name) override;

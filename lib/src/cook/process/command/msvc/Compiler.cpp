@@ -31,7 +31,7 @@ namespace cook { namespace process { namespace command { namespace msvc {
         MSS_BEGIN(Result);
         MSS_END();
     }
-    void Compiler::to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files)
+    void Compiler::stream_command(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const
     {
         OrderedCommand::to_stream(oss, input_, input_files, output_, output_files);
     }

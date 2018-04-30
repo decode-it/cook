@@ -33,7 +33,7 @@ Result Linker::process(const std::list<std::filesystem::path> & input_files, con
     return Result();
 }
 
-void Linker::to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files)
+void Linker::stream_command(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const
 {
     OrderedCommand::to_stream(oss, input_, input_files, output_, output_files);
 }

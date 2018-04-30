@@ -22,14 +22,12 @@ public:
 
     virtual std::string name() const = 0;
     virtual Result process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) = 0;
-    virtual void to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) = 0;
+    virtual void stream_command(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const = 0;
+    virtual std::string depfile(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const {return "";}
     virtual Type type() const = 0;
 
     virtual void set_recipe_uri(const std::string &uri) {recipe_uri_ = uri;}
     virtual const std::string &recipe_uri() const {return recipe_uri_;}
-
-    //TODO: this should be part of a generic system of asking questions to a command
-    virtual bool has_depfile() const {return false;}
 
 private:
     std::string recipe_uri_;
