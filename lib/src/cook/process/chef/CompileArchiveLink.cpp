@@ -1,4 +1,4 @@
-#include "cook/process/chef/CompileLinkArchive.hpp"
+#include "cook/process/chef/CompileArchiveLink.hpp"
 #include "cook/process/souschef/Resolver.hpp"
 #include "cook/process/souschef/DependencyPropagator.hpp"
 #include "cook/process/souschef/IncludePathSetter.hpp"
@@ -22,7 +22,7 @@ const static std::initializer_list<Language> default_supported_languages = { Lan
 
 }
 
-LinkArchiveChef::LinkArchiveChef(const std::string & name)
+CompileArchiveLink::CompileArchiveLink(const std::string & name)
     : name_(name)
 {
     linker_     = std::make_shared<souschef::Linker>();
@@ -32,7 +32,7 @@ LinkArchiveChef::LinkArchiveChef(const std::string & name)
         compilers_[Language] = std::make_shared<souschef::Compiler>(Language);
 }
 
-Result LinkArchiveChef::initialize()
+Result CompileArchiveLink::initialize()
 {
     MSS_BEGIN(Result);
 
@@ -120,27 +120,27 @@ Result LinkArchiveChef::initialize()
     MSS_END();
 }
 
-void LinkArchiveChef::set_compiler(Language language, SouschefPtr compiler)
+void CompileArchiveLink::set_compiler(Language language, SouschefPtr compiler)
 {
     compilers_[language] = compiler;
 }
 
-void LinkArchiveChef::clear_compiler(Language language)
+void CompileArchiveLink::clear_compiler(Language language)
 {
     compilers_.erase(language);
 }
 
-void LinkArchiveChef::set_linker(SouschefPtr linker)
+void CompileArchiveLink::set_linker(SouschefPtr linker)
 {
     linker_ = linker;
 }
 
-void LinkArchiveChef::set_archiver(SouschefPtr archiver)
+void CompileArchiveLink::set_archiver(SouschefPtr archiver)
 {
     archiver_ = archiver;
 }
 
-std::list<SouschefPtr> LinkArchiveChef::generate_compile_only_steps_() const
+std::list<SouschefPtr> CompileArchiveLink::generate_compile_only_steps_() const
 {
     std::list<SouschefPtr> result;
 

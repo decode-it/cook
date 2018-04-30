@@ -135,9 +135,9 @@ build .b0/lib/src/cook/process/RecipeFilteredGraph.cpp.obj: compile lib/src/cook
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/process/build/Graph.cpp.obj: compile lib/src/cook/process/build/Graph.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/chef/Chef.cpp.obj: compile lib/src/cook/process/chef/Chef.cpp
+build .b0/lib/src/cook/process/chef/CompileArchiveLink.cpp.obj: compile lib/src/cook/process/chef/CompileArchiveLink.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/process/chef/CompileLinkArchive.cpp.obj: compile lib/src/cook/process/chef/CompileLinkArchive.cpp
+build .b0/lib/src/cook/process/chef/Interface.cpp.obj: compile lib/src/cook/process/chef/Interface.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/process/command/OrderedCommand.cpp.obj: compile lib/src/cook/process/command/OrderedCommand.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
@@ -408,8 +408,8 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/process/Menu.cpp.obj $
     .b0/lib/src/cook/process/RecipeFilteredGraph.cpp.obj $
     .b0/lib/src/cook/process/build/Graph.cpp.obj $
-    .b0/lib/src/cook/process/chef/Chef.cpp.obj $
-    .b0/lib/src/cook/process/chef/CompileLinkArchive.cpp.obj $
+    .b0/lib/src/cook/process/chef/CompileArchiveLink.cpp.obj $
+    .b0/lib/src/cook/process/chef/Interface.cpp.obj $
     .b0/lib/src/cook/process/command/OrderedCommand.cpp.obj $
     .b0/lib/src/cook/process/command/Toolchain.cpp.obj $
     .b0/lib/src/cook/process/command/gcclike/Archiver.cpp.obj $

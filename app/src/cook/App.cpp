@@ -1,5 +1,5 @@
 #include "cook/App.hpp"
-#include "cook/process/chef/CompileLinkArchive.hpp"
+#include "cook/process/chef/CompileArchiveLink.hpp"
 #include "cook/algo/Book.hpp"
 #include "cook/util/File.hpp"
 #include "cook/log/Scope.hpp"
@@ -90,10 +90,10 @@ Result App::process_()
         // process the menu with the chef
         /* if (false) */
         {
-            process::chef::LinkArchiveChef lac("default");
-            MSS(lac.initialize());
+            process::chef::CompileArchiveLink cal("default");
+            MSS(cal.initialize());
 
-            MSS(lac.mis_en_place(kitchen_));
+            MSS(cal.mis_en_place(kitchen_));
         }
     }
 

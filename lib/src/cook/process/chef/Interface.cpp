@@ -1,11 +1,11 @@
-#include "cook/process/chef/Chef.hpp"
+#include "cook/process/chef/Interface.hpp"
 #include "cook/log/Scope.hpp"
 
 using namespace cook::model;
 
 namespace cook { namespace process { namespace chef {
 
-Result Chef::mis_en_place(Context & context)
+Result Interface::mis_en_place(Context & context)
 {
     MSS_BEGIN(Result);
 
@@ -39,7 +39,7 @@ Result Chef::mis_en_place(Context & context)
     MSS_END();
 }
 
-Result Chef::mis_en_place_(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context &context, const Brigade & brigade) const
+Result Interface::mis_en_place_(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context &context, const Brigade & brigade) const
 {
     MSS_BEGIN(Result);
 
@@ -53,7 +53,7 @@ Result Chef::mis_en_place_(model::Recipe & recipe, RecipeFilteredGraph & file_co
     MSS_END();
 }
 
-Result Chef::find_brigade(const Brigade *& brigade, model::Recipe * recipe) const
+Result Interface::find_brigade(const Brigade *& brigade, model::Recipe * recipe) const
 {
     MSS_BEGIN(Result);
 
