@@ -32,6 +32,7 @@ Proof-of-concept version.
 * Added `-C void` chef to speed-up generation of naft output when only the recipe names are required.
 * [wip] Support for gcc, clang and msvc toolchains
 * [wip] Support for windows and osx
+* [wip] Support for recursive header dependency detection
 
 ## Next
 
