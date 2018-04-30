@@ -53,7 +53,8 @@ namespace cook { namespace process { namespace toolchain {
                 trans[Part::IncludePath] = [](const std::string &k, const std::string &v){return std::string{"-I "}+k;};
                 trans[Part::ForceInclude] = [](const std::string &k, const std::string &v){return std::string{"-include "}+k;};
 
-                kvm_[Part::Pre].emplace_back("-std", "c++17");
+                if (language_ == Language::CXX)
+                    kvm_[Part::Pre].emplace_back("-std", "c++17");
                 kvm_[Part::Pre].emplace_back("-c", "");
             }
             else if (brand == "msvc")
