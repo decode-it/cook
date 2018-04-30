@@ -24,6 +24,15 @@ public:
     virtual Result process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) = 0;
     virtual void to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) = 0;
     virtual Type type() const = 0;
+
+    virtual void set_recipe_uri(const std::string &uri) {recipe_uri_ = uri;}
+    virtual const std::string &recipe_uri() const {return recipe_uri_;}
+
+    //TODO: this should be part of a generic system of asking questions to a command
+    virtual bool has_depfile() const {return false;}
+
+private:
+    std::string recipe_uri_;
 };
 
 inline std::ostream & operator<<(std::ostream & str, Interface::Type type)

@@ -146,6 +146,7 @@ Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, co
 
     command::LinkerPtr lp;
     MSS(context.toolchain().create_linker(lp));
+    lp->set_recipe_uri(recipe.uri().string());
 
     // set the libraries
     for(const ingredient::KeyValue & lib : libs)

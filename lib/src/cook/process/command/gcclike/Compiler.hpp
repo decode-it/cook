@@ -21,6 +21,8 @@ public:
     void add_include_path(const std::filesystem::path & path) override;
     void add_force_include(const std::filesystem::path & path) override;
 
+    bool has_depfile() const override {return true;}
+
 private:
     ArgumentDesc input_;
     ArgumentDesc output_;

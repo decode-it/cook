@@ -82,6 +82,7 @@ Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recip
     
     process::command::CompilerPtr cp;
     MSS(context.toolchain().create_compiler(cp, language_));
+    cp->set_recipe_uri(recipe.uri().string());
 
     // add the include paths
     for (const ingredient::File & f : recipe.files().range(LanguageTypePair(Language::Undefined, Type::IncludePath)))

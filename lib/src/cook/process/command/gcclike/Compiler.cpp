@@ -69,6 +69,10 @@ Result Compiler::process(const std::list<std::filesystem::path> & input_files, c
 void Compiler::to_stream(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files)
 {
     OrderedCommand::to_stream(oss, input_, input_files, output_, output_files);
+    if (output_files.size() == 1)
+    {
+        oss << " -MMD -MF " << output_files.front().string() << ".d";
+    }
 }
 
 } } } }

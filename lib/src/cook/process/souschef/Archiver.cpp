@@ -83,6 +83,7 @@ Result Archiver::archive_command_(command::Ptr &ptr, const model::Recipe & recip
     MSS_BEGIN(Result);
     process::command::ArchiverPtr ap;
     MSS(context.toolchain().create_archiver(ap));
+    ap->set_recipe_uri(recipe.uri().string());
     ptr = ap;
     MSS_END();
 }

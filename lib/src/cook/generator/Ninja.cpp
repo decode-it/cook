@@ -27,9 +27,8 @@ Result Ninja::process(const Context & context)
     std::ofstream ofs;
     MSS(open_output_stream(context, ofs));
 
-
     std::map<cook::process::command::Ptr, std::string> command_map;
-    auto get_command = [&](cook::process::command::Ptr ptr)
+    auto goc_command = [&](cook::process::command::Ptr ptr)
     {
         auto it = command_map.find(ptr);
         if (it == command_map.end())
@@ -42,7 +41,10 @@ Result Ninja::process(const Context & context)
 
             // and write out the command
             ofs << std::endl;
+            ofs << "#Parent recipe: " << ptr->recipe_uri() << std::endl;
             ofs << "rule " << name << std::endl;
+            if (ptr->has_depfile())
+                ofs << "   depfile = $out.d" << std::endl;
             ofs << "   command = ";
             std::list<std::filesystem::path> input = { "${in}" };
             std::list<std::filesystem::path> output = { "${out}" };
@@ -126,7 +128,7 @@ Result Ninja::process(const Context & context)
                 });
             }
 
-            const auto build_command = get_command(command);
+            const auto build_command = goc_command(command);
             //The build basically specifies the dependency between the output and input files
             ofs << "build";
             for (const auto & f: output_files)
