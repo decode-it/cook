@@ -22,8 +22,19 @@ Compiler::Compiler(std::string cli_c, std::string cli_cxx, Language language)
     default:
         break;
     }
-    add_argument(ArgumentDesc(1, "-g"), std::string());
+
     add_argument(ArgumentDesc(2, "-c"), std::string());
+
+    bool debug = false;
+    if (debug)
+    {
+        add_argument(ArgumentDesc(1, "-g"), std::string());
+    }
+    else
+    {
+        add_argument(ArgumentDesc(1, "-O3"), std::string());
+        add_define("NDEBUG");
+    }
 }
 
 void Compiler::add_define(const std::string & name, const std::string & value)
