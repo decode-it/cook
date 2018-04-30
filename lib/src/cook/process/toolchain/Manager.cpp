@@ -2,8 +2,20 @@
 #include "cook/process/toolchain/Compiler.hpp"
 #include "cook/process/toolchain/Archiver.hpp"
 #include "cook/process/toolchain/Linker.hpp"
+#include "cook/OS.hpp"
 
 namespace cook { namespace process { namespace toolchain { 
+
+    Manager::Manager()
+    {
+        switch (get_os())
+        {
+            case OS::Linux: brand_ = "gcc"; break;
+            case OS::Windows: brand_ = "msvc"; break;
+            case OS::MacOS: brand_ = "clang"; break;
+            default: brand_ = "gcc"; break;
+        }
+    }
 
     const Interface &Manager::compiler(Language language) const
     {

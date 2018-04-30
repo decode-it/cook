@@ -10,6 +10,8 @@ namespace cook { namespace process { namespace toolchain {
     class Manager
     {
     public:
+        Manager();
+
         const Interface &compiler(Language) const;
         const Interface &archiver() const {return archiver_();}
         const Interface &linker() const {return linker_();}
