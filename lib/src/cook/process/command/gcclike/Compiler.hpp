@@ -13,9 +13,9 @@ public:
     Compiler(std::string cli_c, std::string cli_cxx, Language);
 
     std::string name() const override;
-    Result process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) override;
-    void stream_command(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const override;
-    std::string depfile(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const override;
+    Result process(const Filenames & input_files, const Filenames & output_files) override;
+    void stream_command(std::ostream & oss, const Filenames & input_files, const Filenames & output_files) const override;
+    std::string depfile(const Filenames & input_files, const Filenames & output_files) const override;
 
     void add_define(const std::string & name, const std::string & value) override;
     void add_define(const std::string & name) override;
@@ -25,11 +25,12 @@ public:
 private:
     ArgumentDesc input_;
     ArgumentDesc output_;
+    ArgumentDesc depfile_;
     ArgumentDesc define_;
     ArgumentDesc include_;
     ArgumentDesc force_include_;
 
-
+    static void create_depfiles_(Filenames &dst, const Filenames &src);
 };
 
 } } } }

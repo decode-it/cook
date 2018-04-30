@@ -8,17 +8,13 @@
 
 namespace cook { namespace process { namespace command {
 
-class OrderedCommand : public Interface
-{
-public:
-    using order_type = unsigned char;
-
+    using order_type = int;
     struct ArgumentDesc
     {
         ArgumentDesc(order_type priority = 0, const std::string & option = std::string(), bool add_space = true)
-            : priority(priority),
-              option(option),
-              add_space(add_space)
+        : priority(priority),
+        option(option),
+        add_space(add_space)
         {
         }
 
@@ -26,47 +22,54 @@ public:
         std::string option;
         bool add_space;
     };
-
-    void add_argument(const ArgumentDesc & desc, const std::string & value);
-    void set_command(const std::filesystem::path & command);
-    const std::filesystem::path & command() const;
-
-    template <typename Functor> void each_argument(Functor && functor) const
+    inline bool operator<(const ArgumentDesc & lhs, const ArgumentDesc & rhs)
     {
-        for(const auto & p : arguments_)
-            for(const auto & a : p.second)
-                functor(p.first.option, p.first.add_space, a);
+        return std::make_pair(lhs.priority, lhs.option) < std::make_pair(rhs.priority, rhs.option);
     }
 
-    template <typename Functor> bool each_argument(Functor && functor, const std::pair<order_type, order_type> & range = std::pair<order_type, order_type>(0, std::numeric_limits<order_type>::max())) const
+    using Filename = std::filesystem::path;
+    using Filenames = std::list<Filename>;
+
+    using FilenamesMap = std::map<ArgumentDesc, const Filenames *>;
+
+    class OrderedCommand : public Interface
     {
-        MSS_BEGIN(bool);
-        MSS(range.first <= range.second - 1);
+    public:
+        void add_argument(const ArgumentDesc & desc, const std::string & value);
+        void set_command(const std::filesystem::path & command);
+        const std::filesystem::path & command() const;
+
+        template <typename Functor> void each_argument(Functor && functor) const
+        {
+            for(const auto & p : arguments_)
+                for(const auto & a : p.second)
+                    functor(p.first.option, p.first.add_space, a);
+        }
+
+        template <typename Functor> bool each_argument(Functor && functor, const std::pair<order_type, order_type> & range = std::pair<order_type, order_type>(0, std::numeric_limits<order_type>::max())) const
+        {
+            MSS_BEGIN(bool);
+            MSS(range.first <= range.second - 1);
 
 
-        auto first = arguments_.lower_bound(range.first);
-        auto second = arguments_.upper_bound(range.second-1);
+            auto first = arguments_.lower_bound(range.first);
+            auto second = arguments_.upper_bound(range.second-1);
 
-        for(const auto & p : gubg::make_range(first, second))
-            for(const auto & a : p.second)
-                functor(p.first.option, p.first.add_space, a);
+            for(const auto & p : gubg::make_range(first, second))
+                for(const auto & a : p.second)
+                    functor(p.first.option, p.first.add_space, a);
 
-        MSS_END();
-    }
+            MSS_END();
+        }
 
-    void to_stream(std::ostream & oss, const ArgumentDesc &input_desc, const std::list<std::filesystem::path> & input_files, const ArgumentDesc &output_desc, const std::list<std::filesystem::path> & output_files) const;
+        /* Deprecated, use FilenamesMap version instead. */
+        void to_stream(std::ostream & oss, const ArgumentDesc &input_desc, const Filenames & input_files, const ArgumentDesc &output_desc, const Filenames & output_files) const;
+        void to_stream(std::ostream & oss, const FilenamesMap &) const;
 
-private:
-    std::map<ArgumentDesc, std::list<std::string>> arguments_;
-    std::filesystem::path command_;
-};
-
-inline bool operator<(const OrderedCommand::ArgumentDesc & lhs, const OrderedCommand::ArgumentDesc & rhs)
-{
-    return lhs.priority < rhs.priority || (lhs.priority == rhs.priority && lhs.option < rhs.option);
-}
-
-
+    private:
+        std::map<ArgumentDesc, std::list<std::string>> arguments_;
+        std::filesystem::path command_;
+    };
 
 } } }
 

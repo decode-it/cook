@@ -28,12 +28,12 @@ std::string Linker::name() const
     return gubg::stream([&](auto & os) { os << "linker [" << command()  << "]"; });
 }
 
-Result Linker::process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files)
+Result Linker::process(const Filenames & input_files, const Filenames & output_files)
 {
     return Result();
 }
 
-void Linker::stream_command(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const
+void Linker::stream_command(std::ostream & oss, const Filenames & input_files, const Filenames & output_files) const
 {
     OrderedCommand::to_stream(oss, input_, input_files, output_, output_files);
 }

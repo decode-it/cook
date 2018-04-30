@@ -6,9 +6,10 @@ namespace cook { namespace process { namespace command { namespace gcclike {
 Compiler::Compiler(std::string cli_c, std::string cli_cxx, Language language)
     : input_(10),
       output_(20, "-o"),
-      define_(30, "-D"),
-      include_(40, "-I"),
-      force_include_(50, "-include")
+      depfile_(30, "-MMD -MF"),
+      define_(40, "-D"),
+      include_(50, "-I"),
+      force_include_(60, "-include")
 {
     switch (language)
     {
@@ -62,30 +63,37 @@ std::string Compiler::name() const
     return gubg::stream([&](auto & os) { os << "compiler [" << command()  << "]"; });
 }
 
-Result Compiler::process(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files)
+Result Compiler::process(const Filenames & input_files, const Filenames & output_files)
 {
     S("");
     return Result();
 }
 
-void Compiler::stream_command(std::ostream & oss, const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const
+void Compiler::create_depfiles_(Filenames &dst, const Filenames &src)
 {
-    OrderedCommand::to_stream(oss, input_, input_files, output_, output_files);
-    if (output_files.size() == 1)
-    {
-        oss << " -MMD -MF " << output_files.front().string() << ".d";
-    }
+    dst = src;
+    for (auto &fn: dst)
+        fn += ".d";
 }
 
-std::string Compiler::depfile(const std::list<std::filesystem::path> & input_files, const std::list<std::filesystem::path> & output_files) const
+void Compiler::stream_command(std::ostream & oss, const Filenames & input_files, const Filenames & output_files) const
 {
-    std::string fn;
-    if (output_files.size() == 1)
-    {
-        fn = output_files.front().string();
-        fn += ".d";
-    }
-    return fn;
+    FilenamesMap fm;
+    fm[input_] = &input_files;
+    fm[output_] = &output_files;
+    Filenames dep_files;
+    create_depfiles_(dep_files, output_files);
+    fm[depfile_] = &dep_files;
+    OrderedCommand::to_stream(oss, fm);
+}
+
+std::string Compiler::depfile(const Filenames & input_files, const Filenames & output_files) const
+{
+    Filenames dep_files;
+    create_depfiles_(dep_files, output_files);
+    if (dep_files.empty())
+        return "";
+    return dep_files.front();
 }
 
 } } } }
