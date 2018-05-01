@@ -9,6 +9,7 @@
 #include "cook/generator/Ninja.hpp"
 #include "cook/process/toolchain/Manager.hpp"
 #include "gubg/mss.hpp"
+#include "gubg/Strange.hpp"
 #include <cassert>
 
 namespace  { 
@@ -110,7 +111,12 @@ OS Context::os() const
 bool Context::set_toolchain(const std::string &toolchain)
 {
     MSS_BEGIN(bool);
-    MSS(toolchain_().set_brand(toolchain));
+    gubg::Strange strange(toolchain);
+    std::string part;
+    while (strange.pop_until(part, '-') || strange.pop_all(part))
+    {
+        MSS(toolchain_().configure(part));
+    }
     MSS_END();
 }
 

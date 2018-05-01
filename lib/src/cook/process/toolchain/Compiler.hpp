@@ -11,100 +11,132 @@ namespace cook { namespace process { namespace toolchain {
     public:
         Compiler(Language language): language_(language)
         {
-        }
-
-        bool set_brand(const std::string &brand) override
-        {
-            MSS_BEGIN(bool, "");
-            auto &trans = *trans_;
-            if (false) {}
-            else if (brand == "gcc" || brand == "clang")
             {
+                auto configure_brand = [&](const std::string &key, const std::string &value, KeyValuesMap &kvm, TranslatorMap &trans){
+                    MSS_BEGIN(bool);
+                    MSS_Q(key == "brand");
+                    const auto &brand = value;
+                    if (false) {}
+                    else if (brand == "gcc" || brand == "clang")
+                    {
+                        if (false) {}
+                        else if (brand == "gcc")
+                            switch (language_)
+                            {
+                                case Language::C: trans[Part::Cli] = [](const std::string &, const std::string &){return "gcc";}; break;
+                                case Language::CXX: trans[Part::Cli] = [](const std::string &, const std::string &){return "g++";}; break;
+                            }
+                        else if (brand == "clang")
+                            switch (language_)
+                            {
+                                case Language::C: trans[Part::Cli] = [](const std::string &, const std::string &){return "clang";}; break;
+                                case Language::CXX: trans[Part::Cli] = [](const std::string &, const std::string &){return "clang++";}; break;
+                            }
+
+                        trans[Part::Pre] = [](const std::string &k, const std::string &v)
+                        {
+                            if (v.empty())
+                                return k;
+                            return k+"="+v;
+                        };
+                        trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"-o "}+k;};
+                        trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
+                        trans[Part::DepFile] = [](const std::string &k, const std::string &v){return std::string{"-MMD -MF "}+k;};
+                        trans[Part::Define] = [](const std::string &k, const std::string &v)
+                        {
+                            if (v.empty())
+                                return std::string{"-D"}+k;
+                            return std::string{"-D"}+k+"="+v;
+                        };
+                        trans[Part::IncludePath] = [](const std::string &k, const std::string &v){return std::string{"-I "}+k;};
+                        trans[Part::ForceInclude] = [](const std::string &k, const std::string &v){return std::string{"-include "}+k;};
+
+                        if (language_ == Language::CXX)
+                            kvm[Part::Pre].emplace_back("-std", "c++17");
+                        kvm[Part::Pre].emplace_back("-c", "");
+
+                        configure_.add(configure_gcclike_);
+                    }
+                    else if (brand == "msvc")
+                    {
+                        trans[Part::Cli] = [](const std::string &, const std::string &){return "cl";};
+                        trans[Part::Pre] = [](const std::string &k, const std::string &v)
+                        {
+                            if (v.empty())
+                                return k;
+                            return k+":"+v;
+                        };
+                        trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"/Fo:"}+k;};
+                        trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
+                        /* trans[Part::DepFile] = [](const std::string &k, const std::string &v){return std::string{"-MMD -MF "}+k;}; */
+                        trans[Part::Define] = [](const std::string &k, const std::string &v)
+                        {
+                            if (v.empty())
+                                return std::string{"/D"}+k;
+                            return std::string{"/D"}+k+"="+v;
+                        };
+                        trans[Part::IncludePath] = [](const std::string &k, const std::string &v){return std::string{"/I"}+k;};
+                        trans[Part::ForceInclude] = [](const std::string &k, const std::string &v){return std::string{"/FI"}+k;};
+
+                        if (language_ == Language::C)
+                            kvm[Part::Pre].emplace_back("/TC", "");
+                        kvm[Part::Pre].emplace_back("/std", "c++latest");
+                        kvm[Part::Pre].emplace_back("/nologo", "");
+                        kvm[Part::Pre].emplace_back("/EHsc", "");
+                        kvm[Part::Pre].emplace_back("-c", "");
+
+                        configure_.add(configure_msvc_);
+                    }
+                    MSS_END();
+                };
+                configure_.add(configure_brand);
+            }
+            {
+                auto configure_generic = [&](const std::string &key, const std::string &value, KeyValuesMap &kvm, TranslatorMap &trans)
+                {
+                    MSS_BEGIN(bool);
+                    if (false) {}
+                    else if (key == "config")
+                    {
+                        if (value == "debug")
+                        {
+                            MSS(configure_("debug_symbols", "true", kvm, trans));
+                        }
+                        else if (value == "release")
+                        {
+                            MSS(configure_("optimization", "max_speed", kvm, trans));
+                            kvm[Part::Define].emplace_back("NDEBUG", "");
+                        }
+                        else MSS(false);
+                    }
+                    else MSS_Q(false);
+                    MSS_END();
+                };
+                configure_.add(configure_generic);
+            }
+
+            configure_gcclike_ = [&](const std::string &key, const std::string &value, KeyValuesMap &kvm, TranslatorMap &trans)
+            {
+                MSS_BEGIN(bool);
                 if (false) {}
-                else if (brand == "gcc")
-                    switch (language_)
-                    {
-                        case Language::C: trans[Part::Cli] = [](const std::string &, const std::string &){return "gcc";}; break;
-                        case Language::CXX: trans[Part::Cli] = [](const std::string &, const std::string &){return "g++";}; break;
-                    }
-                else if (brand == "clang")
-                    switch (language_)
-                    {
-                        case Language::C: trans[Part::Cli] = [](const std::string &, const std::string &){return "clang";}; break;
-                        case Language::CXX: trans[Part::Cli] = [](const std::string &, const std::string &){return "clang++";}; break;
-                    }
-
-                trans[Part::Pre] = [](const std::string &k, const std::string &v)
-                {
-                    if (v.empty())
-                        return k;
-                    return k+"="+v;
-                };
-                trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"-o "}+k;};
-                trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
-                trans[Part::DepFile] = [](const std::string &k, const std::string &v){return std::string{"-MMD -MF "}+k;};
-                trans[Part::Define] = [](const std::string &k, const std::string &v)
-                {
-                    if (v.empty())
-                        return std::string{"-D"}+k;
-                    return std::string{"-D"}+k+"="+v;
-                };
-                trans[Part::IncludePath] = [](const std::string &k, const std::string &v){return std::string{"-I "}+k;};
-                trans[Part::ForceInclude] = [](const std::string &k, const std::string &v){return std::string{"-include "}+k;};
-
-                if (language_ == Language::CXX)
-                    kvm_[Part::Pre].emplace_back("-std", "c++17");
-                kvm_[Part::Pre].emplace_back("-c", "");
-                bool debug = false;
-                if (debug)
-                {
-                    kvm_[Part::Pre].emplace_back("-g", "");
-                }
-                else
-                {
-                    kvm_[Part::Pre].emplace_back("-O3", "");
-                    kvm_[Part::Define].emplace_back("NDEBUG", "");
-                }
-            }
-            else if (brand == "msvc")
+                else if (key == "debug_symbols" && value == "true")
+                    kvm[Part::Pre].emplace_back("-g", "");
+                else if (key == "optimization" && value == "max_speed")
+                    kvm[Part::Pre].emplace_back("-O3", "");
+                else MSS(false);
+                MSS_END();
+            };
+            configure_msvc_ = [&](const std::string &key, const std::string &value, KeyValuesMap &kvm, TranslatorMap &trans)
             {
-                trans[Part::Cli] = [](const std::string &, const std::string &){return "cl";};
-                trans[Part::Pre] = [](const std::string &k, const std::string &v)
-                {
-                    if (v.empty())
-                        return k;
-                    return k+":"+v;
-                };
-                trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"/Fo:"}+k;};
-                trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
-                /* trans[Part::DepFile] = [](const std::string &k, const std::string &v){return std::string{"-MMD -MF "}+k;}; */
-                trans[Part::Define] = [](const std::string &k, const std::string &v)
-                {
-                    if (v.empty())
-                        return std::string{"/D"}+k;
-                    return std::string{"/D"}+k+"="+v;
-                };
-                trans[Part::IncludePath] = [](const std::string &k, const std::string &v){return std::string{"/I"}+k;};
-                trans[Part::ForceInclude] = [](const std::string &k, const std::string &v){return std::string{"/FI"}+k;};
-
-                if (language_ == Language::C)
-                    kvm_[Part::Pre].emplace_back("/TC", "");
-                kvm_[Part::Pre].emplace_back("/std", "c++latest");
-                kvm_[Part::Pre].emplace_back("/nologo", "");
-                kvm_[Part::Pre].emplace_back("/EHsc", "");
-                kvm_[Part::Pre].emplace_back("-c", "");
-                bool debug = false;
-                if (debug)
-                {
-                    kvm_[Part::Pre].emplace_back("/Zi", "");
-                }
-                else
-                {
-                    kvm_[Part::Pre].emplace_back("/O3", "");
-                    kvm_[Part::Define].emplace_back("NDEBUG", "");
-                }
-            }
-            MSS_END();
+                MSS_BEGIN(bool);
+                if (false) {}
+                else if (key == "debug_symbols" && value == "true")
+                    kvm[Part::Pre].emplace_back("/Zi", "");
+                else if (key == "optimization" && value == "max_speed")
+                    kvm[Part::Pre].emplace_back("/O2", "");
+                else MSS(false);
+                MSS_END();
+            };
         }
 
         bool create(command::Compile::Ptr &ptr) const override
@@ -116,6 +148,8 @@ namespace cook { namespace process { namespace toolchain {
 
     private:
         const Language language_;
+        ConfigureFunction configure_gcclike_;
+        ConfigureFunction configure_msvc_;
     };
 
 } } } 

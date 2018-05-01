@@ -16,16 +16,21 @@ namespace cook { namespace process { namespace toolchain {
         const Interface &archiver() const {return archiver_();}
         const Interface &linker() const {return linker_();}
 
-        bool set_brand(const std::string &brand);
+        Result configure(const std::string &value);
 
     private:
-        std::string brand_;
+        using ConfigValue = std::pair<std::string, std::string>;
+        using ConfigValues = std::list<ConfigValue>;
+        ConfigValues config_values_;
         mutable std::map<Language, Interface::Ptr> compilers_;
         mutable Interface::Ptr archiver_ptr_;
         mutable Interface::Ptr linker_ptr_;
 
         Interface &archiver_() const;
         Interface &linker_() const;
+
+        static bool configure_(Interface &, const ConfigValue &);
+        static bool configure_(Interface &, ConfigValues::const_iterator begin, ConfigValues::const_iterator end);
     };
 
 } } } 
