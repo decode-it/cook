@@ -30,6 +30,7 @@ Proof-of-concept version.
 ## 1.1.1 (open)
 
 * Added `-C void` chef to speed-up generation of naft output when only the recipe names are required.
+* Support for debug/release and x86/x64 builds via the toolchain option
 * [wip] Support for gcc, clang and msvc toolchains
 * [wip] Support for windows and osx
 * [wip] Support for recursive header dependency detection

@@ -1,59 +1,38 @@
 #ifndef HEADER_cook_process_command_Compile_hpp_ALREADY_INCLUDED
 #define HEADER_cook_process_command_Compile_hpp_ALREADY_INCLUDED
 
-#include "cook/process/command/Interface.hpp"
+#include "cook/process/command/CommonImpl.hpp"
 #include "cook/process/toolchain/Types.hpp"
+#include "gubg/OnlyOnce.hpp"
 #include <memory>
 
 namespace cook { namespace process { namespace command { 
 
-    class Compile: public Interface
+    class Compile: public CommonImpl
     {
     public:
         using Ptr = std::shared_ptr<Compile>;
 
-        Compile(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans): kvm_(kvm), trans_(trans) {}
-        ~Compile() {}
+        Compile(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans): CommonImpl(kvm, trans) {}
 
         std::string name() const override {return "Compile";}
         Type type() const override {return Type::Compile;}
 
         void set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) override
         {
+            CommonImpl::set_inputs_outputs(input_files, output_files);
+
+            //Create the depfiles by appending ".d" to the output files
             {
-                auto &inputs = kvm_[toolchain::Part::Input];
-                inputs.clear();
-                for (const auto &fn: input_files)
-                    inputs.emplace_back(fn.string(), "");
-            }
-            {
-                auto &outputs = kvm_[toolchain::Part::Output];
+                const auto &outputs = kvm_[toolchain::Part::Output];
                 auto &depfiles = kvm_[toolchain::Part::DepFile];
-                outputs.clear();
                 depfiles.clear();
-                for (const auto &fn: output_files)
+                for (const auto &p: outputs)
                 {
-                    auto fn_str = fn.string();
-                    outputs.emplace_back(fn_str, "");
-                    fn_str += ".d";
-                    depfiles.emplace_back(fn_str, "");
+                    auto fn = p.first+".d";
+                    depfiles.emplace_back(fn, "");
                 }
             }
-        }
-        void stream_part(std::ostream & os, toolchain::Part part, const toolchain::Translator *trans_ptr = nullptr) const override
-        {
-            const auto &kvs = kvm_[part];
-            const auto &trans = (!!trans_ptr ? *trans_ptr : (*trans_)[part]);
-            for (const auto &kv: kvs)
-            {
-                const auto str = trans(kv.first, kv.second);
-                if (!str.empty())
-                    os << str << ' ';
-            }
-        }
-        void stream_command(std::ostream & os) const override
-        {
-            toolchain::each_part([&](toolchain::Part part){ stream_part(os, part); });
         }
         Result process() override {return Result();}
 
@@ -70,10 +49,6 @@ namespace cook { namespace process { namespace command {
         {
             kvm_[toolchain::Part::ForceInclude].emplace_back(path.string(), "");
         }
-
-    private:
-        mutable toolchain::KeyValuesMap kvm_;
-        toolchain::TranslatorMapPtr trans_;
     };
 
 } } } 

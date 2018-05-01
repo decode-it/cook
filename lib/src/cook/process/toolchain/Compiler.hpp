@@ -123,6 +123,10 @@ namespace cook { namespace process { namespace toolchain {
                     kvm[Part::Pre].emplace_back("-g", "");
                 else if (key == "optimization" && value == "max_speed")
                     kvm[Part::Pre].emplace_back("-O3", "");
+                else if (key == "arch" && value == "x86")
+                    kvm[Part::Pre].emplace_back("-m32", "");
+                else if (key == "arch" && value == "x64")
+                    kvm[Part::Pre].emplace_back("-m64", "");
                 else MSS(false);
                 MSS_END();
             };
@@ -134,6 +138,8 @@ namespace cook { namespace process { namespace toolchain {
                     kvm[Part::Pre].emplace_back("/Zi", "");
                 else if (key == "optimization" && value == "max_speed")
                     kvm[Part::Pre].emplace_back("/O2", "");
+                else if (key == "arch" && value == "x86") {}
+                else if (key == "arch" && value == "x64") {}
                 else MSS(false);
                 MSS_END();
             };

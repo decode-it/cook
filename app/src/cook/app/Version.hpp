@@ -18,11 +18,16 @@ inline const std::string & version()
     if (version.empty())
     {
         version = COOK_XSTR(COOK_VERSION_MAJOR) "." COOK_XSTR(COOK_VERSION_MINOR) "." COOK_XSTR(COOK_VERSION_PATCH);
+        version += " (";
 #ifdef NDEBUG
-        version += " (release build)";
+        version += "release";
 #else
-        version += " (debug build)";
+        version += "debug";
 #endif
+        version += ", ";
+        const auto nr_bits = (sizeof(void*)*8);
+        version += std::to_string(nr_bits);
+        version += "bit)";
     }
     return version;
 }

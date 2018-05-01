@@ -28,7 +28,7 @@ namespace cook { namespace process { namespace command {
         virtual Type type() const = 0;
 
         virtual void set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) = 0;
-        virtual void stream_part(std::ostream &, toolchain::Part, const toolchain::Translator * = nullptr) const = 0;
+        virtual bool stream_part(std::ostream &, toolchain::Part, const toolchain::Translator * = nullptr) const = 0;
         virtual void stream_command(std::ostream &) const = 0;
         virtual Result process() = 0;
 

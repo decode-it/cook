@@ -37,6 +37,8 @@ namespace cook { namespace process { namespace toolchain {
 
                         kvm[Part::Pre].clear();
                         kvm[Part::Pre].emplace_back("-std", "c++17");
+
+                        configure_.add(configure_gcclike_);
                     }
                     else if (brand == "msvc")
                     {
@@ -45,19 +47,32 @@ namespace cook { namespace process { namespace toolchain {
                         trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
                         trans[Part::Library] = [](const std::string &k, const std::string &v){return k;};
                         trans[Part::LibraryPath] = [](const std::string &k, const std::string &v){return std::string{"/LIBPATH:"}+k;};
+
+                        configure_.add(configure_msvc_);
                     }
                     MSS_END();
                 };
                 configure_.add(configure_brand);
             }
+            configure_gcclike_ = [&](const std::string &key, const std::string &value, KeyValuesMap &kvm, TranslatorMap &trans)
             {
-                auto configure_rest = [&](const std::string &key, const std::string &value, KeyValuesMap &kvm, TranslatorMap &trans)
+                MSS_BEGIN(bool);
+                if (false) {}
+                else if (key == "arch" && value == "x86")
+                    kvm[Part::Pre].emplace_back("-m32", "");
+                else if (key == "arch" && value == "x64")
+                    kvm[Part::Pre].emplace_back("-m64", "");
+                else
                 {
-                    MSS_BEGIN(bool);
-                    MSS_END();
-                };
-                configure_.add(configure_rest);
-            }
+                    //We do not fail on unknown config values
+                }
+                MSS_END();
+            };
+            configure_msvc_ = [&](const std::string &key, const std::string &value, KeyValuesMap &kvm, TranslatorMap &trans)
+            {
+                MSS_BEGIN(bool);
+                MSS_END();
+            };
         }
 
         bool create(command::Link::Ptr &ptr) const override
@@ -68,6 +83,8 @@ namespace cook { namespace process { namespace toolchain {
         }
 
     private:
+        ConfigureFunction configure_gcclike_;
+        ConfigureFunction configure_msvc_;
     };
 
 } } } 
