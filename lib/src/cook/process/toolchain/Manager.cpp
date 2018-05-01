@@ -25,47 +25,51 @@ namespace cook { namespace process { namespace toolchain {
 
     Result Manager::configure(const std::string &value)
     {
-        MSS_BEGIN(Result, "");
+        MSS_BEGIN(Result);
 
-        auto ss = log::scope("Toolchain configure", [&](auto &node){node.attr("value", value);});
-
-        if (value == "gcc" || value == "clang" || value == "msvc")
+        if (false) {}
+        else if (value == "gcc" || value == "clang" || value == "msvc")
         {
-            MSS(config_values_.empty());
-            config_values_.emplace_back("brand", value);
+            //The brand can only be set once
+            MSS(std::find_if(RANGE(config_values_), [](const auto &cv){return cv.first == "brand";}) == config_values_.end());
+            //Make sure the brand comes first
+            config_values_.emplace_front("brand", value);
         }
+        else if (value == "x86" || value == "x64")
+            config_values_.emplace_back("arch", value);
+        else if (value == "x32")
+            MSS(configure("x86"));
+        else if (value == "debug" || value == "release" || value == "rtc" || value == "profile")
+            config_values_.emplace_back("config", value);
         else
+            config_values_.emplace_back(value, "true");
+
+        MSS_END();
+    }
+
+    Result Manager::initialize()
+    {
+        MSS_BEGIN(Result);
+
+        if (std::find_if(RANGE(config_values_), [](const auto &cv){return cv.first == "brand";}) == config_values_.end())
         {
-            if (config_values_.empty())
+            std::string default_brand;
+            switch (get_os())
             {
-                std::string default_brand;
-                switch (get_os())
-                {
-                    case OS::Linux: default_brand = "gcc"; break;
-                    case OS::Windows: default_brand = "msvc"; break;
-                    case OS::MacOS: default_brand = "clang"; break;
-                    default: default_brand = "gcc"; break;
-                }
-                MSS(configure(default_brand));
+                case OS::Linux: default_brand = "gcc"; break;
+                case OS::Windows: default_brand = "msvc"; break;
+                case OS::MacOS: default_brand = "clang"; break;
+                default: default_brand = "gcc"; break;
             }
-
-            if (false) {}
-            else if (value == "x86" || value == "x64")
-                config_values_.emplace_back("arch", value);
-            else if (value == "debug" || value == "release")
-                config_values_.emplace_back("config", value);
-            else
-                config_values_.emplace_back(value, "true");
+            config_values_.emplace_front("brand", default_brand);
         }
-
-        const auto &cv = config_values_.back();
 
         for (auto &p: compilers_)
         {
-            MSS(configure_(*p.second, cv));
+            MSS(configure_(*p.second, RANGE(config_values_)));
         }
-        MSS(configure_(archiver_(), cv));
-        MSS(configure_(linker_(), cv));
+        MSS(configure_(archiver_(), RANGE(config_values_)));
+        MSS(configure_(linker_(), RANGE(config_values_)));
 
         MSS_END();
     }

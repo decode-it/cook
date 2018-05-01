@@ -30,12 +30,11 @@ namespace cook {
 
         virtual ~Context() {}
 
-        bool initialize();
+        Result initialize();
 
         virtual const Logger & logger() const = 0;
 
         Result initialize_menu(const std::list<model::Recipe*> & root_recipes);
-
 
         // getters and setter
         model::Book * root_book() const;
@@ -48,7 +47,7 @@ namespace cook {
         void set_project_name(const std::string & name) { project_name_ = name; }
         OS os() const;
 
-        bool set_toolchain(const std::string &toolchain);
+        Result set_toolchain(const std::string &toolchain);
         const process::toolchain::Manager &toolchain() const;
 
         Result register_generator(GeneratorPtr generator);

@@ -54,6 +54,17 @@ namespace cook { namespace process { namespace toolchain {
                 };
                 configure_.add(configure_brand);
             }
+            {
+                auto configure_generic = [&](const std::string &key, const std::string &value, KeyValuesMap &kvm, TranslatorMap &trans)
+                {
+                    MSS_BEGIN(bool);
+                    if (false) {}
+                    else MSS_Q(false);
+                    MSS_END();
+                };
+                configure_.add(configure_generic);
+            }
+
             configure_gcclike_ = [&](const std::string &key, const std::string &value, KeyValuesMap &kvm, TranslatorMap &trans)
             {
                 MSS_BEGIN(bool);
@@ -62,6 +73,10 @@ namespace cook { namespace process { namespace toolchain {
                     kvm[Part::Pre].emplace_back("-m32", "");
                 else if (key == "arch" && value == "x64")
                     kvm[Part::Pre].emplace_back("-m64", "");
+                else if (key == "config" && value == "rtc")
+                    kvm[Part::Pre].emplace_back("-fsanitize", "address");
+                else if (key == "config" && value == "profile")
+                    kvm[Part::Pre].emplace_back("-pg", "");
                 else
                 {
                     //We do not fail on unknown config values

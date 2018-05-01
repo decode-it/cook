@@ -19,9 +19,11 @@ namespace  {
 
 namespace cook {
 
-bool Context::initialize()
+Result Context::initialize()
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result);
+
+    MSS(toolchain_().initialize());
 
     // add the generators
     MSS(register_generator(std::make_shared<generator::graphviz::Dependency>()));
@@ -108,9 +110,9 @@ OS Context::os() const
     return get_os();
 }
 
-bool Context::set_toolchain(const std::string &toolchain)
+Result Context::set_toolchain(const std::string &toolchain)
 {
-    MSS_BEGIN(bool);
+    MSS_BEGIN(Result, "");
     gubg::Strange strange(toolchain);
     std::string part;
     while (strange.pop_until(part, '-') || strange.pop_all(part))

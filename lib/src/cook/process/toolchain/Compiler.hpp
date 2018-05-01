@@ -96,18 +96,15 @@ namespace cook { namespace process { namespace toolchain {
                 {
                     MSS_BEGIN(bool);
                     if (false) {}
-                    else if (key == "config")
+                    else if (key == "config" && value == "debug")
                     {
-                        if (value == "debug")
-                        {
-                            MSS(configure_("debug_symbols", "true", kvm, trans));
-                        }
-                        else if (value == "release")
-                        {
-                            MSS(configure_("optimization", "max_speed", kvm, trans));
-                            kvm[Part::Define].emplace_back("NDEBUG", "");
-                        }
-                        else MSS(false);
+                        MSS(configure_("debug_symbols", "true", kvm, trans));
+                        MSS(configure_("config", "rtc", kvm, trans));
+                    }
+                    else if (key == "config" && value == "release")
+                    {
+                        MSS(configure_("optimization", "max_speed", kvm, trans));
+                        kvm[Part::Define].emplace_back("NDEBUG", "");
                     }
                     else MSS_Q(false);
                     MSS_END();
@@ -123,6 +120,13 @@ namespace cook { namespace process { namespace toolchain {
                     kvm[Part::Pre].emplace_back("-g", "");
                 else if (key == "optimization" && value == "max_speed")
                     kvm[Part::Pre].emplace_back("-O3", "");
+                else if (key == "config" && value == "rtc")
+                {
+                    kvm[Part::Pre].emplace_back("-fsanitize", "address");
+                    kvm[Part::Pre].emplace_back("-fno-omit-frame-pointer", "");
+                }
+                else if (key == "config" && value == "profile")
+                    kvm[Part::Pre].emplace_back("-g", "");
                 else if (key == "arch" && value == "x86")
                     kvm[Part::Pre].emplace_back("-m32", "");
                 else if (key == "arch" && value == "x64")

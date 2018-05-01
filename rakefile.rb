@@ -115,7 +115,9 @@ namespace :b1 do
         odir = File.join(out_base, "ninja")
         tdir = File.join(tmp_base, "ninja")
 
-        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t clang-release-x64 cook/app/exe"
+        # sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} cook/app/exe"
+        # sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t clang-rtc-release-x86-profile cook/app/exe"
+        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t clang-release-x32 cook/app/exe"
         sh "ninja -f #{odir}/build.ninja"
         cp "#{odir}/cook.app.exe", "b1-cook.exe"
     end

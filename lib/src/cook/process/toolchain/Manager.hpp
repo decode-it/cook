@@ -17,6 +17,7 @@ namespace cook { namespace process { namespace toolchain {
         const Interface &linker() const {return linker_();}
 
         Result configure(const std::string &value);
+        Result initialize();
 
     private:
         using ConfigValue = std::pair<std::string, std::string>;
