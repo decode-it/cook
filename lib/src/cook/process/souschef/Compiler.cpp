@@ -1,5 +1,4 @@
 #include "cook/process/souschef/Compiler.hpp"
-#include "cook/process/command/Toolchain.hpp"
 #include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "cook/log/Scope.hpp"
@@ -81,13 +80,8 @@ Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recip
 {
     MSS_BEGIN(Result, "");
 
-#if 1
     process::command::Compile::Ptr cp;
-    MSS(context.manager().compiler(language_).create(cp));
-#else
-    process::command::CompilerPtr cp;
-    MSS(context.toolchain().create_compiler(cp, language_));
-#endif
+    MSS(context.toolchain().compiler(language_).create(cp));
 
     // add the include paths
     for (const ingredient::File & f : recipe.files().range(LanguageTypePair(Language::Undefined, Type::IncludePath)))

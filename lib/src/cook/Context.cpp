@@ -7,7 +7,6 @@
 #include "cook/generator/CMake.hpp"
 #include "cook/generator/Naft.hpp"
 #include "cook/generator/Ninja.hpp"
-#include "cook/process/command/Toolchain.hpp"
 #include "cook/process/toolchain/Manager.hpp"
 #include "gubg/mss.hpp"
 #include <cassert>
@@ -22,8 +21,6 @@ namespace cook {
 bool Context::initialize()
 {
     MSS_BEGIN(bool);
-
-    MSS(toolchain_().initialize());
 
     // add the generators
     MSS(register_generator(std::make_shared<generator::graphviz::Dependency>()));
@@ -114,30 +111,18 @@ bool Context::set_toolchain(const std::string &toolchain)
 {
     MSS_BEGIN(bool);
     MSS(toolchain_().set_brand(toolchain));
-    MSS(manager_().set_brand(toolchain));
     MSS_END();
 }
 
-process::command::Toolchain &Context::toolchain_() const
+process::toolchain::Manager &Context::toolchain_() const
 {
     if (!toolchain_ptr_)
-        toolchain_ptr_.reset(new process::command::Toolchain);
+        toolchain_ptr_.reset(new process::toolchain::Manager);
     return *toolchain_ptr_;
 }
-const process::command::Toolchain &Context::toolchain() const
+const process::toolchain::Manager &Context::toolchain() const
 {
     return toolchain_();
-}
-
-process::toolchain::Manager &Context::manager_() const
-{
-    if (!manager_ptr_)
-        manager_ptr_.reset(new process::toolchain::Manager);
-    return *manager_ptr_;
-}
-const process::toolchain::Manager &Context::manager() const
-{
-    return manager_();
 }
 
 }

@@ -1,5 +1,4 @@
 #include "cook/process/souschef/Linker.hpp"
-#include "cook/process/command/Toolchain.hpp"
 #include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
@@ -145,13 +144,8 @@ Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, co
 {
     MSS_BEGIN(Result);
 
-#if 1
     command::Link::Ptr lp;
-    MSS(context.manager().linker().create(lp));
-#else
-    command::LinkerPtr lp;
-    MSS(context.toolchain().create_linker(lp));
-#endif
+    MSS(context.toolchain().linker().create(lp));
 
     // set the libraries
     for(const ingredient::KeyValue & lib : libs)

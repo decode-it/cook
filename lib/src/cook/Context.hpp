@@ -16,9 +16,6 @@ namespace cook {
         class Interface;
     }
     namespace process {
-        namespace command { 
-            class Toolchain;
-        }
         namespace toolchain { 
             class Manager;
         } 
@@ -29,8 +26,7 @@ namespace cook {
     public:
         using GeneratorPtr = std::shared_ptr<generator::Interface>;
         using Variable = std::pair<std::string, std::string>;
-        using ToolchainPtr = std::shared_ptr<process::command::Toolchain>;
-        using ManagerPtr = std::shared_ptr<process::toolchain::Manager>;
+        using ToolchainManagerPtr = std::shared_ptr<process::toolchain::Manager>;
 
         virtual ~Context() {}
 
@@ -51,9 +47,9 @@ namespace cook {
         const std::string & project_name() const    { return project_name_; }
         void set_project_name(const std::string & name) { project_name_ = name; }
         OS os() const;
+
         bool set_toolchain(const std::string &toolchain);
-        const process::command::Toolchain &toolchain() const;
-        const process::toolchain::Manager &manager() const;
+        const process::toolchain::Manager &toolchain() const;
 
         Result register_generator(GeneratorPtr generator);
         GeneratorPtr get_generator(const std::string & name) const;
@@ -69,10 +65,8 @@ namespace cook {
         process::Menu menu_;
         std::string project_name_;
 
-        mutable ToolchainPtr toolchain_ptr_;
-        process::command::Toolchain &toolchain_() const;
-        mutable ManagerPtr manager_ptr_;
-        process::toolchain::Manager &manager_() const;
+        mutable ToolchainManagerPtr toolchain_ptr_;
+        process::toolchain::Manager &toolchain_() const;
     };
 
 }
