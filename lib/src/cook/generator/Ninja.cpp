@@ -1,4 +1,5 @@
 #include "cook/generator/Ninja.hpp"
+#include "cook/process/toolchain/Types.hpp"
 #include "cook/Context.hpp"
 #include "cook/log/Scope.hpp"
 #include "boost/iterator/function_output_iterator.hpp"
@@ -43,15 +44,20 @@ Result Ninja::process(const Context & context)
             ofs << std::endl;
             ofs << "#Parent recipe: " << ptr->recipe_uri() << std::endl;
             ofs << "rule " << name << std::endl;
-            std::list<std::filesystem::path> input = { "${in}" };
-            std::list<std::filesystem::path> output = { "${out}" };
+            const process::command::Filenames input = { "${in}" };
+            const process::command::Filenames output = { "${out}" };
+            ptr->set_inputs_outputs(input, output);
             {
-                const auto depfile = ptr->depfile(input, output);
+                std::ostringstream oss;
+                //Extract the dependencyfile, if any, without the toolchain-specific arguments around it: we only want the filename
+                process::toolchain::Translator trans = [](const std::string &k, const std::string &v){return k;};
+                ptr->stream_part(oss, process::toolchain::Part::DepFile, &trans);
+                const auto depfile = oss.str();
                 if (!depfile.empty())
                     ofs << "   depfile = " << depfile << std::endl;
             }
             ofs << "   command = ";
-            ptr->stream_command(ofs, input, output);
+            ptr->stream_command(ofs);
             ofs << std::endl;
         }
 

@@ -16,32 +16,46 @@ namespace cook { namespace process { namespace command {
         ~Compile() {}
 
         std::string name() const override {return "Compile";}
-        Result process(const Filenames & input_files, const Filenames & output_files) override {return Result();}
-        void stream_command(std::ostream & oss, const Filenames & input_files, const Filenames & output_files) const override
-        {
-            for (const auto &fn: input_files)
-                kvm_[toolchain::Part::Input].emplace_back(fn.string(), "");
-            for (const auto &fn: output_files)
-            {
-                auto fn_str = fn.string();
-                kvm_[toolchain::Part::Output].emplace_back(fn_str, "");
-                fn_str += ".d";
-                kvm_[toolchain::Part::DepFile].emplace_back(fn_str, "");
-            }
-
-            auto lambda = [&](toolchain::Part part){
-                const auto &kvs = kvm_[part];
-                const auto &trans = (*trans_)[part];
-                for (const auto &kv: kvs)
-                {
-                    const auto str = trans(kv.first, kv.second);
-                    if (!str.empty())
-                        oss << str << ' ';
-                }
-            };
-            toolchain::each_part(lambda);
-        }
         Type type() const override {return Type::Compile;}
+
+        void set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) override
+        {
+            {
+                auto &inputs = kvm_[toolchain::Part::Input];
+                inputs.clear();
+                for (const auto &fn: input_files)
+                    inputs.emplace_back(fn.string(), "");
+            }
+            {
+                auto &outputs = kvm_[toolchain::Part::Output];
+                auto &depfiles = kvm_[toolchain::Part::DepFile];
+                outputs.clear();
+                depfiles.clear();
+                for (const auto &fn: output_files)
+                {
+                    auto fn_str = fn.string();
+                    outputs.emplace_back(fn_str, "");
+                    fn_str += ".d";
+                    depfiles.emplace_back(fn_str, "");
+                }
+            }
+        }
+        void stream_part(std::ostream & os, toolchain::Part part, const toolchain::Translator *trans_ptr = nullptr) const override
+        {
+            const auto &kvs = kvm_[part];
+            const auto &trans = (!!trans_ptr ? *trans_ptr : (*trans_)[part]);
+            for (const auto &kv: kvs)
+            {
+                const auto str = trans(kv.first, kv.second);
+                if (!str.empty())
+                    os << str << ' ';
+            }
+        }
+        void stream_command(std::ostream & os) const override
+        {
+            toolchain::each_part([&](toolchain::Part part){ stream_part(os, part); });
+        }
+        Result process() override {return Result();}
 
         void add_define(const std::string & name, const std::string & value)
         {

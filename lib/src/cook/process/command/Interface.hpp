@@ -2,6 +2,7 @@
 #define HEADER_cook_process_command_Interface_hpp_ALREADY_INCLUDED
 
 #include "cook/Result.hpp"
+#include "cook/process/toolchain/Types.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <string>
 #include <memory>
@@ -24,10 +25,12 @@ namespace cook { namespace process { namespace command {
         virtual ~Interface() {}
 
         virtual std::string name() const = 0;
-        virtual Result process(const Filenames & input_files, const Filenames & output_files) = 0;
-        virtual void stream_command(std::ostream & oss, const Filenames & input_files, const Filenames & output_files) const = 0;
-        virtual std::string depfile(const Filenames & input_files, const Filenames & output_files) const {return "";}
         virtual Type type() const = 0;
+
+        virtual void set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) = 0;
+        virtual void stream_part(std::ostream &, toolchain::Part, const toolchain::Translator * = nullptr) const = 0;
+        virtual void stream_command(std::ostream &) const = 0;
+        virtual Result process() = 0;
 
         virtual void set_recipe_uri(const std::string &uri) {recipe_uri_ = uri;}
         virtual const std::string &recipe_uri() const {return recipe_uri_;}
@@ -45,9 +48,7 @@ namespace cook { namespace process { namespace command {
             L_CASE(Archive, "archive");
             L_CASE(Link, "link");
 #undef L_CASE
-
-            default:
-            break;
+            default: break;
         }
 
         if (type >= Interface::UserDefined)
