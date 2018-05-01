@@ -14,7 +14,7 @@ namespace cook { namespace process { namespace toolchain {
     enum class Part
     {
         Begin_,
-        Cli = Begin_, Pre, Input, Output, DepFile, Option, Define, IncludePath, ForceInclude, Library, LibraryPath,
+        Cli = Begin_, Pre, Output, Input, DepFile, Option, Define, IncludePath, ForceInclude, Library, LibraryPath,
         End_
     };
 

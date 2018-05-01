@@ -1,5 +1,6 @@
 #include "cook/process/souschef/Linker.hpp"
 #include "cook/process/command/Toolchain.hpp"
+#include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
 #include "boost/predef.h"
@@ -144,9 +145,13 @@ Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, co
 {
     MSS_BEGIN(Result);
 
+#if 1
+    command::Link::Ptr lp;
+    MSS(context.manager().linker().create(lp));
+#else
     command::LinkerPtr lp;
     MSS(context.toolchain().create_linker(lp));
-    lp->set_recipe_uri(recipe.uri().string());
+#endif
 
     // set the libraries
     for(const ingredient::KeyValue & lib : libs)
@@ -156,6 +161,7 @@ Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, co
     for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::LibraryPath)))
         lp->add_library_path(util::make_global_from_recipe(recipe, lib.dir()));
 
+    lp->set_recipe_uri(recipe.uri().string());
     ptr = lp;
 
     MSS_END();

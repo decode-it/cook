@@ -11,7 +11,6 @@ namespace cook { namespace process { namespace toolchain {
     public:
         Compiler(Language language): language_(language)
         {
-            auto &trans = *trans_;
         }
 
         bool set_brand(const std::string &brand) override
@@ -41,8 +40,8 @@ namespace cook { namespace process { namespace toolchain {
                         return k;
                     return k+"="+v;
                 };
-                trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
                 trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"-o "}+k;};
+                trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
                 trans[Part::DepFile] = [](const std::string &k, const std::string &v){return std::string{"-MMD -MF "}+k;};
                 trans[Part::Define] = [](const std::string &k, const std::string &v)
                 {
@@ -76,8 +75,8 @@ namespace cook { namespace process { namespace toolchain {
                         return k;
                     return k+":"+v;
                 };
-                trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
                 trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"/Fo:"}+k;};
+                trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
                 /* trans[Part::DepFile] = [](const std::string &k, const std::string &v){return std::string{"-MMD -MF "}+k;}; */
                 trans[Part::Define] = [](const std::string &k, const std::string &v)
                 {

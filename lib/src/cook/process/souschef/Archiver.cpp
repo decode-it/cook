@@ -1,5 +1,6 @@
 #include "cook/process/souschef/Archiver.hpp"
 #include "cook/process/command/Toolchain.hpp"
+#include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
 
@@ -81,8 +82,13 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 Result Archiver::archive_command_(command::Ptr &ptr, const model::Recipe & recipe, const Context & context) const
 {
     MSS_BEGIN(Result);
+#if 1
+    process::command::Archive::Ptr ap;
+    MSS(context.manager().archiver().create(ap));
+#else
     process::command::ArchiverPtr ap;
     MSS(context.toolchain().create_archiver(ap));
+#endif
     ap->set_recipe_uri(recipe.uri().string());
     ptr = ap;
     MSS_END();

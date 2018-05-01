@@ -3,6 +3,8 @@
 
 #include "cook/process/toolchain/Types.hpp"
 #include "cook/process/command/Compile.hpp"
+#include "cook/process/command/Archive.hpp"
+#include "cook/process/command/Link.hpp"
 
 namespace cook { namespace process { namespace toolchain { 
 
@@ -31,6 +33,8 @@ namespace cook { namespace process { namespace toolchain {
         virtual bool set_brand(const std::string &) = 0;
 
         virtual bool create(command::Compile::Ptr &) const {return false;}
+        virtual bool create(command::Archive::Ptr &) const {return false;}
+        virtual bool create(command::Link::Ptr &) const {return false;}
 
     protected:
         KeyValuesMap kvm_;
