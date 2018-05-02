@@ -156,6 +156,7 @@ struct Context::D
         EXPOSE(Language, C, "C");
         EXPOSE(Language, CXX, "CXX");
         EXPOSE(Language, ASM, "ASM");
+        EXPOSE(Language, Script, "script");
         EXPOSE(Language, UserDefined, "user_defined");
 #undef EXPOSE
 
