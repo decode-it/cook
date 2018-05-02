@@ -26,8 +26,6 @@ const std::list<model::Recipe*> & Menu::topological_order_recipes() const
 
 Result Menu::topological_order_recipes(model::Recipe * root, std::list<model::Recipe*> & result) const
 {
-    using DependencyVertex = boost::graph_traits<DependencyGraph::Graph>::vertex_descriptor;
-
     MSS_BEGIN(Result);
     MSS(is_valid());
     MSS(!!root);
@@ -88,7 +86,6 @@ Result Menu::construct_()
 
     valid_ = false;
 
-    using DependencyVertex = boost::graph_traits<DependencyGraph::Graph>::vertex_descriptor;
     using ComponentVertex = boost::graph_traits<ComponentGraph::Graph>::vertex_descriptor;
 
     // build the dependency graph

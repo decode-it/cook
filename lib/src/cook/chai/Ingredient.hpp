@@ -14,8 +14,8 @@ template <typename T> class Ingredient
 public:
     Ingredient(const LanguageTypePair & language_type_pair, const T & element, const Context * context)
         : flags_(Flags(language_type_pair.language) | Flags(language_type_pair.type) | Flags(element.overwrite()) | Flags(element.propagation())),
-          element_(element),
-          context_(context)
+          context_(context),
+          element_(element)
     {}
 
     bool has_owner() const      { return element_.owner(); }

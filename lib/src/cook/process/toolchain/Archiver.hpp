@@ -30,6 +30,9 @@ namespace cook { namespace process { namespace toolchain {
                         {
                             case OS::Linux: kvm[Part::Pre].emplace_back("crf", ""); break;
                             case OS::MacOS: kvm[Part::Pre].emplace_back("crs", ""); break;
+                        default:
+                            MSS(false);
+                            break;
                         }
                     }
                     else if (brand == "msvc")

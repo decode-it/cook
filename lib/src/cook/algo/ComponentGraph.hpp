@@ -57,7 +57,6 @@ Result make_ComponentGraph(const DependencyGraph & dependency_graph, ComponentGr
     MSS_BEGIN(Result);
 
     // construct the vertices of the component graph
-    auto p = boost::vertices(dependency_graph);
     for(auto p = boost::vertices(dependency_graph); p.first != p.second; ++p.first)
     {
         model::Recipe * recipe = dependency_graph[*p.first];

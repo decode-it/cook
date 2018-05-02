@@ -20,8 +20,6 @@ bool Ninja::can_process(const Context & context) const
 
 Result Ninja::process(const Context & context)
 {
-    using vertex_descriptor = process::build::config::Graph::vertex_descriptor;
-
     MSS_BEGIN(Result);
     auto ss = log::scope("process");
 

@@ -27,6 +27,8 @@ std::ostream & operator<<(std::ostream & str, OS os)
         L_CASE(Windows);
         L_CASE(MacOS);
 #undef L_CASE
+        default:
+            return str << "<unknown>";
     }
 }
 

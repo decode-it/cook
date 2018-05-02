@@ -28,12 +28,16 @@ public:
                         {
                         case Language::C: trans[Part::Cli] = [](const std::string &, const std::string &){return "gcc";}; break;
                         case Language::CXX: trans[Part::Cli] = [](const std::string &, const std::string &){return "g++";}; break;
+                        default:
+                            break;
                         }
                     else if (brand == "clang")
                         switch (language_)
                         {
                         case Language::C: trans[Part::Cli] = [](const std::string &, const std::string &){return "clang";}; break;
                         case Language::CXX: trans[Part::Cli] = [](const std::string &, const std::string &){return "clang++";}; break;
+                        default:
+                            break;
                         }
 
                     trans[Part::Pre] = [](const std::string &k, const std::string &v)
