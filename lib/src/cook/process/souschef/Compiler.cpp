@@ -78,7 +78,7 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
 
 Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recipe, const Context & context) const
 {
-    MSS_BEGIN(Result, "");
+    MSS_BEGIN(Result);
 
     process::command::Compile::Ptr cp;
     MSS(context.toolchain().compiler(language_).create(cp));

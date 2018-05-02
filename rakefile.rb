@@ -121,8 +121,9 @@ namespace :b1 do
         when :macos then brand, arch = :clang, :x64
         when :windows then brand, arch = :msvc, :x32
         end
+        config = :debug
         sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{brand}-#{config}-#{arch} cook/app/exe"
-        sh "ninja -f #{odir}/build.ninja"
+        sh "ninja -f #{odir}/build.ninja -v"
         cp "#{odir}/cook.app.exe", "b1-cook.exe"
     end
     

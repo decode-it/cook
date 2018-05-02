@@ -64,12 +64,6 @@ Result Ninja::process(const Context & context)
         return it->second;
     };
 
-    //We use only one simple rule, basically deferring the actual command to $process_command, defined
-    //for each build seperately.
-    //Trying to create rules per command that include $in or $out will be much more difficult to generalize.
-    ofs << "rule process" << std::endl;
-    ofs << "    command = $process_command" << std::endl;
-
     for (auto recipe: context.menu().topological_order_recipes())
     {
         recipe->stream();

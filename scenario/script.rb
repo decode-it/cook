@@ -10,9 +10,8 @@ test_case("script") do
         cmd << "-v 3 -f ./ -g ninja"
         should = nil
         section("pass"){should = :pass; cmd << "/script/run_pass"}
-        # section("fail"){should = :fail; cmd << "/script/run_fail"}
-        sh(cmd.flatten*' ') { |ok, res| must(ok) }
-        sh("ninja") do |ok, res|
+        section("fail"){should = :fail; cmd << "/script/run_fail"}
+        sh(cmd.flatten*' ') do |ok, res|
             case should
             when :pass then must(ok)
             when :fail then must(!ok)
