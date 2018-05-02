@@ -104,6 +104,7 @@ Result CompileArchiveLink::initialize()
                 return false;
             }
 
+            //TODO: In the future, this should be allowed.
             if (!recipe->dependency_pairs().empty())
             {
                 reason = gubg::stream([](auto & os) {os << "A script recipe cannot have dependencies"; });
