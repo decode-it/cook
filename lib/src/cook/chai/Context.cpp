@@ -156,6 +156,7 @@ struct Context::D
         EXPOSE(Language, C, "C");
         EXPOSE(Language, CXX, "CXX");
         EXPOSE(Language, ASM, "ASM");
+        EXPOSE(Language, Script, "script");
         EXPOSE(Language, UserDefined, "user_defined");
 #undef EXPOSE
 
@@ -253,6 +254,8 @@ struct Context::D
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, Recipe::GlobFunctor functor) { recipe.add(dir, pattern, Flags(), functor); }), "add");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags) { recipe.add(dir, pattern, flags); }), "add");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags, Recipe::GlobFunctor functor) { recipe.add(dir, pattern, flags, functor); }), "add");
+
+        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & command) { recipe.run(command); }), "run");
 
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern) { recipe.remove(dir, pattern); }), "remove");
         engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags) { recipe.remove(dir, pattern, flags); }), "remove");

@@ -112,7 +112,7 @@ OS Context::os() const
 
 Result Context::set_toolchain(const std::string &toolchain)
 {
-    MSS_BEGIN(Result, "");
+    MSS_BEGIN(Result);
     gubg::Strange strange(toolchain);
     std::string part;
     while (strange.pop_until(part, '-') || strange.pop_all(part))

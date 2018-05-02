@@ -6,9 +6,11 @@ namespace cook { namespace process { namespace souschef {
 
 Result ScriptRunner::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & context) const
 {
-    MSS_BEGIN(Result);
+    MSS_BEGIN(Result, "");
+
     MSS(recipe.build_target().type == TargetType::Script);
 
+#if 0
     std::list<ingredient::File> script_files;
 
     for(auto & file : recipe.files().range(LanguageTypePair(Language::Script, Type::Executable)))
@@ -32,6 +34,16 @@ Result ScriptRunner::process(model::Recipe & recipe, RecipeFilteredGraph & /*fil
     int retval = boost::process::system(script.key().string(), boost::process::args = arguments);
 
     MSG_MSS(retval == 0, Error, "Executing of script " << script << " failed with code " << retval);
+#else
+    for(auto & cmd : recipe.key_values().range(LanguageTypePair(Language::Script, Type::Executable)))
+    {
+        cmd.set_propagation(Propagation::Private);
+
+        const auto command = cmd.key();
+        const int retval = boost::process::system(command);
+        MSG_MSS(retval == 0, Error, "Executing of script " << command << " failed with code " << retval);
+    }
+#endif
 
     MSS_END();
 }

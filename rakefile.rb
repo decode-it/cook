@@ -52,7 +52,7 @@ namespace :b0 do
         case GUBG::os
         when :linux then "build/b0/linux/gcc.ninja"
         when :windows then "build/b0/windows/msvc.ninja"
-        when :osx then "build/b0/osx/clang.ninja"
+        when :macos then "build/b0/macos/clang.ninja"
         end
     end
     
@@ -78,7 +78,7 @@ namespace :b0 do
     
     task :install => :build do
         case GUBG::os
-        when :linux, :osx then sh("sudo cp b0-cook.exe /usr/local/bin/cook")
+        when :linux, :macos then sh("sudo cp b0-cook.exe /usr/local/bin/cook")
         when :windows then cp("b0-cook.exe", "../bin/")
         end
     end
@@ -115,10 +115,15 @@ namespace :b1 do
         odir = File.join(out_base, "ninja")
         tdir = File.join(tmp_base, "ninja")
 
-        # sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} cook/app/exe"
-        # sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t clang-rtc-release-x86-profile cook/app/exe"
-        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t clang-release-x32-c++=17 cook/app/exe"
-        sh "ninja -f #{odir}/build.ninja"
+        brand, config, arch = nil, :release, nil
+        case GUBG::os
+        when :linux then brand, arch = :gcc, :x86
+        when :macos then brand, arch = :clang, :x64
+        when :windows then brand, arch = :msvc, :x32
+        end
+        config = :debug
+        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{brand}-#{config}-#{arch}-c++=17 cook/app/exe"
+        sh "ninja -f #{odir}/build.ninja -v"
         cp "#{odir}/cook.app.exe", "b1-cook.exe"
     end
     

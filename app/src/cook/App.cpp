@@ -8,7 +8,8 @@
 #include <unordered_set>
 
 namespace  { 
-const char *logns = "App";
+/* const char *logns = "App"; */
+const char *logns = nullptr;
 } 
 
 namespace cook {

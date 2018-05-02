@@ -12,6 +12,10 @@ Manager::Manager()
     : archiver_ptr_(std::make_shared<Archiver>()),
       linker_ptr_(std::make_shared<Linker>())
 {
+    //Create compilers for common languages
+    compiler(Language::C);
+    compiler(Language::CXX);
+    compiler(Language::ASM);
 }
 
 const Interface &Manager::compiler(Language language) const
@@ -55,9 +59,9 @@ Result Manager::configure(const std::string &value)
 
             if (false) {}
             else if (key == "c++")
-                MSS(configure("c++-standard"), str.str());
+                MSS(configure("c++-standard", str.str()));
             else if (key == "c")
-                MSS(configure("c-standard"), str.str());
+                MSS(configure("c-standard", str.str()));
             else
                 MSS(configure(key, str.str()));
         }
@@ -67,6 +71,7 @@ Result Manager::configure(const std::string &value)
             MSS(configure(value, "true"));
         }
     }
+    L(C(config_values_.size()));
 
     MSS_END();
 }
@@ -96,9 +101,8 @@ Result Manager::initialize()
     }
 
     for (auto &p: compilers_)
-    {
         MSS(configure_(*p.second, RANGE(config_values_)));
-    }
+
     MSS(configure_(archiver_(), RANGE(config_values_)));
     MSS(configure_(linker_(), RANGE(config_values_)));
 
@@ -108,20 +112,16 @@ Result Manager::initialize()
 Interface &Manager::archiver_() const
 {
     if (!archiver_ptr_)
-    {
         archiver_ptr_.reset(new Archiver);
-        configure_(*archiver_ptr_, RANGE(config_values_));
-    }
+
     return *archiver_ptr_;
 }
 
 Interface &Manager::linker_() const
 {
     if (!linker_ptr_)
-    {
         linker_ptr_.reset(new Linker);
-        configure_(*linker_ptr_, RANGE(config_values_));
-    }
+
     return *linker_ptr_;
 }
 
