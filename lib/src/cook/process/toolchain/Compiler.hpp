@@ -97,10 +97,7 @@ namespace cook { namespace process { namespace toolchain {
                     MSS_BEGIN(bool);
                     if (false) {}
                     else if (key == "config" && value == "debug")
-                    {
                         MSS(configure_("debug_symbols", "true", kvm, trans));
-                        MSS(configure_("config", "rtc", kvm, trans));
-                    }
                     else if (key == "config" && value == "release")
                     {
                         MSS(configure_("optimization", "max_speed", kvm, trans));

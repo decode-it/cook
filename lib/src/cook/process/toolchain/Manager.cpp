@@ -9,6 +9,10 @@ namespace cook { namespace process { namespace toolchain {
 
     Manager::Manager()
     {
+        //Create compilers for common languages
+        compiler(Language::C);
+        compiler(Language::CXX);
+        compiler(Language::ASM);
     }
 
     const Interface &Manager::compiler(Language language) const
@@ -17,7 +21,6 @@ namespace cook { namespace process { namespace toolchain {
         if (it == compilers_.end())
         {
             compilers_[language].reset(new Compiler(language));
-            configure_(*compilers_[language], RANGE(config_values_));
             it = compilers_.find(language);
         }
         return *it->second;
@@ -40,9 +43,15 @@ namespace cook { namespace process { namespace toolchain {
         else if (value == "x32")
             MSS(configure("x86"));
         else if (value == "debug" || value == "release" || value == "rtc" || value == "profile")
+        {
             config_values_.emplace_back("config", value);
+            if (value == "debug")
+                MSS(configure("rtc"));
+        }
         else
             config_values_.emplace_back(value, "true");
+
+        L(C(config_values_.size()));
 
         MSS_END();
     }
@@ -77,20 +86,14 @@ namespace cook { namespace process { namespace toolchain {
     Interface &Manager::archiver_() const
     {
         if (!archiver_ptr_)
-        {
             archiver_ptr_.reset(new Archiver);
-            configure_(*archiver_ptr_, RANGE(config_values_));
-        }
         return *archiver_ptr_;
     }
 
     Interface &Manager::linker_() const
     {
         if (!linker_ptr_)
-        {
             linker_ptr_.reset(new Linker);
-            configure_(*linker_ptr_, RANGE(config_values_));
-        }
         return *linker_ptr_;
     }
 

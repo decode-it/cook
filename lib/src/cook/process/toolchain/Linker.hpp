@@ -74,7 +74,10 @@ namespace cook { namespace process { namespace toolchain {
                 else if (key == "arch" && value == "x64")
                     kvm[Part::Pre].emplace_back("-m64", "");
                 else if (key == "config" && value == "rtc")
+                {
                     kvm[Part::Pre].emplace_back("-fsanitize", "address");
+                    kvm[Part::Library].emplace_back("asan", "");
+                }
                 else if (key == "config" && value == "profile")
                     kvm[Part::Pre].emplace_back("-pg", "");
                 else
