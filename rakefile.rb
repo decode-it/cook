@@ -115,14 +115,14 @@ namespace :b1 do
         odir = File.join(out_base, "ninja")
         tdir = File.join(tmp_base, "ninja")
 
-        brand, config, arch = nil, :release, nil
+        brand, config, arch, lang = nil, :release, nil, "c++=17"
         case GUBG::os
         when :linux then brand, arch = :gcc, :x86
         when :macos then brand, arch = :clang, :x64
         when :windows then brand, arch = :msvc, :x32
         end
-        config = :debug
-        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{brand}-#{config}-#{arch}-c++=17 cook/app/exe"
+        # config = :debug
+        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{brand}-#{config}-#{arch}-#{lang} cook/app/exe"
         sh "ninja -f #{odir}/build.ninja -v"
         cp "#{odir}/cook.app.exe", "b1-cook.exe"
     end
