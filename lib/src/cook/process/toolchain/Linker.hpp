@@ -36,7 +36,6 @@ namespace cook { namespace process { namespace toolchain {
                         trans[Part::LibraryPath] = [](const std::string &k, const std::string &v){return std::string{"-L"}+k;};
 
                         kvm[Part::Pre].clear();
-                        kvm[Part::Pre].emplace_back("-std", "c++17");
 
                         configure_.add(configure_gcclike_);
                     }
@@ -59,6 +58,10 @@ namespace cook { namespace process { namespace toolchain {
                 {
                     MSS_BEGIN(bool);
                     if (false) {}
+                    else if (key == "config" && value == "debug")
+                    {
+                        MSS(configure_("config", "rtc", kvm, trans));
+                    }
                     else MSS_Q(false);
                     MSS_END();
                 };
@@ -74,9 +77,16 @@ namespace cook { namespace process { namespace toolchain {
                 else if (key == "arch" && value == "x64")
                     kvm[Part::Pre].emplace_back("-m64", "");
                 else if (key == "config" && value == "rtc")
+                {
                     kvm[Part::Pre].emplace_back("-fsanitize", "address");
+                    kvm[Part::Library].emplace_back("asan", "");
+                }
                 else if (key == "config" && value == "profile")
                     kvm[Part::Pre].emplace_back("-pg", "");
+                else if (key == "c++-standard")
+                    kvm[Part::Pre].emplace_back("-std", "c++" + value);
+                else if (key == "c-standard")
+                    kvm[Part::Pre].emplace_back("-std", "c" + value);
                 else
                 {
                     //We do not fail on unknown config values

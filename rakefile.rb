@@ -117,7 +117,7 @@ namespace :b1 do
 
         # sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} cook/app/exe"
         # sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t clang-rtc-release-x86-profile cook/app/exe"
-        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t clang-release-x32 cook/app/exe"
+        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t clang-release-x32-c++=17 cook/app/exe"
         sh "ninja -f #{odir}/build.ninja"
         cp "#{odir}/cook.app.exe", "b1-cook.exe"
     end
