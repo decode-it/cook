@@ -1,0 +1,7 @@
+root.book("script", fun(book) {
+    book.recipe("run_fail", "script", fun(r){
+        r.add("./", "run_ok.sh", Language.script()|Type.executable());
+    })
+    book.recipe("run_pass", "script", fun(r){
+    })
+})
