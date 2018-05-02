@@ -30,40 +30,44 @@ Result Manager::configure(const std::string &value)
 {
     MSS_BEGIN(Result);
 
+    gubg::Strange str(value);
     if (false) {}
-    else if (value == "gcc" || value == "clang" || value == "msvc")
+    else if (str.pop_if("gcc") || str.pop_if("clang") || str.pop_if("msvc"))
     {
         //The brand can only be set once
         MSS(std::find_if(RANGE(config_values_), [](const auto &cv){return cv.first == "brand";}) == config_values_.end());
         //Make sure the brand comes first
         config_values_.emplace_front("brand", value);
     }
-    else if (value == "x86" || value == "x64")
-        config_values_.emplace_back("arch", value);
-    else if (value == "x32")
+    else if (str.pop_if("x86") || str.pop_if("x64"))
+        MSS(configure("arch", value));
+    else if (str.pop_if("x32"))
         MSS(configure("x86"));
-    else if (value == "debug" || value == "release" || value == "rtc" || value == "profile")
-        config_values_.emplace_back("config", value);
+    else if (str.pop_if("debug") || str.pop_if("release") || str.pop_if("rtc") || str.pop_if("profile"))
+        MSS(configure("config", value));
     else
     {
-        gubg::Strange str(value);
-
-        if (false) {}
-        else if (str.pop_if("c++="))
-            MSS(configure("c++-standard", str.str()));
-        else if (str.pop_if("c="))
-            MSS(configure("c-standard", str.str()));
-        else if (str.contains('='))
+        if (str.contains('='))
         {
+            // key values
             std::string key;
             MSS(str.pop_until(key, '='));
-            MSS(configure(key, str.str()));
+
+            if (false) {}
+            else if (key == "c++")
+                MSS(configure("c++-standard"), str.str());
+            else if (key == "c")
+                MSS(configure("c-standard"), str.str());
+            else
+                MSS(configure(key, str.str()));
         }
         else
         {
+            // only keys
             MSS(configure(value, "true"));
         }
     }
+
     MSS_END();
 }
 
