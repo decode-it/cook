@@ -33,7 +33,7 @@ namespace cook { namespace process { namespace toolchain {
                         trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"-o "}+k;};
                         trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
                         trans[Part::Library] = [](const std::string &k, const std::string &v){return std::string{"-l"}+k;};
-                        trans[Part::LibraryPath] = [](const std::string &k, const std::string &v){return std::string{"-L"}+k;};
+                        trans[Part::LibraryPath] = [](const std::string &k, const std::string &v){return std::string{"-L"}+(k.empty() ? "./" : k);};
 
                         kvm[Part::Pre].clear();
 
@@ -45,7 +45,7 @@ namespace cook { namespace process { namespace toolchain {
                         trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"/OUT:"}+k;};
                         trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
                         trans[Part::Library] = [](const std::string &k, const std::string &v){return k+".lib";};
-                        trans[Part::LibraryPath] = [](const std::string &k, const std::string &v){return std::string{"/LIBPATH:"}+k;};
+                        trans[Part::LibraryPath] = [](const std::string &k, const std::string &v){return std::string{"/LIBPATH:"}+(k.empty() ? "./" : k);};
 
                         configure_.add(configure_msvc_);
                     }
