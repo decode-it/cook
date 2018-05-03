@@ -71,7 +71,7 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
 
     recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
-        n.node("file").attr("type", ltp.type).attr("language", ltp.language).attr("propagation", file.propagation()).attr("overwrite", file.overwrite()).attr("dir", file.dir()).attr("rel", file.rel());
+        n.node("file").attr("type", ltp.type).attr("language", ltp.language).attr("propagation", file.propagation()).attr("overwrite", file.overwrite()).attr("dir", file.dir().string()).attr("rel", file.rel().string());
         return true;
     });
 
