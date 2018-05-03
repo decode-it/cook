@@ -13,5 +13,5 @@ addons:
 
 script: 
     - rake uth
-    - rake install
+    - rake b1:build
 
