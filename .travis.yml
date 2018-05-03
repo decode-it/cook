@@ -1,21 +1,24 @@
 language: cpp
-os: 
-  - linux
-
+os:
+- linux
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - g++-7
-      - rake
-      - ninja-build
-
+    - g++-7
+    - rake
+    - ninja-build
 install:
-    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
-
-script: 
-    - rake uth
-    - rake b1:build
-    - rake test
-
+- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
+script:
+- rake uth
+- rake b1:build
+- rake test
+deploy:
+  provider: releases
+  api_key:
+    secure: sPpN9605DZoJO9As4KPB8SGsi7XG8PERdMlZgtFNMMYZ7ANbgddgt7FTqhD+DmrMIe3d1FmAy0KFl188U/0hhQsTQImwoSKiWM9gg06N24VmU58a0HXc4BljRb3P03ZvRUKLIO7RWmmvHOmTRDsAM0bhkSDqGP5m4QeUE5ClHwFdQNshrvpuL/OnwJubWTzFIGlqx8x8DNHerVEVqLUIA3V5HA0PucKlDh3MtWNGByoMMhjT0lzjtdNq+3e834d0CyNM5ztypTLWEteEM9zco73RGRVF+Ff0tvvvv5mzKcnt23pZS8ttwYFq8c4UNO/JM2djXX1agEsdc2iRDiVj3ucb9UI09IwPv7VFW4/sPAiY6y1d1TSwcO6BhnQyIueTFoFRIWYV6GWwn6Su8J615GEFDmE3uAyioOH1XGLKrpjRi89UQ5J8A1H+8eops+wL3+MuXRuX3BbU5+9hOa65ErkACVjbjlaNUoCV9RHxvIKeiVS7y/zu6WqCnQwIBaNoHdgMdf4ksTqGHzVJ+bRaAMkPiFqrNUkwaDwWIFAiMoBwaEdWKmZf3yVNov1VoYiD6YFremsMnLmfYaP5+hSbdMNqsT6QgT3EpG6kFwrF7Z3pJd5hG2ygV2ONPWVFPveQs5EBtM4DBmyiriQureXabqfQeHEOoAT/xiAxMRawRbI=
+  file: cook.exe
+  on:
+    repo: decode-it/cook
