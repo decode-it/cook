@@ -18,5 +18,4 @@ script:
     - rake uth
     - rake b1:build
     - rake test
-    - sudo -S rake install
 
