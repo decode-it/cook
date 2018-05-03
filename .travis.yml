@@ -9,7 +9,7 @@ addons:
     packages:
       - g++-7
       - rake
-      - ninja
+      - ninja-build
 
 script: 
     - rake uth
