@@ -16,9 +16,3 @@ script:
 - rake b1:build
 - rake test
   
-deploy:
-    provider: releases
-    api_key:
-        secure: Qmm/KoPHOSw37VKxCPWHEaM1fAQE7WG32zLkcXTmkQUtOrmOcsxkWkfnnUFhoAVczGBh9j579SkqiAmezzI6dVemBTgc6TTUcZZ6kYQI0MaPC5KZJwNZBlR/SedANtjnbaadp1c8b3zNDweqFLFcDP19QP6k+aBggerlPN7XEO87PSyDGVxud7d9v2nGtkayrLASRYJggZ1ui19HfHu0nr0Yh26uzy6mGp9UdY0l7Ui/VIOd8G48Vr4pwHIrscQHjEGKaiFZGifGrP4hBz63esycuCI9bjxrkkHj4Gf1Z1qkiZKzqFgcsferDKaEd0OHgNK+Qce29Y6R8HvU8G7uDt6Ys+asyJQghiVpWaC70hPMUSxxYlp3iN2SKDlSGylOLKV3mMlcbTL7THwPCHWpynIvzShudWN7utj2sw1moytfTKbum/zZjqqBogZHfKIIr4IWE3n8Dllk50Vjw0KARFeF6ts/EvwIgeVLTsydNQfsRjmr5KJvIBtNLS87c3n9bysg1GADsIeIE97ylfiW2OMoDO4UVaBavWI7kc2L8wQqIr/PInefEwVC2MBiT8YPmz7triOyLN19UKJJ55cuBAlqojxMPlEY4hhNwjqWEeI7vIXKHmGpSk+qmXhbvPX+fystO4I1WIYVOw8u0JDCV4L6Vgz3vU5exQO/8trqTAQ=
-    file: cook.exe
-    skip_cleanup: true
