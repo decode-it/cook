@@ -55,7 +55,7 @@ public:
                             return std::string{"-D"}+k;
                         return std::string{"-D"}+k+"="+v;
                     };
-                    trans[Part::IncludePath] = [](const std::string &k, const std::string &v){return std::string{"-I "}+k;};
+                    trans[Part::IncludePath] = [](const std::string &k, const std::string &v){return std::string{"-I "}+(k.empty() ? "./" : k);};
                     trans[Part::ForceInclude] = [](const std::string &k, const std::string &v){return std::string{"-include "}+k;};
 
                     kvm[Part::Pre].emplace_back("-c", "");
