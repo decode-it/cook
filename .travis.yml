@@ -12,7 +12,7 @@ addons:
       - ninja-build
 
 install:
-    -sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
+    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
 
 script: 
     - rake uth
