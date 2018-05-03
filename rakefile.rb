@@ -117,12 +117,13 @@ namespace :b1 do
 
         brand, config, arch, lang = nil, :release, nil, "c++=17"
         case GUBG::os
-        when :linux then brand, arch = :gcc, :x86
+        when :linux then brand, arch = :gcc, nil
         when :macos then brand, arch = :clang, :x64
         when :windows then brand, arch = :msvc, :x32
         end
         # config = :debug
-        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{brand}-#{config}-#{arch}-#{lang} cook/app/exe"
+        toolchain  = [brand, config, arch, lang].select { |a| a != nil }.map{|a| a.to_s }.join("-")
+        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{toolchain} cook/app/exe"
         sh "ninja -f #{odir}/build.ninja -v"
         cp "#{odir}/cook.app.exe", "b1-cook.exe"
     end
