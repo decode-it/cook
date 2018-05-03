@@ -1,6 +1,9 @@
 root.recipe("cook/app/exe", "executable", fun(r) {
     r.add("src", "**.[hc]pp")
     r.depends_on("lib/func")
-    r.library("dl")
-    r.library("pthread")
+    if (my(OS) != windows(OS))
+    {
+        r.library("dl")
+        r.library("pthread")
+    }
 })

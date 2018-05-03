@@ -72,7 +72,7 @@ public:
                     };
                     trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"/Fo:"}+k;};
                     trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
-                    /* trans[Part::DepFile] = [](const std::string &k, const std::string &v){return std::string{"-MMD -MF "}+k;}; */
+                    /* trans[Part::DepFile] = [](const std::string &k, const std::string &v){return "/showIncludes";}; */
                     trans[Part::Define] = [](const std::string &k, const std::string &v)
                     {
                         if (v.empty())

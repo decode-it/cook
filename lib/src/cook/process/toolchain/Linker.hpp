@@ -44,7 +44,7 @@ namespace cook { namespace process { namespace toolchain {
                         trans[Part::Cli] = [](const std::string &, const std::string &){return "link";};
                         trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"/OUT:"}+k;};
                         trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
-                        trans[Part::Library] = [](const std::string &k, const std::string &v){return k;};
+                        trans[Part::Library] = [](const std::string &k, const std::string &v){return k+".lib";};
                         trans[Part::LibraryPath] = [](const std::string &k, const std::string &v){return std::string{"/LIBPATH:"}+k;};
 
                         configure_.add(configure_msvc_);

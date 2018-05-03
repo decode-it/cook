@@ -167,6 +167,7 @@ struct Context::D
 #undef EXPOSE
         engine.add(chaiscript::fun([](const W_OS & ) { return get_os(); }), "my");
         engine.add(chaiscript::fun([](OS lhs, OS rhs){return lhs == rhs;}), "==");
+        engine.add(chaiscript::fun([](OS lhs, OS rhs){return lhs != rhs;}), "!=");
 
         engine.add(chaiscript::fun([](Flags & f, const Flags & to_set) { f.set(to_set); } ), "set");
         engine.add(chaiscript::fun(&Flags::to_string), "to_string");

@@ -47,12 +47,18 @@ Result Ninja::process(const Context & context)
             ptr->set_inputs_outputs(input, output);
             {
                 std::ostringstream oss;
-                //Extract the dependencyfile, if any, without the toolchain-specific arguments around it: we only want the filename
-                process::toolchain::Translator trans = [](const std::string &k, const std::string &v){return k;};
-                ptr->stream_part(oss, process::toolchain::Part::DepFile, &trans);
-                const auto depfile = oss.str();
-                if (!depfile.empty())
-                    ofs << "   depfile = " << depfile << std::endl;
+                //See if this command contains a non-empty depfile part
+                ptr->stream_part(oss, process::toolchain::Part::DepFile);
+                if (!oss.str().empty())
+                {
+                    //Extract the dependency file without the toolchain-specific arguments around it: we only want the filename
+                    process::toolchain::Translator trans = [](const std::string &k, const std::string &v){return k;};
+                    oss.str("");
+                    ptr->stream_part(oss, process::toolchain::Part::DepFile, &trans);
+                    const auto depfile = oss.str();
+                    if (!depfile.empty())
+                        ofs << "   depfile = " << depfile << std::endl;
+                }
             }
             ofs << "   command = ";
             ptr->stream_command(ofs);

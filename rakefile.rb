@@ -79,7 +79,7 @@ namespace :b0 do
     task :install => :build do
         case GUBG::os
         when :linux, :macos then sh("sudo cp b0-cook.exe /usr/local/bin/cook")
-        when :windows then cp("b0-cook.exe", "../bin/")
+        when :windows then cp("b0-cook.exe", GUBG::shared("bin"))
         end
     end
 
@@ -125,7 +125,9 @@ namespace :b1 do
         toolchain  = [brand, config, arch, lang].select { |a| a != nil }.map{|a| a.to_s }.join("-")
         sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{toolchain} cook/app/exe"
         sh "ninja -f #{odir}/build.ninja -v"
-        cp "#{odir}/cook.app.exe", "b1-cook.exe"
+        exe = "cook.app.exe"
+        exe += ".exe" if GUBG::os == :windows
+        cp "#{odir}/#{exe}", "b1-cook.exe"
     end
     
     desc "bootstrap-level1-cmake: Build b1-cook.exe using b0-cook.exe"
@@ -173,7 +175,7 @@ task :install, [:path] => "build" do |task, args|
     else
         case GUBG::os
         when :linux then sh("sudo cp cook.exe /usr/local/bin/cook")
-        when :windows then cp("cook.exe", "../bin/")
+        when :windows then cp("cook.exe", GUBG::shared("bin"))
         end
     end
 end
