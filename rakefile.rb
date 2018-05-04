@@ -22,10 +22,10 @@ when :windows
         require("gubg/msvc")
         GUBG::MSVC::load_compiler(:x64)
         if !find_executable("cl")
-            puts "Could not find the msvc compiler \"cl\":"
+            puts "WARING: Could not find the msvc compiler \"cl\":"
             puts "* [must] Install Microsoft Visual Studio 2017"
             puts "* [optional] Run \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat\" or other bat file to load it"
-            raise "stop"
+            # raise "stop"
         end
     end
 end
