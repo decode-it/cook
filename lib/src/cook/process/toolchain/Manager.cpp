@@ -36,6 +36,8 @@ Result Manager::configure(const std::string &value)
 
     gubg::Strange str(value);
     if (false) {}
+    else if (str.pop_if("cl"))
+        MSS(configure("msvc"));
     else if (str.pop_if("gcc") || str.pop_if("clang") || str.pop_if("msvc"))
     {
         //The brand can only be set once

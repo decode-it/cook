@@ -159,14 +159,32 @@ Result Ninja::process(const Context & context)
             const auto build_command = goc_command(command);
             //The build basically specifies the dependency between the output and input files
             ofs << "build";
+            auto stream_escaped = [&](const std::string &str){
+                for (const auto ch: str)
+                {
+                    if (ch == ':')
+                        ofs << '$';
+                    ofs << ch;
+                }
+            };
             for (const auto & f: output_files)
-                ofs << " " << f.string();
-            ofs << ": " << build_command;
+            {
+                ofs << " ";
+                stream_escaped(f.string());
+            }
+            ofs << ": ";
+            stream_escaped(build_command);
             for (const auto & f: input_files)
-                ofs << " " << f.string();
+            {
+                ofs << " ";
+                stream_escaped(f.string());
+            }
             ofs << " |";
             for (const auto & f: input_dependencies)
-                ofs << " " << f.string();
+            {
+                ofs << " ";
+                stream_escaped(f.string());
+            }
             ofs << std::endl;
         }
     }
