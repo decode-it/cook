@@ -9,6 +9,25 @@ end
 require("gubg/shared")
 require_relative("extern/boost/boost.rb")
 
+case GUBG::os
+when :windows
+	ninja_exe = "ninja"
+	sh(ninja_exe) do |ok,res|
+		if !ok
+			ninja_exe = "#{ENV["gubg"]}/bin/ninja"
+			puts "ninja could not be found, using local version from #{ninja_exe}"
+		end
+	end
+	sh("cl") do |ok,res|
+		if !ok
+			puts "Could not find the msvc compiler \"cl\""
+			puts "* Install Microsoft Visual Studio 2017"
+			puts "* Run \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat\""
+			raise "stop"
+		end
+	end
+end
+
 task :default do
     sh "rake -T"
 end
@@ -67,13 +86,13 @@ namespace :b0 do
     task :ut, [:filter] do |t,args|
         filter = args[:filter] || "ut"
         filter = filter.split(":").map{|e|"[#{e}]"}*""
-        sh("ninja -f #{b0_ninja_fn} -v b0-unit_tests.exe")
+        sh("#{ninja_exe} -f #{b0_ninja_fn} -v b0-unit_tests.exe")
         sh("./b0-unit_tests.exe -a -d yes #{filter}")
     end
 
     desc "bootstrap-level0: Build b0-cook.exe"
     task :build => :generate do
-        sh("ninja -f #{b0_ninja_fn} b0-cook.exe -v")
+        sh("#{ninja_exe} -f #{b0_ninja_fn} b0-cook.exe -v")
     end
     
     task :install => :build do
@@ -85,14 +104,14 @@ namespace :b0 do
 
     desc "bootstrap-level0: Clean"
     task :clean do
-        sh("ninja -f #{b0_ninja_fn} -t clean")
+        sh("#{ninja_exe} -f #{b0_ninja_fn} -t clean")
         rm_rf(".b0")
     end
 
     desc "bootstrap-level0: Update rtags"
     task :rtags do
         puts "Make sure you have \"rdm &\" running somewhere."
-        sh "ninja -f #{b0_ninja_fn} -t compdb compile > compile_commands.json"
+        sh "#{ninja_exe} -f #{b0_ninja_fn} -t compdb compile > compile_commands.json"
         sh("rc -J"){}
     end
 
@@ -106,7 +125,7 @@ namespace :b1 do
 
     desc "bootstrap-level1: Build and run the unit tests"
     task :ut do
-        sh("ninja -f #{b0_ninja_fn} -v unit_tests.exe")
+        sh("#{ninja_exe} -f #{b0_ninja_fn} -v unit_tests.exe")
         sh("./unit_tests.exe -a -d yes")
     end
 
@@ -124,7 +143,7 @@ namespace :b1 do
         # config = :debug
         toolchain  = [brand, config, arch, lang].select { |a| a != nil }.map{|a| a.to_s }.join("-")
         sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{toolchain} cook/app/exe"
-        sh "ninja -f #{odir}/build.ninja -v"
+        sh "#{ninja_exe} -f #{odir}/build.ninja -v"
         exe = "cook.app.exe"
         exe += ".exe" if GUBG::os == :windows
         cp "#{odir}/#{exe}", "b1-cook.exe"
