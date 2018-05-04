@@ -41,18 +41,39 @@ Result Ninja::process(const Context & context)
             // and write out the command
             ofs << std::endl;
             ofs << "#Parent recipe: " << ptr->recipe_uri() << std::endl;
-            ofs << "rule " << name << std::endl;
             const process::command::Filenames input = { "${in}" };
             const process::command::Filenames output = { "${out}" };
             ptr->set_inputs_outputs(input, output);
+            bool has_deps = false;
             {
                 std::ostringstream oss;
+                //See if this command contains a non-empty deps part
+                ptr->stream_part(oss, process::toolchain::Part::Deps);
+                if (!oss.str().empty())
+                {
+                    has_deps = true;
+                    ofs << "msvc_deps_prefix = Note: including file:" << std::endl;
+                }
+
+            }
+            ofs << "rule " << name << std::endl;
+            {
+                //Identity translator, used to get the kv.first directly
+                process::toolchain::Translator trans = [](const std::string &k, const std::string &v){return k;};
+
+                std::ostringstream oss;
+                if (has_deps)
+                {
+                    oss.str("");
+                    ptr->stream_part(oss, process::toolchain::Part::Deps, &trans);
+                    ofs << "   deps = " << oss.str() << std::endl;
+                }
                 //See if this command contains a non-empty depfile part
+                oss.str("");
                 ptr->stream_part(oss, process::toolchain::Part::DepFile);
                 if (!oss.str().empty())
                 {
                     //Extract the dependency file without the toolchain-specific arguments around it: we only want the filename
-                    process::toolchain::Translator trans = [](const std::string &k, const std::string &v){return k;};
                     oss.str("");
                     ptr->stream_part(oss, process::toolchain::Part::DepFile, &trans);
                     const auto depfile = oss.str();

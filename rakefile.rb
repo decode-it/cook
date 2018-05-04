@@ -11,21 +11,23 @@ require_relative("extern/boost/boost.rb")
 
 case GUBG::os
 when :windows
-	ninja_exe = "ninja"
-	sh(ninja_exe) do |ok,res|
-		if !ok
-			ninja_exe = "#{ENV["gubg"]}/bin/ninja"
-			puts "ninja could not be found, using local version from #{ninja_exe}"
-		end
-	end
-	sh("cl") do |ok,res|
-		if !ok
-			puts "Could not find the msvc compiler \"cl\""
-			puts "* Install Microsoft Visual Studio 2017"
-			puts "* Run \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat\""
-			raise "stop"
-		end
-	end
+    require("mkmf")
+	ninja_exe = find_executable("ninja")
+    if !ninja_exe
+        ninja_exe = "#{ENV["gubg"]}/bin/ninja"
+        puts "ninja could not be found, using local version from #{ninja_exe}"
+    end
+    if !find_executable("cl")
+        puts "Could not find the msvc compiler \"cl\", trying to load it myself"
+        require("gubg/msvc")
+        GUBG::MSVC::load_compiler(:x64)
+        if !find_executable("cl")
+            puts "Could not find the msvc compiler \"cl\":"
+            puts "* [must] Install Microsoft Visual Studio 2017"
+            puts "* [optional] Run \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars32.bat\" or other bat file to load it"
+            raise "stop"
+        end
+    end
 end
 
 task :default do
@@ -36,8 +38,6 @@ gubg_submods = %w[build std math io algo chaiscript].map{|e|"gubg.#{e}"}
 
 desc "Prepare the submods"
 task :prepare do
-    Rake::Task["boost:update"].invoke
-
     GUBG::each_submod(submods: gubg_submods) do |info|
         sh "rake prepare"
     end
@@ -74,7 +74,7 @@ namespace :b0 do
         when :macos then "build/b0/macos/clang.ninja"
         end
     end
-    
+
     desc "bootstrap-level0: generater the ninja scripts (depends on gubg.build)"
     task :generate => "boost:load" do
         require("gubg/build/expand_templates")
@@ -94,7 +94,7 @@ namespace :b0 do
     task :build => :generate do
         sh("#{ninja_exe} -f #{b0_ninja_fn} b0-cook.exe -v")
     end
-    
+
     task :install => :build do
         case GUBG::os
         when :linux, :macos then sh("sudo cp b0-cook.exe /usr/local/bin/cook")
@@ -148,20 +148,20 @@ namespace :b1 do
         exe += ".exe" if GUBG::os == :windows
         cp "#{odir}/#{exe}", "b1-cook.exe"
     end
-    
+
     desc "bootstrap-level1-cmake: Build b1-cook.exe using b0-cook.exe"
     task :build_cmake => ["b0:update", "b0:build"] do
         odir = File.join(out_base, "cmake")
         tdir = File.join(tmp_base, "cmake")
-        
+
         sh "./b0-cook.exe -f ./ -g CMake -o #{odir} -O #{tdir} cook/app/exe"
         Dir::chdir(odir) do
             sh "cmake ./"
             sh "make -j8"
         end
         cp "#{odir}/cook_app_exe", "b1-cook.exe"
-        
-        
+
+
     end
 
     desc "bootstrap-level1: Clean"

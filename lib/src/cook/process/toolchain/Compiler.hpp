@@ -72,7 +72,8 @@ public:
                     };
                     trans[Part::Output] = [](const std::string &k, const std::string &v){return std::string{"/Fo:"}+k;};
                     trans[Part::Input] = [](const std::string &k, const std::string &v){return k;};
-                    /* trans[Part::DepFile] = [](const std::string &k, const std::string &v){return "/showIncludes";}; */
+                    trans[Part::Deps] = [](const std::string &k, const std::string &v){return "/showIncludes";};
+                    kvm[Part::Deps].emplace_back("msvc", "");
                     trans[Part::Define] = [](const std::string &k, const std::string &v)
                     {
                         if (v.empty())
@@ -87,6 +88,7 @@ public:
 
                     kvm[Part::Pre].emplace_back("/nologo", "");
                     kvm[Part::Pre].emplace_back("/EHsc", "");
+                    kvm[Part::Pre].emplace_back("/bigobj", "");
                     kvm[Part::Pre].emplace_back("-c", "");
 
                     configure_.add(configure_msvc_);

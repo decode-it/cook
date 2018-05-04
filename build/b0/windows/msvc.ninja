@@ -1,4 +1,6 @@
+msvc_deps_prefix = Note: including file:
 rule compile
+    deps = msvc
     command = cl -c $in /Fo:$out $cflags $defines $include_paths
 rule archive
     command = lib /OUT:$out $in
@@ -6,6 +8,6 @@ rule link
     command = link /OUT:$out $in $user_libs_msvc
 
 defines = -DNDEBUG -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_ALL_NO_LIB
-cflags = /nologo /EHsc /std:c++latest
+cflags = /nologo /EHsc /std:c++latest /bigobj /showIncludes
 
 subninja build/b0/compile.ninja
