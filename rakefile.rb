@@ -64,6 +64,7 @@ task :uth => ["boost:load", "boost:update"] do
     GUBG::each_submod(submods: gubg_submods) do |info|
         sh "git checkout #{info[:branch]}"
         sh "git pull --rebase"
+        sh "rake uth" if `rake -AT`["rake uth"]
     end
 end
 
