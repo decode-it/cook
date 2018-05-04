@@ -1,6 +1,6 @@
 #include "cook/process/souschef/ScriptRunner.hpp"
 #include "cook/Result.hpp"
-#include "boost/process.hpp"
+#include <cstdlib>
 
 namespace cook { namespace process { namespace souschef {
 
@@ -15,7 +15,8 @@ Result ScriptRunner::process(model::Recipe & recipe, RecipeFilteredGraph & /*fil
         cmd.set_propagation(Propagation::Private);
 
         const auto command = cmd.key();
-        const int retval = boost::process::system(command);
+        //Replaced boost::process::system() with std::system() due to boost crashing for windows
+        const int retval = std::system(command.c_str());
         MSG_MSS(retval == 0, Error, "Executing of script " << command << " failed with code " << retval);
     }
 
