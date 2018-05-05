@@ -9,10 +9,10 @@ end
 require("gubg/shared")
 require_relative("extern/boost/boost.rb")
 
+require("mkmf")
+ninja_exe = find_executable("ninja")
 case GUBG::os
 when :windows
-    require("mkmf")
-	ninja_exe = find_executable("ninja")
     if !ninja_exe
         ninja_exe = "#{ENV["gubg"]}/bin/ninja"
         puts "ninja could not be found, using local version from #{ninja_exe}"
