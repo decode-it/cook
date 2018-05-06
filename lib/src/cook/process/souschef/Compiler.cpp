@@ -89,7 +89,8 @@ Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recip
 
     // add the force includes
     for (const ingredient::File & f : recipe.files().range(LanguageTypePair(language_, Type::ForceInclude)))
-        cp->add_force_include(util::make_global_from_recipe(recipe, f.key()));
+        //The necessary include path is already added by IncludePathSetter
+        cp->add_force_include(f.rel());
 
     // add the defines
     for (const ingredient::KeyValue & f : recipe.key_values().range(LanguageTypePair(Language::Undefined, Type::Define)))
