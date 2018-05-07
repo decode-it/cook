@@ -9,5 +9,16 @@
         [cli]{
             [add -j option to control threading]
         }
+        [support for disabling deps for msvc]
+        [support for msvc wrapper]
+        [move output dir back to core-build for msvc]
+        [specify pdb output file to allow debug mode builds with msvc]
+        [c-string escaping iso gsub]
+        [regex improvement iso if statements]
+        [expose compiler brand to recipes]
+        [expose architecture to recipes]
+        [introduce threading concept]
+        [proper colon escaping in ninja]
+        [internal header dependency detection]
     }
 }
