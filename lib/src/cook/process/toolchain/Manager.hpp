@@ -2,6 +2,9 @@
 #define HEADER_cook_process_toolchain_Manager_hpp_ALREADY_INCLUDED
 
 #include "cook/process/toolchain/Interface.hpp"
+#include "cook/process/toolchain/Archiver.hpp"
+#include "cook/process/toolchain/Compiler.hpp"
+#include "cook/process/toolchain/Linker.hpp"
 #include "cook/Language.hpp"
 #include <map>
 
@@ -12,9 +15,9 @@ namespace cook { namespace process { namespace toolchain {
     public:
         Manager();
 
-        const Interface &compiler(Language) const;
-        const Interface &archiver() const {return archiver_();}
-        const Interface &linker() const {return linker_();}
+        const Compiler & compiler(Language) const;
+        const Archiver & archiver() const { return archiver_; }
+        const Linker & linker() const { return linker_; }
 
         Result configure(const std::string &value);
         Result configure(const std::string & key, const std::string & value);
@@ -24,20 +27,17 @@ namespace cook { namespace process { namespace toolchain {
         std::string config_value(const std::string & key) const;
 
     private:
+        bool configure_(Interface & itf) const;
         using ConfigValue = std::pair<std::string, std::string>;
         using ConfigValues = std::list<ConfigValue>;
 
-        Interface &archiver_() const;
-        Interface &linker_() const;
-
-        static bool configure_(Interface &, const ConfigValue &);
-        static bool configure_(Interface &, ConfigValues::const_iterator begin, ConfigValues::const_iterator end);
-
-
         ConfigValues config_values_;
-        mutable std::map<Language, Interface::Ptr> compilers_;
-        mutable Interface::Ptr archiver_ptr_;
-        mutable Interface::Ptr linker_ptr_;
+        mutable std::map<Language, Compiler> compilers_;
+        Archiver archiver_;
+        Linker linker_;
+ 
+        std::string name_;
+        bool initialized_ = false;
     };
 
 } } } 

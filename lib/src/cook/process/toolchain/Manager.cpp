@@ -2,6 +2,13 @@
 #include "cook/process/toolchain/Compiler.hpp"
 #include "cook/process/toolchain/Archiver.hpp"
 #include "cook/process/toolchain/Linker.hpp"
+#include "cook/process/toolchain/gcc.hpp"
+#include "cook/process/toolchain/gcc/Archiver.hpp"
+#include "cook/process/toolchain/gcc/Compiler.hpp"
+#include "cook/process/toolchain/gcc/Linker.hpp"
+#include "cook/process/toolchain/msvc/Archiver.hpp"
+#include "cook/process/toolchain/msvc/Compiler.hpp"
+#include "cook/process/toolchain/msvc/Linker.hpp"
 #include "cook/OS.hpp"
 #include "cook/log/Scope.hpp"
 #include "gubg/Strange.hpp"
@@ -9,8 +16,6 @@
 namespace cook { namespace process { namespace toolchain { 
 
 Manager::Manager()
-    : archiver_ptr_(std::make_shared<Archiver>()),
-      linker_ptr_(std::make_shared<Linker>())
 {
     //Create compilers for common languages
     compiler(Language::C);
@@ -18,16 +23,25 @@ Manager::Manager()
     compiler(Language::ASM);
 }
 
-const Interface &Manager::compiler(Language language) const
+const Compiler & Manager::compiler(Language language) const
 {
     auto it = compilers_.find(language);
     if (it == compilers_.end())
     {
-        compilers_[language].reset(new Compiler(language));
-        configure_(*compilers_[language], RANGE(config_values_));
-        it = compilers_.find(language);
+        it = compilers_.insert(std::make_pair(language, Compiler(language))).first;
+
+        if (initialized_)
+        {
+            if (false) {}
+            else if (name_ == "msvc")
+                msvc::set_compiler(it->second);
+            else
+                gcc::set_compiler(it->second, standard_executable(language, name_));
+
+            configure_(it->second);
+        }
     }
-    return *it->second;
+    return it->second;
 }
 
 Result Manager::configure(const std::string &value)
@@ -40,10 +54,8 @@ Result Manager::configure(const std::string &value)
         MSS(configure("msvc"));
     else if (str.pop_if("gcc") || str.pop_if("clang") || str.pop_if("msvc"))
     {
-        //The brand can only be set once
-        MSS(std::find_if(RANGE(config_values_), [](const auto &cv){return cv.first == "brand";}) == config_values_.end());
-        //Make sure the brand comes first
-        config_values_.emplace_front("brand", value);
+        MSS(name_.empty());
+        name_ = value;
     }
     else if (str.pop_if("x86") || str.pop_if("x64"))
         MSS(configure("arch", value));
@@ -88,60 +100,56 @@ Result Manager::configure(const std::string & key, const std::string & value)
 Result Manager::initialize()
 {
     MSS_BEGIN(Result);
+    MSS(initialized_ == false);
+    initialized_ = true;
 
-    if (std::find_if(RANGE(config_values_), [](const auto &cv){return cv.first == "brand";}) == config_values_.end())
+    if (name_.empty())
     {
-        std::string default_brand;
         switch (get_os())
         {
-        case OS::Linux: default_brand = "gcc"; break;
-        case OS::Windows: default_brand = "msvc"; break;
-        case OS::MacOS: default_brand = "clang"; break;
-        default: default_brand = "gcc"; break;
+        case OS::Linux: name_ = "gcc"; break;
+        case OS::Windows: name_ = "msvc"; break;
+        case OS::MacOS: name_ = "clang"; break;
+        default: name_ = "gcc"; break;
         }
-        config_values_.emplace_front("brand", default_brand);
+    }
+
+    if (false) {}
+    else if (name_ == "msvc")
+    {
+        for(auto & p: compilers_)
+            msvc::set_compiler(p.second);
+
+        msvc::set_linker(linker_);
+        msvc::set_archiver(archiver_);
+    }
+    else
+    {
+        for(auto & p: compilers_)
+            gcc::set_compiler(p.second, standard_executable(p.first, name_));
+
+        gcc::set_linker(linker_, standard_executable(Language::CXX, name_));
+        gcc::set_archiver(archiver_);
     }
 
     for (auto &p: compilers_)
-        MSS(configure_(*p.second, RANGE(config_values_)));
+        MSS(configure_(p.second));
 
-    MSS(configure_(archiver_(), RANGE(config_values_)));
-    MSS(configure_(linker_(), RANGE(config_values_)));
+    MSS(configure_(archiver_));
+    MSS(configure_(linker_));
 
     MSS_END();
 }
 
-Interface &Manager::archiver_() const
+bool Manager::configure_(Interface & itf) const
 {
-    if (!archiver_ptr_)
-        archiver_ptr_.reset(new Archiver);
+    for(const auto & p : config_values_)
+        itf.configure(p.first, p.second);
 
-    return *archiver_ptr_;
+    return true;
 }
 
-Interface &Manager::linker_() const
-{
-    if (!linker_ptr_)
-        linker_ptr_.reset(new Linker);
-
-    return *linker_ptr_;
-}
-
-bool Manager::configure_(Interface &itf, const ConfigValue &cv)
-{
-    return itf.configure(cv.first, cv.second);
-}
-bool Manager::configure_(Interface &itf, ConfigValues::const_iterator begin, ConfigValues::const_iterator end)
-{
-    MSS_BEGIN(bool);
-    for (; begin != end; ++begin)
-    {
-        MSS(configure_(itf, *begin));
-    }
-    MSS_END();
-}
-
-bool  Manager::has_config(const std::string & key) const
+bool Manager::has_config(const std::string & key) const
 {
     for(const auto & p : config_values_)
         if (p.first == key)
@@ -156,8 +164,6 @@ std::string  Manager::config_value(const std::string & key) const
             return p.second;
 
     return std::string();
-
-
 }
 
 
