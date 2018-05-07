@@ -133,6 +133,7 @@ ingredient::File Linker::construct_link_file(model::Recipe & recipe, const Conte
     const std::filesystem::path rel = *recipe.build_target().filename;
 
     ingredient::File archive(dir, rel);
+    archive.set_content(Content::Generated);
     archive.set_overwrite(Overwrite::IfSame);
     archive.set_owner(&recipe);
     archive.set_propagation(Propagation::Public);

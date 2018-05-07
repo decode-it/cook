@@ -97,6 +97,7 @@ void Recipe::library(const std::string & library, const Flags & flags)
     CHAI_MSS(flags.only({Flag::Propagation, Flag::Overwrite, Flag::Language, Flag::Type} ));
 
     auto lib = ingredient::KeyValue(library);
+    lib.set_content(Content::User);
     lib.set_propagation(flags.get_or(Propagation::Public));
     lib.set_overwrite(flags.get_or(Overwrite::Always));
 
@@ -109,6 +110,7 @@ void Recipe::library_path(const std::string & path, const Flags & flags)
     CHAI_MSS(flags.only({Flag::Propagation, Flag::Overwrite, Flag::Language, Flag::Type} ));
 
     auto lib_path = ingredient::File(path, {});
+    lib_path.set_content(Content::User);
     lib_path.set_propagation(flags.get_or(Propagation::Public));
     lib_path.set_overwrite(flags.get_or(Overwrite::Always));
 
@@ -121,6 +123,7 @@ void Recipe::include_path(const std::string & path, const Flags & flags)
     CHAI_MSS(flags.only({Flag::Propagation, Flag::Overwrite, Flag::Language, Flag::Type} ));
 
     auto inc_path = ingredient::File(path, {});
+    inc_path.set_content(Content::User);
 
     inc_path.set_propagation(flags.get_or(Propagation::Public));
     inc_path.set_overwrite(flags.get_or(Overwrite::Always));
@@ -134,6 +137,7 @@ void Recipe::define(const std::string & name, const Flags & flags)
     CHAI_MSS(flags.only({Flag::Propagation, Flag::Overwrite, Flag::Language, Flag::Type} ));
 
     auto kv = ingredient::KeyValue(name);
+    kv.set_content(Content::User);
     kv.set_propagation(flags.get_or(Propagation::Public));
     kv.set_overwrite(flags.get_or(Overwrite::IfSame));
 
@@ -146,6 +150,7 @@ void Recipe::define(const std::string & name, const std::string & value, const F
     CHAI_MSS(flags.only({Flag::Propagation, Flag::Overwrite, Flag::Language, Flag::Type} ));
 
     auto kv = ingredient::KeyValue(name, value);
+    kv.set_content(Content::User);
     kv.set_propagation(flags.get_or(Propagation::Public));
     kv.set_overwrite(flags.get_or(Overwrite::IfSame));
 
@@ -155,6 +160,7 @@ void Recipe::define(const std::string & name, const std::string & value, const F
 void Recipe::run(const std::string & command)
 {
     auto kv = ingredient::KeyValue(command, "");
+    kv.set_content(Content::User);
     kv.set_propagation(Propagation::Private);
     kv.set_overwrite(Overwrite::Never);
     recipe_->key_values().insert(LanguageTypePair(Language::Script, Type::Executable), kv);

@@ -48,6 +48,7 @@ ingredient::File make_local_to_recipe(const std::filesystem::path & adj_path, co
     f.set_overwrite(file.overwrite());
     f.set_owner(file.owner());
     f.set_propagation(file.propagation());
+    f.set_content(file.content());
 
     return f;
 }

@@ -69,16 +69,29 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
     n.attr("type", recipe->build_target().type);
     n.attr("build_target", recipe->build_target().name);
 
+    auto base_naft = [](gubg::naft::Node & node, const LanguageTypePair & ltp, const auto & ingredient)
+    {
+        node.attr("type", ltp.type)
+            .attr("language", ltp.language)
+            .attr("propagation", ingredient.propagation())
+            .attr("overwrite", ingredient.overwrite())
+            .attr("content", ingredient.content());
+    };
+
     recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
-        n.node("file").attr("type", ltp.type).attr("language", ltp.language).attr("propagation", file.propagation()).attr("overwrite", file.overwrite()).attr("dir", file.dir().string()).attr("rel", file.rel().string());
+        auto nn = n.node("file");
+        base_naft(nn, ltp, file);
+        nn.attr("dir", file.dir().string()).attr("rel", file.rel().string());
+
         return true;
     });
 
     recipe->key_values().each([&](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
     {
         auto nn = n.node("key_value");
-        nn.attr("type", ltp.type).attr("language", ltp.language).attr("propagation", key_value.propagation()).attr("overwrite", key_value.overwrite()).attr("key", key_value.key());
+        base_naft(nn, ltp, key_value);
+        nn.attr("key", key_value.key());
         if (key_value.has_value())
             nn.attr("value", key_value.value());
 

@@ -12,6 +12,7 @@ Result add_derived_path(const LanguageTypePair & key, const ingredient::File & f
 
     // create a file object for the path
     ingredient::File path(file.dir(), {});
+    path.set_content(Content::Generated);
 
     path.set_overwrite(Overwrite::Always);
     path.set_owner(&recipe);
@@ -39,7 +40,7 @@ Result add_derived_paths(model::Recipe & recipe, const LanguageTypePair & src_pa
     {
         // create a file object for the path
         ingredient::File dir(p.first, {});
-
+        dir.set_content(Content::Generated);
         dir.set_overwrite(Overwrite::Always);
         dir.set_owner(&recipe);
         dir.set_propagation( p.second );

@@ -40,7 +40,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     {
         MSS(!!recipe.build_target().filename);
         ingredient::File dep(library_dir, *recipe.build_target().filename);
-
+        dep.set_content(Content::Generated);
         dep.set_overwrite(Overwrite::IfSame);
         dep.set_owner(&recipe);
         dep.set_propagation(Propagation::Public);

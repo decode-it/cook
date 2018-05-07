@@ -4,6 +4,7 @@
 #include "cook/Propagation.hpp"
 #include "cook/Overwrite.hpp"
 #include "cook/Result.hpp"
+#include "cook/Content.hpp"
 #include "gubg/mss.hpp"
 
 namespace cook { namespace model {
@@ -32,7 +33,8 @@ public:
         : key_(key),
           propagation_(Propagation::Private),
           owner_(nullptr),
-          overwrite_(Overwrite::Never)
+          overwrite_(Overwrite::Never),
+          content_(Content::Generated)
     {
     }
 
@@ -40,9 +42,11 @@ public:
     model::Recipe * owner() const                   { return owner_; }
     Propagation propagation() const                 { return propagation_; }
     Overwrite overwrite() const                     { return overwrite_; }
+    Content content() const                         { return content_; }
     void set_propagation(Propagation propagation)   { propagation_ = propagation; }
     void set_overwrite(Overwrite overwrite)         { overwrite_ = overwrite; }
     void set_owner(model::Recipe * owner)           { owner_ = owner; }
+    void set_content(Content content)               { content_ = content; }
 
 protected:
     bool equal_(const Base<KeyType> & rhs) const
@@ -93,6 +97,7 @@ private:
     Propagation propagation_;
     model::Recipe * owner_;
     Overwrite overwrite_;
+    Content content_;
 };
 
 } }

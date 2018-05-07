@@ -63,6 +63,7 @@ Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & glo
         // resolve the file if possible
         ingredient::File file(globber.dir, fn);
         LanguageTypePair key(globber.language, globber.type);
+        file.set_content(Content::Globbing);
 
         auto accepts = [&](const rules::Interface & interface) { return interface.accepts_file(key, file); };
         const rules::Interface & interface = rule_set_->find(accepts);

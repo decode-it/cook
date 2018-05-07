@@ -69,6 +69,7 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
     const std::filesystem::path rel = source.rel().string() + ".obj";
 
     ingredient::File object(dir, rel);
+    object.set_content(Content::Generated);
     object.set_owner(&recipe);
     object.set_overwrite(Overwrite::IfSame);
     object.set_propagation(Propagation::Public);
