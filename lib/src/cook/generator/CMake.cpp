@@ -1,7 +1,9 @@
 #include "cook/generator/CMake.hpp"
+#include "cook/process/toolchain/Manager.hpp"
 #include "cook/Context.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
+#include <list>
 
 namespace cook { namespace generator {
 
@@ -23,6 +25,41 @@ bool CMake::can_process(const Context & context) const
     return context.menu().is_valid();
 }
 
+Result CMake::construct_recipe_map_(const Context & context)
+{
+    MSS_BEGIN(Result);
+
+    recipe_map_.clear();
+    for(const model::Recipe * recipe : context.menu().topological_order_recipes())
+    {
+        CMakeType type;
+        bool has_sources = contains_sources_(*recipe);
+
+        switch(recipe->build_target().type)
+        {
+            case TargetType::Executable:
+                MSG_MSS(has_sources, Error, "CMake cannot create an executable with no sources for " << recipe->uri());
+                type = CMakeType::Executable;
+                break;
+
+            case TargetType::Archive:
+                type = has_sources ? CMakeType::StaticLibrary : CMakeType::Interface;
+                break;
+
+            case TargetType::Undefined:
+                type = has_sources ? CMakeType::Object : CMakeType::Interface;
+                break;
+
+            default:
+                MSG_MSS(false, Error, "No CMake translation possible for recipe " << recipe->uri() << " with type " << recipe->build_target().type);
+        }
+
+        recipe_map_[recipe] = type;
+    }
+
+    MSS_END();
+}
+
 Result CMake::process(const Context & context)
 {
     MSS_BEGIN(Result);
@@ -30,7 +67,7 @@ Result CMake::process(const Context & context)
     std::ofstream ofs;
     MSS(open_output_stream(context, ofs));
 
-    std::vector<std::pair<std::filesystem::path, std::ofstream>> streams;
+    std::list<std::pair<std::filesystem::path, std::ofstream>> streams;
     std::filesystem::path root_path = gubg::filesystem::normalize(std::filesystem::current_path());
 
     auto get_output_stream = [&](const std::filesystem::path & wd, std::ofstream *& str, bool & is_new)
@@ -64,18 +101,30 @@ Result CMake::process(const Context & context)
         MSS_END();
     };
 
+    MSS(construct_recipe_map_(context));
+
     const auto & recipe_list = context.menu().topological_order_recipes();
-
     ofs << "cmake_minimum_required (VERSION 3.1)" << std::endl;
-    ofs << "project (recipes.chai)" << std::endl;
-    ofs << "set(CMAKE_CXX_STANDARD 17)" << std::endl;
+    ofs << "project (" << context.project_name() << ")" << std::endl;
+    
+    auto set_property = [&](const std::string & key, const std::string & cmake_key)
+    {
+        const std::string & val = context.toolchain().config_value(key);
+        if (!val.empty())
+            ofs << "set(" << cmake_key << " " << val << ")" << std::endl;
+    };
+    
+    set_property("c++-standard", "CMAKE_CXX_STANDARD");
+    set_property("c-standard", "CMAKE_C_STANDARD");
 
-    for(const model::Recipe * recipe : recipe_list)
+    for(model::Recipe * recipe : recipe_list)
     {
         std::ofstream * str = nullptr;
         bool is_new = false;
         MSS(get_output_stream(recipe->working_directory(), str, is_new));
         MSS(!!str);
+
+        auto type = recipe_map_[recipe];
 
         if (is_new)
             ofs << "add_subdirectory(" << gubg::filesystem::normalize(recipe->working_directory()) << ")" << std::endl;
@@ -83,14 +132,21 @@ Result CMake::process(const Context & context)
 
         std::filesystem::path output_to_source = gubg::filesystem::get_relative_to(output_path_ / recipe->working_directory(), recipe->working_directory());
 
-        if (false) {}
-        else if (recipe->build_target().type == TargetType::Executable)
-            add_executable_(*str, *recipe, output_to_source);
-        else if (contains_sources_(*recipe))
-            add_library_(*str, *recipe, output_to_source);
-        else
-            add_interface_(*str, *recipe, output_to_source);
-
+        switch(type)
+        {
+            case CMakeType::Object:
+                MSS(add_object_library_(*str, recipe, context, output_to_source));
+                break;
+            case CMakeType::StaticLibrary:
+                MSS(add_static_library_(*str, recipe, context, output_to_source));
+                break;
+            case CMakeType::Executable:
+                MSS(add_executable_(*str, recipe, context, output_to_source));
+                break;
+            case CMakeType::Interface:
+                MSS(add_interface_library_(*str, recipe, context, output_to_source));
+                break;
+        }
     }
 
     MSS_END();
@@ -101,43 +157,83 @@ std::string CMake::default_filename() const
     return "CMakeLists.txt";
 }
 
-void CMake::add_interface_(std::ostream &ofs, const model::Recipe & recipe, const std::filesystem::path & output_to_source) const
+Result CMake::add_object_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source)
 {
-    ofs << "# " << recipe.uri() << std::endl;
+    MSS_BEGIN(Result);
 
-    ofs << "add_library(" << recipe_name_(recipe) << " INTERFACE" << std::endl;
-    add_source_and_header_(ofs, recipe, false, output_to_source);
-    ofs << ")" << std::endl;
+    str << "# " << recipe->uri() << std::endl;
 
-    ofs << "target_sources(" << recipe_name_(recipe) << " INTERFACE" << std::endl;
-    recipe.files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
-    {
-        if (ltp.type == Type::Header)
-            ofs << "  " << gubg::filesystem::combine(output_to_source, file.key()) << std::endl;
-        return true;
-    });
-    ofs << ")" << std::endl;
+    str << "add_library(" << recipe_name_(recipe) << " OBJECT" << std::endl;
+    add_source_and_header_(str, recipe, true, std::list<model::Recipe*>(), output_to_source);
+    str << ")" << std::endl;
 
-    set_target_properties_(ofs, recipe, "INTERFACE", output_to_source);
+    set_target_properties_(str, recipe, "PRIVATE", output_to_source);
 
+    str << "# " << recipe->uri() << std::endl << std::endl;
 
-    ofs << "# " << recipe.uri() << std::endl << std::endl;
+    MSS_END();
 }
 
-void CMake::add_library_(std::ostream & ofs, const model::Recipe & recipe, const std::filesystem::path &output_to_source) const
+Result CMake::add_static_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source)
 {
-    ofs << "# " << recipe.uri() << std::endl;
-    if (contains_sources_(recipe))
+    MSS_BEGIN(Result);
+    
+    str << "# " << recipe->uri() << std::endl;
+
+    str << "add_library(" << recipe_name_(recipe) << " STATIC" << std::endl;
+    std::list<model::Recipe*> lst;
+    MSS(context.menu().topological_order_recipes(recipe, lst));
+
+    add_source_and_header_(str, recipe, true, lst, output_to_source);
+    str << ")" << std::endl;
+
+    set_target_properties_(str, recipe, "PRIVATE", output_to_source);
+
+    str << "# " << recipe->uri() << std::endl << std::endl;
+    MSS_END();
+}
+
+Result CMake::add_executable_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source)
+{
+    MSS_BEGIN(Result);
+
+    str << "# " << recipe->uri() << std::endl;
+    set_link_paths_(str, recipe, output_to_source);
+
+    str << "add_executable(" << recipe_name_(recipe) << " ";
+    std::list<model::Recipe*> lst;
+    MSS(context.menu().topological_order_recipes(recipe, lst));
+    add_source_and_header_(str, recipe, true, lst, output_to_source);
+    str << ")" << std::endl;
+    set_target_properties_(str, recipe, "PRIVATE", output_to_source);
+
+    MSS(set_link_libraries(str, recipe, lst, "PRIVATE", output_to_source));
+
+    str << "# " << recipe->uri() << std::endl << std::endl;
+    MSS_END();
+}
+
+Result CMake::add_interface_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source)
+{
+    MSS_BEGIN(Result);
+    str << "# " << recipe->uri() << std::endl;
+
+    str << "add_library(" << recipe_name_(recipe) << " INTERFACE)" << std::endl;
+    
+    str << "target_sources(" << recipe_name_(recipe) << " INTERFACE" << std::endl;
+    recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
-        set_link_paths_(ofs, recipe, output_to_source);
+        if (ltp.type == Type::Header)
+            str << "  " << gubg::filesystem::combine(output_to_source, file.key()) << std::endl;
+        return true;
+    });
+    str << ")" << std::endl;
 
-        ofs << "add_library(" << recipe_name_(recipe) << " " << deduce_library_type_(recipe) << std::endl;
-        add_source_and_header_(ofs, recipe, true, output_to_source);
-        ofs << ")" << std::endl;
-        set_target_properties_(ofs, recipe, "PRIVATE", output_to_source);
-    }
+    set_target_properties_(str, recipe, "INTERFACE", output_to_source);
 
-    ofs << "# " << recipe.uri() << std::endl << std::endl;
+
+    str << "# " << recipe->uri() << std::endl << std::endl;
+    MSS_END();
 }
 
 bool CMake::contains_sources_(const model::Recipe & recipe) const
@@ -149,40 +245,16 @@ bool CMake::contains_sources_(const model::Recipe & recipe) const
     });
     return has_sources;
 }
-
-void CMake::add_executable_(std::ostream & ofs, const model::Recipe & recipe, const std::filesystem::path & output_to_source) const
+std::string CMake::recipe_name_(model::Recipe * recipe) const
 {
-    ofs << "# " << recipe.uri() << std::endl;
-    if (contains_sources_(recipe))
-    {
-        set_link_paths_(ofs, recipe, output_to_source);
-
-        ofs << "add_executable(" << recipe_name_(recipe) << " ";
-        add_source_and_header_(ofs, recipe, true, output_to_source);
-        ofs << ")" << std::endl;
-        set_target_properties_(ofs, recipe, "PRIVATE", output_to_source);
-    }
-
-    ofs << "# " << recipe.uri() << std::endl << std::endl;
-}
-
-std::string CMake::recipe_name_(const model::Recipe & recipe) const
-{
-    model::Uri uri = recipe.uri().as_relative();
+    model::Uri uri = recipe->uri().as_relative();
     return uri.string('_');
 }
 
-std::string CMake::deduce_library_type_(const model::Recipe & recipe) const
+Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_headers, const std::list<model::Recipe*> & dependencies, const std::filesystem::path & output_to_source) const
 {
-//    if (recipe.type() == Type::Library)
-//        return "SHARED";
-//    else
-        return "STATIC";
-}
-
-void CMake::add_source_and_header_(std::ostream & ofs, const model::Recipe & recipe, bool add_headers, const std::filesystem::path & output_to_source) const
-{
-    recipe.files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
+    MSS_BEGIN(Result);
+    auto add_files = [&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
         switch(ltp.type)
         {
@@ -193,17 +265,30 @@ void CMake::add_source_and_header_(std::ostream & ofs, const model::Recipe & rec
             case Type::Header:
                 if (add_headers)
                     ofs << "  " << gubg::filesystem::combine(output_to_source, file.key()) << std::endl;
-
                 break;
 
             default:
                 break;
         }
         return true;
-    });
+    };
+
+    MSS(recipe->files().each(add_files));
+
+    for(model::Recipe * dep : dependencies)
+    {
+        if (dep == recipe)
+            break;
+        
+        auto it = recipe_map_.find(dep);
+        MSS(it != recipe_map_.end());
+        
+        if(it->second == CMakeType::Object)
+            ofs << "  $<TARGET_OBJECTS:" << recipe_name_(dep) << ">" << std::endl; 
+    }
+
+    MSS_END();
 }
-
-
 
 namespace  {
 
@@ -229,10 +314,10 @@ void write_elements_(std::ostream & ofs, OpenFunction && open_function, const Co
 
 }
 
-void CMake::set_link_paths_(std::ostream & oss, const model::Recipe & recipe, const std::filesystem::path & output_to_source) const
+void CMake::set_link_paths_(std::ostream & oss, model::Recipe * recipe, const std::filesystem::path & output_to_source) const
 {
     std::list<std::string> link_directories;
-    recipe.files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
+    recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
         if (ltp.type == Type::LibraryPath && file.owner() == nullptr)
             link_directories.push_back(gubg::filesystem::combine(output_to_source, file.dir()).string());
@@ -243,14 +328,46 @@ void CMake::set_link_paths_(std::ostream & oss, const model::Recipe & recipe, co
     write_elements_(oss, [](auto & os) { os << "link_directories("; }, link_directories, false);
 }
 
-void CMake::set_target_properties_(std::ostream & ofs, const model::Recipe & recipe, const std::string & keyword, const std::filesystem::path & output_to_source) const
+Result CMake::set_link_libraries(std::ostream & ofs, model::Recipe * recipe, const std::list<model::Recipe*> & dependencies, const std::string & keyword, const std::filesystem::path & output_to_source) const
+{
+    MSS_BEGIN(Result);
+
+    const std::string & name = recipe_name_(recipe);
+    
+    // the link libraries
+    {
+        std::set<std::string> link_libraries;
+        for(const ingredient::KeyValue & lib : recipe->key_values().range(LanguageTypePair(Language::Binary, Type::Library)))
+        {
+            if (lib.owner() == nullptr)
+                link_libraries.insert(gubg::stream([&](auto & os) { os << lib.key(); } ));
+        }
+
+        for (model::Recipe * dep : dependencies)
+        {
+            auto it = recipe_map_.find(dep);
+            MSS(it != recipe_map_.end());
+
+            if (it->second == CMakeType::StaticLibrary)
+                link_libraries.insert(recipe_name_(dep));
+        }
+
+
+        write_elements_(ofs, [&](auto & os) { os << "target_link_libraries(" << name << " " << keyword; }, link_libraries, false);
+    }
+
+    MSS_END();
+}
+
+
+void CMake::set_target_properties_(std::ostream & ofs, model::Recipe * recipe, const std::string & keyword, const std::filesystem::path & output_to_source) const
 {
     const std::string & name = recipe_name_(recipe);
 
     // the include directories
     {
         std::set<std::string> include_dirs;
-        recipe.files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
+        recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
         {
             if (ltp.type == Type::IncludePath)
             {
@@ -262,28 +379,10 @@ void CMake::set_target_properties_(std::ostream & ofs, const model::Recipe & rec
     }
 
 
-    // the link libraries
-    {
-        std::set<std::string> link_libraries;
-        for(const ingredient::KeyValue & lib : recipe.key_values().range(LanguageTypePair(Language::Binary, Type::Library)))
-        {
-            if (false) {}
-            else if (lib.owner() == nullptr)
-                link_libraries.insert(gubg::stream([&](auto & os) { os << lib.key(); } ));
-
-            else if (lib.owner() != &recipe)
-                link_libraries.insert(gubg::stream([&](auto & os) { os << recipe_name_(*lib.owner()); } ));
-        }
-
-        write_elements_(ofs, [&](auto & os) { os << "target_link_libraries(" << name << " " << keyword; }, link_libraries, false);
-    }
-
-
-
     // the compile definitions
     {
         std::set<std::string> definitions;
-        recipe.key_values().each([&](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
+        recipe->key_values().each([&](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
         {
             if (ltp.type == Type::Define)
                 definitions.insert(key_value.to_string());
@@ -296,7 +395,7 @@ void CMake::set_target_properties_(std::ostream & ofs, const model::Recipe & rec
     // the compile options
     {
         std::set<std::string> options;
-        recipe.files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
+        recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
         {
             if (ltp.type == Type::ForceInclude)
                 options.insert(gubg::stream([&](auto & os)
@@ -313,8 +412,8 @@ void CMake::set_target_properties_(std::ostream & ofs, const model::Recipe & rec
     // the dependencies
     {
         std::list<std::string> dependencies;
-        for(const model::Recipe * dep : recipe.dependencies())
-            dependencies.push_back(recipe_name_(*dep));
+        for(model::Recipe * dep : recipe->dependencies())
+            dependencies.push_back(recipe_name_(dep));
 
         write_elements_(ofs, [&](auto & os) { os << "add_dependencies(" << name; }, dependencies, false);
     }
