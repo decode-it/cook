@@ -45,7 +45,7 @@ Result Manager::configure(const std::string &value)
         //Make sure the brand comes first
         config_values_.emplace_front("brand", value);
     }
-    else if (str.pop_if("x86") || str.pop_if("x64"))
+    else if (str.pop_if("x86") || str.pop_if("x64") || str.pop_if("armv7"))
         MSS(configure("arch", value));
     else if (str.pop_if("x32"))
         MSS(configure("x86"));
