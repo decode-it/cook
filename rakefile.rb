@@ -134,17 +134,18 @@ namespace :b1 do
         sh("./unit_tests.exe -a -d yes")
     end
 
+    brand, config, arch, lang = nil, :release, nil, "c++=17"
+    case GUBG::os
+    when :linux then brand, arch = :gcc, nil
+    when :macos then brand, arch = :clang, :x64
+    when :windows then brand, arch = :msvc, :x86
+    end
+
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
     task :build => ["b0:build"] do
         odir = File.join(out_base, "ninja")
         tdir = File.join(tmp_base, "ninja")
 
-        brand, config, arch, lang = nil, :release, nil, "c++=17"
-        case GUBG::os
-        when :linux then brand, arch = :gcc, nil
-        when :macos then brand, arch = :clang, :x64
-        when :windows then brand, arch = :msvc, :x32
-        end
         # config = :debug
         toolchain  = [brand, config, arch, lang].select { |a| a != nil }.map{|a| a.to_s }.join("-")
         sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{toolchain} cook/app/exe"
@@ -152,6 +153,20 @@ namespace :b1 do
         exe = "cook.app.exe"
         exe += ".exe" if GUBG::os == :windows
         cp "#{odir}/#{exe}", "b1-cook.exe"
+    end
+
+    desc "bootstrap-level1: Publish b1-cook.exe into cook-binary"
+    task :publish => :build do
+        here, ext = nil
+        case GUBG::os
+        when :macos, :linux then here, ext = "./", ""
+        when :windows then here, ext = "", ".exe"
+        else raise "stop" end
+
+        b1_exe = "b1-cook.exe"
+        version = `#{here}#{b1_exe} -h`[/cook version (\d\.\d\.\d) /, 1]
+        dst_dir = "cook-binary/#{version}/#{GUBG::os}/#{arch}"
+        cp b1_exe, File.join(GUBG::mkdir(dst_dir), "cook#{ext}")
     end
 
     desc "bootstrap-level1-cmake: Build b1-cook.exe using b0-cook.exe"
