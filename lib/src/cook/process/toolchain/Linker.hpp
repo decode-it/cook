@@ -10,7 +10,6 @@ namespace cook { namespace process { namespace toolchain {
     public:
         Linker()
         {
-            auto & kvm = this->key_values_map();
             auto configure = [&](const std::string &key, const std::string &value, const Configuration & conf)
             {
                 MSS_BEGIN(bool);

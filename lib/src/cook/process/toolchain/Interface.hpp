@@ -16,7 +16,7 @@ namespace cook { namespace process { namespace toolchain {
         using Ptr = std::shared_ptr<Interface>;
 
         Interface()
-        : trans_(std::make_shared<TranslatorMap>())
+            : trans_(std::make_shared<TranslatorMap>())
         {
             kvm_[Part::Cli].emplace_back("", "");
 
@@ -40,6 +40,11 @@ namespace cook { namespace process { namespace toolchain {
         const TranslatorMap & translator_map() const { return *trans_; }
 
     private:
+       Interface(const Interface &) = delete;
+        Interface(Interface &&) = delete;
+        Interface & operator=(const Interface &) = delete;
+        Interface & operator=(Interface &&) = delete;
+        
         KeyValuesMap kvm_;
         TranslatorMapPtr trans_;
     };

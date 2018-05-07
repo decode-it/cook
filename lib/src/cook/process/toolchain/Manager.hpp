@@ -16,8 +16,8 @@ namespace cook { namespace process { namespace toolchain {
         Manager();
 
         const Compiler & compiler(Language) const;
-        const Archiver & archiver() const { return archiver_; }
-        const Linker & linker() const { return linker_; }
+        const Archiver & archiver() const { return *archiver_; }
+        const Linker & linker() const { return *linker_; }
 
         Result configure(const std::string &value);
         Result configure(const std::string & key, const std::string & value);
@@ -32,9 +32,9 @@ namespace cook { namespace process { namespace toolchain {
         using ConfigValues = std::list<ConfigValue>;
 
         ConfigValues config_values_;
-        mutable std::map<Language, Compiler> compilers_;
-        Archiver archiver_;
-        Linker linker_;
+        mutable std::map<Language, std::shared_ptr<Compiler>> compilers_;
+        std::shared_ptr<Archiver> archiver_;
+        std::shared_ptr<Linker> linker_;
  
         std::string name_;
         bool initialized_ = false;

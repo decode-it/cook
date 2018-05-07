@@ -14,6 +14,7 @@ public:
     Compiler(Language language)
         : language(language)
     {
+        auto & kvm = key_values_map();
         auto configure = [&](const std::string & key, const std::string & value, const Configuration & conf)
         {
             MSS_BEGIN(bool);
@@ -27,7 +28,7 @@ public:
             else if (key == "config" && value == "release")
             {
                 MSS(conf.configure("optimization", "max_speed"));
-                key_values_map()[Part::Define].emplace_back("NDEBUG", "");
+                kvm[Part::Define].emplace_back("NDEBUG", "");
             }
             else MSS_Q(false);
             MSS_END();

@@ -16,6 +16,8 @@
 namespace cook { namespace process { namespace toolchain { 
 
 Manager::Manager()
+    : linker_(std::make_shared<Linker>()),
+    archiver_(std::make_shared<Archiver>())
 {
     //Create compilers for common languages
     compiler(Language::C);
@@ -28,20 +30,21 @@ const Compiler & Manager::compiler(Language language) const
     auto it = compilers_.find(language);
     if (it == compilers_.end())
     {
-        it = compilers_.insert(std::make_pair(language, Compiler(language))).first;
+        auto ptr = std::make_shared<Compiler>(language);
+        it = compilers_.insert(std::make_pair(language, ptr)).first;
 
         if (initialized_)
         {
             if (false) {}
             else if (name_ == "msvc")
-                msvc::set_compiler(it->second);
+                msvc::set_compiler(*it->second);
             else
-                gcc::set_compiler(it->second, standard_executable(language, name_));
+                gcc::set_compiler(*it->second, standard_executable(language, name_));
 
-            configure_(it->second);
+            configure_(*it->second);
         }
     }
-    return it->second;
+    return *it->second;
 }
 
 Result Manager::configure(const std::string &value)
@@ -118,26 +121,26 @@ Result Manager::initialize()
     else if (name_ == "msvc")
     {
         for(auto & p: compilers_)
-            msvc::set_compiler(p.second);
+            msvc::set_compiler(*p.second);
 
-        msvc::set_linker(linker_);
-        msvc::set_archiver(archiver_);
+        msvc::set_linker(*linker_);
+        msvc::set_archiver(*archiver_);
     }
     else
     {
         for(auto & p: compilers_)
-            gcc::set_compiler(p.second, standard_executable(p.first, name_));
+            gcc::set_compiler(*p.second, standard_executable(p.first, name_));
 
-        gcc::set_linker(linker_, standard_executable(Language::CXX, name_));
-        gcc::set_archiver(archiver_);
+        gcc::set_linker(*linker_, standard_executable(Language::CXX, name_));
+        gcc::set_archiver(*archiver_);
     }
 
     for (auto &p: compilers_)
-        MSS(configure_(p.second));
+        MSS(configure_(*p.second));
 
-    MSS(configure_(archiver_));
-    MSS(configure_(linker_));
-
+    MSS(configure_(*archiver_));
+    MSS(configure_(*linker_));
+ 
     MSS_END();
 }
 
