@@ -59,14 +59,29 @@ namespace :setup do
     end
 end
 
-desc "Update submodules to head"
-task :uth => ["boost:load", "boost:update"] do
-    GUBG::each_submod(submods: gubg_submods) do |info|
-        sh "git checkout #{info[:branch]}"
-        sh "git pull --rebase"
-        sh "rake uth" if `rake -AT`["rake uth"]
+namespace :uth do
+    desc "Update gubg to head"
+    task :gubg do
+        GUBG::each_submod(submods: gubg_submods) do |info|
+            sh "git checkout #{info[:branch]}"
+            sh "git pull --rebase"
+            sh "rake uth" if `rake -AT`["rake uth"]
+        end
     end
+
+    desc "Update binary to head"
+    task :binary do
+        GUBG::each_submod(submods: %w[cook-binary]) do |info|
+            sh "git checkout #{info[:branch]}"
+            sh "git pull --rebase"
+        end
+    end
+
+    desc "Update boost to head"
+    task :boost => ["boost:load", "boost:update"]
 end
+desc "Update all non-boost"
+task :uth => %w[uth:gubg uth:binary]
 
 task :update => :uth
 
@@ -134,17 +149,18 @@ namespace :b1 do
         sh("./unit_tests.exe -a -d yes")
     end
 
+    brand, config, arch, lang = nil, :release, nil, "c++=17"
+    case GUBG::os
+    when :linux then brand, arch = :gcc, nil
+    when :macos then brand, arch = :clang, :x64
+    when :windows then brand, arch = :msvc, :x86
+    end
+
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
     task :build => ["b0:build"] do
         odir = File.join(out_base, "ninja")
         tdir = File.join(tmp_base, "ninja")
 
-        brand, config, arch, lang = nil, :release, nil, "c++=17"
-        case GUBG::os
-        when :linux then brand, arch = :gcc, nil
-        when :macos then brand, arch = :clang, :x64
-        when :windows then brand, arch = :msvc, :x32
-        end
         # config = :debug
         toolchain  = [brand, config, arch, lang].select { |a| a != nil }.map{|a| a.to_s }.join("-")
         sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{toolchain} cook/app/exe"
@@ -152,6 +168,20 @@ namespace :b1 do
         exe = "cook.app.exe"
         exe += ".exe" if GUBG::os == :windows
         cp "#{odir}/#{exe}", "b1-cook.exe"
+    end
+
+    desc "bootstrap-level1: Publish b1-cook.exe into cook-binary"
+    task :publish => :build do
+        here, ext = nil
+        case GUBG::os
+        when :macos, :linux then here, ext = "./", ""
+        when :windows then here, ext = "", ".exe"
+        else raise "stop" end
+
+        b1_exe = "b1-cook.exe"
+        version = `#{here}#{b1_exe} -h`[/cook version (\d\.\d\.\d) /, 1]
+        dst_dir = "cook-binary/#{version}/#{GUBG::os}/#{arch}"
+        cp b1_exe, File.join(GUBG::mkdir(dst_dir), "cook#{ext}")
     end
 
     desc "bootstrap-level1-cmake: Build b1-cook.exe using b0-cook.exe"
@@ -198,7 +228,7 @@ task :install, [:path] => "build" do |task, args|
         sh("cp cook.exe #{path}")
     else
         case GUBG::os
-        when :linux then sh("sudo cp cook.exe /usr/local/bin/cook")
+        when :linux, :macos then sh("sudo cp cook.exe /usr/local/bin/cook")
         when :windows then cp("cook.exe", GUBG::shared("bin"))
         end
     end

@@ -9,6 +9,9 @@
         [cli]{
             [add -j option to control threading]
         }
+        [support for providing the object files via a file to the msvc linker]{
+            [currently, only /ut/exe seems to be affected, see core-build/cook/ut.chai]
+        }
         [support for disabling deps for msvc]
         [support for msvc wrapper]
         [move output dir back to core-build for msvc]

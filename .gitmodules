@@ -211,3 +211,7 @@
 [submodule "extern/boost/modules/tokenizer"]
 	path = extern/boost/modules/tokenizer
 	url = https://github.com/boostorg/tokenizer
+[submodule "cook-binary"]
+	path = cook-binary
+	url = https://github.com/decode-it/cook-binary
+	branch = master
