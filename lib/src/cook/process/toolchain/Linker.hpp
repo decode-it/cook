@@ -76,6 +76,8 @@ namespace cook { namespace process { namespace toolchain {
                     kvm[Part::Pre].emplace_back("-m32", "");
                 else if (key == "arch" && value == "x64")
                     kvm[Part::Pre].emplace_back("-m64", "");
+                else if (key == "arch" && value == "armv7")
+                    kvm[Part::Pre].emplace_back("-arch armv7", "");
                 else if (key == "config" && value == "rtc")
                 {
                     kvm[Part::Pre].emplace_back("-fsanitize", "address");

@@ -38,6 +38,7 @@ Proof-of-concept version.
 ## 1.1.2 (open)
 
 * Added support for `Book::has_recipe()`
+* Added support for `arch=armv7`
 
 ## Next
 

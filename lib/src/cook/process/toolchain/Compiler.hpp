@@ -138,6 +138,8 @@ public:
                 kvm[Part::Pre].emplace_back("-m32", "");
             else if (key == "arch" && value == "x64")
                 kvm[Part::Pre].emplace_back("-m64", "");
+            else if (key == "arch" && value == "armv7")
+                kvm[Part::Pre].emplace_back("-arch armv7", "");
             else if (key == "c++-standard" && language_ == Language::CXX)
                 kvm[Part::Pre].emplace_back("-std", "c++" + value);
             else if (key == "c-standard" && language_ == Language::C)
