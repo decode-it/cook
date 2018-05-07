@@ -214,4 +214,4 @@
 [submodule "cook-binary"]
 	path = cook-binary
 	url = https://github.com/decode-it/cook-binary
-    branch = master
+	branch = master
