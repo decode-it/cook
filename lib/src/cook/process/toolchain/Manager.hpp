@@ -20,6 +20,9 @@ namespace cook { namespace process { namespace toolchain {
         Result configure(const std::string & key, const std::string & value);
         Result initialize();
 
+        bool has_config(const std::string & key) const;
+        std::string config_value(const std::string & key) const;
+
     private:
         using ConfigValue = std::pair<std::string, std::string>;
         using ConfigValues = std::list<ConfigValue>;

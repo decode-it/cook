@@ -3,15 +3,15 @@ root.book("cook/lib", fun(b) {
 		r.add("src", "**.[hc]pp")
 		for_each(["std", "io", "algo", "chaiscript"], fun[r](d) { r.depends_on("gubg/${d}/func") })
 		r.depends_on("boost/all")
-        if (my(OS) == linux(OS)) {
+        if (my(OS) == OS.Linux) {
             r.library("stdc++fs")
         }
-        if (my(OS) == macos(OS)) {
+        if (my(OS) == OS.MacOS) {
             r.library_path("/usr/local/opt/llvm/lib")
             r.library("c++experimental")
         }
 		r.define("BOOST_ERROR_CODE_HEADER_ONLY")
-	})
+	})  
 
 	b.recipe("ut", "executable", fun(r) {
 		r.add("test/src", "**.[hc]pp")

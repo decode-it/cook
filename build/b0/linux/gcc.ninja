@@ -11,8 +11,8 @@ rule link
 #system_libs = -ldl -lstdc++fs -lpthread
 
 defines = -DBOOST_ERROR_CODE_HEADER_ONLY
-cflags = -g -Werror=return-type -Wall -fdiagnostics-show-option -fsanitize=address 
-system_libs = -lasan -ldl -lstdc++fs -lpthread
+cflags = -g -Werror=return-type -Wall -fdiagnostics-show-option 
+system_libs = -ldl -lstdc++fs -lpthread
 
 aflags = crf
 

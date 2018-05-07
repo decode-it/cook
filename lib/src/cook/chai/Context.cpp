@@ -4,6 +4,7 @@
 #include "cook/chai/File.hpp"
 #include "cook/chai/KeyValue.hpp"
 #include "cook/chai/Flags.hpp"
+#include "cook/chai/Toolchain.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
 #include "gubg/chai/inject.hpp"
@@ -41,15 +42,16 @@ struct Cook
 {
     Cook(model::Book * book, Context * context, Logger * logger)
         : root(book, context),
-          context_(context)
+          context_(context),
+          toolchain(&context->toolchain())
     {
-
     }
 
     Book operator[](const std::string & uri)
     {
         return root.book(uri);
     }
+
 
     std::string working_directory() const
     {
@@ -76,6 +78,7 @@ struct Cook
 
     Book root;
     Context * context_;
+    Toolchain toolchain;
 };
 
 struct W_Propagation { };
@@ -114,6 +117,7 @@ struct Context::D
         initialize_flags();
         initialize_file(kitchen);
         initialize_key_value(kitchen);
+        initialize_toolchain();
         engine.add(user_data_module());
         engine.add_global(chaiscript::var(std::ref(cook.root)), "root");
         engine.add_global(chaiscript::var(std::ref(cook)), "cook");
@@ -122,6 +126,14 @@ struct Context::D
         engine.add(chaiscript::fun([](const Cook & c, bool absolute) { return c.working_directory(absolute); }), "working_directory");
         engine.add(chaiscript::fun(&Cook::project_name), "project_name");
         engine.add(chaiscript::fun(&Cook::set_project_name), "set_project_name");
+        engine.add(chaiscript::fun(&Cook::toolchain), "toolchain");
+    }
+
+    void initialize_toolchain()
+    {
+        engine.add(chaiscript::fun(&Toolchain::has_config), "has_config");
+        engine.add(chaiscript::fun(&Toolchain::config_value), "config_value");
+        engine.add(chaiscript::fun(&Toolchain::set_config_value), "set_config_value");
     }
 
     void initialize_flags()
@@ -134,36 +146,36 @@ struct Context::D
         EXPOSE_TOP(OS);
 #undef EXPOSE_TOP
 
-#define EXPOSE(TYPE, NAME, CHAINAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return Flags(TYPE::NAME); }), CHAINAME)
-        EXPOSE(Propagation, Public, "public");
-        EXPOSE(Propagation, Private, "private");
-        EXPOSE(Overwrite, Always, "always");
-        EXPOSE(Overwrite, IfSame, "if_same");
-        EXPOSE(Overwrite, Never, "never");
-        EXPOSE(Type, Undefined, "undefined");
-        EXPOSE(Type, Source, "source");
-        EXPOSE(Type, Header, "header");
-        EXPOSE(Type, Object, "object");
-        EXPOSE(Type, ForceInclude, "force_include");
-        EXPOSE(Type, IncludePath, "include_path");
-        EXPOSE(Type, LibraryPath, "library_path");
-        EXPOSE(Type, Library, "library");
-        EXPOSE(Type, Dependency, "dependency");
-        EXPOSE(Type, Define, "define");
-        EXPOSE(Type, Executable, "executable");
-        EXPOSE(Language, Undefined, "undefined");
-        EXPOSE(Language, Binary, "binary");
-        EXPOSE(Language, C, "C");
-        EXPOSE(Language, CXX, "CXX");
-        EXPOSE(Language, ASM, "ASM");
-        EXPOSE(Language, Script, "script");
-        EXPOSE(Language, UserDefined, "user_defined");
+#define EXPOSE(TYPE, NAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return Flags(TYPE::NAME); }), #NAME)
+        EXPOSE(Propagation, Public);
+        EXPOSE(Propagation, Private);
+        EXPOSE(Overwrite, Always);
+        EXPOSE(Overwrite, IfSame);
+        EXPOSE(Overwrite, Never);
+        EXPOSE(Type, Undefined);
+        EXPOSE(Type, Source);
+        EXPOSE(Type, Header);
+        EXPOSE(Type, Object);
+        EXPOSE(Type, ForceInclude);
+        EXPOSE(Type, IncludePath);
+        EXPOSE(Type, LibraryPath);
+        EXPOSE(Type, Library);
+        EXPOSE(Type, Dependency);
+        EXPOSE(Type, Define);
+        EXPOSE(Type, Executable);
+        EXPOSE(Language, Undefined);
+        EXPOSE(Language, Binary);
+        EXPOSE(Language, C);
+        EXPOSE(Language, CXX);
+        EXPOSE(Language, ASM);
+        EXPOSE(Language, Script);
+        EXPOSE(Language, UserDefined);
 #undef EXPOSE
 
-#define EXPOSE(TYPE, NAME, CHAINAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return TYPE::NAME; }), CHAINAME)
-        EXPOSE(OS, Windows, "windows");
-        EXPOSE(OS, Linux, "linux");
-        EXPOSE(OS, MacOS, "macos");
+#define EXPOSE(TYPE, NAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return TYPE::NAME; }), #NAME)
+        EXPOSE(OS, Windows);
+        EXPOSE(OS, Linux);
+        EXPOSE(OS, MacOS);
 #undef EXPOSE
         engine.add(chaiscript::fun([](const W_OS & ) { return get_os(); }), "my");
         engine.add(chaiscript::fun([](OS lhs, OS rhs){return lhs == rhs;}), "==");

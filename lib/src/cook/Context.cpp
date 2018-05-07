@@ -133,6 +133,9 @@ const process::toolchain::Manager &Context::toolchain() const
     return toolchain_();
 }
 
+process::toolchain::Manager & Context::toolchain()
+{
+    return toolchain_();
 }
 
-
+}

@@ -141,4 +141,24 @@ bool Manager::configure_(Interface &itf, ConfigValues::const_iterator begin, Con
     MSS_END();
 }
 
+bool  Manager::has_config(const std::string & key) const
+{
+    for(const auto & p : config_values_)
+        if (p.first == key)
+            return true;
+
+    return false;
+}
+std::string  Manager::config_value(const std::string & key) const
+{
+    for(const auto & p : config_values_)
+        if (p.first == key)
+            return p.second;
+
+    return std::string();
+
+
+}
+
+
 } } } 

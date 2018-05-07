@@ -49,6 +49,7 @@ namespace cook {
 
         Result set_toolchain(const std::string &toolchain);
         const process::toolchain::Manager &toolchain() const;
+        process::toolchain::Manager & toolchain();
 
         Result register_generator(GeneratorPtr generator);
         GeneratorPtr get_generator(const std::string & name) const;
