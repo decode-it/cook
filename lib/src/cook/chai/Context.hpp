@@ -23,8 +23,8 @@ private:
     void reset_engine_();
     std::filesystem::path generate_file_path_(const std::string & file) const;
 
-    struct D;
-    std::unique_ptr<D> d;
+    struct Pimpl;
+    std::unique_ptr<Pimpl> pimpl_;
     UserData data_;
 };
 

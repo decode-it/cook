@@ -36,6 +36,7 @@ namespace cook { namespace process { namespace toolchain { namespace gcc {
         trans[Part::ForceInclude] = [](const std::string &k, const std::string &v){return std::string{"-include "}+k;};
 
         kvm[Part::Pre].emplace_back("-c", "");
+        kvm[Part::Pre].emplace_back("-fPIC", "");
 
         const Language & language = compiler.language;
         
@@ -57,6 +58,8 @@ namespace cook { namespace process { namespace toolchain { namespace gcc {
                 kvm[Part::Pre].emplace_back("-m32", "");
             else if (key == "arch" && value == "x64")
                 kvm[Part::Pre].emplace_back("-m64", "");
+            else if (key == "arch" && value == "armv7")
+                kvm[Part::Pre].emplace_back("-arch armv7", "");
             else if (key == "c++-standard" && language == Language::CXX)
                 kvm[Part::Pre].emplace_back("-std", "c++" + value);
             else if (key == "c-standard" && language == Language::C)

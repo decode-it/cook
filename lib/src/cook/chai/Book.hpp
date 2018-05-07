@@ -21,6 +21,7 @@ public:
 
     Book book(const model::Uri & uri);
     void book(const model::Uri & uri, const BookFunctor &functor);
+    bool has_recipe(const model::Uri & uri) const;
     void recipe(const model::Uri & uri, const RecipeFunctor & functor);
     void recipe(const model::Uri & uri, const std::string & type, const RecipeFunctor & functor);
     Recipe recipe(const model::Uri & uri, const std::string & type = std::string());
