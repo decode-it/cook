@@ -59,14 +59,29 @@ namespace :setup do
     end
 end
 
-desc "Update submodules to head"
-task :uth => ["boost:load", "boost:update"] do
-    GUBG::each_submod(submods: gubg_submods + %w[cook-binary]) do |info|
-        sh "git checkout #{info[:branch]}"
-        sh "git pull --rebase"
-        sh "rake uth" if `rake -AT`["rake uth"]
+namespace :uth do
+    desc "Update gubg to head"
+    task :gubg do
+        GUBG::each_submod(submods: gubg_submods) do |info|
+            sh "git checkout #{info[:branch]}"
+            sh "git pull --rebase"
+            sh "rake uth" if `rake -AT`["rake uth"]
+        end
     end
+
+    desc "Update binary to head"
+    task :binary do
+        GUBG::each_submod(submods: %w[cook-binary]) do |info|
+            sh "git checkout #{info[:branch]}"
+            sh "git pull --rebase"
+        end
+    end
+
+    desc "Update boost to head"
+    task :boost => ["boost:load", "boost:update"]
 end
+desc "Update all non-boost"
+task :uth => %w[uth:gubg uth:binary]
 
 task :update => :uth
 
