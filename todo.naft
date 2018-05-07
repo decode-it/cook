@@ -15,10 +15,17 @@
         [specify pdb output file to allow debug mode builds with msvc]
         [c-string escaping iso gsub]
         [regex improvement iso if statements]
-        [expose compiler brand to recipes]
-        [expose architecture to recipes]
+        [expose to chai]{
+            [toolset options]
+            [supplied key values]
+            [machine information]
+        }
         [introduce threading concept]
         [proper colon escaping in ninja]
         [internal header dependency detection]
+        [ingredient content generator iso owner]{
+            [different content generator types](user_set)(globbing)(generated)
+            [always set owner recipe]
+        }
     }
 }
