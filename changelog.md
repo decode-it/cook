@@ -27,13 +27,17 @@ Proof-of-concept version.
 * Support for force includes
 * Support for chaiscript regular expressions, file io and os
 
-## 1.1.1 (open)
+## 1.1.1
 
 * Added `-C void` chef to speed-up generation of naft output when only the recipe names are required.
 * Support for debug/release/rtc/profile and x86/x64/x32 builds via the toolchain option
 * Support for gcc, clang and msvc toolchains
 * Support for linux, windows and macos
 * Support for recursive header dependency detection
+
+## 1.1.2 (open)
+
+* Added support for `Book::has_recipe()`
 
 ## Next
 

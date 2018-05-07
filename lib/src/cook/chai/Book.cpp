@@ -30,6 +30,18 @@ void Book::book(const model::Uri & uri, const BookFunctor &functor)
     functor(book(uri));
 }
 
+bool Book::has_recipe(const model::Uri & uri) const
+{
+    CHAI_MSS_BEGIN();
+
+    CHAI_MSS_MSG(!uri.path().empty(), Error, "The recipe uri can not be empty");
+
+    model::Recipe * recipe = nullptr;
+    CHAI_MSS(model::Book::find_relative(recipe, uri, book_));
+
+    return !!recipe;
+}
+
 Recipe Book::recipe(const model::Uri & uri, const std::string & type_str)
 {
     CHAI_MSS_BEGIN();

@@ -87,12 +87,12 @@ struct W_Type { };
 struct W_Language { };
 struct W_OS {};
 
-struct Context::D
+struct Context::Pimpl
 {
     using Parser = chaiscript::parser::ChaiScript_Parser<chaiscript::eval::Noop_Tracer, chaiscript::optimizer::Optimizer_Default>;
     using Engine = chaiscript::ChaiScript_Basic;
 
-    D(model::Book * book, Context * context)
+    Pimpl(model::Book * book, Context * context)
         : engine(chaiscript::Std_Lib::library(), std::make_unique<Parser>()),
           cook(book, context, &logger)
     {
@@ -212,6 +212,7 @@ struct Context::D
 
         engine.add(chaiscript::fun([](Book & book, const model::Uri & uri) { return book.book(uri); } ), "book");
         engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const Book::BookFunctor & functor) { book.book(uri, functor); } ), "book");
+        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri) { return book.has_recipe(uri); }), "has_recipe");
         engine.add(chaiscript::fun([](Book & book, const model::Uri & uri) { return book.recipe(uri); }), "recipe");
         engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const std::string & type) { return book.recipe(uri, type); }), "recipe");
         engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const Book::RecipeFunctor & functor) { book.recipe(uri, functor); }), "recipe");
@@ -356,13 +357,13 @@ struct Context::D
 
 const cook::Logger & Context::logger() const
 {
-    return d->logger;
+    return pimpl_->logger;
 }
 
 Context::Context()
-    : d(std::make_unique<D>(root_book(), this))
+    : pimpl_(std::make_unique<Pimpl>(root_book(), this))
 {
-    d->initialize_engine_(this);
+    pimpl_->initialize_engine_(this);
 }
 
 
@@ -442,8 +443,17 @@ Result Context::load(const std::string & recipe)
     }
     catch(std::runtime_error & error)
     {
-        std::cout << "caught error: " << error.what() << std::endl;
+        std::cout << "Error: caught std::runtime_error: " << error.what() << std::endl;
         MSG_MSS(false, InternalError, error.what());
+    }
+    catch(chaiscript::Boxed_Value & error)
+    {
+        std::cout << "Error: caught chaiscript::Boxed_Value: ";
+        auto ptr = chaiscript::boxed_cast<std::shared_ptr<std::string>>(error);
+        if (ptr)
+            std::cout << *ptr;
+        std::cout << " in \"" << pimpl_->scripts.top().string() << "\"" << std::endl;
+        MSG_MSS(false, InternalError, "Boxed_Value");
     }
 
     MSS_END();
@@ -455,7 +465,7 @@ std::filesystem::path Context::generate_file_path_(const std::string & file) con
     std::filesystem::path script_fn(file);
 
     if (script_fn.is_relative())
-        script_fn = d->top_level_path() / script_fn;
+        script_fn = pimpl_->top_level_path() / script_fn;
 
     if (script_fn.empty())
         script_fn = "recipes.chai";
@@ -467,7 +477,7 @@ std::filesystem::path Context::generate_file_path_(const std::string & file) con
 
 std::filesystem::path Context::current_working_directory() const
 {
-    return d->top_level_path();
+    return pimpl_->top_level_path();
 }
 
 void Context::include_(const std::string & file)
@@ -482,9 +492,9 @@ void Context::include_(const std::string & file)
 
 
     // push the script
-    d->scripts.push(script_fn);
-    d->engine.eval_file(script_fn.string());
-    d->scripts.pop();
+    pimpl_->scripts.push(script_fn);
+    pimpl_->engine.eval_file(script_fn.string());
+    pimpl_->scripts.pop();
 }
 
 } }
