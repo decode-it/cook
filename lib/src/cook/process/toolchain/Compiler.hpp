@@ -59,6 +59,7 @@ public:
                     trans[Part::ForceInclude] = [](const std::string &k, const std::string &v){return std::string{"-include "}+k;};
 
                     kvm[Part::Pre].emplace_back("-c", "");
+                    kvm[Part::Pre].emplace_back("-fPIC", "");
                     configure_.add(configure_gcclike_);
                 }
                 else if (brand == "msvc")
