@@ -35,10 +35,13 @@ Proof-of-concept version.
 * Support for linux, windows and macos
 * Support for recursive header dependency detection
 
-## 1.1.2 (open)
+## 1.1.2
 
 * Added support for `Book::has_recipe()`
-* Added support for `arch=armv7`
+* Added preliminary support for `arch=armv7`
+* Preparation work for exposing the toolchain to chaiscript
+
+## 1.1.3 (open)
 
 ## Next
 
