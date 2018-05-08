@@ -184,6 +184,8 @@ namespace :b1 do
         cp "changelog.md", version_dir
         dst_dir = GUBG::mkdir("#{version_dir}/#{GUBG::os}/#{arch}")
         cp b1_exe, File.join(dst_dir, "cook#{ext}")
+        latest_dir = GUBG::mkdir("cook-binary/latest/#{GUBG::os}/#{arch}")
+        cp b1_exe, File.join(latest_dir, "cook#{ext}")
     end
 
     desc "bootstrap-level1-cmake: Build b1-cook.exe using b0-cook.exe"
