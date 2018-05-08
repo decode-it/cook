@@ -1,4 +1,5 @@
 #include "cook/process/souschef/Linker.hpp"
+#include "cook/process/toolchain/Linker.hpp"
 #include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"

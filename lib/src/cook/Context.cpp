@@ -114,11 +114,23 @@ Result Context::set_toolchain(const std::string &toolchain)
 {
     MSS_BEGIN(Result);
     gubg::Strange strange(toolchain);
-    std::string part;
-    while (strange.pop_until(part, '-') || strange.pop_all(part))
+
+    auto get_part = [&](std::string & part) {
+        return strange.pop_until(part, '-') || strange.pop_all(part);
+    };
+
     {
-        MSS(toolchain_().configure(part));
+        std::string brand;
+        get_part(brand);
+        MSS(toolchain_().temp_set_brand(brand));
     }
+
+    {
+        std::string part;
+        while(get_part(part))
+            toolchain_().configure(part);
+    }
+
     MSS_END();
 }
 

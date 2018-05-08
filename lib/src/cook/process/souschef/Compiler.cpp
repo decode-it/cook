@@ -1,4 +1,5 @@
 #include "cook/process/souschef/Compiler.hpp"
+#include "cook/process/toolchain/Compiler.hpp"
 #include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "cook/log/Scope.hpp"
@@ -50,7 +51,7 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
             const std::filesystem::path & src_fn = util::make_global_from_recipe(recipe, source.key());
             auto source_vertex = g.goc_vertex(src_fn);
             MSS(g.add_edge(compile_vertex, source_vertex));
-        }
+        } 
         {
             const std::filesystem::path & obj_fn = util::make_global_from_recipe(recipe, object.key());
             auto object_vertex = g.goc_vertex(obj_fn);
@@ -82,7 +83,9 @@ Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recip
     MSS_BEGIN(Result);
 
     process::command::Compile::Ptr cp;
-    MSS(context.toolchain().compiler(language_).create(cp));
+    auto comp = context.toolchain().compiler(language_);
+    MSS(!!comp);
+    MSS(comp->create(cp));
 
     // add the include paths
     for (const ingredient::File & f : recipe.files().range(LanguageTypePair(Language::Undefined, Type::IncludePath)))

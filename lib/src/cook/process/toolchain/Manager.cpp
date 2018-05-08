@@ -15,159 +15,200 @@
 
 namespace cook { namespace process { namespace toolchain { 
 
-Manager::Manager()
+    Manager::Manager()
     : linker_(std::make_shared<Linker>()),
     archiver_(std::make_shared<Archiver>())
-{
-    //Create compilers for common languages
-    compiler(Language::C);
-    compiler(Language::CXX);
-    compiler(Language::ASM);
-}
-
-const Compiler & Manager::compiler(Language language) const
-{
-    auto it = compilers_.find(language);
-    if (it == compilers_.end())
     {
-        auto ptr = std::make_shared<Compiler>(language);
-        it = compilers_.insert(std::make_pair(language, ptr)).first;
+        //Create compilers for common languages
+        compiler(Language::C);
+        compiler(Language::CXX);
+        compiler(Language::ASM);
+    }
 
-        if (initialized_)
+    bool Manager::temp_set_brand(std::string brand)
+    {
+        MSS_BEGIN(bool);
+        MSS(!initialized_);
+
+        if (brand.empty())
         {
-            if (false) {}
-            else if (name_ == "msvc")
-                msvc::set_compiler(*it->second);
-            else
-                gcc::set_compiler(*it->second, standard_executable(language, name_));
-
-            configure_(*it->second);
+            switch (get_os())
+            {
+                case OS::Linux: brand = "gcc"; break;
+                case OS::Windows: brand = "msvc"; break;
+                case OS::MacOS: brand = "clang"; break;
+                default: brand = "gcc"; break;
+            }
         }
-    }
-    return *it->second;
-}
 
-Result Manager::configure(const std::string &value)
-{
-    MSS_BEGIN(Result);
+        std::cout << "brand:" << brand << std::endl;
 
-    gubg::Strange str(value);
-    if (false) {}
-    else if (value == "cl")
-        MSS(configure("msvc"));
-    else if (str.pop_if("gcc") || str.pop_if("clang") || str.pop_if("msvc"))
-    {
-        MSS(name_.empty());
-        name_ = value;
-    }
-    else if (str.pop_if("x86") || str.pop_if("x64"))
-        MSS(configure("arch", value));
-    else if (str.pop_if("x32"))
-        MSS(configure("x86"));
-    else if (str.pop_if("debug") || str.pop_if("release") || str.pop_if("rtc") || str.pop_if("profile"))
-        MSS(configure("config", value));
-    else
-    {
-        if (str.contains('='))
+        if (false) {}
+        else if (brand == "msvc" || brand == "cl")
         {
-            // key values
-            std::string key;
-            MSS(str.pop_until(key, '='));
+            for(Language lang : {Language::C, Language::CXX, Language::ASM})
+            {
+                auto * comp = compiler(lang);
+                MSS(!!comp);
+                msvc::set_compiler(*comp);
+            }
 
-            if (false) {}
-            else if (key == "c++")
-                MSS(configure("c++-standard", str.str()));
-            else if (key == "c")
-                MSS(configure("c-standard", str.str()));
-            else
-                MSS(configure(key, str.str()));
+            {
+                auto & link = linker();
+                msvc::set_linker(link);
+            }
+
+            {
+                auto & ar = archiver();
+                msvc::set_archiver(ar);
+            }
         }
         else
         {
-            // only keys
-            MSS(configure(value, "true"));
+            for(Language lang : {Language::C, Language::CXX, Language::ASM})
+            {
+                auto * comp = compiler(lang);
+                MSS(!!comp);
+                gcc::set_compiler(*comp, standard_executable(lang, brand));
+            }
+
+            {
+                auto & link = linker();
+                gcc::set_linker(link, standard_executable(Language::CXX, brand));
+            }
+
+            {
+                auto & ar = archiver();
+                gcc::set_archiver(ar);
+            }
         }
+
+        MSS_END();
     }
-    L(C(config_values_.size()));
 
-    MSS_END();
-}
+    const Archiver & Manager::archiver() const 
+    { 
+        return *archiver_; 
+    }
+    const Linker & Manager::linker() const 
+    { 
+        return *linker_; 
+    }
 
-Result Manager::configure(const std::string & key, const std::string & value)
-{
-    MSS_BEGIN(Result);
-    config_values_.emplace_back(key, value);
-    MSS_END();
-}
+    Archiver & Manager::archiver() 
+    { 
+        return *archiver_; 
+    }
+    Linker & Manager::linker() 
+    { 
+        return *linker_; 
+    }
 
-Result Manager::initialize()
-{
-    MSS_BEGIN(Result);
-    MSS(initialized_ == false);
-    initialized_ = true;
-
-    if (name_.empty())
+    Compiler * Manager::compiler(Language language)
     {
-        switch (get_os())
+        auto it = compilers_.find(language);
+        if (it == compilers_.end())
         {
-        case OS::Linux: name_ = "gcc"; break;
-        case OS::Windows: name_ = "msvc"; break;
-        case OS::MacOS: name_ = "clang"; break;
-        default: name_ = "gcc"; break;
+            if (initialized_)
+                return nullptr;
+
+            it = compilers_.insert(std::make_pair(language, std::make_shared<Compiler>(language))).first;
         }
+
+        return &*it->second;
     }
 
-    if (false) {}
-    else if (name_ == "msvc")
+    const Compiler * Manager::compiler(Language language) const
     {
-        for(auto & p: compilers_)
-            msvc::set_compiler(*p.second);
-
-        msvc::set_linker(*linker_);
-        msvc::set_archiver(*archiver_);
+        auto it = compilers_.find(language);
+        return (it == compilers_.end() ? nullptr : &*it->second);
     }
-    else
+
+    Result Manager::configure(const std::string &value)
     {
-        for(auto & p: compilers_)
-            gcc::set_compiler(*p.second, standard_executable(p.first, name_));
+        MSS_BEGIN(Result);
 
-        gcc::set_linker(*linker_, standard_executable(Language::CXX, name_));
-        gcc::set_archiver(*archiver_);
+        gubg::Strange str(value);
+        if (false) {}
+        else if (str.pop_if("x86") || str.pop_if("x64"))
+            MSS(configure("arch", value));
+        else if (str.pop_if("x32"))
+            MSS(configure("x86"));
+        else if (str.pop_if("debug") || str.pop_if("release") || str.pop_if("rtc") || str.pop_if("profile"))
+            MSS(configure("config", value));
+        else
+        {
+            if (str.contains('='))
+            {
+                // key values
+                std::string key;
+                MSS(str.pop_until(key, '='));
+
+                if (false) {}
+                else if (key == "c++")
+                    MSS(configure("c++-standard", str.str()));
+                else if (key == "c")
+                    MSS(configure("c-standard", str.str()));
+                else
+                    MSS(configure(key, str.str()));
+            }
+            else
+            {
+                // only keys
+                MSS(configure(value, "true"));
+            }
+        }
+        L(C(config_values_.size()));
+
+        MSS_END();
     }
 
-    for (auto &p: compilers_)
-        MSS(configure_(*p.second));
+    Result Manager::configure(const std::string & key, const std::string & value)
+    {
+        MSS_BEGIN(Result);
+        config_values_.emplace_back(key, value);
+        MSS_END();
+    }
 
-    MSS(configure_(*archiver_));
-    MSS(configure_(*linker_));
- 
-    MSS_END();
-}
+    Result Manager::initialize()
+    {
+        MSS_BEGIN(Result);
+        MSS(initialized_ == false);
+        initialized_ = true;
 
-bool Manager::configure_(Interface & itf) const
-{
-    for(const auto & p : config_values_)
-        itf.configure(p.first, p.second);
+        for (auto &p: compilers_)
+            MSS(configure_(*p.second));
 
-    return true;
-}
+        MSS(configure_(*archiver_));
+        MSS(configure_(*linker_));
 
-bool Manager::has_config(const std::string & key) const
-{
-    for(const auto & p : config_values_)
-        if (p.first == key)
-            return true;
+        MSS_END();
+    }
 
-    return false;
-}
-std::string  Manager::config_value(const std::string & key) const
-{
-    for(const auto & p : config_values_)
-        if (p.first == key)
-            return p.second;
+    bool Manager::configure_(Interface & itf) const
+    {
+        for(const auto & p : config_values_)
+            itf.configure(p.first, p.second);
 
-    return std::string();
-}
+        return true;
+    }
+
+    bool Manager::has_config(const std::string & key) const
+    {
+        for(const auto & p : config_values_)
+            if (p.first == key)
+                return true;
+
+        return false;
+    }
+    std::string  Manager::config_value(const std::string & key) const
+    {
+        for(const auto & p : config_values_)
+            if (p.first == key)
+                return p.second;
+
+        return std::string();
+    }
 
 
 } } } 

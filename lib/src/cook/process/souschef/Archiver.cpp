@@ -1,4 +1,5 @@
 #include "cook/process/souschef/Archiver.hpp"
+#include "cook/process/toolchain/Archiver.hpp"
 #include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
