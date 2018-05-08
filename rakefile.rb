@@ -180,8 +180,10 @@ namespace :b1 do
 
         b1_exe = "b1-cook.exe"
         version = `#{here}#{b1_exe} -h`[/cook version (\d\.\d\.\d) /, 1]
-        dst_dir = "cook-binary/#{version}/#{GUBG::os}/#{arch}"
-        cp b1_exe, File.join(GUBG::mkdir(dst_dir), "cook#{ext}")
+        version_dir = GUBG::mkdir("cook-binary/#{version}")
+        cp "changelog.md", version_dir
+        dst_dir = GUBG::mkdir("#{version_dir}/#{GUBG::os}/#{arch}")
+        cp b1_exe, File.join(dst_dir, "cook#{ext}")
     end
 
     desc "bootstrap-level1-cmake: Build b1-cook.exe using b0-cook.exe"
