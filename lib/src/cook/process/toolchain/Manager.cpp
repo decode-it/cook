@@ -133,7 +133,7 @@ namespace cook { namespace process { namespace toolchain {
 
         gubg::Strange str(value);
         if (false) {}
-        else if (str.pop_if("x86") || str.pop_if("x64"))
+        else if (str.pop_if("x86") || str.pop_if("x64") || str.pop_if("armv7"))
             MSS(configure("arch", value));
         else if (str.pop_if("x32"))
             MSS(configure("x86"));

@@ -16,7 +16,9 @@ namespace cook { namespace process { namespace toolchain { namespace gcc {
         auto & trans = compiler.translator_map();
         auto & kvm = compiler.key_values_map();
 
-        trans[Part::Cli] = [=](const std::string &, const std::string &){return executable; }; 
+        kvm[Part::Cli].emplace_back(executable, "");
+        trans[Part::Cli] = [=](const std::string &k, const std::string &){return k; }; 
+
         trans[Part::Pre] = [](const std::string &k, const std::string &v)
         {
             if (v.empty())
@@ -59,7 +61,18 @@ namespace cook { namespace process { namespace toolchain { namespace gcc {
             else if (key == "arch" && value == "x64")
                 kvm[Part::Pre].emplace_back("-m64", "");
             else if (key == "arch" && value == "armv7")
+            {
+                kvm[Part::Cli].clear();
+                kvm[Part::Cli].emplace_back("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang", "");
+                if (language == Language::CXX)
+                {
+                    kvm[Part::Pre].emplace_back("-x c++", "");
+                    kvm[Part::Pre].emplace_back("-stdlib=libc++ -Wno-c++11-extensions", "");
+                }
                 kvm[Part::Pre].emplace_back("-arch armv7", "");
+                kvm[Part::Pre].emplace_back("-fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -Wno-trigraphs -fpascal-strings -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wno-shorten-64-to-32 -Wnewline-eof -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -miphoneos-version-min=9.3 -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -fembed-bitcode-marker -Wall -Wextra", "");
+                kvm[Part::Define].emplace_back("MAC", "1");
+            }
             else if (key == "c++-standard" && language == Language::CXX)
                 kvm[Part::Pre].emplace_back("-std", "c++" + value);
             else if (key == "c-standard" && language == Language::C)
