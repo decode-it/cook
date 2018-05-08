@@ -17,14 +17,13 @@ namespace cook { namespace process { namespace toolchain {
     public:
         Manager();
 
+        bool is_initialized() const;
         const Compiler * compiler(Language) const;
         const Archiver & archiver() const;
         const Linker & linker() const;
         Compiler * compiler(Language language);
         Archiver & archiver();
         Linker & linker();
-
-        bool temp_set_brand(std::string brand);
 
         Result configure(const std::string &value);
         Result configure(const std::string & key, const std::string & value);
@@ -47,7 +46,7 @@ namespace cook { namespace process { namespace toolchain {
         bool initialized_ = false;
     };
 
-    void temp_initialize(Manager & manager, const std::string & brand);
+        bool temp_set_brand(Manager & manager, std::string brand);
 
 } } } 
 

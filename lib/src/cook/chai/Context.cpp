@@ -4,7 +4,12 @@
 #include "cook/chai/File.hpp"
 #include "cook/chai/KeyValue.hpp"
 #include "cook/chai/Flags.hpp"
-#include "cook/chai/Toolchain.hpp"
+#include "cook/chai/mss.hpp"
+#include "cook/process/toolchain/Manager.hpp"
+#include "cook/process/toolchain/Interface.hpp"
+#include "cook/process/toolchain/Compiler.hpp"
+#include "cook/process/toolchain/Archiver.hpp"
+#include "cook/process/toolchain/Linker.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
 #include "gubg/chai/inject.hpp"
@@ -78,7 +83,7 @@ struct Cook
 
     Book root;
     Context * context_;
-    Toolchain toolchain;
+    process::toolchain::Manager * toolchain;
 };
 
 struct W_Propagation { };
@@ -86,6 +91,7 @@ struct W_Overwrite { };
 struct W_Type { };
 struct W_Language { };
 struct W_OS {};
+struct W_Part {};
 
 struct Context::Pimpl
 {
@@ -129,21 +135,17 @@ struct Context::Pimpl
         engine.add(chaiscript::fun(&Cook::toolchain), "toolchain");
     }
 
-    void initialize_toolchain()
-    {
-        engine.add(chaiscript::fun(&Toolchain::has_config), "has_config");
-        engine.add(chaiscript::fun(&Toolchain::config_value), "config_value");
-        engine.add(chaiscript::fun(&Toolchain::set_config_value), "set_config_value");
-    }
-
     void initialize_flags()
     {
+        using Part = process::toolchain::Part;
+
 #define EXPOSE_TOP(TYPE) engine.add_global(chaiscript::var(W_##TYPE()), #TYPE)
         EXPOSE_TOP(Propagation);
         EXPOSE_TOP(Overwrite);
         EXPOSE_TOP(Type);
         EXPOSE_TOP(Language);
         EXPOSE_TOP(OS);
+        EXPOSE_TOP(Part);
 #undef EXPOSE_TOP
 
 #define EXPOSE(TYPE, NAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return Flags(TYPE::NAME); }), #NAME)
@@ -170,7 +172,19 @@ struct Context::Pimpl
         EXPOSE(Language, ASM);
         EXPOSE(Language, Script);
         EXPOSE(Language, UserDefined);
+        EXPOSE(Part, Pre);
+        EXPOSE(Part, Deps);
+        EXPOSE(Part, Output);
+        EXPOSE(Part, Input);
+        EXPOSE(Part, DepFile);
+        EXPOSE(Part, Option);
+        EXPOSE(Part, Define);
+        EXPOSE(Part, IncludePath);
+        EXPOSE(Part, ForceInclude);
+        EXPOSE(Part, Library);
+        EXPOSE(Part, LibraryPath);
 #undef EXPOSE
+
 
 #define EXPOSE(TYPE, NAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return TYPE::NAME; }), #NAME)
         EXPOSE(OS, Windows);
@@ -187,6 +201,83 @@ struct Context::Pimpl
         engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs||rhs; } ), "|");
 
         engine.add(chaiscript::type_conversion<Flags, bool>());
+    }
+
+    template <typename T, typename Engine>
+    void export_toolchain_element(const std::string & name, Engine & engine)
+    {
+        using KVM = process::toolchain::KeyValuesMap;
+        using TM = process::toolchain::TranslatorMap;
+        
+        engine.add(chaiscript::user_type<T>(), name);
+
+        engine.add(chaiscript::fun([](T & c) -> KVM & { return c.key_values_map(); }), "key_values");
+        engine.add(chaiscript::fun([](const T & c) -> const KVM & { return c.key_values_map(); }), "key_values");
+
+        engine.add(chaiscript::fun([](T & c) -> TM & { return c.translator_map(); }), "translators");
+        engine.add(chaiscript::fun([](const T & c) -> const TM & { return c.translator_map(); }), "translators");
+
+    }
+
+    void initialize_toolchain()
+    {
+        using KVM = process::toolchain::KeyValuesMap;
+        using Part = process::toolchain::Part;
+        using T = process::toolchain::Translator;
+        using TM = process::toolchain::TranslatorMap;
+        using Toolchain = process::toolchain::Manager;
+        using Compiler = process::toolchain::Compiler;
+        using Archiver = process::toolchain::Archiver;
+        using Linker = process::toolchain::Linker;
+
+        {
+            // key value maps
+            engine.add(chaiscript::user_type<KVM>(), "KeyValueMap");
+            engine.add(chaiscript::fun([](KVM & map, Part p) { map[p].clear(); }), "clear");
+            engine.add(chaiscript::fun([](KVM & map, Part p, const std::string & key) { map[p].emplace_back(std::make_pair(key, std::string())); }), "append");
+            engine.add(chaiscript::fun([](KVM & map, Part p, const std::string & key, const std::string & value) { map[p].emplace_back(std::make_pair(key, value)); }), "append");
+        }
+        {
+            // translator map
+            engine.add(chaiscript::user_type<T>(), "Translator");
+            engine.add(chaiscript::user_type<TM>(), "TranslatorMap");
+        }
+
+        {
+
+            export_toolchain_element<Compiler>("Compiler", engine);
+            export_toolchain_element<Linker>("Linker", engine);
+            export_toolchain_element<Archiver>("Archiver", engine);
+        }
+
+        {
+            // toolchain config
+            engine.add(chaiscript::fun(&Toolchain::has_config), "has_config");
+            engine.add(chaiscript::fun(&Toolchain::config_value), "config_value");
+            engine.add(chaiscript::fun([](Toolchain & toolchain, const std::string & key) { return toolchain.configure(key); }), "set_config_value");
+            engine.add(chaiscript::fun([](Toolchain & toolchain, const std::string & key, const std::string & value) { return toolchain.configure(key, value); }), "set_config_value");
+
+
+            auto compiler = [](Toolchain & toolchain, Flags lang) -> Compiler &
+            {
+                CHAI_MSS_BEGIN();
+                std::cout << "hier" << lang << std::endl;
+                CHAI_MSS(lang.only({Flag::Language}));
+                std::cout << "hier2" << std::endl;
+
+                Language l = lang.language().first;
+                std::cout << "hier3" << l << std::endl;
+                auto p = toolchain.compiler(l);
+                void * s = p;
+                std::cout << "hier4" << s << std::endl;
+
+                return *p;
+
+            };
+            engine.add(chaiscript::fun(compiler), "compiler");
+            engine.add(chaiscript::fun([](Toolchain & toolchain) { return &toolchain.linker(); }), "linker");
+            engine.add(chaiscript::fun([](Toolchain & toolchain) -> Archiver & { return toolchain.archiver(); }), "archiver");
+        }
     }
 
     void initialize_uri()
@@ -444,6 +535,7 @@ Result Context::load(const std::string & recipe)
     catch(std::runtime_error & error)
     {
         std::cout << "Error: caught std::runtime_error: " << error.what() << std::endl;
+        std::cout << " in \"" << pimpl_->scripts.top().string() << "\"" << std::endl;
         MSG_MSS(false, InternalError, error.what());
     }
     catch(chaiscript::Boxed_Value & error)

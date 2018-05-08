@@ -97,7 +97,7 @@ Result Context::find_recipe(model::Recipe *& recipe, const std::string & name) c
 
     // find the recipe in the root book
     MSG_MSS(lib_.find_recipe(recipe, uri), InternalError, "Error while finding uri '" << uri << "'");
-
+ 
     // make sure the recipe is found
     MSG_MSS(!!recipe, Error, "No recipe with name '" << uri << "' exists ");
 
@@ -122,7 +122,7 @@ Result Context::set_toolchain(const std::string &toolchain)
     {
         std::string brand;
         get_part(brand);
-        MSS(toolchain_().temp_set_brand(brand));
+        MSS(temp_set_brand(toolchain_(), brand));
     }
 
     {

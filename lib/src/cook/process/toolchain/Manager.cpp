@@ -25,41 +25,44 @@ namespace cook { namespace process { namespace toolchain {
         compiler(Language::ASM);
     }
 
-    bool Manager::temp_set_brand(std::string brand)
+    bool Manager::is_initialized() const
+    {
+        return initialized_;
+    }
+
+    bool temp_set_brand(Manager & manager, std::string brand)
     {
         MSS_BEGIN(bool);
-        MSS(!initialized_);
+        MSS(!manager.is_initialized());
 
         if (brand.empty())
         {
             switch (get_os())
             {
-                case OS::Linux: brand = "gcc"; break;
-                case OS::Windows: brand = "msvc"; break;
-                case OS::MacOS: brand = "clang"; break;
-                default: brand = "gcc"; break;
+                case OS::Linux:     brand = "gcc";      break;
+                case OS::Windows:   brand = "msvc";     break;
+                case OS::MacOS:     brand = "clang";    break;
+                default:            brand = "gcc";      break;
             }
         }
-
-        std::cout << "brand:" << brand << std::endl;
 
         if (false) {}
         else if (brand == "msvc" || brand == "cl")
         {
             for(Language lang : {Language::C, Language::CXX, Language::ASM})
             {
-                auto * comp = compiler(lang);
+                auto * comp = manager.compiler(lang);
                 MSS(!!comp);
                 msvc::set_compiler(*comp);
             }
 
             {
-                auto & link = linker();
+                auto & link = manager.linker();
                 msvc::set_linker(link);
             }
 
             {
-                auto & ar = archiver();
+                auto & ar = manager.archiver();
                 msvc::set_archiver(ar);
             }
         }
@@ -67,18 +70,18 @@ namespace cook { namespace process { namespace toolchain {
         {
             for(Language lang : {Language::C, Language::CXX, Language::ASM})
             {
-                auto * comp = compiler(lang);
+                auto * comp = manager.compiler(lang);
                 MSS(!!comp);
                 gcc::set_compiler(*comp, standard_executable(lang, brand));
             }
 
             {
-                auto & link = linker();
+                auto & link = manager.linker();
                 gcc::set_linker(link, standard_executable(Language::CXX, brand));
             }
 
             {
-                auto & ar = archiver();
+                auto & ar = manager.archiver();
                 gcc::set_archiver(ar);
             }
         }
