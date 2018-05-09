@@ -5,9 +5,10 @@
 
 namespace cook { namespace process { namespace toolchain { namespace msvc {
 
-    inline bool set_linker(Linker & linker)
+    inline bool configure_linker(Linker & linker)
     {
         MSS_BEGIN(bool);
+        MSS(toolchain::configure_linker(linker));
 
         auto & trans = linker.translator_map();
         trans[Part::Cli] = [](const std::string &, const std::string &){return "link";};

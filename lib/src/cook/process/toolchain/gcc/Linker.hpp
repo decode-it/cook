@@ -5,9 +5,10 @@
 
 namespace cook { namespace process { namespace toolchain { namespace gcc {
 
-    inline bool set_linker(Linker & linker, const std::string & executable)
+    inline bool configure_linker(Linker & linker, const std::string & executable)
     {
         MSS_BEGIN(bool);
+        MSS(toolchain::configure_linker(linker));
 
         auto & trans = linker.translator_map();
         auto & kvm = linker.key_values_map();

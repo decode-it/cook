@@ -30,10 +30,6 @@ namespace cook { namespace process { namespace toolchain {
 
         const TranslatorMapPtr &translator_map_ptr() const { return trans_; }
 
-        virtual bool create(command::Compile::Ptr &) const  { return false; }
-        virtual bool create(command::Archive::Ptr &) const  { return false; }
-        virtual bool create(command::Link::Ptr &) const     { return false; }
-
         KeyValuesMap & key_values_map() { return kvm_; }
         TranslatorMap & translator_map() { return *trans_; }
         const KeyValuesMap & key_values_map() const { return kvm_; }

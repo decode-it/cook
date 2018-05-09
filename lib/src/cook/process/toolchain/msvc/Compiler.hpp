@@ -8,9 +8,10 @@
 
 namespace cook { namespace process { namespace toolchain { namespace msvc {
 
-    inline bool set_compiler(Compiler & compiler)
+    inline bool configure_compiler(Compiler & compiler)
     {
         MSS_BEGIN(bool);
+        MSS(toolchain::configure_compiler(compiler));
 
         auto & trans = compiler.translator_map();
         auto & kvm = compiler.key_values_map();

@@ -10,13 +10,19 @@ namespace cook { namespace process { namespace toolchain {
     class Archiver: public Interface
     {
     public:
-        bool create(command::Archive::Ptr &ptr) const override
+        bool create(command::Archive::Ptr &ptr) const
         {
             MSS_BEGIN(bool);
             ptr.reset(new command::Archive(key_values_map(), translator_map_ptr()));
             MSS_END();
         }
     };
+
+    inline bool configure_archiver(Archiver & /*archiver*/)
+    {
+        MSS_BEGIN(bool);
+        MSS_END();
+    }
 
 } } } 
 

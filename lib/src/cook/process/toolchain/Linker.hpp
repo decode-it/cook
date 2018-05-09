@@ -7,28 +7,32 @@ namespace cook { namespace process { namespace toolchain {
 
     class Linker: public Interface
     {
-    public:
-        Linker()
-        {
-            auto configure = [&](const std::string &key, const std::string &value, const Configuration & conf)
+        public:
+            bool create(command::Link::Ptr &ptr) const 
             {
                 MSS_BEGIN(bool);
-                if (false) {}
-                else if (key == "config" && value == "debug")
-                    MSS(conf.configure("config", "rtc"));
-                else MSS_Q(false);
+                ptr.reset(new command::Link(key_values_map(), translator_map_ptr()));
                 MSS_END();
-            };
-            add_config(1, configure);
-        }
+            }
+    };
 
-        bool create(command::Link::Ptr &ptr) const override
+    inline bool configure_linker(Linker & linker)
+    {
+        MSS_BEGIN(bool);
+
+        auto configure = [&](const std::string &key, const std::string &value, const Configuration & conf)
         {
             MSS_BEGIN(bool);
-            ptr.reset(new command::Link(key_values_map(), translator_map_ptr()));
+            if (false) {}
+            else if (key == "config" && value == "debug")
+                MSS(conf.configure("config", "rtc"));
+            else MSS_Q(false);
             MSS_END();
-        }
-    };
+        };
+        linker.add_config(10, configure);
+
+        MSS_END();
+    }
 
 } } } 
 

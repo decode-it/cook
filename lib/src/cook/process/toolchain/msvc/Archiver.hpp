@@ -7,9 +7,10 @@
 
 namespace cook { namespace process { namespace toolchain { namespace msvc {
 
-    inline bool set_archiver(Archiver & archiver)
+    inline bool configure_archiver(Archiver & archiver)
     {
         MSS_BEGIN(bool);
+        MSS(toolchain::configure_archiver(archiver));
 
         auto & trans = archiver.translator_map();
         trans[Part::Cli] = [](const std::string &, const std::string &){return "lib";};

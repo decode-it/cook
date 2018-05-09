@@ -49,9 +49,8 @@ Result App::process_()
     kitchen_.dirs().set_output(options_.output_path);
     kitchen_.dirs().set_temporary(options_.temp_path);
 
-    //Set the toolchain, if specified
-    if (!options_.toolchain.empty())
-        MSS(kitchen_.set_toolchain(options_.toolchain));
+    // Always set the toolchain
+    MSS(kitchen_.set_toolchain(options_.toolchain));
 
     // initialize the kitchen
     MSS(kitchen_.initialize());

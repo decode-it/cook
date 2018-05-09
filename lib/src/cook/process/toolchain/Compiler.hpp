@@ -8,13 +8,29 @@
 
 namespace cook { namespace process { namespace toolchain { 
 
-class Compiler: public Interface
-{
-public:
-    Compiler(Language language)
-        : language(language)
+    class Compiler: public Interface
     {
-        auto & kvm = key_values_map();
+        public:
+            Compiler(Language language)
+            : language(language)
+            {
+            }
+
+            bool create(command::Compile::Ptr &ptr) const
+            {
+                MSS_BEGIN(bool);
+                ptr.reset(new command::Compile(key_values_map(), translator_map_ptr()));
+                MSS_END();
+            }
+
+            const Language language;
+    };
+
+    inline bool configure_compiler(Compiler & compiler)
+    {
+        MSS_BEGIN(bool);
+
+        auto & kvm = compiler.key_values_map();
         auto configure = [&](const std::string & key, const std::string & value, const Configuration & conf)
         {
             MSS_BEGIN(bool);
@@ -34,18 +50,10 @@ public:
             MSS_END();
         };
 
-        add_config(10, configure);
-    }
+        compiler.add_config(10, configure);
 
-    bool create(command::Compile::Ptr &ptr) const override
-    {
-        MSS_BEGIN(bool);
-        ptr.reset(new command::Compile(key_values_map(), translator_map_ptr()));
         MSS_END();
     }
-
-    const Language language;
-};
 
 } } } 
 

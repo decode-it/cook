@@ -53,17 +53,17 @@ namespace cook { namespace process { namespace toolchain {
             {
                 auto * comp = manager.compiler(lang);
                 MSS(!!comp);
-                msvc::set_compiler(*comp);
+                msvc::configure_compiler(*comp);
             }
 
             {
                 auto & link = manager.linker();
-                msvc::set_linker(link);
+                msvc::configure_linker(link);
             }
 
             {
                 auto & ar = manager.archiver();
-                msvc::set_archiver(ar);
+                msvc::configure_archiver(ar);
             }
         }
         else
@@ -72,17 +72,17 @@ namespace cook { namespace process { namespace toolchain {
             {
                 auto * comp = manager.compiler(lang);
                 MSS(!!comp);
-                gcc::set_compiler(*comp, standard_executable(lang, brand));
+                gcc::configure_compiler(*comp, standard_executable(lang, brand));
             }
 
             {
                 auto & link = manager.linker();
-                gcc::set_linker(link, standard_executable(Language::CXX, brand));
+                gcc::configure_linker(link, standard_executable(Language::CXX, brand));
             }
 
             {
                 auto & ar = manager.archiver();
-                gcc::set_archiver(ar);
+                gcc::configure_archiver(ar);
             }
         }
 

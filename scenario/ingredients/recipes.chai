@@ -9,7 +9,7 @@ root.book("book", fun(book) {
     book.recipe("main", "executable", fun(r){
         r.add("", "main.cpp")
         r.depends_on("foobar", fun(b) {
-            return (!(b.flags() & Type.include_path))
+            return (!(b.flags() & Type.IncludePath))
         })
     })
 })

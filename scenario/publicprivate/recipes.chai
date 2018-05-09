@@ -5,7 +5,7 @@ cook["lib"].recipe("func", fun(r) {
 
 cook["lib"].recipe("api", fun(r) {
     r.depends_on("func", fun(d) {
-        return !((d.flags() & Type.include_path) && d.has_owner())
+        return !((d.flags() & Type.IncludePath) && d.has_owner())
     })
     r.include_path("inc")
 })

@@ -9,9 +9,11 @@
 
 namespace cook { namespace process { namespace toolchain { namespace gcc {
 
-    inline bool set_compiler(Compiler & compiler, const std::string & executable)
+    inline bool configure_compiler(Compiler & compiler, const std::string & executable)
     {
         MSS_BEGIN(bool);
+
+        MSS(toolchain::configure_compiler(compiler));
 
         auto & trans = compiler.translator_map();
         auto & kvm = compiler.key_values_map();
