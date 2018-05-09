@@ -1,5 +1,4 @@
 #include "cook/process/souschef/Compiler.hpp"
-#include "cook/process/toolchain/Compiler.hpp"
 #include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "cook/log/Scope.hpp"

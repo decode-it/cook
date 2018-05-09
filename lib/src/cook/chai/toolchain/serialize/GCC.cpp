@@ -30,7 +30,9 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "        } else if (k == \"arch\" && v == \"x64\") {" << std::endl;
         oss << "            kv.append(Part.Pre, \"-m64\")" << std::endl;
         oss << "        } else if (k == \"arch\" && v == \"armv7\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"armv7\")" << std::endl;
+        oss << "            kv.append(Part.Pre, \"-armv7\")" << std::endl;
+        oss << "        } else if (k == \"position_independent_code\" && v == \"true\") {" << std::endl;
+        oss << "            kv.append(Part.Pre, \"-fPIC\")" << std::endl;
         oss << "        } else if (k == \"c++-standard\" && e.language == Language.CXX) {" << std::endl;
         oss << "            kv.append(Part.Pre, \"-std\", \"c++${v}\")" << std::endl;
         oss << "        } else if (k == \"c-standard\" && e.language == Language.C) {" << std::endl;
@@ -89,7 +91,6 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "" << std::endl;
         oss << "    kv.append(Part.Cli, s[1])" << std::endl;
         oss << "    kv.append(Part.Pre, \"-c\")" << std::endl;
-        oss << "    kv.append(Part.Pre, \"-fPIC\")" << std::endl;
         oss << "}" << std::endl;
         oss << std::endl;
 

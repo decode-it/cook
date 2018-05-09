@@ -126,6 +126,7 @@ namespace :b0 do
     task :clean do
         sh("#{ninja_exe} -f #{b0_ninja_fn} -t clean")
         rm_rf(".b0")
+        rm_rf("default.chai")
     end
 
     desc "bootstrap-level0: Update rtags"
