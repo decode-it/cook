@@ -1,0 +1,1 @@
+cook[""].recipe("a", "executable").add("src", "main.cpp")

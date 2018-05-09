@@ -82,8 +82,12 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 Result Archiver::archive_command_(command::Ptr &ptr, const model::Recipe & recipe, const Context & context) const
 {
     MSS_BEGIN(Result);
-    process::command::Archive::Ptr ap;
-    MSS(context.toolchain().archiver().create(ap));
+
+    auto element = context.toolchain().element(toolchain::Element::Archive, Language::Binary);
+    MSS(!!element);
+    auto ap = element->create<process::command::Archive>();
+    MSS(!!ap);
+    
     ap->set_recipe_uri(recipe.uri().string());
     ptr = ap;
     MSS_END();

@@ -1,36 +1,36 @@
 #ifndef HEADER_cook_process_toolchain_Linker_hpp_ALREADY_INCLUDED
 #define HEADER_cook_process_toolchain_Linker_hpp_ALREADY_INCLUDED
 
-#include "cook/process/toolchain/Interface.hpp"
+#include "cook/process/toolchain/Manager.hpp"
 
 namespace cook { namespace process { namespace toolchain { 
 
-    class Linker: public Interface
+    inline bool link_config_cb(Element::Ptr element, const std::string & key, const std::string & value, ConfigurationBoard & board)
     {
-        public:
-            bool create(command::Link::Ptr &ptr) const 
-            {
-                MSS_BEGIN(bool);
-                ptr.reset(new command::Link(key_values_map(), translator_map_ptr()));
-                MSS_END();
-            }
-    };
+        if (element->type() != Element::Link)
+            return false;
 
-    inline bool configure_linker(Linker & linker)
+        if (false) {}
+        else if (key == "config" && value == "debug")
+            board.add_configuration("config", "rtc");
+        else
+            return false;
+
+        return true;
+    }
+
+    inline bool configure_link(Manager & manager)
     {
         MSS_BEGIN(bool);
 
-        auto configure = [&](const std::string &key, const std::string &value, const Configuration & conf)
-        {
-            MSS_BEGIN(bool);
-            if (false) {}
-            else if (key == "config" && value == "debug")
-                MSS(conf.configure("config", "rtc"));
-            else MSS_Q(false);
-            MSS_END();
-        };
-        linker.add_config(10, configure);
+        manager.goc_element(Element::Link, Language::Binary);
 
+        {
+            Configuration cb(10, "linker configuration");
+            cb.callback = link_config_cb;
+            manager.add_configuration_callback(std::move(cb));
+        }
+ 
         MSS_END();
     }
 

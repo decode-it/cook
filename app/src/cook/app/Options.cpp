@@ -31,7 +31,8 @@ bool Options::parse(int argc, const char ** argv)
         opt.add_mandatory(  'f', "--input-file           ", "recipes to process", [&](const std::string & str) { recipe_files.push_back(str); });
         opt.add_mandatory(  'o', "--output-dir           ", "Output directory, default is \"./\"", [&](const std::string & str) { output_path = str; });
         opt.add_mandatory(  'O', "--temp-dir             ", "Temporary build cache directory. Default is .cook", [&](const std::string & str) {temp_path = str; });
-        opt.add_mandatory(  't', "--toolchain            ", "The toolchain to use.", [&](const std::string & str) { toolchain = str; });
+        opt.add_mandatory(  't', "--toolchain-file       ", "The toolchain-file to use. If not found and any of [gcc,clang, msvc, default] a toolchain is generated in the working directory", [&](const std::string & str) { toolchains.push_back(str); });
+        opt.add_mandatory(  'T', "--toolchain-option     ", "Passes the option to the toolchain.", [&](const std::string & str) { toolchain_options.push_back(parse_key_value_pair(str)); });
         opt.add_mandatory(  'g', "--generator            ", "A generator to use [naft|ninja|cmake|build]. If none are specified, then build is used.", [&](const std::string & str) { generators.push_back(parse_key_value_pair(str)); });
         opt.add_mandatory(  'C', "--chef                 ", "Chef to use [cal|void]", [&](const std::string &str){ chef = str; });
         opt.add_switch(     'c', "--clean                ", "Clean the data for the specified generators before using them", [&](){ clean = true; });
@@ -74,39 +75,36 @@ void Options::stream(log::Importance importance) const
     auto ss = log::scope("options", imp, [&](auto &n){
             n.attr("output_path", output_path);
             n.attr("temp_path", temp_path);
-            n.attr("toolchain", toolchain);
             n.attr("clean", (clean ? "true" : "false"));
             n.attr("print_help", (print_help ? "true" : "false"));
             n.attr("verbosity", verbosity);
             });
 
+    auto log_single_range = [&](const std::string & name, const auto & range)
     {
-        auto ss = log::scope("recipe_files", imp, [&](auto & n) {
-                for (const auto &fn: recipe_files)
-                n.attr(fn);
-                });
-    }
+        auto ss = log::scope(name, imp, [&](auto & n) {
+            for(const auto & el : range)
+                n.attr(el);
+        });
+    };
 
+    auto log_pair_range = [&](const std::string & name, const auto & range)
     {
-        auto ss = log::scope("generators", imp, [&](auto & n) {
-                for (const auto &p: generators)
-                n.attr(p.first, p.second);
-                });
-    }
+        auto ss = log::scope(name, imp, [&](auto & n) {
+            for(const auto & el : range)
+                if (el.second.empty())
+                    n.attr(el.first);
+                else
+                    n.attr(el.first, el.second);
+        });
+    };
 
-    {
-        auto ss = log::scope("variables", imp, [&](auto & n) {
-                for (const auto &p: variables)
-                n.attr(p.first, p.second);
-                });
-    }
+    log_single_range("recipes", recipe_files);
+    log_single_range("toolchains", toolchains);
 
-    {
-        auto ss = log::scope("recipes", imp, [&](auto & n) {
-                for (const auto &r: recipes)
-                n.attr(r);
-                });
-    }
+    log_pair_range("toolchain-options", toolchain_options);
+    log_pair_range("generators", generators);
+    log_pair_range("variables", variables);
 }
 
 } }

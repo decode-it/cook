@@ -49,8 +49,17 @@ Result App::process_()
     kitchen_.dirs().set_output(options_.output_path);
     kitchen_.dirs().set_temporary(options_.temp_path);
 
-    // Always set the toolchain
-    MSS(kitchen_.set_toolchain(options_.toolchain));
+    // load the toolchains from file
+    MSS(load_toolchains_());
+
+    // Set the toolchain options
+    for(const auto & p : options_.toolchain_options)
+    {
+        if (p.second.empty())
+            kitchen_.add_toolchain_config(p.first);
+        else
+            kitchen_.add_toolchain_config(p.first, p.second);
+    }
 
     // initialize the kitchen
     MSS(kitchen_.initialize());
@@ -151,6 +160,19 @@ Result App::process_generators_() const
     MSS_END();
 }
 
+Result App::load_toolchains_()
+{
+    MSS_BEGIN(Result);
+
+    if (options_.toolchains.empty())
+        options_.toolchains.push_back("default");
+
+    for(const auto & fn : options_.toolchains)
+        MSS(kitchen_.load_toolchain(fn));
+
+    MSS_END();
+}
+
 Result App::load_recipes_()
 {
     MSS_BEGIN(Result);
@@ -159,7 +181,7 @@ Result App::load_recipes_()
         options_.recipe_files.push_back("./");
 
     for(const auto & fn : options_.recipe_files)
-        MSS(kitchen_.load(fn));
+        MSS(kitchen_.load_recipe(fn));
 
     MSS_END();
 }

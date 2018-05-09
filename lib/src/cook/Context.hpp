@@ -47,7 +47,8 @@ namespace cook {
         void set_project_name(const std::string & name) { project_name_ = name; }
         OS os() const;
 
-        Result set_toolchain(const std::string &toolchain);
+        void add_toolchain_config(const std::string & key, const std::string & value);
+        void add_toolchain_config(const std::string & key);
         const process::toolchain::Manager &toolchain() const;
         process::toolchain::Manager & toolchain();
 

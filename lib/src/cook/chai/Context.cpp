@@ -6,10 +6,7 @@
 #include "cook/chai/Flags.hpp"
 #include "cook/chai/mss.hpp"
 #include "cook/process/toolchain/Manager.hpp"
-#include "cook/process/toolchain/Interface.hpp"
-#include "cook/process/toolchain/Compiler.hpp"
-#include "cook/process/toolchain/Archiver.hpp"
-#include "cook/process/toolchain/Linker.hpp"
+#include "cook/process/toolchain/Element.hpp"
 #include "gubg/std/filesystem.hpp"
 #include "gubg/mss.hpp"
 #include "gubg/chai/inject.hpp"
@@ -88,7 +85,7 @@ struct Cook
 
 struct ToolchainElement
 {
-    ToolchainElement(process::toolchain::Interface * element)
+    ToolchainElement(process::toolchain::Element::Ptr element)
         : element(element)
     {
     }
@@ -100,8 +97,10 @@ struct ToolchainElement
     const KVM & key_values_const() const { return element->key_values_map(); }
     TM & translators() { return element->translator_map(); }
     const TM & translators_const() const { return element->translator_map(); }
+    process::toolchain::Element::Type type() const { return element->type(); }
+    Language language() const { return element->language(); }
     
-    process::toolchain::Interface * element;
+    process::toolchain::Element::Ptr element;
 };
 
 struct W_Propagation { };
@@ -110,6 +109,7 @@ struct W_Type { };
 struct W_Language { };
 struct W_OS {};
 struct W_Part {};
+struct W_ElementType {};
 
 struct Context::Pimpl
 {
@@ -131,6 +131,7 @@ struct Context::Pimpl
     Engine engine;
     std::stack<std::filesystem::path> scripts;
     Cook cook;
+    using ElementType = process::toolchain::Element::Type;
 
     void initialize_engine_(Context * kitchen)
     {
@@ -164,6 +165,7 @@ struct Context::Pimpl
         EXPOSE_TOP(Language);
         EXPOSE_TOP(OS);
         EXPOSE_TOP(Part);
+        EXPOSE_TOP(ElementType);
 #undef EXPOSE_TOP
 
 #define EXPOSE(TYPE, NAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return Flags(TYPE::NAME); }), #NAME)
@@ -192,6 +194,7 @@ struct Context::Pimpl
         EXPOSE(Language, UserDefined);
 #undef EXPOSE
 
+
 #define EXPOSE(TYPE, NAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return TYPE::NAME; }), #NAME)
         EXPOSE(Part, Cli);
         EXPOSE(Part, Pre);
@@ -208,10 +211,18 @@ struct Context::Pimpl
         EXPOSE(OS, Windows);
         EXPOSE(OS, Linux);
         EXPOSE(OS, MacOS);
+        EXPOSE(ElementType, Compile);
+        EXPOSE(ElementType, Link);
+        EXPOSE(ElementType, Archive);
 #undef EXPOSE
+
+#define EXPOSE_ENUM_FUNC(NAME) engine.add(chaiscript::user_type<NAME>(), #NAME); engine.add(chaiscript::fun([](NAME lhs, NAME rhs){return lhs == rhs;}), "=="); engine.add(chaiscript::fun([](NAME lhs, NAME rhs){return lhs != rhs;}), "!=")
+
+        EXPOSE_ENUM_FUNC(OS);
+        EXPOSE_ENUM_FUNC(ElementType);
+        EXPOSE_ENUM_FUNC(Part);
+
         engine.add(chaiscript::fun([](const W_OS & ) { return get_os(); }), "my");
-        engine.add(chaiscript::fun([](OS lhs, OS rhs){return lhs == rhs;}), "==");
-        engine.add(chaiscript::fun([](OS lhs, OS rhs){return lhs != rhs;}), "!=");
 
         engine.add(chaiscript::fun([](Flags & f, const Flags & to_set) { f.set(to_set); } ), "set");
         engine.add(chaiscript::fun(&Flags::to_string), "to_string");
@@ -228,6 +239,10 @@ struct Context::Pimpl
         using T = process::toolchain::Translator;
         using TM = process::toolchain::TranslatorMap;
         using Toolchain = process::toolchain::Manager;
+        using Configuration = process::toolchain::Configuration;
+        using ConfigurationBoard  = process::toolchain::ConfigurationBoard;
+
+        using ConfigurationCallback = std::function<bool (ToolchainElement, const std::string &, const std::string &, ConfigurationBoard &)>;
 
         {
             // key value maps
@@ -242,37 +257,78 @@ struct Context::Pimpl
             engine.add(chaiscript::user_type<TM>(), "TranslatorMap");
 
             engine.add(chaiscript::fun(static_cast<T & (TM::*)(const Part & )>(&TM::operator[])), "[]");
+        }
 
+
+        {
+            engine.add(chaiscript::user_type<ConfigurationBoard>(), "ConfigurationBoard");
+            engine.add(chaiscript::fun(&ConfigurationBoard::add_configuration), "add_config");
+            engine.add(chaiscript::user_type<ConfigurationCallback>(), "ConfigurationCallback");
+            auto add_configuration = [](Toolchain & toolchain, unsigned int priority, const std::string & uuid, const ConfigurationCallback & callback)
+            {
+                Configuration cfg(priority, uuid);
+                cfg.callback = [=](process::toolchain::Element::Ptr element, const std::string & key, const std::string & value, ConfigurationBoard & board)
+                {
+                    return callback(ToolchainElement(element), key, value, board);
+                };
+                toolchain.add_configuration_callback(std::move(cfg));
+            };
+            engine.add(chaiscript::fun(add_configuration), "configure");
         }
 
         {
-            engine.add(chaiscript::user_type<ToolchainElement>(), "Compiler");
-            engine.add(chaiscript::user_type<ToolchainElement>(), "Linker");
-            engine.add(chaiscript::user_type<ToolchainElement>(), "Archiver");
+            engine.add(chaiscript::user_type<ToolchainElement>(), "ToolchainElement");
             engine.add(chaiscript::fun(&ToolchainElement::key_values), "key_values");
             engine.add(chaiscript::fun(&ToolchainElement::translators), "translators");
+            engine.add(chaiscript::fun(&ToolchainElement::type), "type");
+            engine.add(chaiscript::fun([](const ToolchainElement & el) { return Flags(el.language()); }), "language");
         }
 
         {
             // toolchain config
             engine.add(chaiscript::fun(&Toolchain::has_config), "has_config");
-            engine.add(chaiscript::fun(&Toolchain::config_value), "config_value");
-            engine.add(chaiscript::fun([](Toolchain & toolchain, const std::string & key) { return toolchain.configure(key); }), "set_config_value");
-            engine.add(chaiscript::fun([](Toolchain & toolchain, const std::string & key, const std::string & value) { return toolchain.configure(key, value); }), "set_config_value");
+            engine.add(chaiscript::fun(&Toolchain::config_values), "config_values");
 
-
-            auto compiler = [](Toolchain & toolchain, Flags lang)
             {
-                CHAI_MSS_BEGIN();
-                CHAI_MSS(lang.only({Flag::Language}));
+                auto check_lang = [](const Flags & lang)
+                {
+                    MSS_BEGIN(Result);
 
-                Language l = lang.language().first;
-                auto p = toolchain.compiler(l);
-                return ToolchainElement(p);
-            };
-            engine.add(chaiscript::fun(compiler), "compiler");
-            engine.add(chaiscript::fun([](Toolchain & toolchain) { return ToolchainElement(&toolchain.linker()); }), "linker");
-            engine.add(chaiscript::fun([](Toolchain & toolchain) { return ToolchainElement(&toolchain.archiver()); }), "archiver");
+                    MSS(lang.only({Flag::Language}));
+                    MSG_MSS(lang.language().second, Error, "A language should be specified");
+
+                    MSS_END();
+                };
+
+                auto has_element = [=](const Toolchain & chain, ElementType type, Flags lang) 
+                { 
+                    CHAI_MSS_BEGIN();
+                    CHAI_MSS(check_lang(lang));
+
+                    return !!chain.element(type, lang.language().first);
+                };
+                engine.add(chaiscript::fun(has_element), "has_element");
+
+                auto element_const = [=](const Toolchain & chain, ElementType type, Flags lang)
+                {
+                    CHAI_MSS_BEGIN();
+                    CHAI_MSS(check_lang(lang));
+ 
+                    auto ptr = chain.element(type, lang.language().first);
+                    CHAI_MSS_MSG(!!ptr, Error, "No toolchain element with type " << type << " and language " << lang << " exists");
+                    return ToolchainElement(ptr);
+                };
+                engine.add(chaiscript::fun(element_const), "element");
+
+                auto element = [=](Toolchain & chain, ElementType type, Flags lang)
+                {
+                    CHAI_MSS_BEGIN();
+                    CHAI_MSS(check_lang(lang));
+
+                    return ToolchainElement(chain.goc_element(type, lang.language().first));
+                };
+                engine.add(chaiscript::fun(element), "element");
+            }
         }
     }
 
@@ -507,8 +563,26 @@ Result process_Error(Error & error)
 
 }
 
+Result Context::load_toolchain(const std::string & toolchain)
+{
+    MSS_BEGIN(Result);
 
-Result Context::load(const std::string & recipe)
+    std::filesystem::path fn;
+    MSS(loader_.load(toolchain, fn));
+
+    MSS(load_(fn));
+    MSS_END();
+}
+
+Result Context::load_recipe(const std::string & recipe)
+{
+    MSS_BEGIN(Result);
+    MSS(load_(recipe));
+    MSS_END();
+}
+
+
+Result Context::load_(const std::string & recipe)
 {
     MSS_BEGIN(Result);
 
@@ -574,10 +648,7 @@ void Context::include_(const std::string & file)
 
     auto ss = log::scope("chai script", [&](auto & n) {
         n.attr("filename", script_fn.string());
-
     });
-
-
 
     // push the script
     pimpl_->scripts.push(script_fn);

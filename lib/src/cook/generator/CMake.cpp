@@ -109,9 +109,10 @@ Result CMake::process(const Context & context)
     
     auto set_property = [&](const std::string & key, const std::string & cmake_key)
     {
-        const std::string & val = context.toolchain().config_value(key);
-        if (!val.empty())
-            ofs << "set(" << cmake_key << " " << val << ")" << std::endl;
+        std::list<std::string> values = context.toolchain().config_values(key);
+
+        for(auto it = values.begin(); it != values.end(); ++it)
+            ofs << "set(" << cmake_key << " " << *it << ")" << std::endl;
     };
     
     set_property("c++-standard", "CMAKE_CXX_STANDARD");

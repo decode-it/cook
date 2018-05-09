@@ -1,56 +1,45 @@
 #ifndef HEADER_cook_process_toolchain_Compiler_hpp_ALREADY_INCLUDED
 #define HEADER_cook_process_toolchain_Compiler_hpp_ALREADY_INCLUDED
 
-#include "cook/process/toolchain/Interface.hpp"
-#include "cook/Language.hpp"
-#include "gubg/mss.hpp"
-#include <optional>
+#include "cook/process/toolchain/Manager.hpp"
 
 namespace cook { namespace process { namespace toolchain { 
 
-    class Compiler: public Interface
+    inline bool compile_config_cb(Element::Ptr element, const std::string & key, const std::string & value, ConfigurationBoard & board)
     {
-        public:
-            Compiler(Language language)
-            : language(language)
-            {
-            }
+        if (element->type() != Element::Compile)
+            return false;
 
-            bool create(command::Compile::Ptr &ptr) const
-            {
-                MSS_BEGIN(bool);
-                ptr.reset(new command::Compile(key_values_map(), translator_map_ptr()));
-                MSS_END();
-            }
+        if (false) {}
+        else if (key == "config" && value == "debug")
+        {            
+            board.add_configuration("debug_symbols", "true");
+            board.add_configuration("config", "rtc");
+        }
+        else if (key == "config" && value == "release")
+        {
+            board.add_configuration("optimization", "max_speed");
+            element->key_values_map()[Part::Define].emplace_back("NDEBUG", "");
+        }
+        else
+        {
+            return false;
+        }
 
-            const Language language;
-    };
+        return true;
+    }
 
-    inline bool configure_compiler(Compiler & compiler)
+    inline bool configure_compiler(Manager & manager, const Language & language)
     {
         MSS_BEGIN(bool);
 
-        auto & kvm = compiler.key_values_map();
-        auto configure = [&](const std::string & key, const std::string & value, const Configuration & conf)
         {
-            MSS_BEGIN(bool);
+            Configuration cb(10, "compiler config");
+            cb.callback = &compile_config_cb;
+            manager.add_configuration_callback(std::move(cb));
+        }
 
-            if (false) {}
-            else if (key == "config" && value == "debug")
-            {
-                MSS(conf.configure("debug_symbols", "true"));
-                MSS(conf.configure("config", "rtc"));
-            }
-            else if (key == "config" && value == "release")
-            {
-                MSS(conf.configure("optimization", "max_speed"));
-                kvm[Part::Define].emplace_back("NDEBUG", "");
-            }
-            else MSS_Q(false);
-            MSS_END();
-        };
-
-        compiler.add_config(10, configure);
+        manager.goc_element(Element::Compile, language);
 
         MSS_END();
     }

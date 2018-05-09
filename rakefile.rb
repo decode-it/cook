@@ -149,11 +149,10 @@ namespace :b1 do
         sh("./unit_tests.exe -a -d yes")
     end
 
-    brand, config, arch, lang = nil, :release, nil, "c++=17"
+    toolchain_options = {"c++-standard" => 17, "release" => nil}
     case GUBG::os
-    when :linux then brand, arch = :gcc, nil
-    when :macos then brand, arch = :clang, :x64
-    when :windows then brand, arch = :msvc, :x86
+    when :macos     then toolchain_options["arch"] = "x64"
+    when :windows   then toolchain_options["arch"] = "x86"
     end
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
@@ -161,9 +160,9 @@ namespace :b1 do
         odir = File.join(out_base, "ninja")
         tdir = File.join(tmp_base, "ninja")
 
-        # config = :debug
-        toolchain  = [brand, config, arch, lang].select { |a| a != nil }.map{|a| a.to_s }.join("-")
-        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} -t #{toolchain} cook/app/exe"
+        opts = toolchain_options.map {|k,v| "-T " + (v ? "#{k}=#{v}" : "#{k}") }.join(" ")
+                                                     
+        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} #{opts} cook/app/exe"
         sh "#{ninja_exe} -f #{odir}/build.ninja -v"
         exe = "cook.app.exe"
         exe += ".exe" if GUBG::os == :windows

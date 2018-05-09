@@ -110,28 +110,14 @@ OS Context::os() const
     return get_os();
 }
 
-Result Context::set_toolchain(const std::string &toolchain)
+void Context::add_toolchain_config(const std::string & key, const std::string & value)
 {
-    MSS_BEGIN(Result);
-    gubg::Strange strange(toolchain);
+    toolchain_().add_config(key, value);
+}
 
-    auto get_part = [&](std::string & part) {
-        return strange.pop_until(part, '-') || strange.pop_all(part);
-    };
-
-    {
-        std::string brand;
-        get_part(brand);
-        MSS(temp_set_brand(toolchain_(), brand));
-    }
-
-    {
-        std::string part;
-        while(get_part(part))
-            toolchain_().configure(part);
-    }
-
-    MSS_END();
+void Context::add_toolchain_config(const std::string & key)
+{
+    toolchain_().add_config(key);
 }
 
 process::toolchain::Manager &Context::toolchain_() const

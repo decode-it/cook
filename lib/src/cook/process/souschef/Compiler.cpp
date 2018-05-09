@@ -82,10 +82,10 @@ Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recip
 {
     MSS_BEGIN(Result);
 
-    process::command::Compile::Ptr cp;
-    auto comp = context.toolchain().compiler(language_);
-    MSS(!!comp);
-    MSS(comp->create(cp));
+    auto element = context.toolchain().element(toolchain::Element::Compile, language_);
+    MSS(!!element);
+    auto cp = element->create<process::command::Compile>();
+    MSS(!!cp);
 
     // add the include paths
     for (const ingredient::File & f : recipe.files().range(LanguageTypePair(Language::Undefined, Type::IncludePath)))

@@ -18,6 +18,7 @@ private:
 
     Result extract_root_recipes_(std::list<model::Recipe *> & result) const;
     Result load_recipes_();
+    Result load_toolchains_();
     Result process_generators_() const;
     Result process_generator_(const std::string & name, const std::string & value) const;
 

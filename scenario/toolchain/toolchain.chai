@@ -1,6 +1,91 @@
-{
-    var c = cook.toolchain.compiler(Language.CXX)
-    c.translators[Part.Cli] = fun(k,v) { return "kaka" }
-}
+cook.toolchain.configure(100, "specific toolchain config", fun(e,k,v,b) {
 
-cook[""].recipe("a", "executable").add("src", "main.cpp")
+    auto & kv = e.key_values();
+    auto & tm = e.translators();
+
+    if (false) {
+    } else if (e.type == ElementType.Compile) {
+        if (false) {
+        } else if (k == "debug_symbols" && v == "true") {
+            kv.append(Part.Pre, "/Zi")
+        } else if (k == "optimization" && v == "max_speed") {
+            kv.append(Part.Pre, "/O2")
+        } else if (k == "arch" && v = "x86") {
+        } else if (k == "arch" && v == "x64") {
+        } else if (k == "c++-standard" && e.language == Language.CXX && v == "17") {
+            kv.append(Part.Pre, "/std", "c++latest")
+        } else {
+            return false;
+        }
+    } else if (e.type == ElementType.Link) {
+        if (false) {
+        } else {
+            return false
+        }
+    } else if (e.type == ElementType.Archive) {
+        if (false) {
+        } else {
+            return false
+        }
+    } else {
+        return false
+    }
+    return true
+})
+
+{
+    for( lang : [Language.C, Language.CXX, Language.ASM]) {
+
+        var compiler = cook.toolchain.element(ElementType.Compile, lang)
+        var & kv = compiler.key_values()
+        var & tm = compiler.translators()
+
+        tm[Part.Cli]            = fun(k,v) { return k }
+        tm[Part.Pre]            = fun(k,v) { if (v.empty) { return "/k" } else { return "/${k}:${v}" } }
+        tm[Part.Output]         = fun(k,v) { return "/Fo:${k}" }
+        tm[Part.Input]          = fun(k,v) { return k }
+        tm[Part.DepFile]        = fun(k,v) { return "/showIncludes" }
+        tm[Part.Define]         = fun(k,v) { if (v.empty) { return "/D${k}" } else { return "/D${k}:${v}" } }
+        tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "/I./" } else { return "/I${k}" } }
+        tm[Part.ForceInclude]   = fun(k,v) { return "/FI${k}" }
+
+        if (lang == Language.C) {
+            kv.append(Part.Pre, "/TC")
+        }
+        kv.append(Part.Cli, "cl")
+        kv.append(Part.Pre, "/nologo")
+        kv.append(Part.Pre, "/EHsc")
+        kv.append(Part.Pre, "/bigobj")
+        kv.append(Part.Pre, "-c")
+        kv.append(Part.Deps, "msvc")
+    }
+
+    {
+        var linker = cook.toolchain.element(ElementType.Link, Language.Binary)
+        var & kv = linker.key_values()
+        var & tm = linker.translators()
+
+        tm[Part.Cli]            = fun(k,v) { return k }
+        tm[Part.Pre]            = fun(k,v) { if (v.empty) { return "/k" } else { return "/${k}:${v}" } }
+        tm[Part.Output]         = fun(k,v) { return "/OUT:${k}" }
+        tm[Part.Input]          = fun(k,v) { return k }
+        tm[Part.Library]        = fun(k,v) { return "${k}.lib" }
+        tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return "/LIBPATH./" } else { return "/LIBPATH${k}" } }
+        
+        kv.append(Part.Cli, "link")
+    }
+
+    {
+        var archiver = cook.toolchain.element(ElementType.Archive, Language.Binary)
+        var & kv = archiver.key_values()
+        var & tm = archiver.translators()
+
+        tm[Part.Cli]            = fun(k,v) { return k }
+        tm[Part.Pre]            = fun(k,v) { return k }
+        tm[Part.Output]         = fun(k,v) { return "/OUT:${k}" }
+        tm[Part.Input]          = fun(k,v) { return k }
+
+        kv.append(Part.Cli, "link")
+    }
+    
+}

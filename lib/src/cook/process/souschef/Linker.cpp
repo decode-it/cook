@@ -145,9 +145,11 @@ ingredient::File Linker::construct_link_file(model::Recipe & recipe, const Conte
 Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, const model::Recipe::KeyValues::Range &libs, const Context & context) const
 {
     MSS_BEGIN(Result);
-
-    command::Link::Ptr lp;
-    MSS(context.toolchain().linker().create(lp));
+    
+    auto element = context.toolchain().element(toolchain::Element::Link, Language::Binary);
+    MSS(!!element);
+    auto lp = element->create<process::command::Link>();
+    MSS(!!lp);
 
     // set the libraries
     for(const ingredient::KeyValue & lib : libs)
