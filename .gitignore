@@ -25,3 +25,6 @@ output.txt
 *.user
 test.svg
 default.chai
+gcc.chai
+clang.chai
+msvc.chai
