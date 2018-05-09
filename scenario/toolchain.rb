@@ -4,7 +4,7 @@ test_case("toolchain") do
     cmd = [cook_fn]
     cmd << "-f scenario/hello_world/recipes.chai"
     should = :pass
-    
+
     sh(cmd.flatten*' ') do |ok, res|
         case should
         when :pass then must(ok)
