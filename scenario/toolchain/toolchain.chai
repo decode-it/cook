@@ -1,0 +1,6 @@
+{
+    var c = cook.toolchain.compiler(Language.CXX)
+    c.translators[Part.Cli] = fun(k,v) { return "kaka" }
+}
+
+cook[""].recipe("a", "executable").add("src", "main.cpp")
