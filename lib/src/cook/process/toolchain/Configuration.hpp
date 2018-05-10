@@ -41,6 +41,7 @@ namespace cook { namespace process { namespace toolchain {
         using ConfigPair = std::pair<std::string, std::string>;
 
         void add_configuration(const std::string & key, const std::string & value);
+        void add_configuration(const std::string & key);
 
         template <typename It>
         bool process(It first, It second)

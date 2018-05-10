@@ -262,7 +262,10 @@ struct Context::Pimpl
 
         {
             engine.add(chaiscript::user_type<ConfigurationBoard>(), "ConfigurationBoard");
-            engine.add(chaiscript::fun(&ConfigurationBoard::add_configuration), "add_config");
+
+            engine.add(chaiscript::fun(static_cast<void (ConfigurationBoard::*)(const std::string &, const std::string &)>(&ConfigurationBoard::add_configuration)), "add_config");
+            engine.add(chaiscript::fun(static_cast<void (ConfigurationBoard::*)(const std::string &)>(&ConfigurationBoard::add_configuration)), "add_config");
+
             engine.add(chaiscript::user_type<ConfigurationCallback>(), "ConfigurationCallback");
             auto add_configuration = [](Toolchain & toolchain, unsigned int priority, const std::string & uuid, const ConfigurationCallback & callback)
             {

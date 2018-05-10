@@ -16,6 +16,12 @@ namespace cook { namespace process { namespace toolchain {
         (priority == rhs.priority && uuid < rhs.uuid);
     }
 
+
+    void ConfigurationBoard::add_configuration(const std::string & key)
+    {
+        add_configuration(key, "true");
+    }
+
     void ConfigurationBoard::add_configuration(const std::string & key, const std::string & value)
     {
         auto s = log::scope("Configuration value", [&](auto & n){

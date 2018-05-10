@@ -36,7 +36,7 @@ namespace cook { namespace process { namespace toolchain {
 
         void Manager::add_config(const std::string & value)
         {
-            add_config(value, "true");
+            board_.add_configuration(value);
         }
 
         void Manager::add_config(const std::string & key, const std::string & value)
