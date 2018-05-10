@@ -1,0 +1,118 @@
+# test that convert a flag to string is the same name as the flag
+def test_to_string(flag_type, str_name) {
+   var v = eval("${flag_type}.${str_name}")
+   assert("${v}" == str_name, "The string representation for ${flag_type}.${str_name} is ${v} iso ${str_name}")
+}
+
+# all known Propagation flags
+Propagation.Public
+Propagation.Private
+test_to_string(Propagation, "Public")
+test_to_string(Propagation, "Private")
+
+# all known Overwrite flags
+Overwrite.Always
+Overwrite.IfSame
+Overwrite.Never
+test_to_string(Overwrite, "Always")
+test_to_string(Overwrite, "IfSame")
+test_to_string(Overwrite, "Never")
+
+# all known Type flags
+Type.Undefined
+Type.Source
+Type.Header
+Type.Object
+Type.ForceInclude
+Type.IncludePath
+Type.LibraryPath
+Type.Library
+Type.Dependency
+Type.Define
+Type.Executable
+Type.UserDefined(0)
+Type.UserDefined(9)
+test_to_string(Type, "Undefined")
+test_to_string(Type, "Source")
+test_to_string(Type, "Header")
+test_to_string(Type, "Object")
+test_to_string(Type, "ForceInclude")
+test_to_string(Type, "IncludePath")
+test_to_string(Type, "LibraryPath")
+test_to_string(Type, "Library")
+test_to_string(Type, "Dependency")
+test_to_string(Type, "Define")
+test_to_string(Type, "Executable")
+test_to_string(Type, "UserDefined(0)")
+test_to_string(Type, "UserDefined(9)")
+
+
+# all known Language flags
+Language.Undefined
+Language.Binary
+Language.C
+Language.CXX
+Language.ASM
+Language.Script
+Language.UserDefined(0)
+Language.UserDefined(1)
+Language.UserDefined(4)
+test_to_string(Language, "Undefined")
+test_to_string(Language, "Binary")
+test_to_string(Language, "C")
+test_to_string(Language, "CXX")
+test_to_string(Language, "ASM")
+test_to_string(Language, "Script")
+test_to_string(Language, "UserDefined(0)")
+test_to_string(Language, "UserDefined(1)")
+test_to_string(Language, "UserDefined(4)")
+
+# storing values
+{
+    var v1 = Propagation.Private
+    var v2 = Overwrite.Never
+    var v3 = Type.IncludePath
+    var v4 = Language.UserDefined(12)
+
+    # combining values
+    var v5 = v1 | v2 | v3
+
+    # all the same type
+    assert(type_name(v1) == type_name(v2))
+    assert(type_name(v1) == type_name(v3))
+    assert(type_name(v1) == type_name(v4))
+    assert(type_name(v1) == type_name(v5))
+}
+
+
+# Flags operations
+{
+    var v1 = Flags()
+    var v2 = Language.ASM
+    var v3 = Type.Source | Overwrite.Never
+    var v4 = v2 | v3
+
+    # empty flag
+    assert(v1 == false)
+
+    # non-empty flag
+    assert(v2 == true)
+
+    # equality test
+    assert(v2 == v2, "${v2} is equal to ${v2}")
+    assert(v2 != v3, "${v2} is not equal to ${v3}")
+    assert(v2 != v4, "${v2} is not equal to ${v4}")
+
+    # flag & operations
+    assert((v3 & v1) == Flags(), "${v3} & ${v1} == ${v3&v1}")
+    assert((v3 & v2) == Flags(), "${v3} & ${v2} == ${v3&v2}")
+    assert((v2 & v4) == Language.ASM, "${v2} & ${v4} == ${v2&v4}")
+
+    # setting elements
+    v3.set(Language.Binary)
+    assert((v3 & Language.Binary) == Language.Binary, "${v3} should have Language.Binary set")
+
+    v3.set(Language.CXX)
+    assert((v3 & Language.Binary) != Language.Binary, "${v3} should not have Language.Binary set")
+    assert((v3 & Language.CXX) == Language.CXX, "${v3} should have Language.CXX set")
+}

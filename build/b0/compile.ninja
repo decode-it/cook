@@ -96,6 +96,10 @@ build .b0/lib/src/cook/chai/ToolchainLoader.cpp.obj: compile lib/src/cook/chai/T
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/UserData.cpp.obj: compile lib/src/cook/chai/UserData.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
+build .b0/lib/src/cook/chai/module/Basic.cpp.obj: compile lib/src/cook/chai/module/Basic.cpp
+    include_paths = $cook_lib_include_paths $boost_include_paths
+build .b0/lib/src/cook/chai/module/Flags.cpp.obj: compile lib/src/cook/chai/module/Flags.cpp
+    include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/mss.cpp.obj: compile lib/src/cook/chai/mss.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/toolchain/serialize/GCC.cpp.obj: compile lib/src/cook/chai/toolchain/serialize/GCC.cpp
@@ -388,6 +392,8 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/chai/Recipe.cpp.obj $
     .b0/lib/src/cook/chai/ToolchainLoader.cpp.obj $
     .b0/lib/src/cook/chai/UserData.cpp.obj $
+    .b0/lib/src/cook/chai/module/Basic.cpp.obj $
+    .b0/lib/src/cook/chai/module/Flags.cpp.obj $
     .b0/lib/src/cook/chai/mss.cpp.obj $
     .b0/lib/src/cook/chai/toolchain/serialize/GCC.cpp.obj $
     .b0/lib/src/cook/chai/toolchain/serialize/MSVC.cpp.obj $

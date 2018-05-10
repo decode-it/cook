@@ -1,4 +1,8 @@
 #include "cook/chai/Context.hpp"
+
+#include "cook/chai/module/Basic.hpp"
+#include "cook/chai/module/Flags.hpp"
+
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/Book.hpp"
 #include "cook/chai/File.hpp"
@@ -103,10 +107,6 @@ struct ToolchainElement
     process::toolchain::Element::Ptr element;
 };
 
-struct W_Propagation { };
-struct W_Overwrite { };
-struct W_Type { };
-struct W_Language { };
 struct W_OS {};
 struct W_Part {};
 struct W_ElementType {};
@@ -131,7 +131,7 @@ struct Context::Pimpl
     Engine engine;
     std::stack<std::filesystem::path> scripts;
     Cook cook;
-    using ElementType = process::toolchain::Element::Type;
+    using ElementType = process::toolchain::Element::Type; 
 
     void initialize_engine_(Context * kitchen)
     {
@@ -139,6 +139,10 @@ struct Context::Pimpl
         initialize_uri();
         initialize_book();
         initialize_recipe(kitchen);
+
+        engine.add(module::flags());
+        engine.add(module::basic());
+
         initialize_flags();
         initialize_file(kitchen);
         initialize_key_value(kitchen);
@@ -159,40 +163,11 @@ struct Context::Pimpl
         using Part = process::toolchain::Part;
 
 #define EXPOSE_TOP(TYPE) engine.add_global(chaiscript::var(W_##TYPE()), #TYPE)
-        EXPOSE_TOP(Propagation);
-        EXPOSE_TOP(Overwrite);
-        EXPOSE_TOP(Type);
-        EXPOSE_TOP(Language);
         EXPOSE_TOP(OS);
         EXPOSE_TOP(Part);
         EXPOSE_TOP(ElementType);
 #undef EXPOSE_TOP
 
-#define EXPOSE(TYPE, NAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return Flags(TYPE::NAME); }), #NAME)
-        EXPOSE(Propagation, Public);
-        EXPOSE(Propagation, Private);
-        EXPOSE(Overwrite, Always);
-        EXPOSE(Overwrite, IfSame);
-        EXPOSE(Overwrite, Never);
-        EXPOSE(Type, Undefined);
-        EXPOSE(Type, Source);
-        EXPOSE(Type, Header);
-        EXPOSE(Type, Object);
-        EXPOSE(Type, ForceInclude);
-        EXPOSE(Type, IncludePath);
-        EXPOSE(Type, LibraryPath);
-        EXPOSE(Type, Library);
-        EXPOSE(Type, Dependency);
-        EXPOSE(Type, Define);
-        EXPOSE(Type, Executable);
-        EXPOSE(Language, Undefined);
-        EXPOSE(Language, Binary);
-        EXPOSE(Language, C);
-        EXPOSE(Language, CXX);
-        EXPOSE(Language, ASM);
-        EXPOSE(Language, Script);
-        EXPOSE(Language, UserDefined);
-#undef EXPOSE
 
 
 #define EXPOSE(TYPE, NAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return TYPE::NAME; }), #NAME)
@@ -224,12 +199,6 @@ struct Context::Pimpl
 
         engine.add(chaiscript::fun([](const W_OS & ) { return get_os(); }), "my");
 
-        engine.add(chaiscript::fun([](Flags & f, const Flags & to_set) { f.set(to_set); } ), "set");
-        engine.add(chaiscript::fun(&Flags::to_string), "to_string");
-        engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs&rhs; } ), "&");
-        engine.add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs||rhs; } ), "|");
-
-        engine.add(chaiscript::type_conversion<Flags, bool>());
     }
 
     void initialize_toolchain()

@@ -18,7 +18,6 @@ enum class Type
     Dependency,
     Define,
     Executable,
-    Argument,
     UserDefined
 };
 
@@ -26,7 +25,7 @@ inline std::ostream & operator<<(std::ostream & os, Type type)
 {
     switch(type)
     {
-#define L_CASE(NAME) case Type::NAME: os << #NAME; return os
+#define L_CASE(NAME) case Type::NAME: return os << #NAME
         L_CASE(Undefined);
         L_CASE(Source);
         L_CASE(Header);
@@ -38,18 +37,10 @@ inline std::ostream & operator<<(std::ostream & os, Type type)
         L_CASE(Dependency);
         L_CASE(Define);
         L_CASE(Executable);
-        L_CASE(Argument);
 #undef L_CASE
         default:
-            break;
+        return os << "UserDefined(" << (static_cast<unsigned int>(type) - static_cast<unsigned int>(Type::UserDefined)) << ")";
     }
-
-    if (type >= Type::UserDefined)
-        os << "UserDefined (" << static_cast<unsigned int>(type) << ")";
-    else
-        os << "unknown";
-
-    return os;
 }
 
 }
