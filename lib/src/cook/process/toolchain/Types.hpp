@@ -18,6 +18,29 @@ namespace cook { namespace process { namespace toolchain {
         End_
     };
 
+    inline std::ostream & operator<<(std::ostream & oss, Part p)
+    {
+        switch(p)
+        {
+#define L_CASE(NAME) case Part::NAME: return oss << #NAME
+            L_CASE(Cli);
+            L_CASE(Pre);
+            L_CASE(Deps);
+            L_CASE(Output);
+            L_CASE(Input);
+            L_CASE(DepFile);
+            L_CASE(Option);
+            L_CASE(Define);
+            L_CASE(IncludePath);
+            L_CASE(ForceInclude);
+            L_CASE(Library);
+            L_CASE(LibraryPath);
+#undef L_CASE
+            default:
+            return oss << "<unknown>";
+        }
+    }
+
     template <typename Ftor>
     void each_part(Ftor &&ftor)
     {

@@ -7,13 +7,17 @@ test_case("chai_test") do
     cmd = [cook_fn]
     should = :pass
 
-    name = nil
+    recipe_name = nil
+    toolchain_name = nil
 
 
-    section ("flags") { name = :flags }
-    section ("uri") { name = :uri }
+    section ("flags") { recipe_name = :flags }
+    section ("uri") { recipe_name = :uri }
+    section ("toolchain element") { toolchain_name = :toolchain_element }
 
-    cmd << "-f scenario/chai_test/#{name}.chai"
+    cmd << "-t scenario/chai_test/#{toolchain_name}.chai" if toolchain_name
+    recipe_name = recipe_name || "recipes"
+    cmd << "-f scenario/chai_test/#{recipe_name}.chai"
 
     sh(cmd.flatten*' ') do |ok, res|
         case should

@@ -1,0 +1,72 @@
+def test_to_string(enum_type, flag_str) {
+    var v = eval("${enum_type}.${flag_str}")
+    assert_equal(flag_str, "${v}")
+}
+
+# all known Part enum values
+Part.Cli
+Part.Pre
+Part.Deps
+Part.Output
+Part.Input
+Part.DepFile
+Part.Option
+Part.Define
+Part.IncludePath
+Part.ForceInclude
+Part.Library
+Part.LibraryPath
+assert_equal("${Part}", "Part")
+
+test_to_string(Part, "Cli")
+test_to_string(Part, "Pre")
+test_to_string(Part, "Deps")
+test_to_string(Part, "Output")
+test_to_string(Part, "Input")
+test_to_string(Part, "DepFile")
+test_to_string(Part, "Option")
+test_to_string(Part, "Define")
+test_to_string(Part, "IncludePath")
+test_to_string(Part, "ForceInclude")
+test_to_string(Part, "Library")
+test_to_string(Part, "LibraryPath")
+
+# All known ElementType enum values
+ElementType.Compile
+ElementType.Link
+ElementType.Archive
+assert_equal("${ElementType}", "ElementType")
+
+test_to_string(ElementType, "Compile")
+test_to_string(ElementType, "Link")
+test_to_string(ElementType, "Archive")
+
+{
+    var el = cook.toolchain.element(ElementType.Compile, Language.ASM)
+
+    assert_equal(el.language(), Language.ASM)
+    assert_equal(el.type(), ElementType.Compile)
+
+    # key values 
+    {
+        var kvm = el.key_values();
+        kvm.clear(Part.Pre);
+        kvm.append(Part.Library, "book")
+        kvm.append(Part.Option, "test", "1")
+    }
+
+    # translators
+    {
+        var tr = el.translators();
+
+        # default translator does nothgin
+        assert_equal(tr[Part.Input]("a", "b"), "")
+
+        tr[Part.Input] = fun(k,v) { return "-D${k}=${v}" }
+        assert_equal(tr[Part.Input]("a", "b"), "-Da=b")
+
+        # translators are by reference
+        assert_equal(el.translators[Part.Input]("a", "b"), "-Da=b")
+    }
+
+}

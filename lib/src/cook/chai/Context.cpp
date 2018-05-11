@@ -3,7 +3,9 @@
 #include "cook/chai/module/Basic.hpp"
 #include "cook/chai/module/Flags.hpp"
 #include "cook/chai/module/Uri.hpp"
+#include "cook/chai/module/ToolchainElement.hpp"
 
+#include "cook/chai/ToolchainElement.hpp"
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/Book.hpp"
 #include "cook/chai/File.hpp"
@@ -88,29 +90,7 @@ struct Cook
     process::toolchain::Manager * toolchain;
 };
 
-struct ToolchainElement
-{
-    ToolchainElement(process::toolchain::Element::Ptr element)
-        : element(element)
-    {
-    }
-
-    using KVM = process::toolchain::KeyValuesMap;
-    using TM = process::toolchain::TranslatorMap;
-
-    KVM & key_values() { return element->key_values_map(); }
-    const KVM & key_values_const() const { return element->key_values_map(); }
-    TM & translators() { return element->translator_map(); }
-    const TM & translators_const() const { return element->translator_map(); }
-    process::toolchain::Element::Type type() const { return element->type(); }
-    Language language() const { return element->language(); }
-    
-    process::toolchain::Element::Ptr element;
-};
-
 struct W_OS {};
-struct W_Part {};
-struct W_ElementType {};
 
 struct Context::Pimpl
 {
@@ -143,6 +123,7 @@ struct Context::Pimpl
         engine.add(module::flags());
         engine.add(module::basic());
         engine.add(module::uri());
+        engine.add(module::toolchain_element());
 
         initialize_flags();
         initialize_file(kitchen);
@@ -161,42 +142,21 @@ struct Context::Pimpl
 
     void initialize_flags()
     {
-        using Part = process::toolchain::Part;
-
 #define EXPOSE_TOP(TYPE) engine.add_global(chaiscript::var(W_##TYPE()), #TYPE)
         EXPOSE_TOP(OS);
-        EXPOSE_TOP(Part);
-        EXPOSE_TOP(ElementType);
 #undef EXPOSE_TOP
 
 
 
 #define EXPOSE(TYPE, NAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return TYPE::NAME; }), #NAME)
-        EXPOSE(Part, Cli);
-        EXPOSE(Part, Pre);
-        EXPOSE(Part, Deps);
-        EXPOSE(Part, Output);
-        EXPOSE(Part, Input);
-        EXPOSE(Part, DepFile);
-        EXPOSE(Part, Option);
-        EXPOSE(Part, Define);
-        EXPOSE(Part, IncludePath);
-        EXPOSE(Part, ForceInclude);
-        EXPOSE(Part, Library);
-        EXPOSE(Part, LibraryPath);
         EXPOSE(OS, Windows);
         EXPOSE(OS, Linux);
         EXPOSE(OS, MacOS);
-        EXPOSE(ElementType, Compile);
-        EXPOSE(ElementType, Link);
-        EXPOSE(ElementType, Archive);
 #undef EXPOSE
 
 #define EXPOSE_ENUM_FUNC(NAME) engine.add(chaiscript::user_type<NAME>(), #NAME); engine.add(chaiscript::fun([](NAME lhs, NAME rhs){return lhs == rhs;}), "=="); engine.add(chaiscript::fun([](NAME lhs, NAME rhs){return lhs != rhs;}), "!=")
 
         EXPOSE_ENUM_FUNC(OS);
-        EXPOSE_ENUM_FUNC(ElementType);
-        EXPOSE_ENUM_FUNC(Part);
 
         engine.add(chaiscript::fun([](const W_OS & ) { return get_os(); }), "my");
 
@@ -215,22 +175,6 @@ struct Context::Pimpl
         using ConfigurationCallback = std::function<bool (ToolchainElement, const std::string &, const std::string &, ConfigurationBoard &)>;
 
         {
-            // key value maps
-            engine.add(chaiscript::user_type<KVM>(), "KeyValueMap");
-            engine.add(chaiscript::fun([](KVM & map, Part p) { map[p].clear(); }), "clear");
-            engine.add(chaiscript::fun([](KVM & map, Part p, const std::string & key) { map[p].emplace_back(std::make_pair(key, std::string())); }), "append");
-            engine.add(chaiscript::fun([](KVM & map, Part p, const std::string & key, const std::string & value) { map[p].emplace_back(std::make_pair(key, value)); }), "append");
-        }
-        {
-            // translator map
-            engine.add(chaiscript::user_type<T>(), "Translator");
-            engine.add(chaiscript::user_type<TM>(), "TranslatorMap");
-
-            engine.add(chaiscript::fun(static_cast<T & (TM::*)(const Part & )>(&TM::operator[])), "[]");
-        }
-
-
-        {
             engine.add(chaiscript::user_type<ConfigurationBoard>(), "ConfigurationBoard");
 
             engine.add(chaiscript::fun(static_cast<void (ConfigurationBoard::*)(const std::string &, const std::string &)>(&ConfigurationBoard::add_configuration)), "add_config");
@@ -247,14 +191,6 @@ struct Context::Pimpl
                 toolchain.add_configuration_callback(std::move(cfg));
             };
             engine.add(chaiscript::fun(add_configuration), "configure");
-        }
-
-        {
-            engine.add(chaiscript::user_type<ToolchainElement>(), "ToolchainElement");
-            engine.add(chaiscript::fun(&ToolchainElement::key_values), "key_values");
-            engine.add(chaiscript::fun(&ToolchainElement::translators), "translators");
-            engine.add(chaiscript::fun(&ToolchainElement::type), "type");
-            engine.add(chaiscript::fun([](const ToolchainElement & el) { return Flags(el.language()); }), "language");
         }
 
         {
