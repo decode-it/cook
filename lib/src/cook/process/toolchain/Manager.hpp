@@ -31,6 +31,8 @@ namespace cook { namespace process { namespace toolchain {
         std::list<std::pair<std::string, std::string>> all_config_values() const;
 
     private:
+        Result resolve_();
+
         bool configure_(Element & element);
         bool initialized_ = false;
 

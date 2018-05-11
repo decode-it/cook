@@ -13,6 +13,7 @@ test_case("chai_test") do
 
     section ("flags") { recipe_name = :flags }
     section ("uri") { recipe_name = :uri }
+    section ("ingredient") { recipe_name = :ingredient }
     section ("toolchain element") { toolchain_name = :toolchain_element }
     section ("toolchain") { toolchain_name = :toolchain }
 

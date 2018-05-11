@@ -37,14 +37,18 @@ namespace cook { namespace process { namespace toolchain {
         void Manager::add_config(const std::string & value)
         {
             board_.add_configuration(value);
+            if (is_initialized())
+                resolve_();
         }
 
         void Manager::add_config(const std::string & key, const std::string & value)
         {
             board_.add_configuration(key, value);
+            if (is_initialized())
+                resolve_();
         }
 
-        Result Manager::initialize()
+        Result Manager::resolve_()
         {
             MSS_BEGIN(Result);
 
@@ -63,6 +67,18 @@ namespace cook { namespace process { namespace toolchain {
 
             };
             MSS(board_.each_config(check_all_resolved));
+            MSS_END();
+        }
+
+        Result Manager::initialize()
+        {
+            MSS_BEGIN(Result);
+
+            MSG_MSS(!is_initialized(), InternalError, "Manager Initialize multiple calls");
+
+            MSS(resolve_());
+            initialized_ = true;
+
             MSS_END();
         }
 

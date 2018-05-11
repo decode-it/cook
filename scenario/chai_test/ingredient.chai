@@ -1,0 +1,15 @@
+# File ingredient
+var dir = "/usr/local/bin"
+var rel = "cook"
+var f = make_file(dir, rel)
+
+assert_equal(f.dir(), dir)
+assert_equal(f.rel(), rel)
+assert(f.is_file())
+assert(!f.is_key_value())
+
+# owner are the recipes generating the ingredients
+assert(!f.has_owner())
+
+# flags
+print(f.flags())

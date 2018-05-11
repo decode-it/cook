@@ -264,6 +264,7 @@ struct Context::Pimpl
                 return File(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::File(dir, rel), context);
             };
             engine.add(chaiscript::fun(lambda), "File");
+            engine.add(chaiscript::fun(lambda), "make_file");
         }
 
         {
@@ -272,6 +273,7 @@ struct Context::Pimpl
                 return KeyValue(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::KeyValue(key), context);
             };
             engine.add(chaiscript::fun(lambda), "KeyValue");
+            engine.add(chaiscript::fun(lambda), "make_key_value");
         }
 
         {
@@ -280,6 +282,7 @@ struct Context::Pimpl
                 return KeyValue(LanguageTypePair(Language::Undefined, Type::Undefined), ingredient::KeyValue(key, value), context);
             };
             engine.add(chaiscript::fun(lambda), "KeyValue");
+            engine.add(chaiscript::fun(lambda), "make_key_value");
         }
     }
 
