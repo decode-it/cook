@@ -1,0 +1,53 @@
+var t = cook.toolchain
+
+# by default no elements are set
+assert(!t.has_element(ElementType.Compile, Language.CXX))
+
+# add a new element
+var el = t.element(ElementType.Compile, Language.CXX)
+assert(t.has_element(ElementType.Compile, Language.CXX))
+
+# add configuration values to the board, these get resolved by the configure callbacks
+t.add_config("test")
+t.add_config("add", "extra")
+
+
+# we will now add our own configure function
+# with highest priority (0)
+t.configure(0, "my config", fun(element, key, value, board)
+{
+    print("config: ${key} = ${value}")
+    # only one element has been added, a CXX compiler
+    assert_equal(element.type(), ElementType.Compile)
+    assert_equal(element.language(), Language.CXX)
+
+    if (key == "test") 
+    {
+        # we added a config with no value, then value is true
+        #assert_equal(value, "true")
+    }
+    else if (key == "add" && value == "extra") 
+    {
+        # we can add a new value to the board if we like
+        board.add_config("extra", "options")
+    } 
+    else if (key == "extra" && value == "options") 
+    {
+        # we can add compiler options
+        element.key_values.append(Part.Pre, "option", "value")
+    } 
+    else 
+    {
+        assert(false, "No other configuration options should be called")
+    }
+
+
+    # returning true means that we understood the key value pair
+    # false implies further propagation
+    return true
+})
+
+# to set compiler stuff, independent of the configure method (e.g. always) just do it here
+var compiler = t.element(ElementType.Compile, Language.CXX)
+compiler.translators[Part.Pre] = fun(k,v) { return "-f${k}=${v}" }
+compiler.key_values.append(Part.Cli, "executable")

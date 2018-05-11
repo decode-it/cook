@@ -1,0 +1,28 @@
+#include "cook/chai/module/Toolchain.hpp"
+#include "cook/chai/Toolchain.hpp"
+#include "gubg/chai/Module.hpp"
+
+namespace cook { namespace chai { namespace module {
+
+    gubg::chai::ModulePtr toolchain()
+    {
+        auto ptr = gubg::chai::make_module();
+        using CFGBoard = Toolchain::ConfigurationBoard;
+
+        ptr->add(chaiscript::user_type<CFGBoard>(), "ConfigurationBoard");
+        ptr->add(chaiscript::fun([](CFGBoard & b, const std::string & k) { b.add_configuration(k); }), "add_config");
+        ptr->add(chaiscript::fun([](CFGBoard & b, const std::string & k, const std::string & v) { b.add_configuration(k, v); }), "add_config");
+
+
+        ptr->add(chaiscript::user_type<Toolchain::ConfigurationCallback>(), "ConfigurationCallback");
+        ptr->add(chaiscript::user_type<Toolchain>(), "Toolchain");
+        ptr->add(chaiscript::fun(&Toolchain::has_element), "has_element");
+        ptr->add(chaiscript::fun(&Toolchain::element), "element");
+        ptr->add(chaiscript::fun(&Toolchain::add_config_1), "add_config");
+        ptr->add(chaiscript::fun(&Toolchain::add_config_2), "add_config");
+        ptr->add(chaiscript::fun(&Toolchain::configure), "configure");
+
+        return ptr;
+    }
+
+} } }

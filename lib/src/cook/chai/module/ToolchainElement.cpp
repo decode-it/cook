@@ -5,14 +5,11 @@
 
 namespace cook { namespace chai { namespace module {
     
-    using ElementType = ToolchainElement::ElementType;
-
     CREATE_WRAPPER_TYPE(Part);
     CREATE_WRAPPER_TYPE(ElementType);
 
     gubg::chai::ModulePtr toolchain_element()
     {
-        
         auto ptr = gubg::chai::make_module();
 
         EXPOSE_TYPE(Part);
@@ -58,4 +55,4 @@ namespace cook { namespace chai { namespace module {
     }
 
 
-} } }  ;
+} } } 

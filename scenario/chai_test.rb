@@ -14,6 +14,7 @@ test_case("chai_test") do
     section ("flags") { recipe_name = :flags }
     section ("uri") { recipe_name = :uri }
     section ("toolchain element") { toolchain_name = :toolchain_element }
+    section ("toolchain") { toolchain_name = :toolchain }
 
     cmd << "-t scenario/chai_test/#{toolchain_name}.chai" if toolchain_name
     recipe_name = recipe_name || "recipes"

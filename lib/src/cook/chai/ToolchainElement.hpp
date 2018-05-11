@@ -7,6 +7,7 @@
 namespace cook { namespace chai {
 
     using Part = process::toolchain::Part;
+    using ElementType = process::toolchain::Element::Type;
 
     class KeyValues : public Freezable
     {
@@ -37,13 +38,13 @@ namespace cook { namespace chai {
         translators_type * map_;
     };
 
+
     class ToolchainElement : public Freezable
     {
         using Element = process::toolchain::Element;
 
     public:
         using key_values_type = process::toolchain::KeyValuesMap;
-        using ElementType = Element::Type;
         
         ToolchainElement(Element::Ptr element);
 

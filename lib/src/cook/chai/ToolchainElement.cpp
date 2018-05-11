@@ -56,7 +56,7 @@ namespace cook { namespace chai {
         return element_->language();
     }
 
-    ToolchainElement::ElementType ToolchainElement::type() const
+    ElementType ToolchainElement::type() const
     {
         return element_->type();
     }

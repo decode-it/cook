@@ -18,7 +18,7 @@ namespace cook { namespace chai {
         void serialize_clang(std::ostream & oss)
         {
             std::map<Language, std::string> compilers = { {Language::C, "clang"}, {Language::CXX, "clang++"}, {Language::ASM, "clang"} };
-            toolchain::serialize::gcc_config(oss, compilers, "clang");
+            toolchain::serialize::gcc_config(oss, compilers, "clang++");
         }
 
         void serialize_msvc(std::ostream & oss) 

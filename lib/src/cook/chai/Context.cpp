@@ -3,9 +3,12 @@
 #include "cook/chai/module/Basic.hpp"
 #include "cook/chai/module/Flags.hpp"
 #include "cook/chai/module/Uri.hpp"
+#include "cook/chai/module/Ingredient.hpp"
 #include "cook/chai/module/ToolchainElement.hpp"
+#include "cook/chai/module/Toolchain.hpp"
 
 #include "cook/chai/ToolchainElement.hpp"
+#include "cook/chai/Toolchain.hpp"
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/Book.hpp"
 #include "cook/chai/File.hpp"
@@ -52,7 +55,7 @@ struct Cook
     Cook(model::Book * book, Context * context, Logger * logger)
         : root(book, context),
           context_(context),
-          toolchain(&context->toolchain())
+          toolchain_(&context->toolchain())
     {
     }
 
@@ -83,11 +86,16 @@ struct Cook
     {
         context_->set_project_name(name);
     }
+ 
+    Toolchain toolchain() const
+    {
+        return toolchain_;
+    }
 
 
     Book root;
     Context * context_;
-    process::toolchain::Manager * toolchain;
+    Toolchain toolchain_;
 };
 
 struct W_OS {};
@@ -118,17 +126,18 @@ struct Context::Pimpl
     {
         engine.add(chaiscript::fun(&Context::include_, kitchen), "include");
         initialize_book();
-        initialize_recipe(kitchen);
+        initialize_recipe(kitchen); 
 
         engine.add(module::flags());
         engine.add(module::basic());
         engine.add(module::uri());
         engine.add(module::toolchain_element());
+        engine.add(module::toolchain());
+        engine.add(module::ingredient());
+        
 
         initialize_flags();
-        initialize_file(kitchen);
-        initialize_key_value(kitchen);
-        initialize_toolchain();
+        add_ingredient_constructors(kitchen);
         engine.add(user_data_module());
         engine.add_global(chaiscript::var(std::ref(cook.root)), "root");
         engine.add_global(chaiscript::var(std::ref(cook)), "cook");
@@ -160,85 +169,6 @@ struct Context::Pimpl
 
         engine.add(chaiscript::fun([](const W_OS & ) { return get_os(); }), "my");
 
-    }
-
-    void initialize_toolchain()
-    {
-        using KVM = process::toolchain::KeyValuesMap;
-        using Part = process::toolchain::Part;
-        using T = process::toolchain::Translator;
-        using TM = process::toolchain::TranslatorMap;
-        using Toolchain = process::toolchain::Manager;
-        using Configuration = process::toolchain::Configuration;
-        using ConfigurationBoard  = process::toolchain::ConfigurationBoard;
-
-        using ConfigurationCallback = std::function<bool (ToolchainElement, const std::string &, const std::string &, ConfigurationBoard &)>;
-
-        {
-            engine.add(chaiscript::user_type<ConfigurationBoard>(), "ConfigurationBoard");
-
-            engine.add(chaiscript::fun(static_cast<void (ConfigurationBoard::*)(const std::string &, const std::string &)>(&ConfigurationBoard::add_configuration)), "add_config");
-            engine.add(chaiscript::fun(static_cast<void (ConfigurationBoard::*)(const std::string &)>(&ConfigurationBoard::add_configuration)), "add_config");
-
-            engine.add(chaiscript::user_type<ConfigurationCallback>(), "ConfigurationCallback");
-            auto add_configuration = [](Toolchain & toolchain, unsigned int priority, const std::string & uuid, const ConfigurationCallback & callback)
-            {
-                Configuration cfg(priority, uuid);
-                cfg.callback = [=](process::toolchain::Element::Ptr element, const std::string & key, const std::string & value, ConfigurationBoard & board)
-                {
-                    return callback(ToolchainElement(element), key, value, board);
-                };
-                toolchain.add_configuration_callback(std::move(cfg));
-            };
-            engine.add(chaiscript::fun(add_configuration), "configure");
-        }
-
-        {
-            // toolchain config
-            engine.add(chaiscript::fun(&Toolchain::has_config), "has_config");
-            engine.add(chaiscript::fun(&Toolchain::config_values), "config_values");
-
-            {
-                auto check_lang = [](const Flags & lang)
-                {
-                    MSS_BEGIN(Result);
-
-                    MSS(lang.only({Flag::Language}));
-                    MSG_MSS(lang.language().second, Error, "A language should be specified");
-
-                    MSS_END();
-                };
-
-                auto has_element = [=](const Toolchain & chain, ElementType type, Flags lang) 
-                { 
-                    CHAI_MSS_BEGIN();
-                    CHAI_MSS(check_lang(lang));
-
-                    return !!chain.element(type, lang.language().first);
-                };
-                engine.add(chaiscript::fun(has_element), "has_element");
-
-                auto element_const = [=](const Toolchain & chain, ElementType type, Flags lang)
-                {
-                    CHAI_MSS_BEGIN();
-                    CHAI_MSS(check_lang(lang));
- 
-                    auto ptr = chain.element(type, lang.language().first);
-                    CHAI_MSS_MSG(!!ptr, Error, "No toolchain element with type " << type << " and language " << lang << " exists");
-                    return ToolchainElement(ptr);
-                };
-                engine.add(chaiscript::fun(element_const), "element");
-
-                auto element = [=](Toolchain & chain, ElementType type, Flags lang)
-                {
-                    CHAI_MSS_BEGIN();
-                    CHAI_MSS(check_lang(lang));
-
-                    return ToolchainElement(chain.goc_element(type, lang.language().first));
-                };
-                engine.add(chaiscript::fun(element), "element");
-            }
-        }
     }
 
     void initialize_book()
@@ -326,21 +256,8 @@ struct Context::Pimpl
         engine.add(chaiscript::fun(&Recipe::data), "data");
     }
 
-    void initialize_file(const Context * context)
+    void add_ingredient_constructors(const Context * context)
     {
-        engine.add(chaiscript::user_type<File>(), "File");
-
-        engine.add(chaiscript::fun([](const File & f) -> const Flags &  { return f.flags(); }), "flags");
-        engine.add(chaiscript::fun([](File & f) -> Flags & { return f.flags(); }), "flags");
-        engine.add(chaiscript::fun([](const File & f) { return f.has_owner(); }), "has_owner");
-        engine.add(chaiscript::fun([](const File & f) { return f.owner(); }), "owner");
-        engine.add(chaiscript::fun(&File::key), "key");
-        engine.add(chaiscript::fun(&File::dir), "dir");
-        engine.add(chaiscript::fun(&File::rel), "rel");
-        engine.add(chaiscript::fun(&File::is_file), "is_file");
-        engine.add(chaiscript::fun(&File::is_key_value), "is_key_value");
-
-
         {
             auto lambda = [=](const std::string & dir, const std::string & rel)
             {
@@ -348,21 +265,6 @@ struct Context::Pimpl
             };
             engine.add(chaiscript::fun(lambda), "File");
         }
-    }
-
-    void initialize_key_value(const Context * context)
-    {
-        engine.add(chaiscript::user_type<KeyValue>(), "KeyValue");
-
-        engine.add(chaiscript::fun([](const KeyValue & f) -> const Flags & { return f.flags(); }), "flags");
-        engine.add(chaiscript::fun([](KeyValue & f) -> Flags & { return f.flags(); }), "flags");
-        engine.add(chaiscript::fun([](const KeyValue & f) { return f.has_owner(); }), "has_owner");
-        engine.add(chaiscript::fun([](const KeyValue & f) { return f.owner(); }), "owner");
-        engine.add(chaiscript::fun(&KeyValue::key), "key");
-        engine.add(chaiscript::fun(&KeyValue::has_value), "has_value");
-        engine.add(chaiscript::fun(&KeyValue::value), "value");
-        engine.add(chaiscript::fun(&KeyValue::is_file), "is_file");
-        engine.add(chaiscript::fun(&KeyValue::is_key_value), "is_key_value");
 
         {
             auto lambda = [=](const std::string & key)
