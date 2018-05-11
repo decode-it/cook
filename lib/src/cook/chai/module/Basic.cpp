@@ -26,6 +26,9 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&assert_true_1), "assert");
         ptr->add(chaiscript::fun(&assert_true_2), "assert");
 
+        ptr->eval("def assert_equal(a,b) { assert(a==b, \"${a} is not equal to ${b}\") }");
+        ptr->eval("def assert_not_equal(a,b) { assert(a!=b, \"${a} is equal to ${b}\") }");
+
         return ptr;
     }
 

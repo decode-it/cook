@@ -1,0 +1,55 @@
+# constructor tests
+{
+    var v1 = Uri()
+    assert_equal("${v1}", "")
+
+    var v2 = Uri("a/b")
+    assert_equal("${v2}", "a/b")
+
+    var v3 = Uri("/")
+    assert_equal("${v3}", "/")
+}
+
+# combining
+{
+    var v1 = Uri()
+    v1 = v1 / Uri("a")
+    v1 = v1 / "b"
+    v1 /= "/c"
+    v1 /= Uri("d")
+    
+    assert_equal("${v1}", "a/b/c/d")
+}
+
+# converting to string
+{
+    var v1 = Uri("/a/b/c")
+    assert_equal(v1.to_string, "/a/b/c")
+
+    # a different separator
+    assert_equal(v1.to_string('_'), "_a_b_c")
+
+    # no initial separator
+    assert_equal(v1.to_string(false),"a/b/c")
+   
+    # no initial separator and a different separator
+    assert_equal(v1.to_string(false, '-'),"a-b-c")
+
+
+    v1 = Uri("a/b/c")
+    # adding a initial separator
+    assert_equal(v1.to_string(true), "/a/b/c")
+}
+
+# as_[absolute|relative] methods
+{
+    var v1 = "/a/b/c"
+    var v2 = "a/b/c"
+
+    assert_not_equal(v1, v2)
+    assert_equal(v1.as_absolute, v1)
+    assert_equal(v2.as_absolute, v1)
+
+    assert_equal(v1.as_relative, v2)
+    assert_equal(v2.as_relative, v2)
+}

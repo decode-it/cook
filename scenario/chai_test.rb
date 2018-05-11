@@ -9,7 +9,9 @@ test_case("chai_test") do
 
     name = nil
 
+
     section ("flags") { name = :flags }
+    section ("uri") { name = :uri }
 
     cmd << "-f scenario/chai_test/#{name}.chai"
 

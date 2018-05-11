@@ -1,7 +1,7 @@
 # test that convert a flag to string is the same name as the flag
 def test_to_string(flag_type, str_name) {
    var v = eval("${flag_type}.${str_name}")
-   assert("${v}" == str_name, "The string representation for ${flag_type}.${str_name} is ${v} iso ${str_name}")
+   assert_equal("${v}", str_name)
 }
 
 # all known Propagation flags
@@ -78,10 +78,10 @@ test_to_string(Language, "UserDefined(4)")
     var v5 = v1 | v2 | v3
 
     # all the same type
-    assert(type_name(v1) == type_name(v2))
-    assert(type_name(v1) == type_name(v3))
-    assert(type_name(v1) == type_name(v4))
-    assert(type_name(v1) == type_name(v5))
+    assert_equal(type_name(v1), type_name(v2))
+    assert_equal(type_name(v1), type_name(v3))
+    assert_equal(type_name(v1), type_name(v4))
+    assert_equal(type_name(v1), type_name(v5))
 }
 
 
@@ -93,26 +93,26 @@ test_to_string(Language, "UserDefined(4)")
     var v4 = v2 | v3
 
     # empty flag
-    assert(v1 == false)
+    assert(v1 == false, "${v1} should be convertible to false")
 
     # non-empty flag
-    assert(v2 == true)
+    assert(v2 == true, "${v2} should be convertible to true")
 
     # equality test
-    assert(v2 == v2, "${v2} is equal to ${v2}")
-    assert(v2 != v3, "${v2} is not equal to ${v3}")
-    assert(v2 != v4, "${v2} is not equal to ${v4}")
+    assert_equal(v2, v2)
+    assert_not_equal(v2, v3)
+    assert_not_equal(v2, v4)
 
     # flag & operations
-    assert((v3 & v1) == Flags(), "${v3} & ${v1} == ${v3&v1}")
-    assert((v3 & v2) == Flags(), "${v3} & ${v2} == ${v3&v2}")
-    assert((v2 & v4) == Language.ASM, "${v2} & ${v4} == ${v2&v4}")
+    assert_equal(v3 & v1, Flags())
+    assert_equal(v3 & v2, Flags())
+    assert_equal(v2 & v4, Language.ASM)
 
     # setting elements
     v3.set(Language.Binary)
-    assert((v3 & Language.Binary) == Language.Binary, "${v3} should have Language.Binary set")
+    assert_equal(v3 & Language.Binary, Language.Binary)
 
     v3.set(Language.CXX)
-    assert((v3 & Language.Binary) != Language.Binary, "${v3} should not have Language.Binary set")
-    assert((v3 & Language.CXX) == Language.CXX, "${v3} should have Language.CXX set")
+    assert_not_equal(v3 & Language.Binary, Language.Binary)
+    assert_equal(v3 & Language.CXX, Language.CXX)
 }

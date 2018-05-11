@@ -2,6 +2,7 @@
 
 #include "cook/chai/module/Basic.hpp"
 #include "cook/chai/module/Flags.hpp"
+#include "cook/chai/module/Uri.hpp"
 
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/Book.hpp"
@@ -136,12 +137,12 @@ struct Context::Pimpl
     void initialize_engine_(Context * kitchen)
     {
         engine.add(chaiscript::fun(&Context::include_, kitchen), "include");
-        initialize_uri();
         initialize_book();
         initialize_recipe(kitchen);
 
         engine.add(module::flags());
         engine.add(module::basic());
+        engine.add(module::uri());
 
         initialize_flags();
         initialize_file(kitchen);
@@ -302,22 +303,6 @@ struct Context::Pimpl
                 engine.add(chaiscript::fun(element), "element");
             }
         }
-    }
-
-    void initialize_uri()
-    {
-        using Uri = model::Uri;
-
-        engine.add(chaiscript::user_type<Uri>(), "Uri");
-        engine.add(chaiscript::constructor<Uri(const Uri &)>(), "Uri");
-        engine.add(chaiscript::type_conversion<std::string, Uri>());
-        engine.add(chaiscript::fun([](const model::Uri & uri) { return uri.string(); }), "to_string");
-        engine.add(chaiscript::fun([](const model::Uri & uri, char c) { return uri.string(c); }), "to_string");
-        engine.add(chaiscript::fun([](const model::Uri & uri, bool initial_separator) { return uri.string(initial_separator); }), "to_string");
-        engine.add(chaiscript::fun([](const model::Uri & uri, bool initial_separator, char c) { return uri.string(initial_separator, c); }), "to_string");
-        engine.add(chaiscript::fun([](const model::Uri & lhs, const model::Uri & rhs) { return lhs / rhs; }), "/");
-        engine.add(chaiscript::fun(&model::Uri::as_absolute), "as_absolute");
-        engine.add(chaiscript::fun(&model::Uri::as_relative), "as_relative");
     }
 
     void initialize_book()
