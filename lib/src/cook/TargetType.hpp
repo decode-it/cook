@@ -19,7 +19,7 @@ inline std::ostream & operator<<(std::ostream & os, TargetType type)
 {
     switch(type)
     {
-#define L_CASE(NAME) case TargetType::NAME: os << #NAME; return os
+#define L_CASE(NAME) case TargetType::NAME: return os << #NAME
         L_CASE(Undefined);
         L_CASE(Archive);
         L_CASE(SharedLibrary);
@@ -27,15 +27,8 @@ inline std::ostream & operator<<(std::ostream & os, TargetType type)
         L_CASE(Script);
 #undef L_CASE
         default:
-            break;
+        return os << "UserDefined(" << (static_cast<unsigned int>(type) - static_cast<unsigned int>(TargetType::UserDefined)) << ")";
     }
-
-    if (type >= TargetType::UserDefined)
-        os << "UserDefined (" << static_cast<unsigned int>(type) << ")";
-    else
-        os << "unknown";
-
-    return os;
 }
 
 

@@ -102,9 +102,13 @@ build .b0/lib/src/cook/chai/UserData.cpp.obj: compile lib/src/cook/chai/UserData
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/module/Basic.cpp.obj: compile lib/src/cook/chai/module/Basic.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
+build .b0/lib/src/cook/chai/module/Book.cpp.obj: compile lib/src/cook/chai/module/Book.cpp
+    include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/module/Flags.cpp.obj: compile lib/src/cook/chai/module/Flags.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/module/Ingredient.cpp.obj: compile lib/src/cook/chai/module/Ingredient.cpp
+    include_paths = $cook_lib_include_paths $boost_include_paths
+build .b0/lib/src/cook/chai/module/Recipe.cpp.obj: compile lib/src/cook/chai/module/Recipe.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/module/Toolchain.cpp.obj: compile lib/src/cook/chai/module/Toolchain.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
@@ -407,8 +411,10 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/chai/ToolchainLoader.cpp.obj $
     .b0/lib/src/cook/chai/UserData.cpp.obj $
     .b0/lib/src/cook/chai/module/Basic.cpp.obj $
+    .b0/lib/src/cook/chai/module/Book.cpp.obj $
     .b0/lib/src/cook/chai/module/Flags.cpp.obj $
     .b0/lib/src/cook/chai/module/Ingredient.cpp.obj $
+    .b0/lib/src/cook/chai/module/Recipe.cpp.obj $
     .b0/lib/src/cook/chai/module/Toolchain.cpp.obj $
     .b0/lib/src/cook/chai/module/ToolchainElement.cpp.obj $
     .b0/lib/src/cook/chai/module/Uri.cpp.obj $

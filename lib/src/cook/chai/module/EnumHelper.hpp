@@ -11,14 +11,13 @@ namespace cook { namespace chai { namespace module {
     ptr->add(chaiscript::user_type<wrapper::TYPE##_t>(), #TYPE); \
     ptr->add(chaiscript::user_type<TYPE>(), #TYPE); \
     ptr->add(chaiscript::fun([](const wrapper::TYPE##_t &) {return std::string(#TYPE); }), "to_string"); \
-    ptr->add_global_const(chaiscript::const_var(wrapper::s_##TYPE), #TYPE) \
-    
-    
-#define EXPOSE_VALUE(TYPE, VAL)\
-    ptr->add(chaiscript::fun([](const wrapper::TYPE##_t &) { return TYPE::VAL; }), #VAL); \
+    ptr->add_global_const(chaiscript::const_var(wrapper::s_##TYPE), #TYPE); \
     ptr->add(chaiscript::fun([](TYPE v) { std::ostringstream oss; oss << v; return oss.str(); }), "to_string"); \
     ptr->add(chaiscript::fun([](TYPE lhs, TYPE rhs) { return lhs == rhs; }), "=="); \
     ptr->add(chaiscript::fun([](TYPE lhs, TYPE rhs) { return lhs != rhs; }), "!="); 
+    
+    
+#define EXPOSE_VALUE(TYPE, VAL) ptr->add(chaiscript::fun([](const wrapper::TYPE##_t &) { return TYPE::VAL; }), #VAL); 
 
 } } }
 

@@ -4,7 +4,9 @@
 #include "cook/chai/UserData.hpp"
 #include "cook/model/Book.hpp"
 #include "cook/Logger.hpp"
+#include "cook/model/Recipe.hpp"
 #include <functional>
+#include <optional>
 
 namespace cook { namespace chai {
 
@@ -22,14 +24,25 @@ public:
     Book book(const model::Uri & uri);
     void book(const model::Uri & uri, const BookFunctor &functor);
     bool has_recipe(const model::Uri & uri) const;
+
+    Recipe recipe(const model::Uri & uri, TargetType type);
+    Recipe recipe(const model::Uri & uri);
+    void recipe(const model::Uri & uri, TargetType type, const RecipeFunctor & functor);
     void recipe(const model::Uri & uri, const RecipeFunctor & functor);
+
+    // deprecated functionality
+    Recipe recipe(const model::Uri & uri, const std::string & type);
     void recipe(const model::Uri & uri, const std::string & type, const RecipeFunctor & functor);
-    Recipe recipe(const model::Uri & uri, const std::string & type = std::string());
-    const model::Uri & uri() const { return book_->uri(); }
+    
+
+    const model::Uri & uri() const;
 
     UserData data() const { return data_; }
 
 private:
+    Recipe recipe_(const model::Uri & uri, const std::optional<TargetType> & type = std::optional<TargetType>());;
+    Result convert_(const std::string & str, TargetType & type) const;
+    
     model::Book * book_;
     const Context * context_;
     UserData data_;

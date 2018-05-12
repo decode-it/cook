@@ -27,7 +27,12 @@ std::string Recipe::working_directory() const
     return (context_->dirs().recipe() / recipe_->working_directory()).string();
 }
 
-void Recipe::add(const std::string & dir, const std::string & pattern, const Flags & flags, GlobFunctor functor)
+const model::Uri & Recipe::uri() const 
+{ 
+    return recipe_->uri(); 
+}
+
+void Recipe::add(const std::string & dir, const std::string & pattern, const Flags & flags, const GlobFunctor &  functor)
 {
     model::GlobInfo info;
     info.dir = dir;
@@ -70,12 +75,22 @@ void Recipe::add(const std::string & dir, const std::string & pattern, const Fla
     recipe_->add_globber(info);
 }
 
-void Recipe::remove(const std::string & dir, const std::string & pattern, const Flags & flags, GlobFunctor functor)
+void Recipe::remove(const std::string & dir, const std::string & pattern, const GlobFunctor & functor)
 {
     model::GlobInfo info;
     info.dir = dir;
     info.pattern = pattern;
     info.mode = model::GlobInfo::Remove;
+
+    const Context * context = context_;
+    if (functor)
+    {
+        info.filter_and_adaptor = [=](LanguageTypePair & ltp, ingredient::File & file)
+        {
+            File f(ltp, file, context);
+            return functor(f);
+        };
+    }
 
     recipe_->add_globber(info);
 }

@@ -26,7 +26,14 @@ namespace cook { namespace chai {
         public:
             Flags();
 
-            template <typename T> Flags(T val) : flags_(0) { set(val); }
+#define CTR(TYPE) Flags(TYPE value) : flags_(0) { set(value); }
+            CTR(Language)
+            CTR(Type)
+            CTR(Overwrite)
+            CTR(Propagation)
+#undef CTR
+
+
 
             Flags & operator|(const Flags & rhs);
             friend Flags operator||(const Flags & lhs, const Flags & rhs);
@@ -38,7 +45,6 @@ namespace cook { namespace chai {
             SET(Overwrite)
             SET(Propagation)
 #undef SET
-
             void set(const Flags & flags);
 
 #define GET_OR(TYPE) TYPE get_or(TYPE fallback) const { return is_set(Flag::TYPE) ? t##TYPE##_ : fallback; }

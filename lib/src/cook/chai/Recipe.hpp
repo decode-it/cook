@@ -23,8 +23,8 @@ public:
 
     Recipe(model::Recipe * recipe, const Context *context);
 
-    void add(const std::string & dir, const std::string & pattern, const Flags & flags = Flags(), GlobFunctor functor = GlobFunctor());
-    void remove(const std::string & dir, const std::string & pattern, const Flags & flags = Flags(), GlobFunctor functor = GlobFunctor());
+    void add(const std::string & dir, const std::string & pattern, const Flags & flags = Flags(), const GlobFunctor & functor = GlobFunctor());
+    void remove(const std::string & dir, const std::string & pattern, const GlobFunctor & functor = GlobFunctor());
     void depends_on(const model::Uri &dependency, const DepFileFilter & file_filter = DepFileFilter(), const DepKeyValueFilter & key_value_filter = DepKeyValueFilter());
     void set_type(TargetType type);
     void set_working_directory(const std::string & dir);
@@ -36,9 +36,10 @@ public:
     void define(const std::string & name, const Flags & flags= Flags());
     void define(const std::string & name, const std::string & value, const Flags & flags = Flags());
     void run(const std::string & command);
-    const model::Uri & uri() const { return recipe_->uri(); }
+    const model::Uri & uri() const;
 
     UserData data() const { return data_; }
+    const Context * context() { return context_; }
 
 private:
     model::Recipe * recipe_;

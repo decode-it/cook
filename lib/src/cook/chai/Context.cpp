@@ -6,6 +6,8 @@
 #include "cook/chai/module/Ingredient.hpp"
 #include "cook/chai/module/ToolchainElement.hpp"
 #include "cook/chai/module/Toolchain.hpp"
+#include "cook/chai/module/Book.hpp"
+#include "cook/chai/module/Recipe.hpp"
 
 #include "cook/chai/ToolchainElement.hpp"
 #include "cook/chai/Toolchain.hpp"
@@ -125,8 +127,6 @@ struct Context::Pimpl
     void initialize_engine_(Context * kitchen)
     {
         engine.add(chaiscript::fun(&Context::include_, kitchen), "include");
-        initialize_book();
-        initialize_recipe(kitchen); 
 
         engine.add(module::flags());
         engine.add(module::basic());
@@ -134,6 +134,8 @@ struct Context::Pimpl
         engine.add(module::toolchain_element());
         engine.add(module::toolchain());
         engine.add(module::ingredient());
+        engine.add(module::book());
+        engine.add(module::recipe());
         
 
         initialize_flags();
@@ -169,91 +171,6 @@ struct Context::Pimpl
 
         engine.add(chaiscript::fun([](const W_OS & ) { return get_os(); }), "my");
 
-    }
-
-    void initialize_book()
-    {
-        engine.add(chaiscript::user_type<Book>(), "Book");
-        engine.add(chaiscript::constructor<Book(const Book &)>(), "Book");
-
-        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri) { return book.book(uri); } ), "book");
-        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const Book::BookFunctor & functor) { book.book(uri, functor); } ), "book");
-        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri) { return book.has_recipe(uri); }), "has_recipe");
-        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri) { return book.recipe(uri); }), "recipe");
-        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const std::string & type) { return book.recipe(uri, type); }), "recipe");
-        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const Book::RecipeFunctor & functor) { book.recipe(uri, functor); }), "recipe");
-        engine.add(chaiscript::fun([](Book & book, const model::Uri & uri, const std::string & type, const Book::RecipeFunctor & functor) { book.recipe(uri, type, functor); }), "recipe");
-        engine.add(chaiscript::fun(&Book::data), "data");
-        engine.add(chaiscript::fun(&Book::uri), "uri");
-    }
-
-    void initialize_recipe(Context * context)
-    {
-        engine.add(chaiscript::user_type<Recipe>(), "Recipe");
-        engine.add(chaiscript::constructor<Recipe(const Recipe &)>(), "Recipe");
-
-        engine.add(chaiscript::fun(&Recipe::add), "add");
-        engine.add(chaiscript::fun(&Recipe::set_type), "set_type");
-        engine.add(chaiscript::fun(&Recipe::working_directory), "working_dir");
-
-        engine.add(chaiscript::fun([](Recipe & recipe, const model::Uri & dep) { recipe.depends_on(dep); }), "depends_on");
-
-        {
-            using DepFunction = std::function<bool (const chaiscript::Boxed_Value & vt)>;
-            auto lambda = [=](Recipe & recipe, const model::Uri & dep, DepFunction function)
-            {
-                auto file_dep = [=](LanguageTypePair & ltp, ingredient::File & file)
-                {
-                    File f(ltp, file, context);
-                    if (!function(chaiscript::var(std::ref(f))))
-                        return false;
-
-                    ltp = f.language_type_pair();
-                    file = f.element();
-                    return true;
-
-                };
-
-                auto key_value_dep = [=](LanguageTypePair & ltp, ingredient::KeyValue & key_value)
-                {
-                    KeyValue kv(ltp, key_value, context);
-                    return function(chaiscript::var(std::ref(kv)));
-
-                    ltp = kv.language_type_pair();
-                    key_value = kv.element();
-                    return true;
-                };
-
-                recipe.depends_on(dep, file_dep, key_value_dep);
-            };
-            engine.add(chaiscript::fun(lambda), "depends_on");
-        }
-
-
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern) { recipe.add(dir, pattern); }), "add");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, Recipe::GlobFunctor functor) { recipe.add(dir, pattern, Flags(), functor); }), "add");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags) { recipe.add(dir, pattern, flags); }), "add");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags, Recipe::GlobFunctor functor) { recipe.add(dir, pattern, flags, functor); }), "add");
-
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & command) { recipe.run(command); }), "run");
-
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern) { recipe.remove(dir, pattern); }), "remove");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & dir, const std::string & pattern, const Flags & flags) { recipe.remove(dir, pattern, flags); }), "remove");
-
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name) { recipe.library(name); } ), "library");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & path) { recipe.library_path(path); } ), "library_path");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & path) { recipe.include_path(path); } ), "include_path");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name) { recipe.define(name); } ), "define");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name, const std::string & value) { recipe.define(name, value); } ), "define");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name, const Flags & flags) { recipe.library(name, flags); } ), "library");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & path, const Flags & flags) { recipe.library_path(path, flags); } ), "library_path");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & path, const Flags & flags) { recipe.include_path(path, flags); } ), "include_path");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name, const Flags & flags) { recipe.define(name, flags); } ), "define");
-        engine.add(chaiscript::fun([](Recipe & recipe, const std::string & name, const std::string & value, const Flags & flags) { recipe.define(name, value, flags); } ), "define");
-        engine.add(chaiscript::fun(&Recipe::set_working_directory), "set_working_directory");
-
-        engine.add(chaiscript::fun(&Recipe::uri), "uri");
-        engine.add(chaiscript::fun(&Recipe::data), "data");
     }
 
     void add_ingredient_constructors(const Context * context)
