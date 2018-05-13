@@ -62,7 +62,7 @@ namespace cook { namespace rules {
     {
         MSS_BEGIN(Result);
 
-        auto ss = log::scope("add file", [&](auto & n) {
+        auto ss = log::scope("add c_family file", [&](auto & n) {
             n.attr("recipe", recipe.uri().string()).attr("file", file.key());
         });
 

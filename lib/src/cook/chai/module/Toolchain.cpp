@@ -21,6 +21,8 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&Toolchain::add_config_1), "add_config");
         ptr->add(chaiscript::fun(&Toolchain::add_config_2), "add_config");
         ptr->add(chaiscript::fun(&Toolchain::configure), "configure");
+        ptr->add(chaiscript::fun(&Toolchain::each_config_1), "each_config");
+        ptr->add(chaiscript::fun(&Toolchain::each_config_2), "each_config");
 
         return ptr;
     }

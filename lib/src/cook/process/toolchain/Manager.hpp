@@ -24,6 +24,9 @@ namespace cook { namespace process { namespace toolchain {
         void add_configuration_callback(Configuration && cb);
         void add_configuration_callback(const Configuration & cb);
 
+        void each_config(const std::function<void (const std::string &, const std::string &)> &cb);
+        void each_config(const std::string &wanted_key, const std::function<void (const std::string &)> &cb);
+
         Result initialize();
 
         bool has_config(const std::string & key, const std::string & value) const;

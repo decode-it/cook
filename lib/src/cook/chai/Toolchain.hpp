@@ -25,6 +25,12 @@ namespace cook { namespace chai {
         void add_config_2(const std::string & key, const std::string & value);
         void configure(unsigned int priority, const std::string & uuid, const ConfigurationCallback & cb);
 
+        using IterationCallback1 = std::function<void (const std::string &key, const std::string &value)>;
+        void each_config_1(const IterationCallback1 &);
+
+        using IterationCallback2 = std::function<void (const std::string &value)>;
+        void each_config_2(const std::string &key, const IterationCallback2 &);
+
     private:
         Result check_language_(const Flags & language);
         Manager * manager_; 

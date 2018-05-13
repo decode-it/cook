@@ -111,4 +111,24 @@ namespace cook { namespace process { namespace toolchain {
 
         }
 
+        void Manager::each_config(const std::function<void(const std::string &, const std::string &)> &cb)
+        {
+            auto lambda = [&](const std::string &key, const std::string &value, ConfigurationBoard::State)
+            {
+                cb(key, value);
+                return Result{};
+            };
+            board_.each_config(lambda);
+        }
+        void Manager::each_config(const std::string &wanted_key, const std::function<void(const std::string &)> &cb)
+        {
+            auto lambda = [&](const std::string &key, const std::string &value, ConfigurationBoard::State)
+            {
+                if (key == wanted_key)
+                    cb(value);
+                return Result{};
+            };
+            board_.each_config(lambda);
+        }
+
 } } } 

@@ -69,4 +69,15 @@ namespace cook { namespace chai {
             manager_->add_configuration_callback(std::move(cfg));
 
         }
+
+        void Toolchain::each_config_1(const IterationCallback1 &cb)
+        {
+            CHAI_MSS_BEGIN();
+            manager_->each_config(cb);
+        }
+        void Toolchain::each_config_2(const std::string &key, const IterationCallback2 &cb)
+        {
+            CHAI_MSS_BEGIN();
+            manager_->each_config(key, cb);
+        }
 } }
