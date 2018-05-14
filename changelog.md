@@ -50,12 +50,14 @@ Proof-of-concept version.
 
 * Changed the way to communicate the c/c++ standard: `-T c++.std=17` will now enable `-std=c++17`
 
-## 1.1.5 (open)
+## 1.1.5
 
 * Added support for TargetType when specifying an element
 * Built-in toolchain files are now installed in `.config/cook/<version>/` or `AppData/Local/cook/<version>/` if they do not exist yet
-* [wip] Added arm64 support
-* [wip] Added support Language.Definition and Type.Export to handle .def files when creating a .dll
+* Added arm64 support
+* Added shared library support
+* Added support Language.Definition and Type.Export to handle .def files when creating a .dll
+* Fix for msvc defines
 
 ## Next
 
