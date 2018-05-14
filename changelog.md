@@ -52,6 +52,8 @@ Proof-of-concept version.
 
 ## 1.1.5 (open)
 
+* Added support for TargetType when specifying an element
+
 * [wip] Added arm64 support
 
 ## Next
