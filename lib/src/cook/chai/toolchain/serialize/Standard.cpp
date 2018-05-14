@@ -10,7 +10,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "    }" << std::endl;
         oss << "" << std::endl;
         oss << "    if (false) {" << std::endl;
-        oss << "    } else if (k == \"x86\" || k == \"x64\" || k == \"armv7\") {" << std::endl;
+        oss << "    } else if (k == \"x86\" || k == \"x64\" || k == \"armv7\" || k == \"arm64\") {" << std::endl;
         oss << "        b.add_config(\"arch\", k);" << std::endl;
         oss << "    } else if (k == \"x32\") {" << std::endl;
         oss << "        b.add_config(\"x86\")" << std::endl;

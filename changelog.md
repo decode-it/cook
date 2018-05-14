@@ -52,6 +52,8 @@ Proof-of-concept version.
 
 ## 1.1.5 (open)
 
+* [wip] Added arm64 support
+
 ## Next
 
 * Support for `COOK_PATH` search for scripts
