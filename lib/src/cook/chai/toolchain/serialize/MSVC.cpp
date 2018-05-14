@@ -94,7 +94,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "    tm[Part.Output]         = fun(k,v) { return \"/OUT:${k}\" }" << std::endl;
         oss << "    tm[Part.Input]          = fun(k,v) { return k }" << std::endl;
         oss << "    tm[Part.Library]        = fun(k,v) { return \"${k}.lib\" }" << std::endl;
-        oss << "    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return \"/LIBPATH./\" } else { return \"/LIBPATH${k}\" } }" << std::endl;
+        oss << "    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return \"/LIBPATH:./\" } else { return \"/LIBPATH:${k}\" } }" << std::endl;
         oss << "    " << std::endl;
         oss << "    kv.append(Part.Cli, \"link\")" << std::endl;
         oss << "}" << std::endl;
