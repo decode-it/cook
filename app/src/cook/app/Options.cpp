@@ -1,5 +1,5 @@
 #include "cook/app/Options.hpp"
-#include "cook/app/Version.hpp"
+#include "cook/Version.hpp"
 #include "gubg/mss.hpp"
 #include "gubg/OptionParser.hpp"
 #include <algorithm>
@@ -44,7 +44,7 @@ bool Options::parse(int argc, const char ** argv)
     // set the help message
     {
         std::ostringstream str;
-        str << "cook version " << version() << std::endl;
+        str << "cook version " << extended_version() << std::endl;
         str << opt.help();
         help_message = str.str();
     }
