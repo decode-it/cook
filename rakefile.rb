@@ -157,7 +157,7 @@ namespace :b1 do
     end
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
-    task :build, :opts => ["b0:build"] do |t,args|
+    task :build, :ninja_opts => ["b0:build"] do |t,args|
         odir = File.join(out_base, "ninja")
         tdir = File.join(tmp_base, "ninja")
 
@@ -168,8 +168,8 @@ namespace :b1 do
                  when :windows then "b0-cook.exe" end
                                                      
         sh "#{b0cook} -f ./ -g ninja -o #{odir} -O #{tdir} #{opts} cook/app/exe"
-        opts = args[:opts]||""
-        sh "#{ninja_exe} -f #{odir}/build.ninja #{opts}"
+        ninja_opts = args[:ninja_opts]||""
+        sh "#{ninja_exe} -f #{odir}/build.ninja #{ninja_opts}"
         exe = "cook.app.exe"
         exe += ".exe" if GUBG::os == :windows
         cp "#{odir}/#{exe}", "b1-cook.exe"
