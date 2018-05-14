@@ -16,6 +16,8 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         oss << "        b.add_config(\"x86\")" << std::endl;
         oss << "    } else if (k == \"debug\" || k == \"release\" || k == \"rtc\" || k == \"profile\") {" << std::endl;
         oss << "        b.add_config(\"config\", k)" << std::endl;
+        oss << "    } else if (k == \"pic\") {" << std::endl;
+        oss << "        b.add_config(\"position_independent_code\", \"true\")" << std::endl;
         oss << "    } else {" << std::endl;
         oss << "        return false" << std::endl;
         oss << "    }" << std::endl;
