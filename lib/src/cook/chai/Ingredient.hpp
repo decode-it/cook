@@ -27,6 +27,13 @@ public:
     const T & element() const                               { return element_; }
     LanguageTypePair language_type_pair() const             { return LanguageTypePair(flags_.get_or(Language::Undefined), flags_.get_or(Type::Undefined)); }
 
+
+    void install_flags()
+    {
+        element_.set_propagation(flags_.get_or(element_.propagation()));
+        element_.set_overwrite(flags_.get_or(element_.overwrite()));
+    }
+
 private:
     Flags flags_;
     const Context * context_;

@@ -8,7 +8,7 @@
 
 namespace cook { namespace chai { namespace module {
 
-    using DependencyFilter = std::function<bool (const chaiscript::Boxed_Value & vt)>;
+    using DependencyFilter = std::function<bool (chaiscript::Boxed_Value vt)>;
 
     CREATE_WRAPPER_TYPE(TargetType);
 
@@ -25,13 +25,17 @@ namespace cook { namespace chai { namespace module {
 
             ~RaiiIngredient()
             {
+                // update the flags back into the references
                 ltp_ = chai.language_type_pair();
+                chai.install_flags();
+
+                // set the reference to the element
                 ingredient_ = chai.element();
             }
 
             chaiscript::Boxed_Value as_boxed()
             {
-                return chaiscript::var(std::ref(chai));
+                return chaiscript::var(&chai);
             }
 
 
