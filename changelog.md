@@ -41,7 +41,10 @@ Proof-of-concept version.
 * Added preliminary support for `arch=armv7`
 * Preparation work for exposing the toolchain to chaiscript
 
-## 1.1.3 (open)
+## 1.1.3
+
+* Toolchain export and specification via chaiscript
+* Default toolchains for gcc, clang and msvc
 
 ## Next
 
