@@ -8,6 +8,8 @@
 #include "cook/chai/module/Toolchain.hpp"
 #include "cook/chai/module/Book.hpp"
 #include "cook/chai/module/Recipe.hpp"
+#include "cook/chai/module/Cook.hpp"
+#include "cook/chai/Cook.hpp"
 
 #include "cook/chai/Toolchain.hpp"
 #include "cook/chai/Book.hpp"
@@ -49,53 +51,6 @@ struct Logger : public cook::Logger
 
 }
 
-struct Cook
-{
-    Cook(model::Book * book, Context * context, Logger * logger)
-        : root(book, context),
-          context_(context),
-          toolchain_(&context->toolchain())
-    {
-    }
-
-    Book operator[](const std::string & uri)
-    {
-        return root.book(uri);
-    }
-
-
-    std::string working_directory() const
-    {
-        return context_->current_working_directory().string();
-    }
-
-    std::string working_directory(bool absolute) const
-    {
-        if (absolute)
-            return gubg::filesystem::combine(std::filesystem::current_path(), context_->current_working_directory()).string();
-        else
-            return working_directory();
-    }
-
-    std::string project_name() const
-    {
-        return context_->project_name();
-    }
-    void set_project_name(const std::string & name)
-    {
-        context_->set_project_name(name);
-    }
- 
-    Toolchain toolchain() const
-    {
-        return toolchain_;
-    }
-
-
-    Book root;
-    Context * context_;
-    Toolchain toolchain_;
-};
 
 struct W_OS {};
 
@@ -106,7 +61,7 @@ struct Context::Pimpl
 
     Pimpl(model::Book * book, Context * context)
         : engine(chaiscript::Std_Lib::library(), std::make_unique<Parser>()),
-          cook(book, context, &logger)
+          cook(book, context)
     {
         set_logger(&logger);
         gubg::chai::inject<gubg::chai::Regex>(engine);
@@ -133,41 +88,12 @@ struct Context::Pimpl
         engine.add(module::ingredient());
         engine.add(module::book());
         engine.add(module::recipe());
-        
+        engine.add(module::cook());
 
-        initialize_flags();
         add_ingredient_constructors(kitchen);
         engine.add(user_data_module());
-        engine.add_global(chaiscript::var(std::ref(cook.root)), "root");
+        engine.add_global(chaiscript::var(cook.root()), "root");
         engine.add_global(chaiscript::var(std::ref(cook)), "cook");
-        engine.add(chaiscript::fun(&Cook::operator []), "[]");
-        engine.add(chaiscript::fun([](const Cook & c) { return c.working_directory(); }), "working_directory");
-        engine.add(chaiscript::fun([](const Cook & c, bool absolute) { return c.working_directory(absolute); }), "working_directory");
-        engine.add(chaiscript::fun(&Cook::project_name), "project_name");
-        engine.add(chaiscript::fun(&Cook::set_project_name), "set_project_name");
-        engine.add(chaiscript::fun(&Cook::toolchain), "toolchain");
-    }
-
-    void initialize_flags()
-    {
-#define EXPOSE_TOP(TYPE) engine.add_global(chaiscript::var(W_##TYPE()), #TYPE)
-        EXPOSE_TOP(OS);
-#undef EXPOSE_TOP
-
-
-
-#define EXPOSE(TYPE, NAME) engine.add(chaiscript::fun([](const W_##TYPE & ) { return TYPE::NAME; }), #NAME)
-        EXPOSE(OS, Windows);
-        EXPOSE(OS, Linux);
-        EXPOSE(OS, MacOS);
-#undef EXPOSE
-
-#define EXPOSE_ENUM_FUNC(NAME) engine.add(chaiscript::user_type<NAME>(), #NAME); engine.add(chaiscript::fun([](NAME lhs, NAME rhs){return lhs == rhs;}), "=="); engine.add(chaiscript::fun([](NAME lhs, NAME rhs){return lhs != rhs;}), "!=")
-
-        EXPOSE_ENUM_FUNC(OS);
-
-        engine.add(chaiscript::fun([](const W_OS & ) { return get_os(); }), "my");
-
     }
 
     void add_ingredient_constructors(const Context * context)
