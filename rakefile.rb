@@ -157,7 +157,7 @@ namespace :b1 do
     end
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
-    task :build, :ninja_opts => ["b0:build"] do |t,args|
+    task :build, [:ninja_opts] => ["b0:build"] do |t,args|
         odir = File.join(out_base, "ninja")
         tdir = File.join(tmp_base, "ninja")
 
