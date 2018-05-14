@@ -19,7 +19,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "            kv.append(Part.Pre, \"/Zi\")" << std::endl;
         oss << "        } else if (k == \"optimization\" && v == \"max_speed\") {" << std::endl;
         oss << "            kv.append(Part.Pre, \"/O2\")" << std::endl;
-        oss << "        } else if (k == \"arch\" && v = \"x86\") {" << std::endl;
+        oss << "        } else if (k == \"arch\" && v == \"x86\") {" << std::endl;
         oss << "        } else if (k == \"arch\" && v == \"x64\") {" << std::endl;
         oss << "        } else if (k == \"position_independent_code\" && v == \"true\") {" << std::endl;
         oss << "        } else if (k == \"c++-standard\" && e.language == Language.CXX && v == \"17\") {" << std::endl;
