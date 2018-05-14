@@ -10,6 +10,7 @@
 #include "cook/process/souschef/ScriptRunner.hpp"
 #include "cook/rules/C_family.hpp"
 #include "cook/rules/ASM.hpp"
+#include "cook/rules/Definition.hpp"
 #include "gubg/stream.hpp"
 
 namespace cook { namespace process { namespace chef {
@@ -149,6 +150,7 @@ std::list<SouschefPtr> CompileArchiveLink::generate_compile_only_steps_() const
     rule_set->add<rules::CXX>();
     rule_set->add<rules::Cc>();
     rule_set->add<rules::ASM>();
+    rule_set->add<rules::Definition>();
     result.push_back(std::make_shared<souschef::Resolver>(rule_set));
 
     result.push_back(std::make_shared<souschef::DependentPropagator>());
