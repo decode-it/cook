@@ -9,6 +9,7 @@ root.recipe("boost/all", fun[boosts](r) {
     {
         r.add("modules/filesystem/src", "*.cpp")
         r.define("BOOST_ALL_NO_LIB")
+        r.define("BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE")
     }
     
     r.define("BOOST_ERROR_CODE_HEADER_ONLY")
