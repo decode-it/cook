@@ -50,6 +50,8 @@ Proof-of-concept version.
 
 * Changed the way to communicate the c/c++ standard: `-T c++.std=17` will now enable `-std=c++17`
 
+## 1.1.5 (open)
+
 ## Next
 
 * Support for `COOK_PATH` search for scripts
