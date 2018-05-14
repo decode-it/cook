@@ -14,7 +14,7 @@ namespace cook { namespace process { namespace toolchain {
     enum class Part
     {
         Begin_,
-        Cli = Begin_, Pre, Deps, Output, Input, DepFile, Option, Define, IncludePath, ForceInclude, Library, LibraryPath,
+        Cli = Begin_, Pre, Deps, Export, Output, Input, DepFile, Option, Define, IncludePath, ForceInclude, Library, LibraryPath,
         End_
     };
 
@@ -26,6 +26,7 @@ namespace cook { namespace process { namespace toolchain {
             L_CASE(Cli);
             L_CASE(Pre);
             L_CASE(Deps);
+            L_CASE(Export);
             L_CASE(Output);
             L_CASE(Input);
             L_CASE(DepFile);

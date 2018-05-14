@@ -38,6 +38,11 @@ namespace cook { namespace rules {
                 for (auto ext: Exts{ ".a", ".so", ".lib", ".dll" })
                     tm[ext] = Type::Library;
             }
+            else if (lang == Language::Definition)
+            {
+                for (auto ext: Exts{ ".def" })
+                    tm[ext] = Type::Export;
+            }
             else
             {
                 MSS(false);

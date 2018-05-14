@@ -55,6 +55,7 @@ Proof-of-concept version.
 * Added support for TargetType when specifying an element
 * Built-in toolchain files are now installed in `.config/cook/<version>/` or `AppData/Local/cook/<version>/` if they do not exist yet
 * [wip] Added arm64 support
+* [wip] Added support Language.Definition and Type.Export to handle .def files when creating a .dll
 
 ## Next
 

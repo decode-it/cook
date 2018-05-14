@@ -13,6 +13,7 @@ enum class Language
     CXX,
     ASM,
     Script,
+    Definition,
     UserDefined
 };
 
@@ -27,6 +28,7 @@ inline std::ostream & operator<<(std::ostream & os, Language type)
         L_CASE(CXX);
         L_CASE(ASM);
         L_CASE(Script);
+        L_CASE(Definition);
 #undef L_CASE
         default:
         return os << "UserDefined(" << (static_cast<unsigned int>(type) - static_cast<unsigned int>(Language::UserDefined)) << ")";
