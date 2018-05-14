@@ -46,6 +46,8 @@ Proof-of-concept version.
 * Toolchain export and specification via chaiscript
 * Default toolchains for gcc, clang and msvc
 
+## 1.1.4 (open)
+
 ## Next
 
 * Support for `COOK_PATH` search for scripts
