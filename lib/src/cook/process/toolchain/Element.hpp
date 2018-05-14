@@ -6,6 +6,7 @@
 #include "cook/process/command/Archive.hpp"
 #include "cook/process/command/Link.hpp"
 #include "cook/Language.hpp"
+#include "cook/TargetType.hpp"
 #include "gubg/mss.hpp"
 
 namespace cook { namespace process { namespace toolchain { 
@@ -15,16 +16,16 @@ namespace cook { namespace process { namespace toolchain {
         public:
             enum Type
             {
+                Undefined,
                 Archive,
                 Compile,
-                LinkExe,
-                LinkSharedLibrary,
+                Link,
                 UserDefined,
             };
 
             using Ptr = std::shared_ptr<Element>;
 
-            Element(Type type, Language language);
+            Element(Type type, Language language, TargetType target_type);
 
             template <typename T>
             std::shared_ptr<T> create() const
@@ -37,7 +38,8 @@ namespace cook { namespace process { namespace toolchain {
             const KeyValuesMap & key_values_map() const;
             const TranslatorMap & translator_map() const;
             Language language() const;
-            Type type() const;
+            Type element_type() const;
+            TargetType target_type() const;
 
         private:
             Element(const Element &) = delete;
@@ -47,8 +49,9 @@ namespace cook { namespace process { namespace toolchain {
 
             KeyValuesMap kvm_;
             TranslatorMapPtr trans_;
-            Type type_;
+            Type element_type_;
             Language language_;
+            TargetType target_type_;
     };
 
     std::ostream & operator<<(std::ostream & str, Element::Type type);

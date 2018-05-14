@@ -13,7 +13,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "    auto & tm = e.translators();" << std::endl;
         oss << "" << std::endl;
         oss << "    if (false) {" << std::endl;
-        oss << "    } else if (e.type == ElementType.Compile) {" << std::endl;
+        oss << "    } else if (e.element_type == ElementType.Compile) {" << std::endl;
         oss << "        if (false) {" << std::endl;
         oss << "        } else if (k == \"debug_symbols\" && v == \"true\") {" << std::endl;
         oss << "            kv.append(Part.Pre, \"Zi\")" << std::endl;
@@ -27,12 +27,12 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "        } else {" << std::endl;
         oss << "            return false;" << std::endl;
         oss << "        }" << std::endl;
-        oss << "    } else if (e.type == ElementType.Link) {" << std::endl;
+        oss << "    } else if (e.element_type == ElementType.Link) {" << std::endl;
         oss << "        if (false) {" << std::endl;
         oss << "        } else {" << std::endl;
         oss << "            return false" << std::endl;
         oss << "        }" << std::endl;
-        oss << "    } else if (e.type == ElementType.Archive) {" << std::endl;
+        oss << "    } else if (e.element_type == ElementType.Archive) {" << std::endl;
         oss << "        if (false) {" << std::endl;
         oss << "        } else {" << std::endl;
         oss << "            return false" << std::endl;
@@ -46,7 +46,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "" << std::endl;
         oss << "for( lang : [Language.C, Language.CXX, Language.ASM]) {" << std::endl;
         oss << "" << std::endl;
-        oss << "    var compiler = cook.toolchain.element(ElementType.Compile, lang)" << std::endl;
+        oss << "    var compiler = cook.toolchain.element(ElementType.Compile, lang, TargetType.Object)" << std::endl;
         oss << "    var & kv = compiler.key_values()" << std::endl;
         oss << "    var & tm = compiler.translators()" << std::endl;
         oss << "" << std::endl;
@@ -72,7 +72,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "}" << std::endl;
         oss << "" << std::endl;
         oss << "{" << std::endl;
-        oss << "    var archiver = cook.toolchain.element(ElementType.Archive, Language.Binary)" << std::endl;
+        oss << "    var archiver = cook.toolchain.element(ElementType.Archive, Language.Binary, TargetType.Archive)" << std::endl;
         oss << "    var & kv = archiver.key_values()" << std::endl;
         oss << "    var & tm = archiver.translators()" << std::endl;
         oss << "" << std::endl;
@@ -84,8 +84,8 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "    kv.append(Part.Cli, \"lib\")" << std::endl;
         oss << "}" << std::endl;
         oss << "" << std::endl;
-        oss << "{" << std::endl;
-        oss << "    var linker = cook.toolchain.element(ElementType.Link, Language.Binary)" << std::endl;
+        oss << "for(s : [TargetType.Executable, TargetType.SharedLibrary]){" << std::endl;
+        oss << "    var linker = cook.toolchain.element(ElementType.Link, Language.Binary, s)" << std::endl;
         oss << "    var & kv = linker.key_values()" << std::endl;
         oss << "    var & tm = linker.translators()" << std::endl;
         oss << "" << std::endl;

@@ -27,7 +27,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "cook.toolchain.configure(10, \"standard toolchain config\", fun(e, k, v, b) {" << std::endl;
         oss << "" << std::endl;
         oss << "    if (false) {" << std::endl;
-        oss << "    } else if (e.type == ElementType.Compile) {" << std::endl;
+        oss << "    } else if (e.element_type == ElementType.Compile) {" << std::endl;
         oss << "        if (false) {" << std::endl;
         oss << "        } else if (k == \"config\" && v == \"debug\") {" << std::endl;
         oss << "            b.add_config(\"debug_symbols\")" << std::endl;
@@ -39,14 +39,14 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "        } else {" << std::endl;
         oss << "            return false" << std::endl;
         oss << "        }" << std::endl;
-        oss << "    } else if (e.type == ElementType.LinkExe || e.type == ElementType.LinkSharedLibrary) {" << std::endl;
+        oss << "    } else if (e.element_type == ElementType.Link) {" << std::endl;
         oss << "        if (false) {" << std::endl;
         oss << "        } else if (k == \"config\" && v == \"debug\") {" << std::endl;
         oss << "            b.add_config(\"config\", \"rtc\")" << std::endl;
         oss << "        } else {" << std::endl;
         oss << "            return false" << std::endl;
         oss << "        }" << std::endl;
-        oss << "    } else if (e.type == ElementType.Archive) {" << std::endl;
+        oss << "    } else if (e.element_type == ElementType.Archive) {" << std::endl;
         oss << "        if (false) {" << std::endl;
         oss << "        } else  {" << std::endl;
         oss << "            return false" << std::endl;

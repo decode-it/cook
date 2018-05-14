@@ -7,15 +7,15 @@ namespace cook { namespace chai {
         {
         }
 
-        bool Toolchain::has_element(ElementType type, const Flags & language)
+        bool Toolchain::has_element(ElementType type, const Flags & language, TargetType target_type)
         {
             CHAI_MSS_BEGIN();
             CHAI_MSS(check_language_(language));
 
-            return !!manager_->element(type, language.language().first);
+            return !!manager_->element(type, language.language().first, target_type);
         }
 
-        ToolchainElement Toolchain::element(ElementType type, const Flags & language)
+        ToolchainElement Toolchain::element(ElementType type, const Flags & language, TargetType target_type)
         {
             CHAI_MSS_BEGIN();
             CHAI_MSS(check_language_(language));
@@ -23,9 +23,9 @@ namespace cook { namespace chai {
             Language lang = language.language().first;
 
             if (is_frozen())
-                CHAI_MSS_MSG(!!manager_->element(type, lang), Error, "No toolchain element with type " << type << " and language " << lang << " exists");
+                CHAI_MSS_MSG(!!manager_->element(type, lang, target_type), Error, "No toolchain element with type " << type << " and language " << lang << " exists");
             
-            ToolchainElement el(manager_->goc_element(type, lang));
+            ToolchainElement el(manager_->goc_element(type, lang, target_type));
             el.set_freeze_flag(is_frozen());
 
             return el;

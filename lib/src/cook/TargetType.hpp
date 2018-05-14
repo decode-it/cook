@@ -8,6 +8,7 @@ namespace cook {
 enum class TargetType
 {
     Undefined,
+    Object,    
     Archive,
     SharedLibrary,
     Executable,
@@ -21,6 +22,7 @@ inline std::ostream & operator<<(std::ostream & os, TargetType type)
     {
 #define L_CASE(NAME) case TargetType::NAME: return os << #NAME
         L_CASE(Undefined);
+        L_CASE(Object);
         L_CASE(Archive);
         L_CASE(SharedLibrary);
         L_CASE(Executable);

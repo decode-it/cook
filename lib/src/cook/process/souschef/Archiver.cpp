@@ -82,7 +82,7 @@ Result Archiver::archive_command_(command::Ptr &ptr, const model::Recipe & recip
 {
     MSS_BEGIN(Result);
 
-    auto element = context.toolchain().element(toolchain::Element::Archive, Language::Binary);
+    auto element = context.toolchain().element(toolchain::Element::Archive, Language::Binary, recipe.build_target().type);
     MSS(!!element);
     auto ap = element->create<process::command::Archive>();
     MSS(!!ap);

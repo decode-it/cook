@@ -4,6 +4,7 @@
 #include "cook/Language.hpp"
 #include "cook/process/toolchain/Element.hpp"
 #include "cook/process/toolchain/Configuration.hpp"
+#include "cook/TargetType.hpp"
 #include "cook/Result.hpp"
 #include <map>
 
@@ -16,8 +17,8 @@ namespace cook { namespace process { namespace toolchain {
 
         bool is_initialized() const;
 
-        Element::Ptr element(Element::Type type, Language language) const;
-        Element::Ptr goc_element(Element::Type type, Language language);
+        Element::Ptr element(Element::Type element_type, Language language, TargetType target_type) const;
+        Element::Ptr goc_element(Element::Type type, Language language, TargetType target_type);
 
         void add_config(const std::string & value);
         void add_config(const std::string & key, const std::string & value);
@@ -34,13 +35,34 @@ namespace cook { namespace process { namespace toolchain {
         std::list<std::pair<std::string, std::string>> all_config_values() const;
 
     private:
+        struct Key
+        {
+            Key() : 
+                element_type(Element::Undefined), 
+                language(Language::Undefined), 
+                target_type(TargetType::Undefined) 
+            {}
+
+            Key(Element::Type etype, Language lang, TargetType ttype) : 
+                element_type(etype),
+                language(lang),
+                target_type(ttype)
+            {
+            }
+
+            Element::Type element_type;
+            Language language;
+            TargetType target_type;
+
+            bool operator<(const Key & rhs) const;
+        };
         Result resolve_();
 
         bool configure_(Element & element);
         bool initialized_ = false;
 
         using ElementDesc = std::pair<Element::Type, Language>;
-        std::map<std::pair<Element::Type, Language>, Element::Ptr> elements_;
+        std::map<Key, Element::Ptr> elements_;
         ConfigurationBoard board_;
     };
 

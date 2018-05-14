@@ -2,8 +2,9 @@
 
 namespace cook { namespace process { namespace toolchain { 
 
-    Element::Element(Type type, Language language) : 
-        trans_(std::make_shared<TranslatorMap>()), type_(type), language_(language)
+    Element::Element(Type element_type, Language language, TargetType target_type) : 
+        trans_(std::make_shared<TranslatorMap>()), element_type_(element_type), language_(language),
+        target_type_(target_type)
     {
         auto lambda = [&](toolchain::Part part)
         {
@@ -37,9 +38,14 @@ namespace cook { namespace process { namespace toolchain {
         return language_; 
     }
 
-    Element::Type Element::type() const 
+    Element::Type Element::element_type() const 
     { 
-        return type_; 
+        return element_type_; 
+    }
+
+    TargetType Element::target_type() const
+    {
+        return target_type_;
     }
 
     std::ostream & operator<<(std::ostream & str, Element::Type type)
@@ -47,10 +53,10 @@ namespace cook { namespace process { namespace toolchain {
         switch(type)
         {
 #define L_CASE(VAL) case Element::VAL: return str << #VAL
+            L_CASE(Undefined);
             L_CASE(Archive);
             L_CASE(Compile);
-            L_CASE(LinkExe);
-            L_CASE(LinkSharedLibrary);
+            L_CASE(Link);
             L_CASE(UserDefined);
 #undef L_CASE
             default:

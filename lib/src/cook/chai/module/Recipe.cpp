@@ -77,6 +77,7 @@ namespace cook { namespace chai { namespace module {
 
         EXPOSE_TYPE(TargetType);
         EXPOSE_VALUE(TargetType, Undefined);
+        EXPOSE_VALUE(TargetType, Object);
         EXPOSE_VALUE(TargetType, Archive);
         EXPOSE_VALUE(TargetType, SharedLibrary);
         EXPOSE_VALUE(TargetType, Executable);

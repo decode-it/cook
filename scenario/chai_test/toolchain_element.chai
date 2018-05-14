@@ -33,21 +33,20 @@ test_to_string(Part, "LibraryPath")
 
 # All known ElementType enum values
 ElementType.Compile
-ElementType.LinkExe
-ElementType.LinkSharedLibrary
+ElementType.Link
 ElementType.Archive
 assert_equal("${ElementType}", "ElementType")
 
 test_to_string(ElementType, "Compile")
-test_to_string(ElementType, "LinkExe")
-test_to_string(ElementType, "LinkSharedLibrary")
+test_to_string(ElementType, "Link")
 test_to_string(ElementType, "Archive")
 
 {
-    var el = cook.toolchain.element(ElementType.Compile, Language.ASM)
+    var el = cook.toolchain.element(ElementType.Compile, Language.ASM, TargetType.Object)
 
     assert_equal(el.language(), Language.ASM)
-    assert_equal(el.type(), ElementType.Compile)
+    assert_equal(el.element_type(), ElementType.Compile)
+    assert_equal(el.target_type(), TargetType.Object)
 
     # key values 
     {

@@ -52,7 +52,8 @@ namespace cook { namespace chai {
         Translators translators() const;
 
         Language language() const;
-        ElementType type() const;
+        ElementType element_type() const;
+        TargetType target_type() const;
 
     private:
         Element::Ptr element_;

@@ -18,8 +18,8 @@ namespace cook { namespace chai {
         
         Toolchain(Manager * manager);
 
-        bool has_element(ElementType type, const Flags &  language);
-        ToolchainElement element(ElementType type, const Flags & language);      
+        bool has_element(ElementType type, const Flags & language, TargetType target_type);
+        ToolchainElement element(ElementType type, const Flags & language, TargetType target_type);      
         
         void add_config_1(const std::string & key);
         void add_config_2(const std::string & key, const std::string & value);

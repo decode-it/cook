@@ -81,7 +81,7 @@ Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recip
 {
     MSS_BEGIN(Result);
 
-    auto element = context.toolchain().element(toolchain::Element::Compile, language_);
+    auto element = context.toolchain().element(toolchain::Element::Compile, language_, TargetType::Object);
     MSS(!!element);
     auto cp = element->create<process::command::Compile>();
     MSS(!!cp);

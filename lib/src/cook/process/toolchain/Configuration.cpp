@@ -53,7 +53,7 @@ namespace cook { namespace process { namespace toolchain {
     bool ConfigurationBoard::resolve_(Element::Ptr element, const ConfigPair & p)
     {
         auto s = log::scope("Resolving", [&](auto & n) {
-            n.attr("element_type", element->type()).attr("element_language", element->language()).attr("key", p.first).attr("value", p.second);
+            n.attr("element_type", element->element_type()).attr("element_language", element->language()).attr("target_type", element->target_type()).attr("key", p.first).attr("value", p.second);
         });
         for(const Configuration & cfg : config_cbs_)
         {

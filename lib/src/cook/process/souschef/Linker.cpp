@@ -145,21 +145,7 @@ Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, co
 {
     MSS_BEGIN(Result);
     
-    toolchain::Element::Type t;
-    switch(recipe.build_target().type)
-    {
-        case TargetType::SharedLibrary:
-            t = toolchain::Element::LinkSharedLibrary;
-            break;
-
-        case TargetType::Executable:
-            t = toolchain::Element::LinkExe;
-            break;
-
-        default:
-            MSS(false);
-    }
-    auto element = context.toolchain().element(t, Language::Binary);
+    auto element = context.toolchain().element(toolchain::Element::Link, Language::Binary, recipe.build_target().type);
     MSS(!!element);
     auto lp = element->create<process::command::Link>();
     MSS(!!lp);

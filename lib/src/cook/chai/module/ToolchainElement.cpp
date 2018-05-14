@@ -29,8 +29,7 @@ namespace cook { namespace chai { namespace module {
 
         EXPOSE_TYPE(ElementType);
         EXPOSE_VALUE(ElementType, Compile);
-        EXPOSE_VALUE(ElementType, LinkExe);
-        EXPOSE_VALUE(ElementType, LinkSharedLibrary);
+        EXPOSE_VALUE(ElementType, Link);
         EXPOSE_VALUE(ElementType, Archive);
 
         // the key values
@@ -50,7 +49,8 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&ToolchainElement::key_values), "key_values");
         ptr->add(chaiscript::fun(&ToolchainElement::translators), "translators");
         ptr->add(chaiscript::fun(&ToolchainElement::language), "language");
-        ptr->add(chaiscript::fun(&ToolchainElement::type), "type");
+        ptr->add(chaiscript::fun(&ToolchainElement::target_type), "target_type");
+        ptr->add(chaiscript::fun(&ToolchainElement::element_type), "element_type");
 
         return ptr;
     }
