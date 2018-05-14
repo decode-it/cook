@@ -67,6 +67,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "    kv.append(Part.Pre, \"/EHsc\")" << std::endl;
         oss << "    kv.append(Part.Pre, \"/bigobj\")" << std::endl;
         oss << "    kv.append(Part.Pre, \"-c\")" << std::endl;
+        oss << "    kv.append(Part.Define, \"NOMINMAX\")" << std::endl;
         oss << "    kv.append(Part.Deps, \"msvc\")" << std::endl;
         oss << "}" << std::endl;
         oss << "" << std::endl;

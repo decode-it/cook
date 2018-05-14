@@ -285,7 +285,7 @@ Result Context::load_toolchain(const std::string & toolchain)
     std::filesystem::path fn;
     MSS(loader_.load(toolchain, fn));
 
-    MSS(load_(fn));
+    MSS(load_(fn.string()));
     MSS_END();
 }
 

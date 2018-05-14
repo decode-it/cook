@@ -1,5 +1,6 @@
 #include "cook/chai/toolchain/serialize/GCC.hpp"
 #include "cook/chai/toolchain/serialize/Standard.hpp"
+#include <string>
 
 namespace cook { namespace chai { namespace toolchain { namespace serialize {
 

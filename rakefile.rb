@@ -162,8 +162,12 @@ namespace :b1 do
         tdir = File.join(tmp_base, "ninja")
 
         opts = toolchain_options.map {|k,v| "-T " + (v ? "#{k}=#{v}" : "#{k}") }.join(" ")
+
+        b0cook = case GUBG::os
+                 when :linux, :macos then "./b0-cook.exe"
+                 when :windows then "b0-cook.exe" end
                                                      
-        sh "./b0-cook.exe -f ./ -g ninja -o #{odir} -O #{tdir} #{opts} cook/app/exe"
+        sh "#{b0cook} -f ./ -g ninja -o #{odir} -O #{tdir} #{opts} cook/app/exe"
         sh "#{ninja_exe} -f #{odir}/build.ninja -v"
         exe = "cook.app.exe"
         exe += ".exe" if GUBG::os == :windows
