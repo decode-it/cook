@@ -16,14 +16,14 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "    } else if (e.type == ElementType.Compile) {" << std::endl;
         oss << "        if (false) {" << std::endl;
         oss << "        } else if (k == \"debug_symbols\" && v == \"true\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"/Zi\")" << std::endl;
+        oss << "            kv.append(Part.Pre, \"Zi\")" << std::endl;
         oss << "        } else if (k == \"optimization\" && v == \"max_speed\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"/O2\")" << std::endl;
+        oss << "            kv.append(Part.Pre, \"O2\")" << std::endl;
         oss << "        } else if (k == \"arch\" && v == \"x86\") {" << std::endl;
         oss << "        } else if (k == \"arch\" && v == \"x64\") {" << std::endl;
         oss << "        } else if (k == \"position_independent_code\" && v == \"true\") {" << std::endl;
         oss << "        } else if (k == \"c++-standard\" && e.language == Language.CXX && v == \"17\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"/std\", \"c++latest\")" << std::endl;
+        oss << "            kv.append(Part.Pre, \"std\", \"c++latest\")" << std::endl;
         oss << "        } else {" << std::endl;
         oss << "            return false;" << std::endl;
         oss << "        }" << std::endl;
@@ -66,7 +66,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "    kv.append(Part.Pre, \"nologo\")" << std::endl;
         oss << "    kv.append(Part.Pre, \"EHsc\")" << std::endl;
         oss << "    kv.append(Part.Pre, \"bigobj\")" << std::endl;
-        oss << "    kv.append(Part.Pre, \"-c\")" << std::endl;
+        oss << "    kv.append(Part.Pre, \"c\")" << std::endl;
         oss << "    kv.append(Part.Define, \"NOMINMAX\")" << std::endl;
         oss << "    kv.append(Part.Deps, \"msvc\")" << std::endl;
         oss << "}" << std::endl;
