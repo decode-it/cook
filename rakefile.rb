@@ -150,7 +150,7 @@ namespace :b1 do
         sh("./unit_tests.exe -a -d yes")
     end
 
-    toolchain_options = {"c++-standard" => 17, "release" => nil}
+    toolchain_options = {"c++.std" => 17, "release" => nil}
     case GUBG::os
     when :macos     then toolchain_options["arch"] = "x64"
     when :windows   then toolchain_options["arch"] = "x86"
