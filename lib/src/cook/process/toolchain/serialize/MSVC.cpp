@@ -55,7 +55,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         oss << "    tm[Part.Output]         = fun(k,v) { return \"/Fo:${k}\" }" << std::endl;
         oss << "    tm[Part.Input]          = fun(k,v) { return k }" << std::endl;
         oss << "    tm[Part.Deps]           = fun(k,v) { return \"/showIncludes\" }" << std::endl;
-        oss << "    tm[Part.Define]         = fun(k,v) { if (v.empty) { return \"/D${k}\" } else { return \"/D${k}:${v}\" } }" << std::endl;
+        oss << "    tm[Part.Define]         = fun(k,v) { if (v.empty) { return \"/D${k}\" } else { return \"/D${k}=${v}\" } }" << std::endl;
         oss << "    tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return \"/I./\" } else { return \"/I${k}\" } }" << std::endl;
         oss << "    tm[Part.ForceInclude]   = fun(k,v) { return \"/FI${k}\" }" << std::endl;
         oss << "" << std::endl;
