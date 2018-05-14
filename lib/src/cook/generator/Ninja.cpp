@@ -54,7 +54,6 @@ Result Ninja::process(const Context & context)
                     has_deps = true;
                     ofs << "msvc_deps_prefix = Note: including file:" << std::endl;
                 }
-
             }
             ofs << "rule " << name << std::endl;
             {
