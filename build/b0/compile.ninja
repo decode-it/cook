@@ -204,6 +204,8 @@ build .b0/lib/src/cook/rules/Binary.cpp.obj: compile lib/src/cook/rules/Binary.c
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/rules/C_family.cpp.obj: compile lib/src/cook/rules/C_family.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
+build .b0/lib/src/cook/rules/Definition.cpp.obj: compile lib/src/cook/rules/Definition.cpp
+    include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/rules/Extensions.cpp.obj: compile lib/src/cook/rules/Extensions.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/rules/Interface.cpp.obj: compile lib/src/cook/rules/Interface.cpp
@@ -466,6 +468,7 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/rules/ASM.cpp.obj $
     .b0/lib/src/cook/rules/Binary.cpp.obj $
     .b0/lib/src/cook/rules/C_family.cpp.obj $
+    .b0/lib/src/cook/rules/Definition.cpp.obj $
     .b0/lib/src/cook/rules/Extensions.cpp.obj $
     .b0/lib/src/cook/rules/Interface.cpp.obj $
     .b0/lib/src/cook/rules/RuleSet.cpp.obj $

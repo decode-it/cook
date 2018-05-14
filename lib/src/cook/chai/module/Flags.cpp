@@ -53,6 +53,7 @@ ptr->add(chaiscript::fun([](const wrapper::TYPE##_t &) { return std::string(#TYP
         EXPOSE(Type, Undefined);
         EXPOSE(Type, Source);
         EXPOSE(Type, Header);
+        EXPOSE(Type, Export);
         EXPOSE(Type, Object);
         EXPOSE(Type, ForceInclude);
         EXPOSE(Type, IncludePath);
@@ -67,6 +68,7 @@ ptr->add(chaiscript::fun([](const wrapper::TYPE##_t &) { return std::string(#TYP
         EXPOSE(Language, CXX);
         EXPOSE(Language, ASM);
         EXPOSE(Language, Script);
+        EXPOSE(Language, Definition);
 #undef EXPOSE
         
         ptr->add(chaiscript::fun(&wrapper::Type_t::make_UserDefined), "UserDefined");

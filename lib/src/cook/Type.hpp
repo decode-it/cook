@@ -10,6 +10,7 @@ enum class Type
     Undefined,
     Source,
     Header,
+    Export,
     Object,
     ForceInclude,
     IncludePath,
@@ -29,6 +30,7 @@ inline std::ostream & operator<<(std::ostream & os, Type type)
         L_CASE(Undefined);
         L_CASE(Source);
         L_CASE(Header);
+        L_CASE(Export);
         L_CASE(Object);
         L_CASE(ForceInclude);
         L_CASE(IncludePath);

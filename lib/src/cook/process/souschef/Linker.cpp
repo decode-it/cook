@@ -24,10 +24,12 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     auto objects    = recipe.files().range(LanguageTypePair(Language::Binary, Type::Object));
     auto libs       = recipe.key_values().range(LanguageTypePair(Language::Binary, Type::Library));
     auto deps       = recipe.files().range(LanguageTypePair(Language::Binary, Type::Dependency));
+    auto exports    = recipe.files().range(LanguageTypePair(Language::Definition, Type::Export));
 
     stop_progagation(objects);
     stop_progagation(libs);
     stop_progagation(deps);
+    stop_progagation(exports);
 
     if (objects.empty() && deps.empty())
     {
@@ -55,6 +57,11 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     for(ingredient::File & dep : deps)
     {
         const std::filesystem::path & fn = util::make_global_from_recipe(recipe, dep.key());
+        MSS(g.add_edge(link_vertex, g.goc_vertex(fn), RecipeFilteredGraph::Implicit));
+    }
+    for(ingredient::File & exp : exports)
+    {
+        const std::filesystem::path & fn = util::make_global_from_recipe(recipe, exp.key());
         MSS(g.add_edge(link_vertex, g.goc_vertex(fn), RecipeFilteredGraph::Implicit));
     }
 
@@ -157,6 +164,10 @@ Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, co
     // set the library paths
     for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::LibraryPath)))
         lp->add_library_path(util::make_global_from_recipe(recipe, lib.dir()));
+
+    // set the export files
+    for(const ingredient::File & exp: recipe.files().range(LanguageTypePair(Language::Definition, Type::Export)))
+        lp->add_export(util::make_global_from_recipe(recipe, exp.key()).string());
 
     lp->set_recipe_uri(recipe.uri().string());
     ptr = lp;

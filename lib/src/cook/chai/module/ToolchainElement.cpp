@@ -17,6 +17,7 @@ namespace cook { namespace chai { namespace module {
         EXPOSE_VALUE(Part, Cli);
         EXPOSE_VALUE(Part, Pre);
         EXPOSE_VALUE(Part, Deps);
+        EXPOSE_VALUE(Part, Export);
         EXPOSE_VALUE(Part, Output);
         EXPOSE_VALUE(Part, Input);
         EXPOSE_VALUE(Part, DepFile);
