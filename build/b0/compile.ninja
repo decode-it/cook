@@ -96,8 +96,6 @@ build .b0/lib/src/cook/chai/Toolchain.cpp.obj: compile lib/src/cook/chai/Toolcha
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/ToolchainElement.cpp.obj: compile lib/src/cook/chai/ToolchainElement.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/ToolchainLoader.cpp.obj: compile lib/src/cook/chai/ToolchainLoader.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/UserData.cpp.obj: compile lib/src/cook/chai/UserData.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/module/Basic.cpp.obj: compile lib/src/cook/chai/module/Basic.cpp
@@ -117,12 +115,6 @@ build .b0/lib/src/cook/chai/module/ToolchainElement.cpp.obj: compile lib/src/coo
 build .b0/lib/src/cook/chai/module/Uri.cpp.obj: compile lib/src/cook/chai/module/Uri.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/chai/mss.cpp.obj: compile lib/src/cook/chai/mss.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/toolchain/serialize/GCC.cpp.obj: compile lib/src/cook/chai/toolchain/serialize/GCC.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/toolchain/serialize/MSVC.cpp.obj: compile lib/src/cook/chai/toolchain/serialize/MSVC.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
-build .b0/lib/src/cook/chai/toolchain/serialize/Standard.cpp.obj: compile lib/src/cook/chai/toolchain/serialize/Standard.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/generator/CMake.cpp.obj: compile lib/src/cook/generator/CMake.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
@@ -192,7 +184,15 @@ build .b0/lib/src/cook/process/toolchain/Configuration.cpp.obj: compile lib/src/
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/process/toolchain/Element.cpp.obj: compile lib/src/cook/process/toolchain/Element.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
+build .b0/lib/src/cook/process/toolchain/Loader.cpp.obj: compile lib/src/cook/process/toolchain/Loader.cpp
+    include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/process/toolchain/Manager.cpp.obj: compile lib/src/cook/process/toolchain/Manager.cpp
+    include_paths = $cook_lib_include_paths $boost_include_paths
+build .b0/lib/src/cook/process/toolchain/serialize/GCC.cpp.obj: compile lib/src/cook/process/toolchain/serialize/GCC.cpp
+    include_paths = $cook_lib_include_paths $boost_include_paths
+build .b0/lib/src/cook/process/toolchain/serialize/MSVC.cpp.obj: compile lib/src/cook/process/toolchain/serialize/MSVC.cpp
+    include_paths = $cook_lib_include_paths $boost_include_paths
+build .b0/lib/src/cook/process/toolchain/serialize/Standard.cpp.obj: compile lib/src/cook/process/toolchain/serialize/Standard.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/rules/ASM.cpp.obj: compile lib/src/cook/rules/ASM.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
@@ -408,7 +408,6 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/chai/Recipe.cpp.obj $
     .b0/lib/src/cook/chai/Toolchain.cpp.obj $
     .b0/lib/src/cook/chai/ToolchainElement.cpp.obj $
-    .b0/lib/src/cook/chai/ToolchainLoader.cpp.obj $
     .b0/lib/src/cook/chai/UserData.cpp.obj $
     .b0/lib/src/cook/chai/module/Basic.cpp.obj $
     .b0/lib/src/cook/chai/module/Book.cpp.obj $
@@ -419,9 +418,6 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/chai/module/ToolchainElement.cpp.obj $
     .b0/lib/src/cook/chai/module/Uri.cpp.obj $
     .b0/lib/src/cook/chai/mss.cpp.obj $
-    .b0/lib/src/cook/chai/toolchain/serialize/GCC.cpp.obj $
-    .b0/lib/src/cook/chai/toolchain/serialize/MSVC.cpp.obj $
-    .b0/lib/src/cook/chai/toolchain/serialize/Standard.cpp.obj $
     .b0/lib/src/cook/generator/CMake.cpp.obj $
     .b0/lib/src/cook/generator/Naft.cpp.obj $
     .b0/lib/src/cook/generator/Ninja.cpp.obj $
@@ -456,7 +452,11 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/process/souschef/ScriptRunner.cpp.obj $
     .b0/lib/src/cook/process/toolchain/Configuration.cpp.obj $
     .b0/lib/src/cook/process/toolchain/Element.cpp.obj $
+    .b0/lib/src/cook/process/toolchain/Loader.cpp.obj $
     .b0/lib/src/cook/process/toolchain/Manager.cpp.obj $
+    .b0/lib/src/cook/process/toolchain/serialize/GCC.cpp.obj $
+    .b0/lib/src/cook/process/toolchain/serialize/MSVC.cpp.obj $
+    .b0/lib/src/cook/process/toolchain/serialize/Standard.cpp.obj $
     .b0/lib/src/cook/rules/ASM.cpp.obj $
     .b0/lib/src/cook/rules/Binary.cpp.obj $
     .b0/lib/src/cook/rules/C_family.cpp.obj $

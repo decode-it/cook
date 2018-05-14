@@ -1,7 +1,7 @@
-#include "cook/chai/toolchain/serialize/GCC.hpp"
-#include "cook/chai/toolchain/serialize/Standard.hpp"
+#include "cook/process/toolchain/serialize/GCC.hpp"
+#include "cook/process/toolchain/serialize/Standard.hpp"
 
-namespace cook { namespace chai { namespace toolchain { namespace serialize {
+namespace cook { namespace process { namespace toolchain { namespace serialize {
 
     void msvc_config(std::ostream & oss)
     {

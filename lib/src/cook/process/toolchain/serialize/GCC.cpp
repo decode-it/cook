@@ -1,10 +1,10 @@
-#include "cook/chai/toolchain/serialize/GCC.hpp"
-#include "cook/chai/toolchain/serialize/Standard.hpp"
+#include "cook/process/toolchain/serialize/GCC.hpp"
+#include "cook/process/toolchain/serialize/Standard.hpp"
 #include <string>
 
-namespace cook { namespace chai { namespace toolchain { namespace serialize {
+namespace cook { namespace process { namespace toolchain { namespace serialize {
 
-    void gcc_config(std::ostream & oss, const std::map<cook::Language, std::string> & compilers, const std::string & linker)
+    void gcc_config(std::ostream & oss, const std::map<Language, std::string> & compilers, const std::string & linker)
     {
         standard_config(oss);
 

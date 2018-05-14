@@ -10,7 +10,7 @@
 #define COOK_XSTR(A) COOK_STR(A)
 #define COOK_STR(A) #A
 
-namespace cook { namespace app {
+namespace cook {
 
     inline const std::string & version()
     {
@@ -41,8 +41,6 @@ namespace cook { namespace app {
         }
         return version_;
     }
-
-
-} }
+}
 
 #endif 

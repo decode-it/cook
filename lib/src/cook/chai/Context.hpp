@@ -2,7 +2,7 @@
 #define HEADER_cook_chai_Context_hpp_ALREADY_INCLUDED
 
 #include "cook/chai/UserData.hpp"
-#include "cook/chai/ToolchainLoader.hpp"
+#include "cook/process/toolchain/Loader.hpp"
 #include "cook/Context.hpp"
 
 namespace cook { namespace chai {
@@ -29,7 +29,7 @@ private:
     struct Pimpl;
     std::unique_ptr<Pimpl> pimpl_;
     UserData data_;
-    ToolchainLoader loader_;
+    process::toolchain::Loader loader_;
 };
 
 } }
