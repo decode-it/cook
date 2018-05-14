@@ -46,7 +46,9 @@ Proof-of-concept version.
 * Toolchain export and specification via chaiscript
 * Default toolchains for gcc, clang and msvc
 
-## 1.1.4 (open)
+## 1.1.4
+
+* Changed the way to communicate the c/c++ standard: `-T c++.std=17` will now enable `-std=c++17`
 
 ## Next
 

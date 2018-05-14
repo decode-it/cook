@@ -34,9 +34,9 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "            kv.append(Part.Pre, \"-armv7\")" << std::endl;
         oss << "        } else if (k == \"position_independent_code\" && v == \"true\") {" << std::endl;
         oss << "            kv.append(Part.Pre, \"-fPIC\")" << std::endl;
-        oss << "        } else if (k == \"c++-standard\" && e.language == Language.CXX) {" << std::endl;
+        oss << "        } else if (k == \"c++.std\" && e.language == Language.CXX) {" << std::endl;
         oss << "            kv.append(Part.Pre, \"-std\", \"c++${v}\")" << std::endl;
-        oss << "        } else if (k == \"c-standard\" && e.language == Language.C) {" << std::endl;
+        oss << "        } else if (k == \"c.std\" && e.language == Language.C) {" << std::endl;
         oss << "            kv.append(Part.Pre, \"-std\", \"c${v}\")" << std::endl;
         oss << "        } else {" << std::endl;
         oss << "            return false;" << std::endl;
@@ -53,9 +53,9 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "            kv.append(Part.Pre, \"-fsanitize\", \"address\") " << std::endl;
         oss << "        } else if (k == \"config\" && v == \"profile\") {" << std::endl;
         oss << "            kv.append(Part.Pre, \"-pg\", \"\") " << std::endl;
-        oss << "        } else if (k == \"c++-standard\") {" << std::endl;
+        oss << "        } else if (k == \"c++.std\") {" << std::endl;
         oss << "            kv.append(Part.Pre, \"-std\", \"c++${v}\") " << std::endl;
-        oss << "        } else if (k == \"c-standard\") {" << std::endl;
+        oss << "        } else if (k == \"c.std\") {" << std::endl;
         oss << "            kv.append(Part.Pre, \"-std\", \"c${v}\")" << std::endl;
         oss << "        } else {" << std::endl;
         oss << "            return false" << std::endl;
