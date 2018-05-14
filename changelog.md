@@ -53,7 +53,7 @@ Proof-of-concept version.
 ## 1.1.5 (open)
 
 * Added support for TargetType when specifying an element
-
+* Built-in toolchain files are now installed in `.config/cook/<version>/` or `AppData/Local/cook/<version>/` if they do not exist yet
 * [wip] Added arm64 support
 
 ## Next

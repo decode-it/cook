@@ -97,7 +97,7 @@ namespace cook { namespace process { namespace toolchain {
                     if (!drive || !path)
                         break;
 
-                    fn = std::filesystem::path(drive) / path / "AppData" / "Local" / version() / "toolchain";
+                    fn = std::filesystem::path(drive) / path / "AppData" / "Local" / "cook" / version() / "toolchain";
                 }
                 break;
 
