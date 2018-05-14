@@ -167,7 +167,7 @@ Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, co
 
     // set the export files
     for(const ingredient::File & exp: recipe.files().range(LanguageTypePair(Language::Definition, Type::Export)))
-        lp->add_export(util::make_global_from_recipe(recipe, exp.key()));
+        lp->add_export(util::make_global_from_recipe(recipe, exp.key()).string());
 
     lp->set_recipe_uri(recipe.uri().string());
     ptr = lp;
