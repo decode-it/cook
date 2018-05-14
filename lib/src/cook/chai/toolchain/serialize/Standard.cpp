@@ -39,7 +39,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "        } else {" << std::endl;
         oss << "            return false" << std::endl;
         oss << "        }" << std::endl;
-        oss << "    } else if (e.type == ElementType.Link) {" << std::endl;
+        oss << "    } else if (e.type == ElementType.LinkExe || e.type == ElementType.LinkSharedLibrary) {" << std::endl;
         oss << "        if (false) {" << std::endl;
         oss << "        } else if (k == \"config\" && v == \"debug\") {" << std::endl;
         oss << "            b.add_config(\"config\", \"rtc\")" << std::endl;

@@ -25,6 +25,7 @@
 {
     var v1 = Uri("/a/b/c")
     assert_equal(v1.to_string, "/a/b/c")
+    assert_equal(v1, Uri("/a/b/c"))
 
     # a different separator
     assert_equal(v1.to_string('_'), "_a_b_c")

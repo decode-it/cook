@@ -17,7 +17,8 @@ namespace cook { namespace process { namespace toolchain {
             {
                 Archive,
                 Compile,
-                Link,
+                LinkExe,
+                LinkSharedLibrary,
                 UserDefined,
             };
 

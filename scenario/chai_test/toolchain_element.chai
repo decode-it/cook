@@ -33,12 +33,14 @@ test_to_string(Part, "LibraryPath")
 
 # All known ElementType enum values
 ElementType.Compile
-ElementType.Link
+ElementType.LinkExe
+ElementType.LinkSharedLibrary
 ElementType.Archive
 assert_equal("${ElementType}", "ElementType")
 
 test_to_string(ElementType, "Compile")
-test_to_string(ElementType, "Link")
+test_to_string(ElementType, "LinkExe")
+test_to_string(ElementType, "LinkSharedLibrary")
 test_to_string(ElementType, "Archive")
 
 {

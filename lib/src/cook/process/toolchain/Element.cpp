@@ -49,7 +49,8 @@ namespace cook { namespace process { namespace toolchain {
 #define L_CASE(VAL) case Element::VAL: return str << #VAL
             L_CASE(Archive);
             L_CASE(Compile);
-            L_CASE(Link);
+            L_CASE(LinkExe);
+            L_CASE(LinkSharedLibrary);
             L_CASE(UserDefined);
 #undef L_CASE
             default:

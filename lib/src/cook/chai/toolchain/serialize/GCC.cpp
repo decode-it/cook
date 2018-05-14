@@ -45,7 +45,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "        } else {" << std::endl;
         oss << "            return false;" << std::endl;
         oss << "        }" << std::endl;
-        oss << "    } else if (e.type == ElementType.Link) {" << std::endl;
+        oss << "    } else if (e.type == ElementType.LinkExe || e.type == ElementType.LinkSharedLibrary) {" << std::endl;
         oss << "        if (false) {" << std::endl;
         oss << "        } else if (k == \"arch\" && v == \"x86\") {" << std::endl;
         oss << "            kv.append(Part.Pre, \"-m32\", \"\")" << std::endl;
@@ -101,8 +101,8 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "}" << std::endl;
         oss << std::endl;
 
-        oss << "{" << std::endl;
-        oss << "    var linker = cook.toolchain.element(ElementType.Link, Language.Binary)" << std::endl;
+        oss << "for(s : [ElementType.LinkExe, ElementType.LinkSharedLibrary]){" << std::endl;
+        oss << "    var linker = cook.toolchain.element(s, Language.Binary)" << std::endl;
         oss << "    var & kv = linker.key_values()" << std::endl;
         oss << "    var & tm = linker.translators()" << std::endl;
         oss << "" << std::endl;
@@ -116,6 +116,9 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "    tm[Part.ForceInclude]   = fun(k,v) { return \"-include${k}\" }" << std::endl;
         oss << "" << std::endl;
         oss << "    kv.append(Part.Cli, \"" << linker << "\")" << std::endl;
+        oss << "    if (s == ElementType.LinkSharedLibrary) {" << std::endl;
+        oss << "        kv.append(Part.Pre, \"-shared\")" << std::endl;
+        oss << "     }" << std::endl;
         oss << "}" << std::endl;
         oss << "" << std::endl;
         oss << "{" << std::endl;
