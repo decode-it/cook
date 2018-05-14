@@ -51,7 +51,7 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "    var & tm = compiler.translators()" << std::endl;
         oss << "" << std::endl;
         oss << "    tm[Part.Cli]            = fun(k,v) { return k }" << std::endl;
-        oss << "    tm[Part.Pre]            = fun(k,v) { if (v.empty) { return \"/k\" } else { return \"/${k}:${v}\" } }" << std::endl;
+        oss << "    tm[Part.Pre]            = fun(k,v) { if (v.empty) { return \"/${k}\" } else { return \"/${k}:${v}\" } }" << std::endl;
         oss << "    tm[Part.Output]         = fun(k,v) { return \"/Fo:${k}\" }" << std::endl;
         oss << "    tm[Part.Input]          = fun(k,v) { return k }" << std::endl;
         oss << "    tm[Part.DepFile]        = fun(k,v) { return \"/showIncludes\" }" << std::endl;
