@@ -60,12 +60,12 @@ namespace cook { namespace chai { namespace toolchain { namespace serialize {
         oss << "    tm[Part.ForceInclude]   = fun(k,v) { return \"/FI${k}\" }" << std::endl;
         oss << "" << std::endl;
         oss << "    if (lang == Language.C) {" << std::endl;
-        oss << "        kv.append(Part.Pre, \"/TC\")" << std::endl;
+        oss << "        kv.append(Part.Pre, \"TC\")" << std::endl;
         oss << "    }" << std::endl;
         oss << "    kv.append(Part.Cli, \"cl\")" << std::endl;
-        oss << "    kv.append(Part.Pre, \"/nologo\")" << std::endl;
-        oss << "    kv.append(Part.Pre, \"/EHsc\")" << std::endl;
-        oss << "    kv.append(Part.Pre, \"/bigobj\")" << std::endl;
+        oss << "    kv.append(Part.Pre, \"nologo\")" << std::endl;
+        oss << "    kv.append(Part.Pre, \"EHsc\")" << std::endl;
+        oss << "    kv.append(Part.Pre, \"bigobj\")" << std::endl;
         oss << "    kv.append(Part.Pre, \"-c\")" << std::endl;
         oss << "    kv.append(Part.Define, \"NOMINMAX\")" << std::endl;
         oss << "    kv.append(Part.Deps, \"msvc\")" << std::endl;
