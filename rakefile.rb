@@ -182,6 +182,7 @@ namespace :b1 do
         version = `#{here}#{b1_exe} -h`[/cook version (\d\.\d\.\d) /, 1]
         version_dir = GUBG::mkdir("cook-binary/#{version}")
         cp "changelog.md", version_dir
+        arch = toolchain_options["arch"]
         dst_dir = GUBG::mkdir("#{version_dir}/#{GUBG::os}/#{arch}")
         cp b1_exe, File.join(dst_dir, "cook#{ext}")
         latest_dir = GUBG::mkdir("cook-binary/latest/#{GUBG::os}/#{arch}")
