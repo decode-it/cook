@@ -63,8 +63,9 @@ Proof-of-concept version.
 
 * Dependencies are listed in naft generator
 * Ingredients created in a recipe always have that recipe has owner
-* Chai functionality for add_file and add_key_value
 * Naft output follows types and variables as chai
+* Added chai functionality for `add_file` and `add_key_value`
+* Added chai `getenv()` function
 
 ## Next
 
