@@ -97,6 +97,14 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
 
         return true;
     });
+
+    for(const auto & p :recipe->dependency_pairs())
+    {
+        auto nn  = n.node("dependency");
+        nn.attr("key", p.first).attr("resolved", p.second.recipe ? 1 : 0);
+        if (p.second.recipe)
+            nn.attr("value", p.second.recipe->uri());
+    }
 }
 
 }

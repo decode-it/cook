@@ -61,6 +61,8 @@ Proof-of-concept version.
 
 ## 1.1.6 (open)
 
+* Dependencies are listed in naft generator
+
 ## Next
 
 * Support for `COOK_PATH` search for scripts
