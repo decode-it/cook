@@ -150,6 +150,13 @@ namespace cook { namespace chai { namespace module {
 
         ptr->add(chaiscript::fun([](Recipe & recipe, const model::Uri & dep) { recipe.depends_on(dep); }), "depends_on");
         ptr->add(chaiscript::fun(filtered_depends_on), "depends_on");
+
+        ptr->add(chaiscript::fun([](Recipe & r, const std::string & d, const std::string & v) { return r.add_file(d, v); }), "add_file");
+        ptr->add(chaiscript::fun([](Recipe & r, const std::string & d, const std::string & v, const Flags & f) { return r.add_file(d, v,f ); }), "add_file");
+        ptr->add(chaiscript::fun([](Recipe & r, const std::string & k) { return r.add_key_value(k); }), "add_key_value");
+        ptr->add(chaiscript::fun([](Recipe & r, const std::string & k, const Flags & f) { return r.add_key_value(k, f); }), "add_key_value");
+        ptr->add(chaiscript::fun([](Recipe & r, const std::string & k, const std::string & v) { return r.add_key_value(k, v); }), "add_key_value");
+        ptr->add(chaiscript::fun([](Recipe & r, const std::string & k, const std::string & v, const Flags & f) { return r.add_key_value(k, v, f); }), "add_key_value");
         
         return ptr;
     }

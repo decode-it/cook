@@ -115,6 +115,7 @@ void Recipe::library(const std::string & library, const Flags & flags)
     lib.set_content(Content::User);
     lib.set_propagation(flags.get_or(Propagation::Public));
     lib.set_overwrite(flags.get_or(Overwrite::Always));
+    lib.set_owner(recipe_);
 
     recipe_->key_values().insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::Library)), lib);
 }
@@ -128,6 +129,7 @@ void Recipe::library_path(const std::string & path, const Flags & flags)
     lib_path.set_content(Content::User);
     lib_path.set_propagation(flags.get_or(Propagation::Public));
     lib_path.set_overwrite(flags.get_or(Overwrite::Always));
+    lib_path.set_owner(recipe_);
 
     recipe_->files().insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::LibraryPath)), lib_path);
 }
@@ -142,6 +144,7 @@ void Recipe::include_path(const std::string & path, const Flags & flags)
 
     inc_path.set_propagation(flags.get_or(Propagation::Public));
     inc_path.set_overwrite(flags.get_or(Overwrite::Always));
+    inc_path.set_owner(recipe_);
 
     recipe_->files().insert(LanguageTypePair(flags.get_or(Language::Undefined), flags.get_or(Type::IncludePath)), inc_path);
 }
@@ -155,6 +158,7 @@ void Recipe::define(const std::string & name, const Flags & flags)
     kv.set_content(Content::User);
     kv.set_propagation(flags.get_or(Propagation::Public));
     kv.set_overwrite(flags.get_or(Overwrite::IfSame));
+    kv.set_owner(recipe_);
 
     recipe_->key_values().insert(LanguageTypePair(flags.get_or(Language::Undefined), flags.get_or(Type::Define)), kv);
 }
@@ -168,6 +172,7 @@ void Recipe::define(const std::string & name, const std::string & value, const F
     kv.set_content(Content::User);
     kv.set_propagation(flags.get_or(Propagation::Public));
     kv.set_overwrite(flags.get_or(Overwrite::IfSame));
+    kv.set_owner(recipe_);
 
     recipe_->key_values().insert(LanguageTypePair(flags.get_or(Language::Undefined), flags.get_or(Type::Define)), kv);
 }
@@ -178,8 +183,49 @@ void Recipe::run(const std::string & command)
     kv.set_content(Content::User);
     kv.set_propagation(Propagation::Private);
     kv.set_overwrite(Overwrite::Never);
+    kv.set_owner(recipe_);
     recipe_->key_values().insert(LanguageTypePair(Language::Script, Type::Executable), kv);
 }
+
+bool Recipe::add_file(const std::string & dir, const std::string & rel, const Flags & flags)
+{
+    CHAI_MSS_BEGIN();
+    auto file = ingredient::File(dir, rel);
+    file.set_content(Content::User);
+    file.set_propagation(flags.get_or(Propagation::Public));
+    file.set_overwrite(flags.get_or(Overwrite::IfSame));
+    file.set_owner(recipe_);
+
+    LanguageTypePair ltp(flags.get_or(Language::Undefined), flags.get_or(Type::Undefined));
+    return recipe_->files().insert(ltp, file).second;
+}
+
+bool Recipe::add_key_value(const std::string & key, const Flags & flags)
+{
+    CHAI_MSS_BEGIN();
+    auto key_value = ingredient::KeyValue(key);
+    key_value.set_content(Content::User);
+    key_value.set_propagation(flags.get_or(Propagation::Public));
+    key_value.set_overwrite(flags.get_or(Overwrite::IfSame));
+    key_value.set_owner(recipe_);
+
+    LanguageTypePair ltp(flags.get_or(Language::Undefined), flags.get_or(Type::Undefined));
+    return recipe_->key_values().insert(ltp, key_value).second;
+}
+
+bool Recipe::add_key_value(const std::string & key, const std::string & value, const Flags & flags)
+{
+    CHAI_MSS_BEGIN();
+    auto key_value = ingredient::KeyValue(key, value);
+    key_value.set_content(Content::User);
+    key_value.set_propagation(flags.get_or(Propagation::Public));
+    key_value.set_overwrite(flags.get_or(Overwrite::IfSame));
+    key_value.set_owner(recipe_);
+
+    LanguageTypePair ltp(flags.get_or(Language::Undefined), flags.get_or(Type::Undefined));
+    return recipe_->key_values().insert(ltp, key_value).second;
+}
+
 
 
 } }

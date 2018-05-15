@@ -21,20 +21,6 @@ Result Resolver::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_co
     MSS_END();
 }
 
-
-Result Resolver::process_(model::Recipe & recipe, LanguageTypePair & key, ingredient::File & file) const
-{
-    MSS_BEGIN(Result);
-
-    auto accepts = [&](const rules::Interface & interface) { return interface.accepts_file(key, file); };
-    const rules::Interface & interface = rule_set_->find(accepts);
-
-    MSS(interface.resolve_file(key, file));
-    MSS(interface.add_file(recipe, key, file));
-
-    MSS_END();
-}
-
 Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & globber) const
 {
     MSS_BEGIN(Result);
@@ -62,6 +48,7 @@ Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & glo
 
         // resolve the file if possible
         ingredient::File file(globber.dir, fn);
+        file.set_owner(&recipe);
         LanguageTypePair key(globber.language, globber.type);
         file.set_content(Content::Globbing);
 

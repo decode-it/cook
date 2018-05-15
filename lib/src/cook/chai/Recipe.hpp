@@ -38,6 +38,10 @@ public:
     void run(const std::string & command);
     const model::Uri & uri() const;
 
+    bool add_file(const std::string & dir, const std::string & rel, const Flags & flags = Flags());
+    bool add_key_value(const std::string & key, const Flags & flags = Flags());
+    bool add_key_value(const std::string & key, const std::string & value, const Flags & flags = Flags());
+
     UserData data() const { return data_; }
     const Context * context() { return context_; }
 

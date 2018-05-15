@@ -76,6 +76,11 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
             .attr("propagation", ingredient.propagation())
             .attr("overwrite", ingredient.overwrite())
             .attr("content", ingredient.content());
+
+        if (!!ingredient.owner())
+            node.attr("owner", ingredient.owner()->uri());
+        else
+            node.attr("owner");
     };
 
     recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
@@ -103,7 +108,7 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
         auto nn  = n.node("dependency");
         nn.attr("key", p.first).attr("resolved", p.second.recipe ? 1 : 0);
         if (p.second.recipe)
-            nn.attr("value", p.second.recipe->uri());
+            nn.attr("uri", p.second.recipe->uri());
     }
 }
 
