@@ -1,5 +1,10 @@
 # File ingredient
-var dir = "/usr/local/bin"
+var dir
+if (my(OS) == OS.Windows){
+    dir = "\\usr\\local\\bin"
+} else {
+    dir = "/usr/local/bin"
+}
 var rel = "cook"
 var f = make_file(dir, rel)
 
