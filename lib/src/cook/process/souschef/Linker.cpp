@@ -81,6 +81,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
                 ingredient::File dep(library_dir, *recipe.build_target().filename);
                 dep.set_overwrite(Overwrite::IfSame);
                 dep.set_owner(&recipe);
+                dep.set_content(Content::Generated);
                 dep.set_propagation(Propagation::Public);
                 const LanguageTypePair key(Language::Binary, Type::Dependency);
                 MSG_MSS(files.insert(key,dep).second, Error, "Dependency " << dep << " already present in " << recipe.uri());
@@ -92,6 +93,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
                 ar.set_overwrite(Overwrite::IfSame);
                 ar.set_owner(&recipe);
                 ar.set_propagation(Propagation::Public);
+                ar.set_content(Content::Generated);
                 const LanguageTypePair key(Language::Binary, Type::LibraryPath);
                 files.insert(key,ar);
             }
@@ -109,6 +111,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
             ar.set_overwrite(Overwrite::IfSame);
             ar.set_owner(&recipe);
             ar.set_propagation(Propagation::Public);
+            ar.set_content(Content::Generated);
 
             Type t;
             switch(recipe.build_target().type)

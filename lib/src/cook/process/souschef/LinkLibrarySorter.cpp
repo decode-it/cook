@@ -26,7 +26,7 @@ Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collectio
 
     // store all the libraries, either as non-owned or as owned
     for(const LibType & file : libraries)
-        if (file.content() == Content::User)
+        if (!is_internal_generated(file.content()))
             user_supplied_libs.push_back(file);
         else
             generated_libs[file.owner()].push_back(file);

@@ -115,8 +115,8 @@ Result CMake::process(const Context & context)
             ofs << "set(" << cmake_key << " " << *it << ")" << std::endl;
     };
     
-    set_property("c++-standard", "CMAKE_CXX_STANDARD");
-    set_property("c-standard", "CMAKE_C_STANDARD");
+    set_property("c++.std", "CMAKE_CXX_STANDARD");
+    set_property("c.std", "CMAKE_C_STANDARD");
 
     for(model::Recipe * recipe : recipe_list)
     {
@@ -320,7 +320,7 @@ void CMake::set_link_paths_(std::ostream & oss, model::Recipe * recipe, const st
     std::list<std::string> link_directories;
     recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
-        if (ltp.type == Type::LibraryPath && file.owner() == nullptr)
+        if (ltp.type == Type::LibraryPath)
             link_directories.push_back(gubg::filesystem::combine(output_to_source, file.dir()).string());
 
         return true;
@@ -340,7 +340,8 @@ Result CMake::set_link_libraries(std::ostream & ofs, model::Recipe * recipe, con
         std::set<std::string> link_libraries;
         for(const ingredient::KeyValue & lib : recipe->key_values().range(LanguageTypePair(Language::Binary, Type::Library)))
         {
-            if (lib.owner() == nullptr)
+            // only the ones added by the user
+            if (!is_internal_generated(lib.content()))
                 link_libraries.insert(gubg::stream([&](auto & os) { os << lib.key(); } ));
         }
 

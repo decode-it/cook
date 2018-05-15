@@ -60,6 +60,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         ar.set_overwrite(Overwrite::IfSame);
         ar.set_owner(&recipe);
         ar.set_propagation(Propagation::Public);
+        ar.set_content(Content::Generated);
 
         const LanguageTypePair key(Language::Binary, Type::Library);
         MSG_MSS(recipe.key_values().insert(key,ar).second, Error, "Archive " << ar << " already present in " << recipe.uri());
@@ -71,6 +72,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         ar.set_overwrite(Overwrite::IfSame);
         ar.set_owner(&recipe);
         ar.set_propagation(Propagation::Public);
+        ar.set_content(Content::Generated);
         const LanguageTypePair key(Language::Binary, Type::LibraryPath);
         files.insert(key,ar);
     }

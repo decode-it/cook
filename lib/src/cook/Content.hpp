@@ -12,19 +12,8 @@ namespace cook {
         Generated
     };
 
-    inline std::ostream & operator<<(std::ostream & oss, Content content)
-    {
-        switch(content)
-        {
-#define L_CASE(NAME) case Content::NAME: return oss << #NAME
-            L_CASE(User);
-            L_CASE(Globbing);
-            L_CASE(Generated);
-#undef L_CASE
-            default:
-            return oss << "undefined>";
-        }
-    }
+    std::ostream & operator<<(std::ostream & oss, Content content);
+    bool is_internal_generated(Content content);
 
 }
 
