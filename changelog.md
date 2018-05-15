@@ -59,6 +59,8 @@ Proof-of-concept version.
 * Added support Language.Definition and Type.Export to handle .def files when creating a .dll
 * Fix for msvc defines
 
+## 1.1.6 (open)
+
 ## Next
 
 * Support for `COOK_PATH` search for scripts
