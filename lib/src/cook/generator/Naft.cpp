@@ -71,11 +71,12 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
 
     auto base_naft = [](gubg::naft::Node & node, const LanguageTypePair & ltp, const auto & ingredient)
     {
-        node.attr("type", ltp.type)
-            .attr("language", ltp.language)
-            .attr("propagation", ingredient.propagation())
-            .attr("overwrite", ingredient.overwrite())
-            .attr("content", ingredient.content());
+        node.attr("Type", ltp.type)
+            .attr("Language", ltp.language)
+            .attr("Propagation", ingredient.propagation())
+            .attr("Overwrite", ingredient.overwrite())
+            .attr("content", ingredient.content())
+            .attr("user_generated", is_internal_generated(ingredient.content()) ? "0" : "1");
 
         if (!!ingredient.owner())
             node.attr("owner", ingredient.owner()->uri());
