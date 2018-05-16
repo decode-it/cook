@@ -31,6 +31,7 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&combine_assign), "/=");
         ptr->add(chaiscript::fun(&assign), "=");
         ptr->add(chaiscript::fun(&Uri::operator==), "==");
+        ptr->add(chaiscript::fun(&Uri::operator!=), "!=");
         
         ptr->add(chaiscript::fun(&model::Uri::as_absolute), "as_absolute");
         ptr->add(chaiscript::fun(&model::Uri::as_relative), "as_relative");

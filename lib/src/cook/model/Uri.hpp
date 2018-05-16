@@ -51,6 +51,7 @@ public:
     Uri & operator/=(const Uri & rhs);
     Uri & operator/=(const Part & rhs);
     bool operator==(const Uri & rhs) const;
+    bool operator!=(const Uri & rhs) const;
     bool operator<(const Uri & rhs) const;
 
     void clear();

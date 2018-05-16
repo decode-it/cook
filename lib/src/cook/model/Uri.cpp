@@ -174,6 +174,10 @@ bool Uri::operator==(const Uri & rhs) const
     return string() == rhs.string();
 }
 
+bool Uri::operator!=(const Uri & rhs) const
+{
+    return !operator==(rhs);
+}
 bool Uri::operator<(const Uri & rhs) const
 {
     return string() < rhs.string();
