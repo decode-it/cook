@@ -68,6 +68,14 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
     n.attr("path", gubg::filesystem::combine({ std::filesystem::current_path(), context.dirs().recipe(), recipe->working_directory() }).string());
     n.attr("type", recipe->build_target().type);
     n.attr("build_target", recipe->build_target().name);
+    
+    {
+        const auto & bt = recipe->build_target();
+        auto nn = n.node("target");
+        nn.attr("type", bt.type).attr("name", bt.name);
+        if (bt.filename)
+            nn.attr("filename", *bt.filename);
+    }
 
     auto base_naft = [](gubg::naft::Node & node, const LanguageTypePair & ltp, const auto & ingredient)
     {

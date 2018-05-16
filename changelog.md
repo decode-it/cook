@@ -61,7 +61,7 @@ Proof-of-concept version.
 
 ## 1.1.6 (open)
 
-* Dependencies are listed in naft generator
+* Dependencies and build target are listed in naft generator
 * Ingredients created in a recipe always have that recipe has owner
 * Naft output follows types and variables as chai
 * Added chai functionality for `add_file` and `add_key_value`
