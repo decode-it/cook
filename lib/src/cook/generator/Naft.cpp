@@ -74,7 +74,7 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
         auto nn = n.node("target");
         nn.attr("type", bt.type).attr("name", bt.name);
         if (bt.filename)
-            nn.attr("filename", *bt.filename);
+            nn.attr("filename", bt.filename->string());
     }
 
     auto base_naft = [](gubg::naft::Node & node, const LanguageTypePair & ltp, const auto & ingredient)
