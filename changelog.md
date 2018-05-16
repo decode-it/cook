@@ -67,6 +67,8 @@ Proof-of-concept version.
 * Added chai functionality for `add_file` and `add_key_value`
 * Added chai `getenv()` function
 * No more backslashes in generated cmakelists
+* Added /FS for msvc to allow parallel builds
+* DLL fixes: .def files now have public propagation, /DEF is only active when building shared libraries
 
 ## Next
 
