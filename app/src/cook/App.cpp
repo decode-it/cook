@@ -82,47 +82,61 @@ Result App::process_()
             rr->stream();
     }
 
-    {
-        auto ss = log::scope("Preparing menu", -2);
-        Result rc = kitchen_.initialize_menu(root_recipes);
 
-        if (!rc)
-            MSS(process_generators_());
-
-        kitchen_.menu().stream();
-
-        MSS(rc);
-    }
-
+    // set the schef
+    std::shared_ptr<process::chef::Interface> chef;
     {
         auto ss = log::scope("Process with chef", -2);
         //Process the menu with the chef
         {
-            auto chef = options_.chef;
-            if (chef.empty())
+            auto chef_name = options_.chef;
+            if (chef_name.empty())
                 //CompileArchiveLink chef is default
-                chef = "cal";
+                chef_name = "cal";
 
             if (false) {}
-            else if (chef == "void")
+            else if (chef_name == "void")
             {
                 //No chef. This is useful when only the recipe names are needed, without the timeconsuming file resolving etc.
             }
-            else if (chef == "cal")
+            else if (chef_name == "cal")
             {
-                //CompileArchiveLink chef.
-                process::chef::CompileArchiveLink cal("default");
-                MSS(cal.initialize());
-                MSS(cal.mis_en_place(kitchen_));
+                chef = std::make_shared<process::chef::CompileArchiveLink>("default");
             }
         }
     }
 
+    // try resolving
+    Result resolve_result;
     {
-        auto ss = log::scope("Process with generators", -2);
-        // and now process all the requested visualizations
-        MSS(process_generators_());
+        auto ss = log::scope("Preparing menu", -2);
+        resolve_result = kitchen_.initialize_menu(root_recipes);
     }
+    
+    // dependening the chef, we will respond differently
+    if (chef)
+    {
+        if (resolve_result)
+        {
+            auto ss = log::scope("Processing the chef", -2);
+            MSS(chef->initialize());
+            MSS(chef->mis_en_place(kitchen_));
+        }
+    
+        // process the generators
+        MSS(process_generators_());
+        kitchen_.menu().stream();
+
+        // ouput if there were unresolved dependencies
+        MSS(resolve_result);
+    }
+    else
+    {
+        // process the generators
+        MSS(process_generators_());
+        kitchen_.menu().stream();
+    }
+
 
     MSS_END();
 }

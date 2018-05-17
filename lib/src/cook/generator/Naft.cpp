@@ -132,7 +132,7 @@ Result Naft::set_option(const std::string & option)
 
 bool Naft::can_process(const Context & context) const
 {
-    return context.menu().is_valid();
+    return true;
 }
 
 Result Naft::process(const Context & context)
