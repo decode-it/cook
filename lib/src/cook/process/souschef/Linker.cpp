@@ -15,7 +15,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     model::Recipe::Files & files = recipe.files();
     auto & g = file_command_graph;
 
-    auto stop_progagation = [](auto & ingredients)
+    auto stop_propagation = [](auto & ingredients)
     {
         for(auto & ingredient : ingredients)
             ingredient.set_propagation(Propagation::Private);
@@ -26,10 +26,10 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     auto deps       = recipe.files().range(LanguageTypePair(Language::Binary, Type::Dependency));
     auto exports    = recipe.files().range(LanguageTypePair(Language::Definition, Type::Export));
 
-    stop_progagation(objects);
-    stop_progagation(libs);
-    stop_progagation(deps);
-    stop_progagation(exports);
+    stop_propagation(objects);
+    stop_propagation(libs);
+    stop_propagation(deps);
+    stop_propagation(exports);
 
     if (objects.empty() && deps.empty())
     {

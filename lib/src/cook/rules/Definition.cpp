@@ -38,7 +38,7 @@ namespace cook { namespace rules {
 
         switch (key.type)
         {
-            case Type::Source:
+            case Type::Export:
                 break;
 
             default:
@@ -47,6 +47,7 @@ namespace cook { namespace rules {
         }
 
         file.set_overwrite(Overwrite::IfSame);
+        file.set_propagation(Propagation::Public);
 
         MSS_END();
     }

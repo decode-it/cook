@@ -66,6 +66,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         oss << "    kv.append(Part.Pre, \"nologo\")" << std::endl;
         oss << "    kv.append(Part.Pre, \"EHsc\")" << std::endl;
         oss << "    kv.append(Part.Pre, \"bigobj\")" << std::endl;
+        oss << "    kv.append(Part.Pre, \"FS\")" << std::endl;
         oss << "    kv.append(Part.Pre, \"c\")" << std::endl;
         oss << "    kv.append(Part.Define, \"NOMINMAX\")" << std::endl;
         oss << "    kv.append(Part.Deps, \"msvc\")" << std::endl;
@@ -91,7 +92,6 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         oss << "" << std::endl;
         oss << "    tm[Part.Cli]            = fun(k,v) { return k }" << std::endl;
         oss << "    tm[Part.Pre]            = fun(k,v) { if (v.empty) { return \"/${k}\" } else { return \"/${k}:${v}\" } }" << std::endl;
-        oss << "    tm[Part.Export]         = fun(k,v) { return \"/DEF:${k}\" }" << std::endl;
         oss << "    tm[Part.Output]         = fun(k,v) { return \"/OUT:${k}\" }" << std::endl;
         oss << "    tm[Part.Input]          = fun(k,v) { return k }" << std::endl;
         oss << "    tm[Part.Library]        = fun(k,v) { return \"${k}.lib\" }" << std::endl;
@@ -99,6 +99,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         oss << "    " << std::endl;
         oss << "    kv.append(Part.Cli, \"link\")" << std::endl;
         oss << "    if (s == TargetType.SharedLibrary){" << std::endl;
+        oss << "        tm[Part.Export]     = fun(k,v) { return \"/DEF:${k}\" }" << std::endl;
         oss << "        kv.append(Part.Pre, \"DLL\")" << std::endl;
         oss << "    }" << std::endl;
         oss << "}" << std::endl;

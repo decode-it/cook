@@ -3,6 +3,7 @@
 #include "cook/Context.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
+#include "gubg/string/escape.hpp"
 #include <list>
 
 namespace cook { namespace generator {
@@ -16,7 +17,7 @@ Result CMake::set_option(const std::string & option)
 {
     MSS_BEGIN(Result);
     output_path_ = option;
-    set_filename(gubg::filesystem::combine(output_path_, default_filename()).string());
+    set_filename(gubg::string::escape_cmake(gubg::filesystem::combine(output_path_, default_filename()).string()));
     MSS_END();
 }
 
@@ -225,7 +226,7 @@ Result CMake::add_interface_library_(std::ofstream & str, model::Recipe * recipe
     recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
         if (ltp.type == Type::Header)
-            str << "  " << gubg::filesystem::combine(output_to_source, file.key()) << std::endl;
+            str << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
         return true;
     });
     str << ")" << std::endl;
@@ -260,12 +261,12 @@ Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe,
         switch(ltp.type)
         {
             case Type::Source:
-                ofs << "  " << gubg::filesystem::combine(output_to_source, file.key()) << std::endl;
+                ofs << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
                 break;
 
             case Type::Header:
                 if (add_headers)
-                    ofs << "  " << gubg::filesystem::combine(output_to_source, file.key()) << std::endl;
+                    ofs << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
                 break;
 
             default:
@@ -321,7 +322,7 @@ void CMake::set_link_paths_(std::ostream & oss, model::Recipe * recipe, const st
     recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
         if (ltp.type == Type::LibraryPath)
-            link_directories.push_back(gubg::filesystem::combine(output_to_source, file.dir()).string());
+            link_directories.push_back(gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.dir()).string()));
 
         return true;
     });
@@ -373,7 +374,7 @@ void CMake::set_target_properties_(std::ostream & ofs, model::Recipe * recipe, c
         {
             if (ltp.type == Type::IncludePath)
             {
-                include_dirs.insert(gubg::stream([&](auto & os) { os << keyword << " " << gubg::filesystem::combine(output_to_source, file.key()); } ));
+                include_dirs.insert(gubg::stream([&](auto & os) { os << keyword << " " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()); } ));
             }
             return true;
         });
@@ -402,7 +403,7 @@ void CMake::set_target_properties_(std::ostream & ofs, model::Recipe * recipe, c
             if (ltp.type == Type::ForceInclude)
                 options.insert(gubg::stream([&](auto & os)
                 {
-                    os << "-include " << gubg::filesystem::combine(output_to_source, file.rel()).string();
+                    os << "-include " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.rel()).string());
                 }));
 
             return true;
