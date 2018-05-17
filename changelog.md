@@ -59,7 +59,7 @@ Proof-of-concept version.
 * Added support Language.Definition and Type.Export to handle .def files when creating a .dll
 * Fix for msvc defines
 
-## 1.1.6 (open)
+## 1.1.6
 
 * Dependencies and build target are listed in naft generator
 * Ingredients created in a recipe always have that recipe has owner
