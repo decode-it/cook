@@ -71,6 +71,8 @@ Proof-of-concept version.
 * Added /FS for msvc to allow parallel builds
 * DLL fixes: .def files now have public propagation, /DEF is only active when building shared libraries
 
+## 1.1.7 (open)
+
 ## Next
 
 * Support for `COOK_PATH` search for scripts
