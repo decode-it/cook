@@ -23,17 +23,36 @@ struct Processor
 
 void Processor::construct_book_list()
 {
-    const auto & recipes = context.menu().topological_order_recipes();
-    used_recipes_.insert(RANGE(recipes));
-
-    for(const model::Recipe * recipe : recipes)
+    if (context.menu().is_valid())
     {
-        // get the parent book
-        model::Book * book = recipe->parent();
+        const auto & recipes = context.menu().topological_order_recipes();
+        used_recipes_.insert(RANGE(recipes));
 
-        // go upwards until root or until already present
-        while (book != nullptr && used_books_.insert(book).second)
-            book = book->parent();
+        for(const model::Recipe * recipe : recipes)
+        {
+            // get the parent book
+            model::Book * book = recipe->parent();
+
+            // go upwards until root or until already present
+            while (book != nullptr && used_books_.insert(book).second)
+                book = book->parent();
+        }
+    }
+    else
+    {
+        // just add all the books and recipes, we've got unresolved dependencies
+        std::stack<model::Book*> todo;
+        todo.push(context.root_book());
+
+        while(!todo.empty())
+        {
+            model::Book * cur = todo.top();
+            todo.pop();
+
+            used_books_.insert(cur);
+            cur->each_book([&](auto * book){ todo.push(book); return true; });
+            cur->each_recipe([&](auto * recipe) { used_recipes_.insert(recipe); return true; });
+        }
     }
 }
 
@@ -143,7 +162,7 @@ Result Naft::process(const Context & context)
     MSS(open_output_stream(context, ofs));
 
     Processor p(context);
-    p.construct_book_list();;
+    p.construct_book_list();
 
     auto n = gubg::naft::Document(ofs).node("structure");
 
