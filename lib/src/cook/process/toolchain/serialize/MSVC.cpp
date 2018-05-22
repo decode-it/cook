@@ -22,8 +22,8 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         oss << "        } else if (k == \"arch\" && v == \"x86\") {" << std::endl;
         oss << "        } else if (k == \"arch\" && v == \"x64\") {" << std::endl;
         oss << "        } else if (k == \"position_independent_code\" && v == \"true\") {" << std::endl;
-        oss << "        } else if (k == \"c++.std\" && e.language == Language.CXX && v == \"17\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"std\", \"c++latest\")" << std::endl;
+        oss << "        } else if (k == \"c++.std\" && e.language == Language.CXX) {" << std::endl;
+        oss << "            kv.append(Part.Pre, \"std\", \"c++${v}\")" << std::endl;
         oss << "        } else {" << std::endl;
         oss << "            return false;" << std::endl;
         oss << "        }" << std::endl;
