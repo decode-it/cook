@@ -14,6 +14,7 @@ public:
     {
         Object,
         StaticLibrary,
+        SharedLibrary,
         Interface,
         Executable
     };
@@ -33,6 +34,7 @@ private:
     Result check_types_(const Context & context);
     Result add_object_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source);
     Result add_static_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source);
+    Result add_shared_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source);
     Result add_executable_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source);
     Result add_interface_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source);
     //Result can_build_recipe_(const model::Recipe & recipe) const;
