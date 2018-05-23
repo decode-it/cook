@@ -43,6 +43,11 @@ Result CMake::construct_recipe_map_(const Context & context)
                 type = CMakeType::Executable;
                 break;
 
+            case TargetType::SharedLibrary:
+                MSG_MSS(has_sources, Error, "CMake cannot create a shared library with no sources for " << recipe->uri());
+                type = CMakeType::SharedLibrary;
+                break;
+
             case TargetType::Archive:
                 type = has_sources ? CMakeType::StaticLibrary : CMakeType::Interface;
                 break;
@@ -209,6 +214,25 @@ Result CMake::add_static_library_(std::ofstream & str, model::Recipe * recipe, c
     str << "# " << recipe->uri() << std::endl;
 
     str << "add_library(" << recipe_name_(recipe) << " STATIC" << std::endl;
+    std::list<model::Recipe*> lst;
+    MSS(context.menu().topological_order_recipes(recipe, lst));
+
+    add_source_and_header_(str, recipe, true, lst, output_to_source);
+    str << ")" << std::endl;
+
+    set_target_properties_(str, recipe, "PRIVATE", output_to_source);
+
+    str << "# " << recipe->uri() << std::endl << std::endl;
+    MSS_END();
+}
+
+Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source)
+{
+    MSS_BEGIN(Result);
+    
+    str << "# " << recipe->uri() << std::endl;
+
+    str << "add_library(" << recipe_name_(recipe) << " SHARED" << std::endl;
     std::list<model::Recipe*> lst;
     MSS(context.menu().topological_order_recipes(recipe, lst));
 

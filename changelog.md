@@ -73,6 +73,8 @@ Proof-of-concept version.
 
 ## 1.1.7 (open)
 
+* Added cmake support for creating shared libraries
+
 ## Next
 
 * Support for `COOK_PATH` search for scripts
