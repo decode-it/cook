@@ -52,10 +52,6 @@ Result CMake::construct_recipe_map_(const Context & context)
                 type = has_sources ? CMakeType::StaticLibrary : CMakeType::Interface;
                 break;
 
-            case TargetType::SharedLibrary:
-                type = has_sources ? CMakeType::SharedLibrary : CMakeType::Interface;
-                break;
-
             case TargetType::Undefined:
                 type = has_sources ? CMakeType::Object : CMakeType::Interface;
                 break;
@@ -178,32 +174,13 @@ Result CMake::add_object_library_(std::ofstream & str, model::Recipe * recipe, c
     str << "# " << recipe->uri() << std::endl;
 
     str << "add_library(" << recipe_name_(recipe) << " OBJECT" << std::endl;
-    add_source_and_header_(str, recipe, true, std::list<model::Recipe*>(), output_to_source);
+    add_source_and_header_(str, recipe, false, std::list<model::Recipe*>(), output_to_source);
     str << ")" << std::endl;
 
     set_target_properties_(str, recipe, "PRIVATE", output_to_source);
 
     str << "# " << recipe->uri() << std::endl << std::endl;
 
-    MSS_END();
-}
-
-Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source)
-{
-    MSS_BEGIN(Result);
-    
-    str << "# " << recipe->uri() << std::endl;
-
-    str << "add_library(" << recipe_name_(recipe) << " SHARED" << std::endl;
-    std::list<model::Recipe*> lst;
-    MSS(context.menu().topological_order_recipes(recipe, lst));
-
-    add_source_and_header_(str, recipe, true, lst, output_to_source);
-    str << ")" << std::endl;
-
-    set_target_properties_(str, recipe, "PRIVATE", output_to_source);
-
-    str << "# " << recipe->uri() << std::endl << std::endl;
     MSS_END();
 }
 
@@ -217,7 +194,7 @@ Result CMake::add_static_library_(std::ofstream & str, model::Recipe * recipe, c
     std::list<model::Recipe*> lst;
     MSS(context.menu().topological_order_recipes(recipe, lst));
 
-    add_source_and_header_(str, recipe, true, lst, output_to_source);
+    add_source_and_header_(str, recipe, false, lst, output_to_source);
     str << ")" << std::endl;
 
     set_target_properties_(str, recipe, "PRIVATE", output_to_source);
@@ -255,7 +232,7 @@ Result CMake::add_executable_(std::ofstream & str, model::Recipe * recipe, const
     str << "add_executable(" << recipe_name_(recipe) << " ";
     std::list<model::Recipe*> lst;
     MSS(context.menu().topological_order_recipes(recipe, lst));
-    add_source_and_header_(str, recipe, true, lst, output_to_source);
+    add_source_and_header_(str, recipe, false, lst, output_to_source);
     str << ")" << std::endl;
     set_target_properties_(str, recipe, "PRIVATE", output_to_source);
 
@@ -303,7 +280,7 @@ std::string CMake::recipe_name_(model::Recipe * recipe) const
     return uri.string('_');
 }
 
-Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_headers, const std::list<model::Recipe*> & dependencies, const std::filesystem::path & output_to_source) const
+Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports, const std::list<model::Recipe*> & dependencies, const std::filesystem::path & output_to_source) const
 {
     MSS_BEGIN(Result);
     auto add_files = [&](const LanguageTypePair & ltp, const ingredient::File & file)
@@ -315,7 +292,11 @@ Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe,
                 break;
 
             case Type::Header:
-                if (add_headers)
+                ofs << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
+                break;
+
+            case Type::Export:
+                if (add_exports)
                     ofs << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
                 break;
 
