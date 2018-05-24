@@ -1,9 +1,50 @@
 #include "cook/process/toolchain/serialize/Standard.hpp"
+#include "cook/OS.hpp"
 
 namespace cook { namespace process { namespace toolchain { namespace serialize {
 
+    namespace {
+
+        void serialize_naming(std::ostream & oss)
+        {
+            if(get_os() == OS::Windows)
+            {
+                oss << "cook.toolchain.set_target_namer(fun(r) {" << std::endl;
+                oss << "    if (false) {" << std::endl;
+                oss << "    } else if (r.type == TargetType.Executable) {" << std::endl;
+                oss << "        return \"${r.name}.exe\"" << std::endl;
+                oss << "    } else if (r.type == TargetType.SharedLibrary) {" << std::endl;
+                oss << "        return \"${r.name}.dll\"" << std::endl;
+                oss << "    } else if(r.type == TargetType.Archive) {" << std::endl;
+                oss << "        return \"${r.name}.lib\"" << std::endl;
+                oss << "    } else {" << std::endl;
+                oss << "        return \"\"" << std::endl;
+                oss << "    }" << std::endl;
+                oss << "})" << std::endl;
+            }
+            else
+            {
+                oss << "cook.toolchain.set_target_namer(fun(r) {" << std::endl;
+                oss << "    if (false) {" << std::endl;
+                oss << "    } else if (r.type == TargetType.Executable) {" << std::endl;
+                oss << "        return \"${r.name}\"" << std::endl;
+                oss << "    } else if (r.type == TargetType.SharedLibrary) {" << std::endl;
+                oss << "        return \"lib${r.name}.so\"" << std::endl;
+                oss << "    } else if(r.type == TargetType.Archive) {" << std::endl;
+                oss << "        return \"lib${r.name}.a\"" << std::endl;
+                oss << "    } else {" << std::endl;
+                oss << "        return \"\"" << std::endl;
+                oss << "    }" << std::endl;
+                oss << "})" << std::endl;
+            }
+        }
+    }
+
     void standard_config(std::ostream & oss)
     {
+        serialize_naming(oss);
+        oss << std::endl;
+
         oss << "cook.toolchain.configure(1, \"single key translations\", fun(e,k,v,b) {" << std::endl;
         oss << "    if (v != \"true\") {" << std::endl;
         oss << "        return false" << std::endl;

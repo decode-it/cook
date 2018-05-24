@@ -22,7 +22,62 @@ namespace cook { namespace process { namespace toolchain {
         return target_type < rhs.target_type;
     }
 
+    namespace {
+
+        std::filesystem::path linux_namer(const model::Recipe & recipe)
+        {
+            std::ostringstream oss;
+            const std::string & name = recipe.build_target().name;
+
+            switch(recipe.build_target().type)
+            {
+                case TargetType::Archive:
+                    oss << "lib" << name << ".a";
+                    break;
+
+                case TargetType::Executable:
+                    oss << name;
+                    break;
+                case TargetType::SharedLibrary:
+                    oss << "lib" << name << ".so";
+                    break;
+
+                default:
+                    return std::filesystem::path();
+            }
+
+            return std::filesystem::path(oss.str());
+        }
+
+        std::filesystem::path windows_namer(const model::Recipe & recipe)
+        {
+            std::ostringstream oss;
+            const std::string & name = recipe.build_target().name;
+
+            switch(recipe.build_target().type)
+            {
+                case TargetType::Archive:
+                    oss << name << ".lib";
+                    break;
+
+                case TargetType::Executable:
+                    oss << name << ".exe";
+                    break;
+                case TargetType::SharedLibrary:
+                    oss << name << ".dll";
+                    break;
+
+                default:
+                    return std::filesystem::path();
+            }
+
+            return std::filesystem::path(oss.str());
+        }
+    }
+
+
     Manager::Manager()
+    : primary_target_functor_(get_os() == OS::Windows ? windows_namer : linux_namer)
     {
     }
 
@@ -145,6 +200,24 @@ namespace cook { namespace process { namespace toolchain {
             return Result{};
         };
         board_.each_config(lambda);
+    }
+
+    const Manager::NameFunctor & Manager::primary_target_functor() const
+    {
+        return primary_target_functor_;
+    }
+
+    void Manager::set_primary_target_functor(const NameFunctor & functor)
+    {
+        primary_target_functor_ = functor;
+    }
+
+    std::filesystem::path Manager::get_primary_target(const model::Recipe & recipe) const
+    {
+        if (!primary_target_functor_)
+            return std::filesystem::path();
+
+        return primary_target_functor_(recipe);
     }
 
 } } } 

@@ -6,6 +6,7 @@
 #include "cook/process/toolchain/Configuration.hpp"
 #include "cook/TargetType.hpp"
 #include "cook/Result.hpp"
+#include "cook/model/Recipe.hpp"
 #include <map>
 
 namespace cook { namespace process { namespace toolchain { 
@@ -13,6 +14,8 @@ namespace cook { namespace process { namespace toolchain {
     class Manager
     {
     public:
+        using NameFunctor = std::function<std::filesystem::path (const model::Recipe &)>;
+        
         Manager();
 
         bool is_initialized() const;
@@ -33,6 +36,11 @@ namespace cook { namespace process { namespace toolchain {
         bool has_config(const std::string & key, const std::string & value) const;
         std::list<std::string> config_values(const std::string & key) const { return board_.config_values(key); }
         std::list<std::pair<std::string, std::string>> all_config_values() const;
+
+        const NameFunctor & primary_target_functor() const;
+        void set_primary_target_functor(const NameFunctor & functor);
+        std::filesystem::path get_primary_target(const model::Recipe & recipe) const;
+
 
     private:
         struct Key
@@ -64,6 +72,7 @@ namespace cook { namespace process { namespace toolchain {
         using ElementDesc = std::pair<Element::Type, Language>;
         std::map<Key, Element::Ptr> elements_;
         ConfigurationBoard board_;
+        NameFunctor primary_target_functor_;
     };
 
 } } } 

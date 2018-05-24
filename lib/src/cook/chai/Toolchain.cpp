@@ -1,9 +1,11 @@
 #include "cook/chai/Toolchain.hpp"
+#include "cook/chai/Recipe.hpp"
 
 namespace cook { namespace chai {
 
-        Toolchain::Toolchain(Manager * manager)
-        : manager_(manager)
+        Toolchain::Toolchain(Manager * manager, const Context* context)
+        : manager_(manager),
+          context_(context)
         {
         }
 
@@ -79,5 +81,16 @@ namespace cook { namespace chai {
         {
             CHAI_MSS_BEGIN();
             manager_->each_config(key, cb);
+        }
+
+        void Toolchain::set_primary_name_functor(const PrimaryNameFunctor & functor)
+        {
+            const Context * context = context_;
+            auto lambda = [=](const model::Recipe & recipe) -> std::filesystem::path
+            {
+                Recipe r(const_cast<model::Recipe *>(&recipe), context);
+                return std::filesystem::path(functor(r)); 
+            };
+            manager_->set_primary_target_functor(lambda);
         }
 } }

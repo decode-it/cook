@@ -11,12 +11,6 @@ class RecipeNamer : public Interface
 public:
     std::string description() const override { return "Recipe name"; }
     Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
-
-private:
-    void update_build_target_name(model::Recipe & recipe) const;
-    std::filesystem::path dynamic_library_filename(const std::string &build_target_name) const;
-    std::filesystem::path executable_filename(const std::string &build_target_name) const;
-    std::filesystem::path static_library_filename(const std::string &build_target_name) const;
 };
 
 } } }

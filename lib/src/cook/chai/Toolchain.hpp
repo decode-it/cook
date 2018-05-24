@@ -8,6 +8,9 @@
 
 namespace cook { namespace chai {
 
+    class Recipe;
+    class Context;
+
     class Toolchain : public Freezable
     {
         using Manager = process::toolchain::Manager;
@@ -15,8 +18,9 @@ namespace cook { namespace chai {
     public:
         using ConfigurationBoard = process::toolchain::ConfigurationBoard;
         using ConfigurationCallback = std::function<bool (ToolchainElement, const std::string &, const std::string &, ConfigurationBoard &)>;
-        
-        Toolchain(Manager * manager);
+        using PrimaryNameFunctor = std::function<std::string (Recipe)>;
+
+        Toolchain(Manager * manager, const Context * context);
 
         bool has_element(ElementType type, const Flags & language, TargetType target_type);
         ToolchainElement element(ElementType type, const Flags & language, TargetType target_type);      
@@ -31,9 +35,12 @@ namespace cook { namespace chai {
         using IterationCallback2 = std::function<void (const std::string &value)>;
         void each_config_2(const std::string &key, const IterationCallback2 &);
 
+        void set_primary_name_functor(const PrimaryNameFunctor & functor);
+
     private:
         Result check_language_(const Flags & language);
         Manager * manager_; 
+        const Context * context_;
     };
 
 } }

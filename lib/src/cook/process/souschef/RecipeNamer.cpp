@@ -1,67 +1,18 @@
 #include "cook/process/souschef/RecipeNamer.hpp"
+#include "cook/process/toolchain/Manager.hpp"
 
 namespace cook { namespace process { namespace souschef {
 
-void RecipeNamer::update_build_target_name(model::Recipe & recipe) const
-{
-    if (recipe.build_target().name.empty())
-        recipe.build_target().name = recipe.uri().as_relative().string('.');
-}
-
-std::filesystem::path RecipeNamer::dynamic_library_filename(const std::string & build_target_name) const
-{
-#if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << build_target_name << ".dll"; });
-#else
-    return gubg::stream([&](auto & os) { os << "lib" << build_target_name << ".so"; });
-#endif
-}
-
-std::filesystem::path RecipeNamer::executable_filename(const std::string &build_target_name) const
-{
-#if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << build_target_name << ".exe"; });
-#else
-    return gubg::stream([&](auto & os) { os << build_target_name; });
-#endif
-}
-
-std::filesystem::path RecipeNamer::static_library_filename(const std::string &build_target_name) const
-{
-#if BOOST_OS_WINDOWS
-    return gubg::stream([&](auto & os) { os << build_target_name << ".lib"; });
-#else
-    return gubg::stream([&](auto & os) { os << "lib" << build_target_name << ".a"; });
-#endif
-}
-
-
-Result RecipeNamer::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
+Result RecipeNamer::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & context) const
 {
     MSS_BEGIN(Result);
 
-    update_build_target_name(recipe);
+    auto output = context.toolchain().get_primary_target(recipe);
 
-    switch(recipe.build_target().type)
-    {
-        case TargetType::Archive:
-            recipe.build_target().filename = static_library_filename(recipe.build_target().name);
-            break;
-
-        case TargetType::Executable:
-            recipe.build_target().filename = executable_filename(recipe.build_target().name);
-            break;
-
-        case TargetType::SharedLibrary:
-            recipe.build_target().filename = dynamic_library_filename(recipe.build_target().name);
-            break;
-
-    case TargetType::Undefined:
-        break;
-
-        default:
-            MSS(false);
-    }
+    if (output.empty())
+        recipe.build_target().filename.reset();
+    else
+        recipe.build_target().filename = output;
 
     MSS_END();
 }

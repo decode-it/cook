@@ -41,9 +41,9 @@ namespace cook { namespace model {
 
     }
 
-    bool Recipe::add_dependency(const Dependency & dependency, const DependencyFileFilter & file_filter, const DependencyKeyValueFilter & key_value_filter)
+    Result Recipe::add_dependency(const Dependency & dependency, const DependencyFileFilter & file_filter, const DependencyKeyValueFilter & key_value_filter)
     {
-        MSS_BEGIN(bool);
+        MSS_BEGIN(Result);
 
         {
             DependencyValue dep_value;
@@ -51,7 +51,7 @@ namespace cook { namespace model {
             dep_value.file_filter = file_filter;
             dep_value.key_value_filter = key_value_filter;
 
-            MSS(dependencies_.emplace(dependency, std::move(dep_value)).second);
+            MSG_MSS(dependencies_.emplace(dependency, std::move(dep_value)).second, Error, uri() << " is already dependent on " << dependency);
         }
 
         MSS_END();

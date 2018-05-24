@@ -11,10 +11,18 @@
 #include "gubg/mss.hpp"
 #include "gubg/Strange.hpp"
 #include <cassert>
+#include <algorithm>
 
 namespace  { 
     /* const char *logns = ""; */
     const char *logns = nullptr;
+
+    std::string to_lower(const std::string & str)
+    {
+        std::string res = str;
+        std::for_each(res.begin(), res.end(), [](char & c) { c = std::tolower(c); });
+        return res;
+    }
 } 
 
 namespace cook {
@@ -63,18 +71,20 @@ Result Context::register_generator(GeneratorPtr generator)
 
     MSS(!!generator);
     const std::string & name = generator->name();
+    const std::string & lname = to_lower(name);
 
     MSG_MSS(!name.empty(), Error, "Cannot add a generator with an empty name");
-    MSG_MSS(generators_.find(name) == generators_.end(), Error, "A generator with name '" << name << "' already exists");
+    MSG_MSS(generators_.find(lname) == generators_.end(), Error, "A generator with name '" << name << "' already exists");
 
-    generators_.emplace(name, generator);
+    generators_.emplace(lname, generator);
 
     MSS_END();
 }
 
 Context::GeneratorPtr Context::get_generator(const std::string & name) const
 {
-    auto it = generators_.find(name);
+    const std::string & lname = to_lower(name);
+    auto it = generators_.find(lname);
     return it == generators_.end() ? GeneratorPtr() : it->second;
 }
 

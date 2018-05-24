@@ -69,6 +69,7 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::user_type<Recipe>(), "Recipe");
         ptr->add(chaiscript::constructor<Recipe(const Recipe &)>(), "Recipe");
         ptr->add(chaiscript::fun(&Recipe::set_type), "set_type");
+        ptr->add(chaiscript::fun(&Recipe::type), "type");
         ptr->add(chaiscript::fun(&Recipe::working_directory), "working_dir");
         
 

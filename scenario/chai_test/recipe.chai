@@ -7,6 +7,7 @@ def create_recipe(uri)
 {
     var v = create_recipe("test")
     var v2 = v
+
     v.set_config_callback(Hook.Post, fun(r)
     { 
         print("Post called") 
@@ -14,10 +15,44 @@ def create_recipe(uri)
             print("${f.key}: ${f.flags}")
         })
     })
-    v.set_config_callback(Hook.Pre, fun(){ print("Pre called") })
+
+    v.set_config_callback(Hook.Pre, fun(){ 
+        print("Pre called") 
+    })
+
+    v.add("src", "**.*")
 
     v.name = "testje"
     assert_equal(v.name, "testje")
 
-    v.add("src", "**.*")
+    {
+        v.set_type(TargetType.Executable)
+        if (my(OS) == OS.Windows) {
+            assert_equal(v.primary_target_filename, "testje.ext");
+        } else {
+            assert_equal(v.primary_target_filename, "testje");
+        }
+    }
+
+    {
+        v.set_type(TargetType.SharedLibrary)
+        if (my(OS) == OS.Windows) {
+            assert_equal(v.primary_target_filename, "testje.dll");
+        } else {
+            assert_equal(v.primary_target_filename, "libtestje.so");
+        }
+    }
+    
+    {
+        v.set_type(TargetType.Archive)
+        if (my(OS) == OS.Windows) {
+            assert_equal(v.primary_target_filename, "testje.lib");
+        } else {
+            assert_equal(v.primary_target_filename, "libtestje.a");
+        }
+    }
+    {
+        v.set_type(TargetType.Undefined)
+        assert_equal(v.primary_target_filename, "");
+    }
 }

@@ -1,5 +1,6 @@
 #include "cook/chai/module/Toolchain.hpp"
 #include "cook/chai/Toolchain.hpp"
+#include "cook/chai/Recipe.hpp"
 #include "gubg/chai/Module.hpp"
 
 namespace cook { namespace chai { namespace module {
@@ -23,6 +24,9 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&Toolchain::configure), "configure");
         ptr->add(chaiscript::fun(&Toolchain::each_config_1), "each_config");
         ptr->add(chaiscript::fun(&Toolchain::each_config_2), "each_config");
+
+        ptr->add(chaiscript::user_type<Toolchain::PrimaryNameFunctor>(), "PrimaryNameFunctor");
+        ptr->add(chaiscript::fun(&Toolchain::set_primary_name_functor), "set_target_namer");
 
         return ptr;
     }

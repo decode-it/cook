@@ -11,6 +11,7 @@
 #include "cook/ingredient/KeyValue.hpp"
 #include "cook/util/ElementAt.hpp"
 #include "cook/log/Scope.hpp"
+#include "cook/Result.hpp"
 #include "gubg/Range.hpp"
 #include "boost/iterator/transform_iterator.hpp"
 #include <set>
@@ -83,7 +84,7 @@ public:
     gubg::Range<DependencyPairIterator> dependency_pairs() const;
     gubg::Range<DependencyIterator> dependencies() const;
 
-    bool add_dependency(const Dependency & dependency, const DependencyFileFilter & file_filter = DependencyFileFilter(), const DependencyKeyValueFilter & key_value_filter = DependencyKeyValueFilter());
+    Result add_dependency(const Dependency & dependency, const DependencyFileFilter & file_filter = DependencyFileFilter(), const DependencyKeyValueFilter & key_value_filter = DependencyKeyValueFilter());
     bool resolve_dependency(const Uri & uri, Recipe * recipe);
 
     void stream(log::Importance = log::Importance{}) const;

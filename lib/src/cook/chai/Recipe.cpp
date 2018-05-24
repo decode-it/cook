@@ -1,6 +1,7 @@
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/File.hpp"
 #include "cook/chai/Context.hpp"
+#include "cook/process/toolchain/Manager.hpp"
 #include "cook/chai/RaiiIngredient.hpp"
 #include "cook/chai/mss.hpp"
 
@@ -16,6 +17,11 @@ namespace cook { namespace chai {
     void Recipe::set_type(TargetType type)
     {
         recipe_->build_target().type = type;
+    }
+
+    TargetType Recipe::type() const
+    {
+        return recipe_->build_target().type;
     }
 
     void Recipe::set_working_directory(const std::string & dir)
@@ -282,10 +288,7 @@ namespace cook { namespace chai {
 
     std::string Recipe::build_target_filename() const
     {
-        if (recipe_->build_target().filename)
-            return *recipe_->build_target().filename;
-        else
-            return std::string();
+        return context_->toolchain().get_primary_target(*recipe_).string();
     }
 
 } }

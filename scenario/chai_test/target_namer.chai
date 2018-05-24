@@ -1,0 +1,13 @@
+cook.toolchain.set_target_namer(fun(r) {
+    return "${r.type}.${r.name}";
+})
+
+
+{
+    var v = cook.recipe("name")
+
+    for(t : [TargetType.Executable, TargetType.SharedLibrary, TargetType.Archive]) {
+        v.set_type(t);
+        assert_equal(v.primary_target_filename, "${t}.name");
+    }
+}

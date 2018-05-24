@@ -79,9 +79,6 @@ Proof-of-concept version.
 * Chai recipe and book are copy constructable
 * Chai recipe `each_file` and `each_key_value`
 * Chai recipe build target name is adjustable
-
-## WIP
-
 * Expose build target filename functionality in toolchain
 * Generator selection is case-InsensItive
 * Double dependency error better output 

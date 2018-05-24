@@ -6,7 +6,7 @@ namespace cook { namespace chai {
         Cook::Cook(model::Book * root_book, Context * context) : 
             Book(root_book, context),
             context_(context),
-            toolchain_(&context->toolchain())   
+            toolchain_(&context->toolchain(), context)   
         {
         }
 

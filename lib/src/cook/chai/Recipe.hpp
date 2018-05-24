@@ -29,6 +29,7 @@ public:
     void remove(const std::string & dir, const std::string & pattern, const GlobFunctor & functor = GlobFunctor());
     void depends_on(const model::Uri &dependency, const DepFileFilter & file_filter = DepFileFilter(), const DepKeyValueFilter & key_value_filter = DepKeyValueFilter());
     void set_type(TargetType type);
+    TargetType type() const;
     void set_working_directory(const std::string & dir);
     std::string working_directory() const;
 
