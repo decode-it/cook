@@ -12,6 +12,7 @@
 #include "gubg/Strange.hpp"
 #include <cassert>
 #include <algorithm>
+#include <cctype>
 
 namespace  { 
     /* const char *logns = ""; */
