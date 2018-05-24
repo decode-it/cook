@@ -83,6 +83,10 @@ Proof-of-concept version.
 * Generator selection is case-InsensItive
 * Double dependency error better output 
 
+## 1.1.8 (open)
+
+* [wip] Support for HTML output
+
 ## Next
 
 * Support for `COOK_PATH` search for scripts
