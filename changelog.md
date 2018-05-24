@@ -71,7 +71,7 @@ Proof-of-concept version.
 * Added /FS for msvc to allow parallel builds
 * DLL fixes: .def files now have public propagation, /DEF is only active when building shared libraries
 
-## 1.1.7 (open)
+## 1.1.7
 
 * Added cmake support for creating shared libraries
 * Added Pre/Post configuration callback for recipes
@@ -86,6 +86,4 @@ Proof-of-concept version.
 ## Next
 
 * Support for `COOK_PATH` search for scripts
-* Chaiscript-based toolchain
 * Internal #include-based dependency detection for compilers that cannot output dependencies
-* Arduino support: compilation, linking and programming
