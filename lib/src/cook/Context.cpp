@@ -7,6 +7,7 @@
 #include "cook/generator/CMake.hpp"
 #include "cook/generator/Naft.hpp"
 #include "cook/generator/Ninja.hpp"
+#include "cook/generator/HTML.hpp"
 #include "cook/process/toolchain/Manager.hpp"
 #include "gubg/mss.hpp"
 #include "gubg/Strange.hpp"
@@ -42,6 +43,7 @@ Result Context::initialize()
     MSS(register_generator(std::make_shared<generator::CMake>()));
     MSS(register_generator(std::make_shared<generator::Naft>()));
     MSS(register_generator(std::make_shared<generator::Ninja>()));
+    MSS(register_generator(std::make_shared<generator::HTML>()));
 
     // specify as project name the current directory
     {
