@@ -74,6 +74,17 @@ Proof-of-concept version.
 ## 1.1.7 (open)
 
 * Added cmake support for creating shared libraries
+* Added Pre/Post configuration callback for recipes
+* Chai global variable cook inherits book
+* Chai recipe and book are copy constructable
+* Chai recipe `each_file` and `each_key_value`
+* Chai recipe build target name is adjustable
+
+## WIP
+
+* Expose build target filename functionality in toolchain
+* Generator selection is case-InsensItive
+* Double dependency error better output 
 
 ## Next
 

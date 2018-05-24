@@ -2,6 +2,7 @@
 #define HEADER_cook_model_Recipe_hpp_ALREADY_INCLUDED
 
 #include "cook/model/Uri.hpp"
+#include "cook/model/Callback.hpp"
 #include "cook/model/Element.hpp"
 #include "cook/model/GlobInfo.hpp"
 #include "cook/model/BuildTarget.hpp"
@@ -69,6 +70,9 @@ public:
     const BuildTarget & build_target() const                { return build_target_; }
     BuildTarget & build_target()                            { return build_target_; }
 
+    void set_callback(Hook hook, const Callback & callback);
+    const Callback & callback(Hook hook) const;
+
     const std::filesystem::path & working_directory() const;
     void set_working_directory(const std::filesystem::path & wd);
 
@@ -102,6 +106,7 @@ private:
     bool allows_early_globbing_;
     BuildTarget build_target_;
     std::set<Language> languages_;
+    Callbacks callbacks_;
 };
 
 } }

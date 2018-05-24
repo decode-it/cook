@@ -4,7 +4,7 @@
 namespace cook { namespace chai { 
 
         Cook::Cook(model::Book * root_book, Context * context) : 
-            root_(root_book, context),
+            Book(root_book, context),
             context_(context),
             toolchain_(&context->toolchain())   
         {
@@ -12,14 +12,14 @@ namespace cook { namespace chai {
 
         Book Cook::operator[](const model::Uri & uri)
         {
-            return root_.book(uri);
+            return root().book(uri);
         }
 
         Book Cook::root() const
         {
-            return root_;
+            return static_cast<const Book &>(*this);
         }
-
+        
         std::string Cook::working_directory() const
         {
             return context_->current_working_directory().string();

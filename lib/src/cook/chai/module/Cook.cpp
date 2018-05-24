@@ -9,6 +9,7 @@ namespace cook { namespace chai { namespace module {
         auto ptr = gubg::chai::make_module();
 
         ptr->add(chaiscript::fun(&Cook::operator[]), "[]");
+        ptr->add(chaiscript::base_class<Book, Cook>());
         ptr->add(chaiscript::fun([](const Cook & c) {return c.working_directory(); }), "working_directory");
         ptr->add(chaiscript::fun([](const Cook & c, bool abs) {return c.working_directory(abs); }), "working_directory");
         ptr->add(chaiscript::fun(&Cook::project_name), "project_name");

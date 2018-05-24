@@ -12,6 +12,7 @@ namespace cook { namespace chai {
 
 class Context;
 class File;
+class KeyValue;
 
 class Recipe
 {
@@ -19,7 +20,8 @@ public:
     using GlobFunctor = std::function<bool (File &)>;
     using DepFileFilter = model::Recipe::DependencyFileFilter;
     using DepKeyValueFilter = model::Recipe::DependencyKeyValueFilter;
-
+    using ConfigCallback1 = std::function<void ()>;
+    using ConfigCallback2 = std::function<void (Recipe)>;
 
     Recipe(model::Recipe * recipe, const Context *context);
 
@@ -41,6 +43,15 @@ public:
     bool add_file(const std::string & dir, const std::string & rel, const Flags & flags = Flags());
     bool add_key_value(const std::string & key, const Flags & flags = Flags());
     bool add_key_value(const std::string & key, const std::string & value, const Flags & flags = Flags());
+    void each_file(const std::function<void (File &)> & functor);
+    void each_key_value(const std::function<void (KeyValue &)> & functor);
+
+
+    void set_callback1(Hook hook, const ConfigCallback1 & callback);
+    void set_callback2(Hook hook, const ConfigCallback2 & callback);
+
+    std::string & build_target_name();
+    std::string build_target_filename() const;
 
     UserData data() const { return data_; }
     const Context * context() { return context_; }

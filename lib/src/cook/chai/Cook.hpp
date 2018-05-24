@@ -12,7 +12,7 @@ namespace cook {
 
 namespace cook { namespace chai {
 
-    class Cook
+    class Cook : public Book
     {
     public:
         Cook(model::Book * root_book, Context * context);
@@ -27,7 +27,6 @@ namespace cook { namespace chai {
         Toolchain toolchain() const;
 
     private:
-        Book root_;
         Context * context_;
         Toolchain toolchain_;
     };

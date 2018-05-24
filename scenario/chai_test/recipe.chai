@@ -1,0 +1,23 @@
+def create_recipe(uri)
+{
+    var v = cook.recipe(uri)
+    return v
+}
+
+{
+    var v = create_recipe("test")
+    var v2 = v
+    v.set_config_callback(Hook.Post, fun(r)
+    { 
+        print("Post called") 
+        r.each_file(fun(f) {
+            print("${f.key}: ${f.flags}")
+        })
+    })
+    v.set_config_callback(Hook.Pre, fun(){ print("Pre called") })
+
+    v.name = "testje"
+    assert_equal(v.name, "testje")
+
+    v.add("src", "**.*")
+}

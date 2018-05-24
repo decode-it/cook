@@ -1,9 +1,11 @@
 #include "cook/chai/module/Recipe.hpp"
 #include "cook/chai/module/EnumHelper.hpp"
+#include "cook/chai/module/RaiiIngredient.hpp"
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/File.hpp"
 #include "cook/chai/KeyValue.hpp"
 #include "cook/TargetType.hpp"
+#include "cook/Hook.hpp"
 #include "gubg/chai/Module.hpp"
 
 namespace cook { namespace chai { namespace module {
@@ -11,38 +13,9 @@ namespace cook { namespace chai { namespace module {
     using DependencyFilter = std::function<bool (chaiscript::Boxed_Value vt)>;
 
     CREATE_WRAPPER_TYPE(TargetType);
+    CREATE_WRAPPER_TYPE(Hook);
 
     namespace {
-
-        template <typename SourceType, typename ChaiType>
-        struct RaiiIngredient
-        {
-
-            RaiiIngredient(LanguageTypePair & ltp, SourceType & ingredient, const Context * context)
-            : ltp_(ltp), ingredient_(ingredient), chai(ltp, ingredient, context)
-            {
-            }
-
-            ~RaiiIngredient()
-            {
-                // update the flags back into the references
-                ltp_ = chai.language_type_pair();
-                chai.install_flags();
-
-                // set the reference to the element
-                ingredient_ = chai.element();
-            }
-
-            chaiscript::Boxed_Value as_boxed()
-            {
-                return chaiscript::var(&chai);
-            }
-
-
-            LanguageTypePair & ltp_;
-            SourceType & ingredient_;
-            ChaiType chai;
-        };
 
 
         TargetType make_user_defined(const wrapper::TargetType_t &, unsigned int val) 
@@ -56,14 +29,14 @@ namespace cook { namespace chai { namespace module {
 
             auto file_dep = [=](LanguageTypePair & ltp, ingredient::File & file)
             {
-                RaiiIngredient<ingredient::File, File> f(ltp, file, context);
-                return filter(f.as_boxed());
+                RaiiFile f(ltp, file, context);
+                return filter(as_boxed(f));
             };
 
             auto key_value_dep = [=](LanguageTypePair & ltp, ingredient::KeyValue & key_value)
             {
-                RaiiIngredient<ingredient::KeyValue, KeyValue> kv(ltp, key_value, context);
-                return filter(kv.as_boxed());
+                RaiiKeyValue kv(ltp, key_value, context);
+                return filter(as_boxed(kv));
             };
 
             recipe.depends_on(dep, file_dep, key_value_dep);
@@ -84,9 +57,17 @@ namespace cook { namespace chai { namespace module {
         EXPOSE_VALUE(TargetType, Script);
         ptr->add(chaiscript::fun(make_user_defined), "UserDefined");
 
+        EXPOSE_TYPE(Hook);
+        EXPOSE_VALUE(Hook, Pre);
+        EXPOSE_VALUE(Hook, Post);
+
+        ptr->add(chaiscript::user_type<Recipe::ConfigCallback1>(), "ConfigurationCallback");
+        ptr->add(chaiscript::user_type<Recipe::ConfigCallback2>(), "ConfigurationCallback");
+
 
         ptr->add(chaiscript::user_type<DependencyFilter>(), "DependencyFilter");
         ptr->add(chaiscript::user_type<Recipe>(), "Recipe");
+        ptr->add(chaiscript::constructor<Recipe(const Recipe &)>(), "Recipe");
         ptr->add(chaiscript::fun(&Recipe::set_type), "set_type");
         ptr->add(chaiscript::fun(&Recipe::working_directory), "working_dir");
         
@@ -157,6 +138,22 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun([](Recipe & r, const std::string & k, const Flags & f) { return r.add_key_value(k, f); }), "add_key_value");
         ptr->add(chaiscript::fun([](Recipe & r, const std::string & k, const std::string & v) { return r.add_key_value(k, v); }), "add_key_value");
         ptr->add(chaiscript::fun([](Recipe & r, const std::string & k, const std::string & v, const Flags & f) { return r.add_key_value(k, v, f); }), "add_key_value");
+
+        ptr->add(chaiscript::fun(&Recipe::set_callback1), "set_config_callback");
+        ptr->add(chaiscript::fun(&Recipe::set_callback2), "set_config_callback");
+
+        ptr->add(chaiscript::fun(&Recipe::build_target_name), "name");
+        ptr->add(chaiscript::fun(&Recipe::build_target_filename), "primary_target_filename");
+
+        ptr->add(chaiscript::fun(&Recipe::each_file), "each_file");
+        ptr->add(chaiscript::fun(&Recipe::each_key_value), "each_key_value");
+        {
+            auto lambda = [](Recipe & recipe, const std::function<void (chaiscript::Boxed_Value)> & functor)
+            {
+                recipe.each_file([=](File & f) { functor(chaiscript::var(&f)); });
+                recipe.each_key_value([=](KeyValue & f) { functor(chaiscript::var(&f)); });
+            };
+        }
         
         return ptr;
     }

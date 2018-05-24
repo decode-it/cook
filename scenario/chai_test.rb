@@ -11,11 +11,12 @@ test_case("chai_test") do
     toolchain_name = nil
 
 
-    section ("flags") { recipe_name = :flags }
-    section ("uri") { recipe_name = :uri }
-    section ("ingredient") { recipe_name = :ingredient }
-    section ("toolchain element") { toolchain_name = :toolchain_element }
-    section ("toolchain") { toolchain_name = :toolchain }
+    section ("flags")               { recipe_name = :flags }
+    section ("uri")                 { recipe_name = :uri }
+    section ("ingredient")          { recipe_name = :ingredient }
+    section ("recipe")              { recipe_name = :recipe }
+    section ("toolchain element")   { toolchain_name = :toolchain_element }
+    section ("toolchain")           { toolchain_name = :toolchain }
 
     cmd << "-t scenario/chai_test/#{toolchain_name}.chai" if toolchain_name
     recipe_name = recipe_name || "recipes"

@@ -43,11 +43,24 @@ Result Interface::mis_en_place_(model::Recipe & recipe, RecipeFilteredGraph & fi
 {
     MSS_BEGIN(Result);
 
+    {
+        auto ss = log::scope("callback", [&](auto & n) { n.attr("pre"); });
+        auto cb = recipe.callback(Hook::Pre);
+        if (cb)
+            cb(recipe);
+    }
 
     for(SouschefPtr souschef : brigade.souschefs)
     {
         auto ss = log::scope("souschef", [&](auto & n) {n.attr("description", souschef->description()); });
         MSS(souschef->process(recipe, file_command_graph, context));
+    }
+    
+    {
+        auto ss = log::scope("callback", [&](auto & n) { n.attr("post"); });
+        auto cb = recipe.callback(Hook::Post);
+        if (cb)
+            cb(recipe);
     }
 
     MSS_END();
