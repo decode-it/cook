@@ -5,7 +5,7 @@
 
 #define COOK_VERSION_MAJOR 1
 #define COOK_VERSION_MINOR 1
-#define COOK_VERSION_PATCH 7
+#define COOK_VERSION_PATCH 8
 
 #define COOK_XSTR(A) COOK_STR(A)
 #define COOK_STR(A) #A
