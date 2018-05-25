@@ -85,6 +85,7 @@ Proof-of-concept version.
 
 ## 1.1.8 (open)
 
+* CMake better output, and less strict (skip script)
 * [wip] Support for HTML output
 
 ## Next
