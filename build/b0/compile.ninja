@@ -128,6 +128,8 @@ build .b0/lib/src/cook/chai/mss.cpp.obj: compile lib/src/cook/chai/mss.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/generator/CMake.cpp.obj: compile lib/src/cook/generator/CMake.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
+build .b0/lib/src/cook/generator/HTML.cpp.obj: compile lib/src/cook/generator/HTML.cpp
+    include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/generator/Naft.cpp.obj: compile lib/src/cook/generator/Naft.cpp
     include_paths = $cook_lib_include_paths $boost_include_paths
 build .b0/lib/src/cook/generator/Ninja.cpp.obj: compile lib/src/cook/generator/Ninja.cpp
@@ -436,6 +438,7 @@ build libb0-cook.a: archive $
     .b0/lib/src/cook/chai/module/Uri.cpp.obj $
     .b0/lib/src/cook/chai/mss.cpp.obj $
     .b0/lib/src/cook/generator/CMake.cpp.obj $
+    .b0/lib/src/cook/generator/HTML.cpp.obj $
     .b0/lib/src/cook/generator/Naft.cpp.obj $
     .b0/lib/src/cook/generator/Ninja.cpp.obj $
     .b0/lib/src/cook/generator/graphviz/Component.cpp.obj $

@@ -16,7 +16,8 @@ public:
         StaticLibrary,
         SharedLibrary,
         Interface,
-        Executable
+        Executable,
+        Skip
     };
     
     CMake();
@@ -53,7 +54,7 @@ private:
     void set_link_paths_(std::ostream & oss, model::Recipe * recipe, const std::filesystem::path & output_to_source) const;
     Result set_link_libraries(std::ostream & ofs, model::Recipe * recipe, const std::list<model::Recipe*> & dependencies, const std::string & keyword, const std::filesystem::path & output_to_source) const;
 
-    bool contains_sources_(const model::Recipe & recipe) const;
+    bool contains_sources_(const model::Recipe & recipe, CMakeType propsed_type) const;
 
     std::filesystem::path output_path_;
     RecipeTypeMap recipe_map_;
