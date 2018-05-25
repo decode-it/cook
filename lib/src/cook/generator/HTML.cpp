@@ -3,6 +3,7 @@
 #include "gubg/mss.hpp"
 #include <fstream>
 #include <set>
+#include <stack>
 
 namespace cook { namespace generator { 
 
