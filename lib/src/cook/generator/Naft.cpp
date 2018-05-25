@@ -2,6 +2,7 @@
 #include "cook/util/File.hpp"
 #include "cook/algo/TopologicalOrder.hpp"
 #include "cook/Context.hpp"
+#include "cook/process/toolchain/Manager.hpp"
 #include "gubg/naft/Document.hpp"
 
 namespace cook { namespace generator {
@@ -94,6 +95,8 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
         nn.attr("type", bt.type).attr("name", bt.name);
         if (bt.filename)
             nn.attr("filename", bt.filename->string());
+        else
+            nn.attr("filename", context.toolchain().get_primary_target(*recipe).string());
     }
 
     auto base_naft = [](gubg::naft::Node & node, const LanguageTypePair & ltp, const auto & ingredient)
