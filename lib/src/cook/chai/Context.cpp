@@ -78,8 +78,7 @@ struct Context::Pimpl
 
     void initialize_engine_(Context * kitchen)
     {
-        engine.add(chaiscript::fun(&Context::include_, kitchen), "include");
-
+        engine.add(chaiscript::fun([=](const std::string & name) { kitchen->include_(name); }), "include");
         engine.add(module::flags());
         engine.add(module::basic());
         engine.add(module::uri());

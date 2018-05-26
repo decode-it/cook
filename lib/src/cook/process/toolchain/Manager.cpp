@@ -3,7 +3,7 @@
 #include "cook/log/Scope.hpp"
 #include "cook/OS.hpp"
 #include "gubg/Strange.hpp"
-#include "boost/iterator/transform_iterator.hpp"
+#include "gubg/iterator/Transform.hpp"
 
 namespace cook { namespace process { namespace toolchain { 
 
@@ -124,8 +124,8 @@ namespace cook { namespace process { namespace toolchain {
         MSS_BEGIN(Result);
 
         {
-            auto first = boost::make_transform_iterator(elements_.begin(), util::ElementAt<1>());
-            auto last = boost::make_transform_iterator(elements_.end(), util::ElementAt<1>());
+            auto first = gubg::iterator::transform(elements_.begin(), util::ElementAt<1>());
+            auto last = gubg::iterator::transform(elements_.end(), util::ElementAt<1>());
             while (board_.process(first, last))
                 ;;
         }

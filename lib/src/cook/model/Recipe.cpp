@@ -18,14 +18,7 @@ namespace cook { namespace model {
 
     gubg::Range<Recipe::DependencyIterator> Recipe::dependencies() const
     {
-        using Functor = DependencyExtractor;
-
-        //    DependencyIterator begin()
-
-        return gubg::make_range(
-                                boost::make_transform_iterator<Functor>(dependencies_.begin()),
-                                boost::make_transform_iterator<Functor>(dependencies_.end())
-                               );
+        return gubg::iterator::transform<DependencyExtractor>(gubg::make_range(dependencies_));
     }
 
     bool Recipe::resolve_dependency(const Uri & uri, Recipe * recipe)

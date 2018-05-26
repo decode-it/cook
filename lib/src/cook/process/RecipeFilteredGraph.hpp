@@ -29,22 +29,22 @@ public:
 
     gubg::Range<CommandVertexIterator> command_vertices() const;
 
-    template <typename It>
-    void input(It it, vertex_descriptor command, EdgeType required = EdgeType()) const
+    template <typename Functor>
+    void input(Functor && functor, vertex_descriptor command, EdgeType required = EdgeType()) const
     {
         if (command_vertices_.find(command) == command_vertices_.end())
             return;
 
-        ptr_->input(it, command, required);
+        ptr_->input(std::forward<Functor>(functor), command, required);
     }
 
-    template <typename It>
-    void output(It it, vertex_descriptor command, EdgeType required = EdgeType()) const
+    template <typename Functor>
+    void output(Functor && functor, vertex_descriptor command, EdgeType required = EdgeType()) const
     {
         if (command_vertices_.find(command) == command_vertices_.end())
             return;
 
-        ptr_->output(it, command, required);
+        ptr_->output(std::forward<Functor>(functor), command, required);
     }
 
 private:

@@ -2,7 +2,6 @@
 #include "cook/process/toolchain/Types.hpp"
 #include "cook/Context.hpp"
 #include "cook/log/Scope.hpp"
-#include "boost/iterator/function_output_iterator.hpp"
 
 namespace cook { namespace generator { 
 
@@ -115,11 +114,11 @@ Result Ninja::process(const Context & context)
 
             std::list<std::filesystem::path> input_files;
             {
-                auto it = boost::make_function_output_iterator([&](const auto & v)
+                auto func = [&](const auto & v)
                 {
                     input_files.push_back(boost::get<process::build::config::Graph::FileLabel>(build_graph[v]));
-                });
-                build_graph.input(it, vertex, cook::process::RecipeFilteredGraph::Explicit);
+                };
+                build_graph.input(func, vertex, cook::process::RecipeFilteredGraph::Explicit);
 
                 auto ss = log::scope("inputs", [&](auto & n) {
                     for (const auto & f: input_files)
@@ -129,11 +128,11 @@ Result Ninja::process(const Context & context)
 
             std::list<std::filesystem::path> input_dependencies;
             {
-                auto it = boost::make_function_output_iterator([&](const auto & v)
+                auto func = [&](const auto & v)
                 {
                     input_dependencies.push_back(boost::get<process::build::config::Graph::FileLabel>(build_graph[v]));
-                });
-                build_graph.input(it, vertex, cook::process::RecipeFilteredGraph::Implicit);
+                };
+                build_graph.input(func, vertex, cook::process::RecipeFilteredGraph::Implicit);
 
                 auto ss = log::scope("implicit inputs", [&](auto & n) {
                     for (const auto & f: input_dependencies)
@@ -143,11 +142,11 @@ Result Ninja::process(const Context & context)
 
             std::list<std::filesystem::path> output_files;
             {
-                auto it = boost::make_function_output_iterator([&](const auto & v)
+                auto func = [&](const auto & v)
                 {
                     output_files.push_back(boost::get<process::build::config::Graph::FileLabel>(build_graph[v]));
-                });
-                build_graph.output(it, vertex);
+                };
+                build_graph.output(func, vertex);
 
                 auto ss = log::scope("outputs", [&](auto & n) {
                     for (const auto & f: output_files)

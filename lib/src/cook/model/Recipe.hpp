@@ -13,7 +13,7 @@
 #include "cook/log/Scope.hpp"
 #include "cook/Result.hpp"
 #include "gubg/Range.hpp"
-#include "boost/iterator/transform_iterator.hpp"
+#include "gubg/iterator/Transform.hpp"
 #include <set>
 
 namespace cook { namespace model {
@@ -48,7 +48,7 @@ public:
     };
 
     using DependencyPairIterator = Dependencies::const_iterator;
-    using DependencyIterator = boost::transform_iterator<DependencyExtractor, Dependencies::const_iterator>;
+    using DependencyIterator = gubg::iterator::Transform<Dependencies::const_iterator, DependencyExtractor>;
 
     using Files = ingredient::Ingredients<ingredient::File>;
     using KeyValues = ingredient::Ingredients<ingredient::KeyValue>;

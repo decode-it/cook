@@ -3,7 +3,7 @@
 
 #include "cook/model/Element.hpp"
 #include "cook/Result.hpp"
-#include "boost/iterator/transform_iterator.hpp"
+#include "gubg/iterator/Transform.hpp"
 #include <memory>
 #include <map>
 
@@ -23,8 +23,8 @@ public:
         model::Recipe * operator()(const RecipeMap::value_type & p) const   { return p.second.get(); }
     };
 
-    using BookIterator = boost::transform_iterator<ExtractPointer, BookMap::const_iterator>;
-    using RecipeIterator = boost::transform_iterator<ExtractPointer, RecipeMap::const_iterator>;
+    using BookIterator = gubg::iterator::Transform<BookMap::const_iterator, ExtractPointer>;
+    using RecipeIterator = gubg::iterator::Transform<RecipeMap::const_iterator, ExtractPointer>;
 
     Book();
     explicit Book(const Uri & uri);

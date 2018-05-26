@@ -48,20 +48,20 @@ struct Graph : public config::Graph
 
     const Label & operator[](vertex_descriptor vd) const;
 
-    template <typename It>
-    void input(It it, vertex_descriptor command, EdgeType required = EdgeType()) const
+    template <typename Functor>
+    void input(Functor && functor, vertex_descriptor command, EdgeType required = EdgeType()) const
     {
         for(auto e : gubg::make_range(boost::out_edges(command, g_)))
             if ((g_[e] & required) == required)
-                *it++ = boost::target(e, g_);
+                functor(boost::target(e, g_));
     }
 
-    template <typename It>
-    void output(It it, vertex_descriptor command, EdgeType required = EdgeType()) const
+    template <typename Functor>
+    void output(Functor && functor, vertex_descriptor command, EdgeType required = EdgeType()) const
     {
         for(auto e : gubg::make_range(boost::in_edges(command, g_)))
             if ((g_[e] & required) == required)
-                *it++ = boost::source(e, g_);
+                functor(boost::source(e, g_));
     }
 
 private:
