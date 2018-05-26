@@ -1,21 +1,32 @@
-root.book("cook/lib", fun(b) {
-  	b.recipe("func", "library", fun(r) {
-		r.add("src", "**.[hc]pp")
-		for_each(["std", "io", "algo", "chaiscript"], fun[r](d) { r.depends_on("gubg/${d}/func") })
-		r.depends_on("boost/all")
-        if (my(OS) == OS.Linux) {
+{
+    var mod = cook["cook/lib"]
+    
+    {
+        var r = mod.recipe("func")
+        r.add("src", "**.[hc]pp")
+        
+        for(dep : ["std", "io", "algo", "chaiscript"]) {
+            r.depends_on("gubg/${dep}/func")
+        }
+        r.depends_on("boost/all")
+
+        if (my(OS) == OS.Linux) 
+        {
             r.library("stdc++fs")
         }
-        if (my(OS) == OS.MacOS) {
+        if (my(OS) == OS.MacOS) 
+        {
             r.library_path("/usr/local/opt/llvm/lib")
             r.library("c++experimental")
         }
-		r.define("BOOST_ERROR_CODE_HEADER_ONLY")
-	})  
+	
+        r.define("BOOST_ERROR_CODE_HEADER_ONLY")  
+    }
 
-	b.recipe("ut", "executable", fun(r) {
-		r.add("test/src", "**.[hc]pp")
-		r.depends_on("/catch/func")
-		r.depends_on("func")
-	})
-})
+    {
+        var r = mod.recipe("ut", TargetType.Executable)
+        r.add("test/src", "**.[hc]pp")
+	r.depends_on("/catch/func")
+	r.depends_on("func")
+    }
+}

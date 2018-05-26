@@ -1,9 +1,14 @@
-root.book("regex", fun(book) {
-    book.recipe("exe_fail", "executable", fun(r){
+{
+    var b = cook["regex"]
+    
+    {
+        var r = b.recipe("exe_fail", TargetType.Executable)
         r.add("./", "*.cpp")
-    })
-    book.recipe("exe_pass", "executable", fun(r){
+    }
+    
+    {
+        var r = b.recipe("exe_pass", TargetType.Executable)
         auto re = Regex("broken")
         r.add("./", "*.cpp", fun[re](f){return !re.matches(f.rel())})
-    })
-})
+    }
+}

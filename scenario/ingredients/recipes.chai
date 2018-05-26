@@ -1,15 +1,14 @@
-cook["book"].recipe("foobar", fun(r) {
-    r.add("", "*", fun(f) {
-        return true
-    })
-    r.remove("", "main.cpp")
-})
+{
+    {
+        var r = cook["book"].recipe("foobar")
+        r.add("", "*", fun(f) {return true })
+        r.remove("", "main.cpp")
+    }
 
-root.book("book", fun(book) {
-    book.recipe("main", "executable", fun(r){
+    {
+        var r = cook["book"].recipe("main", TargetType.Executable)
         r.add("", "main.cpp")
-        r.depends_on("foobar", fun(b) {
-            return (!(b.flags() & Type.IncludePath))
-        })
-    })
-})
+        r.depends_on("foobar", fun(b) { return (!(b.flags() & Type.IncludePath)) })
+
+    }
+}
