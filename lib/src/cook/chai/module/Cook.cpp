@@ -15,6 +15,12 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&Cook::project_name), "project_name");
         ptr->add(chaiscript::fun(&Cook::set_project_name), "set_project_name");
         ptr->add(chaiscript::fun(&Cook::toolchain), "toolchain");
+        ptr->add(chaiscript::fun([](const Cook & c) {return c.project_directory(); }), "project_directory");
+        ptr->add(chaiscript::fun([](const Cook & c, bool abs) {return c.project_directory(abs); }), "project_directory");
+        ptr->add(chaiscript::fun([](const Cook & c) {return c.output_directory(); }), "output_directory");
+        ptr->add(chaiscript::fun([](const Cook & c, bool abs) {return c.output_directory(abs); }), "output_directory");
+        ptr->add(chaiscript::fun([](const Cook & c) {return c.temporary_directory(); }), "temporary_directory");
+        ptr->add(chaiscript::fun([](const Cook & c, bool abs) {return c.temporary_directory(abs); }), "temporary_directory");
 
         return ptr;
     }

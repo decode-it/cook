@@ -26,6 +26,14 @@ namespace cook { namespace chai {
         void set_project_name(const std::string & name);
         Toolchain toolchain() const;
 
+        std::string project_directory() const;
+        std::string output_directory() const;
+        std::string temporary_directory() const;
+        std::string project_directory(bool make_absolute) const;
+        std::string output_directory(bool make_absolute) const;
+        std::string temporary_directory(bool make_absolute) const;
+
+
     private:
         Context * context_;
         Toolchain toolchain_;

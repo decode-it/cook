@@ -22,14 +22,14 @@ namespace cook { namespace chai {
         
         std::string Cook::working_directory() const
         {
-            return context_->current_working_directory().string();
+            return working_directory(false);
         }
         std::string Cook::working_directory(bool make_absolute) const
         {
             if (make_absolute)
                 return gubg::filesystem::combine(std::filesystem::current_path(), context_->current_working_directory()).string();
             else
-                return working_directory();
+                return context_->current_working_directory().string();
         }
 
         std::string Cook::project_name() const
@@ -45,6 +45,51 @@ namespace cook { namespace chai {
         Toolchain Cook::toolchain() const
         {
             return toolchain_;
+        }
+        
+        std::string Cook::project_directory() const
+        {
+            return project_directory(false);
+        }
+
+        std::string Cook::output_directory() const
+        {
+            return output_directory(false);
+        }
+
+        std::string Cook::temporary_directory() const
+        {
+            return temporary_directory(false);
+        }
+
+        std::string Cook::project_directory(bool make_absolute) const
+        {
+            const auto & p = context_->dirs().recipe();
+
+            if (make_absolute) 
+                return gubg::filesystem::normalize(p).string();
+            else
+                return gubg::filesystem::get_relative_to(working_directory(), p);
+        }
+
+        std::string Cook::output_directory(bool make_absolute) const
+        {
+            const auto & p = context_->dirs().output();
+
+            if (make_absolute) 
+                return gubg::filesystem::normalize(p).string();
+            else
+                return gubg::filesystem::get_relative_to(working_directory(), p);
+        }
+
+        std::string Cook::temporary_directory(bool make_absolute) const
+        {
+            const auto & p = context_->dirs().temporary();
+
+            if (make_absolute) 
+                return gubg::filesystem::normalize(p).string();
+            else
+                return gubg::filesystem::get_relative_to(working_directory(), p);
         }
 
 } }

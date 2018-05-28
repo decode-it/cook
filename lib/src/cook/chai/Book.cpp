@@ -54,11 +54,11 @@ namespace cook { namespace chai {
         bool already_existing = false;
 
         {
-            CHAI_MSS(model::Book::find_relative(recipe, uri, book_));
+            CHAI_MSS(model::Book::find_relative(recipe, uri.as_relative(), book_));
             if (recipe)
                 already_existing = true;
             else
-                CHAI_MSS(model::Book::goc_relative(recipe, uri, book_));
+                CHAI_MSS(model::Book::goc_relative(recipe, uri.as_relative(), book_));
         }
 
         Recipe r(recipe, context_);
