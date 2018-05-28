@@ -83,12 +83,20 @@ Proof-of-concept version.
 * Generator selection is case-InsensItive
 * Double dependency error better output 
 
-## 1.1.8 (open)
+## 1.1.8
 
 * CMake better output, and less strict (skip script)
+* Naft output always has build target filename (if present)
+
+### 1.1.9 (open)
+
+* CMake force include are platform independent
+* Added Framework and FrameworkDir
 * [wip] Support for HTML output
 
 ## Next
 
+* Propagating all `key_values` and `files` to toolchain elements
+* Removing boost dependencies
 * Support for `COOK_PATH` search for scripts
 * Internal #include-based dependency detection for compilers that cannot output dependencies
