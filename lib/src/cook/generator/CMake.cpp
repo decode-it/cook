@@ -9,6 +9,7 @@
 namespace cook { namespace generator {
 
     CMake::CMake()
+        : context_(nullptr)
     {
         set_option("");
     }
@@ -89,6 +90,7 @@ namespace cook { namespace generator {
     Result CMake::process(const Context & context)
     {
         MSS_BEGIN(Result);
+        context_ = &context;
 
         std::ofstream ofs;
         MSS(open_output_stream(context, ofs));
@@ -187,7 +189,8 @@ namespace cook { namespace generator {
                     break;
             }
         }
-
+    
+        context_ = nullptr;
         MSS_END();
     }
 
@@ -206,7 +209,7 @@ namespace cook { namespace generator {
         add_source_and_header_(str, recipe, false, std::list<model::Recipe*>(), output_to_source);
         str << ")" << std::endl;
 
-        set_target_properties_(str, recipe, "PRIVATE", output_to_source);
+        MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
 
         str << "# " << recipe->uri() << std::endl << std::endl;
 
@@ -226,7 +229,7 @@ namespace cook { namespace generator {
         add_source_and_header_(str, recipe, false, lst, output_to_source);
         str << ")" << std::endl;
 
-        set_target_properties_(str, recipe, "PRIVATE", output_to_source);
+        MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
 
         str << "# " << recipe->uri() << std::endl << std::endl;
         MSS_END();
@@ -245,7 +248,7 @@ namespace cook { namespace generator {
         add_source_and_header_(str, recipe, true, lst, output_to_source);
         str << ")" << std::endl;
 
-        set_target_properties_(str, recipe, "PRIVATE", output_to_source);
+        MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
 
         str << "# " << recipe->uri() << std::endl << std::endl;
         MSS_END();
@@ -263,7 +266,7 @@ namespace cook { namespace generator {
         MSS(context.menu().topological_order_recipes(recipe, lst));
         add_source_and_header_(str, recipe, false, lst, output_to_source);
         str << ")" << std::endl;
-        set_target_properties_(str, recipe, "PRIVATE", output_to_source);
+        MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
 
         MSS(set_link_libraries(str, recipe, lst, "PRIVATE", output_to_source));
 
@@ -287,7 +290,7 @@ namespace cook { namespace generator {
                              });
         str << ")" << std::endl;
 
-        set_target_properties_(str, recipe, "INTERFACE", output_to_source);
+        MSS(set_target_properties_(str, recipe, "INTERFACE", output_to_source));
 
 
         str << "# " << recipe->uri() << std::endl << std::endl;
@@ -433,8 +436,10 @@ namespace cook { namespace generator {
     }
 
 
-    void CMake::set_target_properties_(std::ostream & ofs, model::Recipe * recipe, const std::string & keyword, const std::filesystem::path & output_to_source) const
+    bool CMake::set_target_properties_(std::ostream & ofs, model::Recipe * recipe, const std::string & keyword, const std::filesystem::path & output_to_source) const
     {
+        MSS_BEGIN(bool);
+
         const std::string & name = recipe_name_(recipe);
 
         // the include directories
@@ -468,16 +473,22 @@ namespace cook { namespace generator {
         // the compile options
         {
             std::set<std::string> options;
-            recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
-                                 {
-                                 if (ltp.type == Type::ForceInclude)
-                                 options.insert(gubg::stream([&](auto & os)
-                                                             {
-                                                             os << "-include " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.rel()).string());
-                                                             }));
+            auto el = context_->toolchain().element(process::toolchain::Element::Compile, Language::C, TargetType::Object);
+            MSS(!!el);
+            
+            auto it = el->translator_map().find(process::toolchain::Part::ForceInclude);
+            MSS(it != el->translator_map().end());
 
-                                 return true;
-                                 });
+            auto add_fi = [&](const LanguageTypePair & ltp, const ingredient::File & file)
+            {
+                if (ltp.type == Type::ForceInclude)
+                {
+                    const auto & str = gubg::string::escape_cmake(it->second(file.rel().string(), ""));
+                    options.insert(str);
+                }
+                return true;
+            };
+            recipe->files().each(add_fi);
 
             write_elements_(ofs, [&](auto & os) { os << "target_compile_options(" << name << " " << keyword; }, options);
         }
@@ -493,6 +504,7 @@ namespace cook { namespace generator {
 
             write_elements_(ofs, [&](auto & os) { os << "add_dependencies(" << name; }, dependencies, false);
         }
+        MSS_END();
     }
 
 } }

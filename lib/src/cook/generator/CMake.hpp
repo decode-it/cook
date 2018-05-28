@@ -50,7 +50,7 @@ private:
 //    std::string deduce_library_type_(const model::Recipe & recipe) const;
 
     Result add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports,  const std::list<model::Recipe*> & dependencies, const std::filesystem::path &output_to_source) const;
-    void set_target_properties_(std::ostream & ofs, model::Recipe * recipe, const std::string &keyword, const std::filesystem::path & output_to_source) const;
+    bool set_target_properties_(std::ostream & ofs, model::Recipe * recipe, const std::string &keyword, const std::filesystem::path & output_to_source) const;
     void set_link_paths_(std::ostream & oss, model::Recipe * recipe, const std::filesystem::path & output_to_source) const;
     Result set_link_libraries(std::ostream & ofs, model::Recipe * recipe, const std::list<model::Recipe*> & dependencies, const std::string & keyword, const std::filesystem::path & output_to_source) const;
 
@@ -58,6 +58,7 @@ private:
 
     std::filesystem::path output_path_;
     RecipeTypeMap recipe_map_;
+    const Context * context_;
 };
 
 } }
