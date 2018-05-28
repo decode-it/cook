@@ -14,6 +14,15 @@ namespace cook { namespace chai {
     {
     }
 
+    bool Recipe::operator==(const Recipe & rhs) const
+    {
+        return uri() == rhs.uri();
+    }
+    bool Recipe::operator!=(const Recipe & rhs) const
+    {
+        return uri() != rhs.uri();
+    }
+
     void Recipe::set_type(TargetType type)
     {
         recipe_->build_target().type = type;

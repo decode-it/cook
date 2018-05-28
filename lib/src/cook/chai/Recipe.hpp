@@ -49,6 +49,8 @@ public:
     void each_file(const std::function<void (File &)> & functor);
     void each_key_value(const std::function<void (KeyValue &)> & functor);
 
+    bool operator==(const Recipe & rhs) const;
+    bool operator!=(const Recipe & rhs) const;
 
     void set_callback1(Hook hook, const ConfigCallback1 & callback);
     void set_callback2(Hook hook, const ConfigCallback2 & callback);
