@@ -9,7 +9,7 @@
 namespace cook { namespace generator {
 
     CMake::CMake()
-        : context_(nullptr)
+    : context_(nullptr)
     {
         set_option("");
     }
@@ -189,7 +189,7 @@ namespace cook { namespace generator {
                     break;
             }
         }
-    
+
         context_ = nullptr;
         MSS_END();
     }
@@ -282,12 +282,13 @@ namespace cook { namespace generator {
         str << "add_library(" << recipe_name_(recipe) << " INTERFACE)" << std::endl;
 
         str << "target_sources(" << recipe_name_(recipe) << " INTERFACE" << std::endl;
-        recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
-                             {
-                             if (ltp.type == Type::Header)
-                             str << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
-                             return true;
-                             });
+        auto add_hdr = [&](const LanguageTypePair & ltp, const ingredient::File & file)
+        {
+            if (ltp.type == Type::Header)
+                str << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
+            return true;
+        };
+        recipe->files().each(add_hdr);
         str << ")" << std::endl;
 
         MSS(set_target_properties_(str, recipe, "INTERFACE", output_to_source));
@@ -300,10 +301,14 @@ namespace cook { namespace generator {
     bool CMake::contains_sources_(const model::Recipe & recipe, CMakeType proposed_type) const
     {
         bool has_sources = false;
-        recipe.files().each([&](const LanguageTypePair & ltp, const auto & ) {
-                            has_sources = has_sources || (ltp.type == Type::Source);
-                            return true;
-                            });
+        {
+            auto check_src = [&](const LanguageTypePair & ltp, const auto & ) 
+            {
+                has_sources = has_sources || (ltp.type == Type::Source);
+                return true;
+            };
+            recipe.files().each(check_src);
+        }
 
         if (has_sources)
             return true;
@@ -394,13 +399,14 @@ namespace cook { namespace generator {
     void CMake::set_link_paths_(std::ostream & oss, model::Recipe * recipe, const std::filesystem::path & output_to_source) const
     {
         std::list<std::string> link_directories;
-        recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
-                             {
-                             if (ltp.type == Type::LibraryPath)
-                             link_directories.push_back(gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.dir()).string()));
+        auto add_lib = [&](const LanguageTypePair & ltp, const ingredient::File & file)
+        {
+            if (ltp.type == Type::LibraryPath)
+                link_directories.push_back(gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.dir()).string()));
 
-                             return true;
-                             });
+            return true;
+        };
+        recipe->files().each(add_lib);
 
         write_elements_(oss, [](auto & os) { os << "link_directories("; }, link_directories, false);
     }
@@ -411,30 +417,66 @@ namespace cook { namespace generator {
 
         const std::string & name = recipe_name_(recipe);
 
-        // the link libraries
+        std::set<std::string> link_libraries;
+        for(const ingredient::KeyValue & lib : recipe->key_values().range(LanguageTypePair(Language::Binary, Type::Library)))
         {
-            std::set<std::string> link_libraries;
-            for(const ingredient::KeyValue & lib : recipe->key_values().range(LanguageTypePair(Language::Binary, Type::Library)))
-            {
-                // only the ones added by the user
-                if (!is_internal_generated(lib.content()))
-                    link_libraries.insert(gubg::stream([&](auto & os) { os << lib.key(); } ));
-            }
-
-            for (model::Recipe * dep : dependencies)
-            {
-                auto it = recipe_map_.find(dep);
-                if (it != recipe_map_.end() && it->second == CMakeType::StaticLibrary)
-                    link_libraries.insert(recipe_name_(dep));
-            }
-
-
-            write_elements_(ofs, [&](auto & os) { os << "target_link_libraries(" << name << " " << keyword; }, link_libraries, false);
+            // only the ones added by the user
+            if (!is_internal_generated(lib.content()))
+                link_libraries.insert(gubg::stream([&](auto & os) { os << lib.key(); } ));
         }
+
+        // add the dependencies on the recipes
+        for (model::Recipe * dep : dependencies)
+        {
+            auto it = recipe_map_.find(dep);
+            if (it != recipe_map_.end() && it->second == CMakeType::StaticLibrary)
+                link_libraries.insert(recipe_name_(dep));
+        }
+
+        {
+            auto el = context_->toolchain().element(process::toolchain::Element::Link, Language::Binary, TargetType::Executable);
+            MSS(!!el);
+            // add the frameworks
+            {
+                auto itf = el->translator_map().find(process::toolchain::Part::Framework);
+                MSS(itf != el->translator_map().end());
+
+                auto add_f = [&](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
+                {
+                    if (ltp.type == Type::Framework)
+                    {
+                        const auto & str = gubg::string::escape_cmake(itf->second(key_value.key(), ""));
+                        link_libraries.insert(str);
+                    }
+                    return true;
+                };
+                recipe->key_values().each(add_f);
+            }
+
+            // add the framework paths
+            {
+                auto itfp = el->translator_map().find(process::toolchain::Part::FrameworkPath);
+                MSS(itfp != el->translator_map().end());
+                std::ostringstream os;
+
+                auto add_fp = [&](const LanguageTypePair & ltp, const ingredient::File & file)
+                {
+                    if (ltp.type == Type::FrameworkPath)
+                    {
+                        const auto & str = gubg::string::escape_cmake(itfp->second(gubg::filesystem::combine(output_to_source, file.dir()).string(), ""));
+                        link_libraries.insert(str);
+                    }
+                    return true;
+                };
+                recipe->files().each(add_fp);
+            }
+        }
+
+        write_elements_(ofs, [&](auto & os) { os << "target_link_libraries(" << name << " " << keyword; }, link_libraries, false);       
+
 
         MSS_END();
     }
-
 
     bool CMake::set_target_properties_(std::ostream & ofs, model::Recipe * recipe, const std::string & keyword, const std::filesystem::path & output_to_source) const
     {
@@ -445,14 +487,15 @@ namespace cook { namespace generator {
         // the include directories
         {
             std::set<std::string> include_dirs;
-            recipe->files().each([&](const LanguageTypePair & ltp, const ingredient::File & file)
-                                 {
-                                 if (ltp.type == Type::IncludePath)
-                                 {
-                                 include_dirs.insert(gubg::stream([&](auto & os) { os << keyword << " " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()); } ));
-                                 }
-                                 return true;
-                                 });
+            auto add_include = [&](const LanguageTypePair & ltp, const ingredient::File & file)
+            {
+                if (ltp.type == Type::IncludePath)
+                {
+                    include_dirs.insert(gubg::stream([&](auto & os) { os << keyword << " " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()); } ));
+                }
+                return true;
+            };
+            recipe->files().each(add_include);
             write_elements_(ofs, [&](auto & os) { os << "target_include_directories(" << name; }, include_dirs, true);
         }
 
@@ -460,12 +503,13 @@ namespace cook { namespace generator {
         // the compile definitions
         {
             std::set<std::string> definitions;
-            recipe->key_values().each([&](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
-                                      {
-                                      if (ltp.type == Type::Define)
-                                      definitions.insert(key_value.to_string());
-                                      return true;
-                                      });
+            auto add_define = [&](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
+            {
+                if (ltp.type == Type::Define)
+                    definitions.insert(key_value.to_string());
+                return true;
+            };
+            recipe->key_values().each(add_define);
 
             write_elements_(ofs, [&](auto & os) { os << "target_compile_definitions(" << name << " " << keyword; }, definitions);
         }
@@ -475,7 +519,7 @@ namespace cook { namespace generator {
             std::set<std::string> options;
             auto el = context_->toolchain().element(process::toolchain::Element::Compile, Language::C, TargetType::Object);
             MSS(!!el);
-            
+
             auto it = el->translator_map().find(process::toolchain::Part::ForceInclude);
             MSS(it != el->translator_map().end());
 

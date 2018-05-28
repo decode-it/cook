@@ -34,7 +34,9 @@ public:
     std::string working_directory() const;
 
     void library(const std::string & library, const Flags & flags = Flags());
+    void framework(const std::string & framework, const Flags & flags = Flags());
     void library_path(const std::string & path, const Flags & flags= Flags());
+    void framework_path(const std::string & path, const Flags & flags= Flags());
     void include_path(const std::string & path, const Flags & flags= Flags());
     void define(const std::string & name, const Flags & flags= Flags());
     void define(const std::string & name, const std::string & value, const Flags & flags = Flags());

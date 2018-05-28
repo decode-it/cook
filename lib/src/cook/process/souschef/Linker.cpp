@@ -23,11 +23,13 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
 
     auto objects    = recipe.files().range(LanguageTypePair(Language::Binary, Type::Object));
     auto libs       = recipe.key_values().range(LanguageTypePair(Language::Binary, Type::Library));
+    auto frameworks = recipe.key_values().range(LanguageTypePair(Language::Binary, Type::Framework));
     auto deps       = recipe.files().range(LanguageTypePair(Language::Binary, Type::Dependency));
     auto exports    = recipe.files().range(LanguageTypePair(Language::Definition, Type::Export));
 
     stop_propagation(objects);
     stop_propagation(libs);
+    stop_propagation(frameworks);
     stop_propagation(deps);
     stop_propagation(exports);
 
@@ -41,7 +43,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     build::Graph::vertex_descriptor link_vertex;
     {
         command::Ptr lc;
-        MSS(link_command_(lc, recipe, libs, context));
+        MSS(link_command_(lc, recipe, libs, frameworks, context));
         link_vertex = g.add_vertex(lc);
     }
 
@@ -151,7 +153,7 @@ ingredient::File Linker::construct_link_file(model::Recipe & recipe, const Conte
     return archive;
 }
 
-Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, const model::Recipe::KeyValues::Range &libs, const Context & context) const
+Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, const model::Recipe::KeyValues::Range &libs, const model::Recipe::KeyValues::Range &frameworks, const Context & context) const
 {
     MSS_BEGIN(Result);
     
@@ -163,10 +165,18 @@ Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, co
     // set the libraries
     for(const ingredient::KeyValue & lib : libs)
         lp->add_library(lib.key());
+    
+    // set the frameworks
+    for(const ingredient::KeyValue & framework : frameworks)
+        lp->add_framework(framework.key());
 
     // set the library paths
     for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::LibraryPath)))
         lp->add_library_path(util::make_global_from_recipe(recipe, lib.dir()));
+
+    // set the frameowork paths
+    for(const ingredient::File & framework_path: recipe.files().range(LanguageTypePair(Language::Binary, Type::FrameworkPath)))
+        lp->add_framework_path(util::make_global_from_recipe(recipe, framework_path.dir()));
 
     // set the export files
     for(const ingredient::File & exp: recipe.files().range(LanguageTypePair(Language::Definition, Type::Export)))

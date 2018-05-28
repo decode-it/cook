@@ -114,11 +114,15 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         oss << "    tm[Part.Library]        = fun(k,v) { return \"-l${k}\" }" << std::endl;
         oss << "    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return \"-L./\" } else { return \"-L${k}\" } }" << std::endl;
         oss << "    tm[Part.ForceInclude]   = fun(k,v) { return \"-include${k}\" }" << std::endl;
+        oss << "    if(my(OS) == OS.MacOS) {" << std::endl;
+        oss << "        tm[Part.Framework]      = fun(k,v) { return \"-framework ${k}\" }" << std::endl;
+        oss << "        tm[Part.FrameworkPath]  = fun(k,v) { if (k.empty) { return \"-F./\" } else { return \"-F${k}\" } }" << std::endl;
+        oss << "    }" << std::endl;
         oss << "" << std::endl;
         oss << "    kv.append(Part.Cli, \"" << linker << "\")" << std::endl;
         oss << "    if (s == TargetType.SharedLibrary) {" << std::endl;
         oss << "        kv.append(Part.Pre, \"-shared\")" << std::endl;
-        oss << "     }" << std::endl;
+        oss << "    }" << std::endl;
         oss << "}" << std::endl;
         oss << "" << std::endl;
         oss << "{" << std::endl;

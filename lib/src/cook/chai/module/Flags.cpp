@@ -59,6 +59,8 @@ ptr->add(chaiscript::fun([](const wrapper::TYPE##_t &) { return std::string(#TYP
         EXPOSE(Type, IncludePath);
         EXPOSE(Type, LibraryPath);
         EXPOSE(Type, Library);
+        EXPOSE(Type, FrameworkPath);
+        EXPOSE(Type, Framework);
         EXPOSE(Type, Dependency);
         EXPOSE(Type, Define);
         EXPOSE(Type, Executable);

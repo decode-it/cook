@@ -114,7 +114,9 @@ namespace cook { namespace chai { namespace module {
         }
 
         ptr->add(chaiscript::fun([](Recipe & r, const std::string & n) { r.library(n); }), "library");
+        ptr->add(chaiscript::fun([](Recipe & r, const std::string & n) { r.framework(n); }), "framework");
         ptr->add(chaiscript::fun([](Recipe & r, const std::string & p) { r.library_path(p); }), "library_path");
+        ptr->add(chaiscript::fun([](Recipe & r, const std::string & p) { r.framework_path(p); }), "framework_path");
         ptr->add(chaiscript::fun([](Recipe & r, const std::string & p) { r.include_path(p); }), "include_path");
         ptr->add(chaiscript::fun([](Recipe & r, const std::string & k) { r.define(k); }), "define");
         ptr->add(chaiscript::fun([](Recipe & r, const std::string & k, const Flags & f) { r.define(k, f); }), "define");
@@ -124,8 +126,10 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&Recipe::run), "run");
       
         ptr->add(chaiscript::fun(&Recipe::library), "library");
-        ptr->add(chaiscript::fun(&Recipe::library), "library_path");
-        ptr->add(chaiscript::fun(&Recipe::library), "include_path");
+        ptr->add(chaiscript::fun(&Recipe::library_path), "library_path");
+        ptr->add(chaiscript::fun(&Recipe::framework), "framework");
+        ptr->add(chaiscript::fun(&Recipe::framework_path), "framework_path");
+        ptr->add(chaiscript::fun(&Recipe::include_path), "include_path");
         ptr->add(chaiscript::fun(&Recipe::set_working_directory), "set_working_directory");
         ptr->add(chaiscript::fun(&Recipe::uri), "uri");
         ptr->add(chaiscript::fun(&Recipe::data), "data");

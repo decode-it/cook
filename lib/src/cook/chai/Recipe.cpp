@@ -127,6 +127,19 @@ namespace cook { namespace chai {
         recipe_->key_values().insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::Library)), lib);
     }
 
+    void Recipe::framework(const std::string & library, const Flags & flags)
+    {
+        CHAI_MSS_BEGIN();
+        CHAI_MSS(flags.only({Flag::Propagation, Flag::Overwrite, Flag::Language, Flag::Type} ));
+
+        auto lib = ingredient::KeyValue(library);
+        lib.set_content(Content::User);
+        lib.set_propagation(flags.get_or(Propagation::Public));
+        lib.set_overwrite(flags.get_or(Overwrite::Always));
+        lib.set_owner(recipe_);
+
+        recipe_->key_values().insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::Framework)), lib);
+    }
     void Recipe::library_path(const std::string & path, const Flags & flags)
     {
         CHAI_MSS_BEGIN();
@@ -141,6 +154,19 @@ namespace cook { namespace chai {
         recipe_->files().insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::LibraryPath)), lib_path);
     }
 
+    void Recipe::framework_path(const std::string & path, const Flags & flags)
+    {
+        CHAI_MSS_BEGIN();
+        CHAI_MSS(flags.only({Flag::Propagation, Flag::Overwrite, Flag::Language, Flag::Type} ));
+
+        auto lib_path = ingredient::File(path, {});
+        lib_path.set_content(Content::User);
+        lib_path.set_propagation(flags.get_or(Propagation::Public));
+        lib_path.set_overwrite(flags.get_or(Overwrite::Always));
+        lib_path.set_owner(recipe_);
+
+        recipe_->files().insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::FrameworkPath)), lib_path);
+    }
     void Recipe::include_path(const std::string & path, const Flags & flags)
     {
         CHAI_MSS_BEGIN();
