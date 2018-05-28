@@ -30,6 +30,7 @@ Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & glo
 
     // get the directory
     std::filesystem::path dir = globber.dir;
+    
     {
         if (dir.is_relative())
             dir = recipe.working_directory() / dir;

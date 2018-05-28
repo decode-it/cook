@@ -1,0 +1,6 @@
+var lib = cook.recipe("lib")
+lib.add("${cook.working_directory(true)}/lib", "**.*")
+
+var exe = cook.recipe("exe", TargetType.Executable)
+exe.add("app", "**.*")
+exe.depends_on(lib.uri)

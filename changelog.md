@@ -92,6 +92,7 @@ Proof-of-concept version.
 
 * CMake force include are platform independent
 * Added Framework and FrameworkDir
+* temporary output files are under <output_dir> / <recipe> / <md5 of dir> / <rel>
 * [wip] Support for HTML output
 
 ## Next

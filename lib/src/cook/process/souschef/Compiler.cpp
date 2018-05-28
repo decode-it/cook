@@ -2,6 +2,7 @@
 #include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "cook/log/Scope.hpp"
+#include "gubg/hash/MD5.hpp"
 
 namespace cook { namespace process { namespace souschef {
 
@@ -64,7 +65,14 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 ingredient::File Compiler::construct_object_file(const ingredient::File & source, model::Recipe & recipe, const Context & context, const std::filesystem::path & adj_path) const
 {
     auto ss = log::scope("construct_object_file");
-    const std::filesystem::path dir = util::make_local_to_recipe(adj_path, gubg::filesystem::normalize(context.dirs().temporary() / recipe.uri().string() /source.dir()));
+
+    std::filesystem::path p = context.dirs().temporary() / recipe.uri().string();
+    {
+        gubg::hash::md5::Stream s;
+        s << source.dir().string();
+        p /= s.hash_hex();
+    }
+    const std::filesystem::path dir = util::make_local_to_recipe(adj_path, gubg::filesystem::normalize(p));
     /* const std::filesystem::path dir = gubg::filesystem::normalize(context.dirs().temporary() / recipe.working_directory() /source.dir()); */
     const std::filesystem::path rel = source.rel().string() + ".obj";
 
