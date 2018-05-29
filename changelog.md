@@ -96,6 +96,7 @@ Proof-of-concept version.
 * Comparing chai recipes and books
 * [Current|Output|Temporary] dir are exposed in chai (read-only)
 * Flags are clonable (copy constructable)
+* Reworked paths, both absolute and relative are possible
 * [wip] Support for HTML output
 
 

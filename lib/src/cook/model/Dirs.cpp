@@ -18,14 +18,17 @@ void Dirs::set_temporary(const std::filesystem::path & dir)
     temporary_ = dir;
 }
 
-std::filesystem::path Dirs::output() const
+std::filesystem::path Dirs::output(bool make_absolute) const
 {
-    return output_;
+    if (make_absolute)
+        return gubg::filesystem::combine(std::filesystem::current_path(), output_);
+    else
+        return output_;
 }
 
-std::filesystem::path Dirs::temporary() const
+std::filesystem::path Dirs::temporary(bool make_absolute) const
 {
-    return gubg::filesystem::combine(output(), temporary_);
+    return gubg::filesystem::combine(output(make_absolute), temporary_);
 }
 
 } }

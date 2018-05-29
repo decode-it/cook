@@ -12,8 +12,8 @@ namespace cook { namespace model {
         void set_output(const std::filesystem::path & dir);
         void set_temporary(const std::filesystem::path & dir);
 
-        std::filesystem::path output() const;
-        std::filesystem::path temporary() const;
+        std::filesystem::path output(bool make_absolute = false) const;
+        std::filesystem::path temporary(bool make_absolute = false) const;
 
         private:
         std::filesystem::path output_;

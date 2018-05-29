@@ -10,11 +10,13 @@
 namespace cook { namespace util {
 
 Result open_file(const std::filesystem::path & path, std::ofstream & ofs);
-std::filesystem::path make_recipe_adj_path(const model::Recipe & old_recipe, const model::Recipe & new_recipe);
-std::filesystem::path make_recipe_adj_path(const model::Recipe & recipe);
-std::filesystem::path make_local_to_recipe(const std::filesystem::path & adj_path, const std::filesystem::path & path);
-ingredient::File make_local_to_recipe(const std::filesystem::path & adj_path, const ingredient::File & file);
-std::filesystem::path make_global_from_recipe(const model::Recipe & recipe, const std::filesystem::path & path);
+
+std::filesystem::path get_from_to_path(const model::Recipe & from, const model::Recipe & to); 
+std::filesystem::path get_from_to_path(const model::Recipe & from, const std::filesystem::path & to); 
+std::filesystem::path get_from_to_path(const std::filesystem::path & from, const model::Recipe & to); 
+std::filesystem::path get_from_to_path(const std::filesystem::path & from, const std::filesystem::path & to); 
+
+ingredient::File combine_file(const std::filesystem::path & prefix, const ingredient::File & file);
 
 } }
 

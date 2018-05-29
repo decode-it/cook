@@ -17,34 +17,34 @@ Result open_file(const std::filesystem::path & path, std::ofstream & ofs)
     MSS_END();
 }
 
-std::filesystem::path make_recipe_adj_path(const model::Recipe & old_recipe, const model::Recipe & new_recipe)
+std::filesystem::path get_from_to_path(const model::Recipe & from, const model::Recipe & to)
 {
-    auto res = gubg::filesystem::get_relative_to(new_recipe.working_directory(), old_recipe.working_directory());
-    return res;
+    return get_from_to_path(from.working_directory(), to.working_directory());
+}
+std::filesystem::path get_from_to_path(const model::Recipe & from, const std::filesystem::path & to)
+{
+    return get_from_to_path(from.working_directory(), to);
+}
+std::filesystem::path get_from_to_path(const std::filesystem::path & from, const model::Recipe & to)
+{
+    return get_from_to_path(from, to.working_directory());
+}
+std::filesystem::path get_from_to_path(const std::filesystem::path & from, const std::filesystem::path & to)
+{
+    std::filesystem::path path;
+    gubg::filesystem::get_from_to(path, 
+                                  gubg::filesystem::combine(std::filesystem::current_path(), from),
+                                  gubg::filesystem::combine(std::filesystem::current_path(), to));
+    return path;
 }
 
-std::filesystem::path make_recipe_adj_path(const model::Recipe & recipe)
-{
-    const auto wd = recipe.working_directory();
-    auto res = gubg::filesystem::get_relative_to(wd, ".");
-    auto ss = log::scope("make_recipe_adj_path", [&](auto &node){node.attr("wd", wd).attr("res", res);});
-    return res;
-}
-
-std::filesystem::path make_local_to_recipe(const std::filesystem::path & adj_path, const std::filesystem::path & path)
-{
-    auto ss = log::scope("make_local_to_recipe(filesystem)");
-    auto res = gubg::filesystem::combine(adj_path, path);
-    return res;
-}
-
-ingredient::File make_local_to_recipe(const std::filesystem::path & adj_path, const ingredient::File & file)
+ingredient::File combine_file(const std::filesystem::path & prefix, const ingredient::File & file)
 {
     auto ss = log::scope("make_local_to_recipe(ingredient::File)");
     if (file.key().is_absolute())
         return file;
 
-    ingredient::File f(make_local_to_recipe(adj_path, file.dir()), file.rel());
+    ingredient::File f(gubg::filesystem::combine(prefix, file.dir()), file.rel());
     f.set_overwrite(file.overwrite());
     f.set_owner(file.owner());
     f.set_propagation(file.propagation());
@@ -52,13 +52,6 @@ ingredient::File make_local_to_recipe(const std::filesystem::path & adj_path, co
 
     return f;
 }
-
-
-std::filesystem::path make_global_from_recipe(const model::Recipe & recipe, const std::filesystem::path & path)
-{
-    return gubg::filesystem::combine(recipe.working_directory(), path);
-}
-
 
 } }
 

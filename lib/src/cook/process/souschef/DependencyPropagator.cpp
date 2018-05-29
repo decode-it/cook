@@ -60,8 +60,11 @@ Result DependentPropagator::process(model::Recipe & recipe, RecipeFilteredGraph 
         });
 
         {
-            const std::filesystem::path & tr = util::make_recipe_adj_path(*src_recipe, recipe);
-            auto transform = [&](const ingredient::File & f) { return util::make_local_to_recipe(tr, f); };
+            const std::filesystem::path & tr = util::get_from_to_path(recipe, *src_recipe);
+            auto transform = [&](const ingredient::File & f) 
+            { 
+                return util::combine_file(tr, f);
+            };
             MSS( merge_(*src_recipe, recipe, selection_, p.second.file_filter, transform, model::tag::File_t() ) );
         }
         {

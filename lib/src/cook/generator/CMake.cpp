@@ -92,50 +92,65 @@ namespace cook { namespace generator {
         MSS_BEGIN(Result);
         context_ = &context;
 
-        std::ofstream ofs;
-        MSS(open_output_stream(context, ofs));
+        auto get_output_dir = [&](const std::filesystem::path & recipe_local_dir)
+        {
+            std::filesystem::path adj = util::get_from_to_path(std::filesystem::current_path(), recipe_local_dir);
+            return output_path_ / adj;
+        };
 
         std::list<std::pair<std::filesystem::path, std::ofstream>> streams;
-        std::filesystem::path root_path = gubg::filesystem::normalize(std::filesystem::current_path());
-
         auto get_output_stream = [&](const std::filesystem::path & wd, std::ofstream *& str, bool & is_new)
         {
             MSS_BEGIN(bool);
-
-            std::filesystem::path cur = gubg::filesystem::combine(root_path, wd);
-
+            std::filesystem::path actual_path = get_output_dir(wd);
             is_new = false;
-
-            // the root
-            if (std::filesystem::equivalent(cur, root_path))
-            {
-                str = &ofs;
-                MSS_RETURN_OK();
-            }
 
             // an existing ?
             for(auto & p : streams)
-                if (std::filesystem::equivalent(p.first, cur))
+            {
+                if (std::filesystem::equivalent(p.first, actual_path))
                 {
                     str = &p.second;
                     MSS_RETURN_OK();
                 }
+            }
 
             is_new = true;
 
             // a new
-            streams.push_back(std::make_pair(cur, std::ofstream()));
+            streams.push_back(std::make_pair(actual_path, std::ofstream()));
             str = &streams.back().second;
 
-            MSS(util::open_file(output_path_ / wd / default_filename(), *str));
+            MSS(util::open_file(actual_path / default_filename(), *str));
             MSS_END();
         };
-
+        
         MSS(construct_recipe_map_(context));
+        
+        std::ofstream * root = nullptr;
+        {
+            bool is_new = false;
+            MSS(get_output_stream(std::filesystem::current_path(), root, is_new));
+            MSS(!!root);
+        }
 
+        std::ofstream & ofs = *root;
         const auto & recipe_list = context.menu().topological_order_recipes();
         ofs << "cmake_minimum_required (VERSION 3.1)" << std::endl;
-        ofs << "project (" << context.project_name() << ")" << std::endl;
+
+        {
+            std::string name = context.project_name();
+            if (name.empty())
+            {
+                auto cp = std::filesystem::current_path();
+                auto it = cp.end();
+                if (!cp.empty())
+                    name = *(--it);
+                else
+                    name = "undefined";
+            }
+            ofs << "project (" << name << ")" << std::endl;
+        }
 
         auto set_property = [&](const std::string & key, const std::string & cmake_key)
         {
@@ -162,10 +177,13 @@ namespace cook { namespace generator {
             MSS(!!str);
 
             if (is_new)
-                ofs << "add_subdirectory(" << gubg::filesystem::normalize(recipe->working_directory()) << ")" << std::endl;
+            {
+                std::filesystem::path p = util::get_from_to_path(std::filesystem::current_path(), recipe->working_directory());
+                ofs << "add_subdirectory(\"" << p.string() << "\")" << std::endl;
+            }
 
-
-            std::filesystem::path output_to_source = gubg::filesystem::get_relative_to(output_path_ / recipe->working_directory(), recipe->working_directory());
+            std::filesystem::path output_dir = get_output_dir(recipe->working_directory());
+            std::filesystem::path output_to_source = util::get_from_to_path(output_dir, *recipe);
 
             switch(type)
             {
@@ -523,7 +541,7 @@ namespace cook { namespace generator {
             auto it = el->translator_map().find(process::toolchain::Part::ForceInclude);
             MSS(it != el->translator_map().end());
 
-            auto add_fi = [&](const LanguageTypePair & ltp, const ingredient::File & file)
+            auto add_fi = [&](const LanguageTypePair &  ltp, const ingredient::File & file)
             {
                 if (ltp.type == Type::ForceInclude)
                 {

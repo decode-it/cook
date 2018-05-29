@@ -32,14 +32,11 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     command::Ptr cc;
     MSG_MSS(compile_command_(cc, recipe, context), Error, "Could not create compile command");
 
-    //Relative adjustment path from recipe.working_directory() to root
-    const std::filesystem::path & adj = util::make_recipe_adj_path(recipe);
-
     for (const ingredient::File & source : it->second)
     {
         MSG_MSS(source.propagation() == Propagation::Private, Warning, "Source file '" << source << "' in " << recipe.uri() << " has public propagation and will (probably) result into multiple defined symbols");
 
-        const ingredient::File object = construct_object_file(source, recipe, context, adj);
+        const ingredient::File object = construct_object_file(source, recipe, context);
         auto ss = log::scope("Compiler::process", [&](auto &node){node.attr("source", source).attr("object", object);});
         const LanguageTypePair key(Language::Binary, Type::Object);
 
@@ -48,12 +45,12 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         L("Adding compile command");
         auto compile_vertex = g.add_vertex(cc);
         {
-            const std::filesystem::path & src_fn = util::make_global_from_recipe(recipe, source.key());
+            const std::filesystem::path & src_fn = gubg::filesystem::combine({recipe.working_directory(), source.dir(), source.rel()});
             auto source_vertex = g.goc_vertex(src_fn);
             MSS(g.add_edge(compile_vertex, source_vertex));
         } 
         {
-            const std::filesystem::path & obj_fn = util::make_global_from_recipe(recipe, object.key());
+            const std::filesystem::path & obj_fn = gubg::filesystem::combine({recipe.working_directory(), object.dir(), object.rel()});
             auto object_vertex = g.goc_vertex(obj_fn);
             MSS(g.add_edge(object_vertex, compile_vertex));
         }
@@ -62,18 +59,19 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     MSS_END();
 }
 
-ingredient::File Compiler::construct_object_file(const ingredient::File & source, model::Recipe & recipe, const Context & context, const std::filesystem::path & adj_path) const
+ingredient::File Compiler::construct_object_file(const ingredient::File & source, model::Recipe & recipe, const Context & context) const
 {
     auto ss = log::scope("construct_object_file");
 
-    std::filesystem::path p = context.dirs().temporary() / recipe.uri().string();
+    // get the path to the file
+    std::filesystem::path p = context.dirs().temporary(true) / recipe.uri().string();
     {
         gubg::hash::md5::Stream s;
         s << source.dir().string();
         p /= s.hash_hex();
     }
-    const std::filesystem::path dir = util::make_local_to_recipe(adj_path, gubg::filesystem::normalize(p));
-    /* const std::filesystem::path dir = gubg::filesystem::normalize(context.dirs().temporary() / recipe.working_directory() /source.dir()); */
+
+    std::filesystem::path dir = util::get_from_to_path(recipe, p);
     const std::filesystem::path rel = source.rel().string() + ".obj";
 
     ingredient::File object(dir, rel);
@@ -88,6 +86,7 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
 Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recipe, const Context & context) const
 {
     MSS_BEGIN(Result);
+    auto adj = util::get_from_to_path("./", recipe);
 
     auto element = context.toolchain().element(toolchain::Element::Compile, language_, TargetType::Object);
     MSS(!!element);
@@ -96,7 +95,7 @@ Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recip
 
     // add the include paths
     for (const ingredient::File & f : recipe.files().range(LanguageTypePair(Language::Undefined, Type::IncludePath)))
-        cp->add_include_path(util::make_global_from_recipe(recipe, f.dir()));
+        cp->add_include_path(gubg::filesystem::combine(adj, f.dir()));
 
     // add the force includes
     for (const ingredient::File & f : recipe.files().range(LanguageTypePair(language_, Type::ForceInclude)))

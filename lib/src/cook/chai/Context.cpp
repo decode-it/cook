@@ -129,7 +129,7 @@ struct Context::Pimpl
     std::filesystem::path top_level_path() const
     {
         if (scripts.empty())
-            return std::filesystem::path();
+            return std::filesystem::current_path();
         else
             return scripts.top().parent_path();
     }
@@ -261,10 +261,7 @@ Result Context::load_(const std::string & recipe)
 std::filesystem::path Context::generate_file_path_(const std::string & file) const
 {
     // make the path to the file
-    std::filesystem::path script_fn(file);
-
-    if (script_fn.is_relative())
-        script_fn = pimpl_->top_level_path() / script_fn;
+    std::filesystem::path script_fn = gubg::filesystem::combine(pimpl_->top_level_path(), file);
 
     if (script_fn.empty())
         script_fn = "recipes.chai";

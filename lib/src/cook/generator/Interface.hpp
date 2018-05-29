@@ -33,6 +33,7 @@ public:
         else
             return std::filesystem::path(filename_);
     }
+
 protected:
     Result open_output_stream(const Context & context, std::ofstream & ofs)
     {
@@ -49,6 +50,11 @@ protected:
     void set_filename(const std::string & filename)
     {
         filename_ = filename;
+    }
+
+    const std::string & get_filename() const
+    {
+        return filename_;
     }
 
 private:
