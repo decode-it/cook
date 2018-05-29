@@ -64,7 +64,7 @@ namespace cook { namespace chai {
             if (make_absolute) 
                 return gubg::filesystem::normalize(p).string();
             else
-                return gubg::filesystem::get_relative_to(working_directory(), p);
+                return gubg::filesystem::get_relative_to(working_directory(), p).string();
         }
 
         std::string Cook::temporary_directory(bool make_absolute) const
@@ -74,7 +74,7 @@ namespace cook { namespace chai {
             if (make_absolute) 
                 return gubg::filesystem::normalize(p).string();
             else
-                return gubg::filesystem::get_relative_to(working_directory(), p);
+                return gubg::filesystem::get_relative_to(working_directory(), p).string();
         }
 
 } }
