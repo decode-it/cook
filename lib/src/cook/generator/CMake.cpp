@@ -145,7 +145,7 @@ namespace cook { namespace generator {
                 auto cp = std::filesystem::current_path();
                 auto it = cp.end();
                 if (!cp.empty())
-                    name = *(--it);
+                    name = (--it)->string();
                 else
                     name = "undefined";
             }
@@ -179,7 +179,7 @@ namespace cook { namespace generator {
             if (is_new)
             {
                 std::filesystem::path p = util::get_from_to_path(std::filesystem::current_path(), recipe->working_directory());
-                ofs << "add_subdirectory(\"" << p.string() << "\")" << std::endl;
+                ofs << "add_subdirectory(\"" << gubg::string::escape_cmake(p.string()) << "\")" << std::endl;
             }
 
             std::filesystem::path output_dir = get_output_dir(recipe->working_directory());
