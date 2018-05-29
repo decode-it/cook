@@ -35,12 +35,12 @@ namespace cook { namespace chai {
 
     void Recipe::set_working_directory(const std::string & dir)
     {
-        gubg::filesystem::combine({context_->dirs().recipe(), context_->current_working_directory(), dir});
+        recipe_->set_working_directory(dir);
     }
 
     std::string Recipe::working_directory() const
     {
-        return recipe_->working_directory().string();
+        return (context_->dirs().recipe() / recipe_->working_directory()).string();
     }
 
     const model::Uri & Recipe::uri() const 
