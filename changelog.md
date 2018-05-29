@@ -88,7 +88,7 @@ Proof-of-concept version.
 * CMake better output, and less strict (skip script)
 * Naft output always has build target filename (if present)
 
-### 1.1.9 (open)
+### 1.1.9
 
 * CMake force include are platform independent
 * Added Framework and FrameworkDir
@@ -97,6 +97,7 @@ Proof-of-concept version.
 * [Current|Output|Temporary] dir are exposed in chai (read-only)
 * Flags are clonable (copy constructable)
 * Reworked paths, both absolute and relative are possible
+* Renamed `working_directory()` into `script_local_directory()`
 * [wip] Support for HTML output
 
 
