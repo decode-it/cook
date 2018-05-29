@@ -100,6 +100,11 @@ Proof-of-concept version.
 * Renamed `working_directory()` into `script_local_directory()`
 * [wip] Support for HTML output
 
+## 1.1.10 (open)
+
+## 1.2.0 (open)
+
+* Boost libration
 
 ## Next
 
