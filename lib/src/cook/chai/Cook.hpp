@@ -19,8 +19,7 @@ namespace cook { namespace chai {
 
         Book operator[](const model::Uri & uri);
         Book root() const;
-        std::string working_directory() const;
-        std::string working_directory(bool make_absolute) const;
+        std::string script_local_directory() const;
 
         std::string project_name() const;
         void set_project_name(const std::string & name);

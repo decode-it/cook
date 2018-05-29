@@ -20,16 +20,10 @@ namespace cook { namespace chai {
             return static_cast<const Book &>(*this);
         }
         
-        std::string Cook::working_directory() const
+        std::string Cook::script_local_directory() const
         {
-            return working_directory(false);
-        }
-        std::string Cook::working_directory(bool make_absolute) const
-        {
-            if (make_absolute)
-                return gubg::filesystem::combine(std::filesystem::current_path(), context_->current_working_directory()).string();
-            else
-                return context_->current_working_directory().string();
+            //TODO: later, we can provide a relative script_local_directory, relative to the path of the root script that was loaded
+            return context_->current_working_directory().string();
         }
 
         std::string Cook::project_name() const
@@ -59,22 +53,18 @@ namespace cook { namespace chai {
 
         std::string Cook::output_directory(bool make_absolute) const
         {
-            const auto & p = context_->dirs().output();
-
             if (make_absolute) 
-                return gubg::filesystem::normalize(p).string();
+                return gubg::filesystem::normalize(context_->dirs().output(true)).string();
             else
-                return gubg::filesystem::get_relative_to(working_directory(), p).string();
+                return gubg::filesystem::get_relative_to(std::filesystem::current_path(), context_->dirs().output()).string();
         }
 
         std::string Cook::temporary_directory(bool make_absolute) const
         {
-            const auto & p = context_->dirs().temporary();
-
             if (make_absolute) 
-                return gubg::filesystem::normalize(p).string();
+                return gubg::filesystem::normalize(context_->dirs().temporary(true)).string();
             else
-                return gubg::filesystem::get_relative_to(working_directory(), p).string();
+                return gubg::filesystem::get_relative_to(std::filesystem::current_path(), context_->dirs().temporary()).string();
         }
 
 } }
