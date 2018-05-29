@@ -8,7 +8,6 @@ namespace cook { namespace process { namespace souschef {
 Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
 {
     MSS_BEGIN(Result);
-    auto pd = context.dirs().recipe();
 
     auto ss = log::scope("Archiver::process", [&](auto &node){node.attr("graph", &file_command_graph);});
 
@@ -31,13 +30,13 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
     {
         object.set_propagation(Propagation::Private);
         auto ss = log::scope("object", [&](auto &node){node.attr("file", object);});
-        const std::filesystem::path & obj_fn = util::make_global_from_recipe(recipe, context.dirs().recipe(), object.key());
+        const std::filesystem::path & obj_fn = util::make_global_from_recipe(recipe, object.key());
 
         MSS(g.add_edge(archive_vertex, g.goc_vertex(obj_fn)));
     }
 
     // get the library dir (local to the path)
-    const std::filesystem::path & library_dir = util::make_local_to_recipe(util::make_recipe_adj_path(recipe, pd), pd, context.dirs().output());
+    const std::filesystem::path & library_dir = util::make_local_to_recipe(util::make_recipe_adj_path(recipe), context.dirs().output());
     {
         MSS(!!recipe.build_target().filename);
         ingredient::File dep(library_dir, *recipe.build_target().filename);
@@ -50,7 +49,7 @@ Result Archiver::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 
         // add the link in the execution graph
         {
-            const std::filesystem::path & lib_fn = util::make_global_from_recipe(recipe, context.dirs().recipe(), dep.key());
+            const std::filesystem::path & lib_fn = util::make_global_from_recipe(recipe, dep.key());
             MSS(g.add_edge(g.goc_vertex(lib_fn), archive_vertex));
         }
     }

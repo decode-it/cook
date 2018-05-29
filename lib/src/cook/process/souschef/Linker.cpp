@@ -9,7 +9,6 @@ namespace cook { namespace process { namespace souschef {
 Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const
 {
     MSS_BEGIN(Result);
-    auto pd = context.dirs().recipe();
 
     auto ss = log::scope("Linker::process");
 
@@ -52,25 +51,25 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
     for(ingredient::File & object : objects)
     {
         auto ss = log::scope("object", [&](auto &node){node.attr("file", object);});
-        const std::filesystem::path & obj_fn = util::make_global_from_recipe(recipe, pd, object.key());
+        const std::filesystem::path & obj_fn = util::make_global_from_recipe(recipe, object.key());
         MSS(g.add_edge(link_vertex, g.goc_vertex(obj_fn)));
     }
 
     // link the dependencies
     for(ingredient::File & dep : deps)
     {
-        const std::filesystem::path & fn = util::make_global_from_recipe(recipe, pd, dep.key());
+        const std::filesystem::path & fn = util::make_global_from_recipe(recipe, dep.key());
         MSS(g.add_edge(link_vertex, g.goc_vertex(fn), RecipeFilteredGraph::Implicit));
     }
     for(ingredient::File & exp : exports)
     {
-        const std::filesystem::path & fn = util::make_global_from_recipe(recipe, context.dirs().recipe(), exp.key());
+        const std::filesystem::path & fn = util::make_global_from_recipe(recipe, exp.key());
         MSS(g.add_edge(link_vertex, g.goc_vertex(fn), RecipeFilteredGraph::Implicit));
     }
 
 
     // create the local link dir
-    const std::filesystem::path & library_dir = util::make_local_to_recipe(util::make_recipe_adj_path(recipe, pd), pd, context.dirs().output());
+    const std::filesystem::path & library_dir = util::make_local_to_recipe(util::make_recipe_adj_path(recipe), context.dirs().output());
 
     // create the linked file
     {
@@ -104,7 +103,7 @@ Result Linker::process(model::Recipe & recipe, RecipeFilteredGraph & file_comman
 
         // add the link in the execution graph
         {
-            const std::filesystem::path & lib_fn = util::make_global_from_recipe(recipe, pd, library_dir) / *recipe.build_target().filename;
+            const std::filesystem::path & lib_fn = util::make_global_from_recipe(recipe, library_dir) / *recipe.build_target().filename;
             MSS(g.add_edge(g.goc_vertex(lib_fn), link_vertex));
         }
 
@@ -157,7 +156,6 @@ ingredient::File Linker::construct_link_file(model::Recipe & recipe, const Conte
 Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, const model::Recipe::KeyValues::Range &libs, const model::Recipe::KeyValues::Range &frameworks, const Context & context) const
 {
     MSS_BEGIN(Result);
-    auto pd = context.dirs().recipe();
     
     auto element = context.toolchain().element(toolchain::Element::Link, Language::Binary, recipe.build_target().type);
     MSS(!!element);
@@ -174,15 +172,15 @@ Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, co
 
     // set the library paths
     for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::LibraryPath)))
-        lp->add_library_path(util::make_global_from_recipe(recipe, pd, lib.dir()));
+        lp->add_library_path(util::make_global_from_recipe(recipe, lib.dir()));
 
     // set the frameowork paths
     for(const ingredient::File & framework_path: recipe.files().range(LanguageTypePair(Language::Binary, Type::FrameworkPath)))
-        lp->add_framework_path(util::make_global_from_recipe(recipe, pd, framework_path.dir()));
+        lp->add_framework_path(util::make_global_from_recipe(recipe, framework_path.dir()));
 
     // set the export files
     for(const ingredient::File & exp: recipe.files().range(LanguageTypePair(Language::Definition, Type::Export)))
-        lp->add_export(util::make_global_from_recipe(recipe, pd, exp.key()).string());
+        lp->add_export(util::make_global_from_recipe(recipe, exp.key()).string());
 
     lp->set_recipe_uri(recipe.uri().string());
     ptr = lp;

@@ -44,7 +44,7 @@ DependentPropagator::DependentPropagator(const SelectionFunction & function)
 
 }
 
-Result DependentPropagator::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & context) const
+Result DependentPropagator::process(model::Recipe & recipe, RecipeFilteredGraph & /*file_command_graph*/, const Context & /*context*/) const
 {
     MSS_BEGIN(Result);
 
@@ -60,12 +60,8 @@ Result DependentPropagator::process(model::Recipe & recipe, RecipeFilteredGraph 
         });
 
         {
-            auto pd = context.dirs().recipe();
-            const std::filesystem::path & tr = util::make_recipe_adj_path(*src_recipe, recipe, pd);
-            auto transform = [&](const ingredient::File & f) 
-            { 
-                return util::make_local_to_recipe(tr, pd, f); 
-            };
+            const std::filesystem::path & tr = util::make_recipe_adj_path(*src_recipe, recipe);
+            auto transform = [&](const ingredient::File & f) { return util::make_local_to_recipe(tr, f); };
             MSS( merge_(*src_recipe, recipe, selection_, p.second.file_filter, transform, model::tag::File_t() ) );
         }
         {
