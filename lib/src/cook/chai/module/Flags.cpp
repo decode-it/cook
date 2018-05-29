@@ -79,6 +79,7 @@ ptr->add(chaiscript::fun([](const wrapper::TYPE##_t &) { return std::string(#TYP
 
         ptr->add(chaiscript::user_type<Flags>(), "Flags");
         ptr->add(chaiscript::constructor<Flags()>(), "Flags");
+        ptr->add(chaiscript::constructor<Flags(const Flags &)>(), "Flags");
         ptr->add(chaiscript::fun([](Flags & f, const Flags & to_set) { f.set(to_set); } ), "set");
         ptr->add(chaiscript::fun(&Flags::to_string), "to_string");
         ptr->add(chaiscript::fun([](const Flags & lhs, const Flags & rhs) { return lhs&rhs; } ), "&");

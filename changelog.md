@@ -95,6 +95,8 @@ Proof-of-concept version.
 * temporary output files are under <output_dir> / <recipe> / <md5 of dir> / <rel>
 * Comparing chai recipes and books
 * [Project|Output|Temporary] dir are exposed in chai (read-only)
+* Combining absolute and relative path works
+* Flags are clonable (copy constructable)
 * [wip] Support for HTML output
 
 
