@@ -267,6 +267,7 @@ namespace cook { namespace generator {
         str << ")" << std::endl;
 
         MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
+        MSS(set_link_libraries(str, recipe, lst, "PRIVATE", output_to_source));
 
         str << "# " << recipe->uri() << std::endl << std::endl;
         MSS_END();
