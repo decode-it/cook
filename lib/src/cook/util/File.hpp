@@ -10,11 +10,11 @@
 namespace cook { namespace util {
 
 Result open_file(const std::filesystem::path & path, std::ofstream & ofs);
-std::filesystem::path make_recipe_adj_path(const model::Recipe & old_recipe, const model::Recipe & new_recipe);
-std::filesystem::path make_recipe_adj_path(const model::Recipe & recipe);
-std::filesystem::path make_local_to_recipe(const std::filesystem::path & adj_path, const std::filesystem::path & path);
-ingredient::File make_local_to_recipe(const std::filesystem::path & adj_path, const ingredient::File & file);
-std::filesystem::path make_global_from_recipe(const model::Recipe & recipe, const std::filesystem::path & path);
+std::filesystem::path make_recipe_adj_path(const model::Recipe & old_recipe, const model::Recipe & new_recipe, const std::filesystem::path & project_dir);
+std::filesystem::path make_recipe_adj_path(const model::Recipe & recipe, const std::filesystem::path & project_dir);
+std::filesystem::path make_local_to_recipe(const std::filesystem::path & adj_path, const std::filesystem::path & project_dir, const std::filesystem::path & path);
+ingredient::File make_local_to_recipe(const std::filesystem::path & adj_path, const std::filesystem::path & project_dir, const ingredient::File & file);
+std::filesystem::path make_global_from_recipe(const model::Recipe & recipe, const std::filesystem::path & project_dir, const std::filesystem::path & rel_or_abs_fn);
 
 } }
 
