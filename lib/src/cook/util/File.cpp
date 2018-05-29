@@ -19,6 +19,7 @@ Result open_file(const std::filesystem::path & path, std::ofstream & ofs)
 
 std::filesystem::path make_recipe_adj_path(const model::Recipe & old_recipe, const model::Recipe & new_recipe)
 {
+    
     auto res = gubg::filesystem::get_relative_to(new_recipe.working_directory(), old_recipe.working_directory());
     return res;
 }

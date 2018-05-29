@@ -69,7 +69,7 @@ namespace cook { namespace chai {
 
         // set the working directory
         if (!already_existing)
-            r.set_working_directory(context_->current_working_directory().string());
+            r.set_working_directory("./");
 
         return r;
     }
