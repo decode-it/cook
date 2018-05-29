@@ -132,7 +132,6 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&Recipe::framework), "framework");
         ptr->add(chaiscript::fun(&Recipe::framework_path), "framework_path");
         ptr->add(chaiscript::fun(&Recipe::include_path), "include_path");
-        ptr->add(chaiscript::fun(&Recipe::set_working_directory), "set_working_directory");
         ptr->add(chaiscript::fun(&Recipe::uri), "uri");
         ptr->add(chaiscript::fun(&Recipe::data), "data");
 
@@ -154,13 +153,6 @@ namespace cook { namespace chai { namespace module {
 
         ptr->add(chaiscript::fun(&Recipe::each_file), "each_file");
         ptr->add(chaiscript::fun(&Recipe::each_key_value), "each_key_value");
-        {
-            auto lambda = [](Recipe & recipe, const std::function<void (chaiscript::Boxed_Value)> & functor)
-            {
-                recipe.each_file([=](File & f) { functor(chaiscript::var(&f)); });
-                recipe.each_key_value([=](KeyValue & f) { functor(chaiscript::var(&f)); });
-            };
-        }
         
         return ptr;
     }

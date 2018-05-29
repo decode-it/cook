@@ -5,22 +5,20 @@
 
 namespace cook { namespace model {
 
-struct Dirs
-{
-    Dirs();
+    struct Dirs
+    {
+        Dirs();
 
-    void set_recipe(const std::filesystem::path & dir);
-    void set_output(const std::filesystem::path & dir);
-    void set_temporary(const std::filesystem::path & dir);
+        void set_output(const std::filesystem::path & dir);
+        void set_temporary(const std::filesystem::path & dir);
 
-    std::filesystem::path recipe() const;
-    std::filesystem::path output() const;
-    std::filesystem::path temporary() const;
-private:
-    std::filesystem::path recipe_;
-    std::filesystem::path output_;
-    std::filesystem::path temporary_;
-};
+        std::filesystem::path output() const;
+        std::filesystem::path temporary() const;
+
+        private:
+        std::filesystem::path output_;
+        std::filesystem::path temporary_;
+    };
 
 } }
 

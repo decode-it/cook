@@ -4,14 +4,8 @@ namespace cook { namespace model {
 
 Dirs::Dirs()
 {
-    set_recipe("./");
-    set_output("new_build");
-    set_temporary(".new_cook");
-}
-
-void Dirs::set_recipe(const std::filesystem::path & dir)
-{
-    recipe_ = dir;
+    set_output("build");
+    set_temporary(".cook");
 }
 
 void Dirs::set_output(const std::filesystem::path & dir)
@@ -24,25 +18,14 @@ void Dirs::set_temporary(const std::filesystem::path & dir)
     temporary_ = dir;
 }
 
-std::filesystem::path Dirs::recipe() const
-{
-    return recipe_;
-}
-
 std::filesystem::path Dirs::output() const
 {
-    if (output_.is_absolute())
-        return output_;
-    else
-        return recipe()/output_;
+    return output_;
 }
 
 std::filesystem::path Dirs::temporary() const
 {
-    if (temporary_.is_absolute())
-        return temporary_;
-    else
-        return output() / temporary_;
+    return gubg::filesystem::combine(output(), temporary_);
 }
 
 } }

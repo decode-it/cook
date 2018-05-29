@@ -47,11 +47,6 @@ namespace cook { namespace chai {
             return toolchain_;
         }
         
-        std::string Cook::project_directory() const
-        {
-            return project_directory(false);
-        }
-
         std::string Cook::output_directory() const
         {
             return output_directory(false);
@@ -60,16 +55,6 @@ namespace cook { namespace chai {
         std::string Cook::temporary_directory() const
         {
             return temporary_directory(false);
-        }
-
-        std::string Cook::project_directory(bool make_absolute) const
-        {
-            const auto & p = context_->dirs().recipe();
-
-            if (make_absolute) 
-                return gubg::filesystem::normalize(p).string();
-            else
-                return gubg::filesystem::get_relative_to(working_directory(), p);
         }
 
         std::string Cook::output_directory(bool make_absolute) const

@@ -40,7 +40,7 @@ namespace cook { namespace chai {
 
     std::string Recipe::working_directory() const
     {
-        return (context_->dirs().recipe() / recipe_->working_directory()).string();
+        return recipe_->working_directory().string();
     }
 
     const model::Uri & Recipe::uri() const 

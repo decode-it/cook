@@ -85,7 +85,7 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
     n.attr("uri", uri);
     n.attr("tag", uri.path().back());
     n.attr("display_name", recipe->name());
-    n.attr("path", gubg::filesystem::combine({ std::filesystem::current_path(), context.dirs().recipe(), recipe->working_directory() }).string());
+    n.attr("path", recipe->working_directory().string());
     n.attr("type", recipe->build_target().type);
     n.attr("build_target", recipe->build_target().name);
     
