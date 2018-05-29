@@ -64,10 +64,7 @@ namespace cook { namespace generator { namespace {
             assert(it != map.end());
 
             if (it->second.type == CMakeType::Object)
-            {
-                std::cout << recipe.uri() << ": dependency " << dep->uri() << " has objects" << std::endl;
                 return true;
-            }
         }
 
         return false;
