@@ -276,9 +276,14 @@ namespace :doc do
         infos.each do |name,info|
             name = name.to_s
             puts("[#{name}](src:#{info[:src]})(dst:#{info[:dst]})")
-            Dir.chdir(info[:src]) do
-                sh "scp -r * web-gfannes@ssh.linuxsystems.be:fannes.com/cook/#{info[:dst]}"
-            end if args[:filter] == name
+            if args[:filter] == name
+                puts("Publishing #{name}")
+                Dir.chdir(info[:src]) do
+                    sh "scp -r * web-gfannes@ssh.linuxsystems.be:fannes.com/cook/#{info[:dst]}"
+                end
+            else
+                puts("Not publishing #{name}")
+            end
         end
     end
 end
