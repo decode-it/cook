@@ -42,14 +42,14 @@ int main(int argc, char ** argv)
 }
 ```
 
-We can create a book for this project by adding the file `Mybook/recipes.cook` with the following contents:
+We can create a book for this project by adding the file `Mybook/recipes.chai` with the following contents:
 ```ruby
 # MyBook/recipes.chai
 root.book("myProject", fun(b) {
-    b.recipe("lib", library, fun(r) {
+    b.recipe("lib", TargetType.Archive, fun(r) {
         r.add("lib", "**.[hc]pp")
     })
-    b.recipe("app", executable, fun(r) {
+    b.recipe("app", TargetType.Executable, fun(r) {
         r.add("app", "main.cpp")
         r.depends_on("lib")
     })
@@ -60,12 +60,12 @@ Our fresh and tasty application can be build as follows
 ```bash
 $ cd MyBook
 # building
-$ cook /myProject/app
+$ cook -g ninja /myProject/app
 # executing
-$ build/myProject.app
+$ ninja -v
 ```
 
-Time to dissect our `recipes.cook`, step by step.
+Time to dissect our `recipes.chai`, step by step.
 
 #### Creating a book
 
@@ -80,20 +80,20 @@ root.book("myProject", fun(b) {
 ```
 The second argument to this `book` function is `fun(b){}` is the callback functor, with argument `b` the newly created book. (Note that the scope of `fun(b)` starts at first line and goes up to the final line of our script.)
 
-#### Creating a library
+#### Creating a static library
 
-On line two, add a new recipe named _"lib"_ to `b`. So far, our recipes.cook contains a recipe named `/myProject/lib`. 
+On line two, add a new recipe named _"lib"_ to `b`. So far, our `recipes.chai` contains a recipe named `/myProject/lib`. 
 ```ruby
 ...
-    b.recipe("lib", library, fun(r) {
+    b.recipe("lib", TargetType.Archive, fun(r) {
         r.add("lib", "**.[hc]pp")
     })
 ...
 ```
-The type of this recipe is `library` as specified by the second (and optional) argument. The third and final argument is a callback functor, similarly when creating books.
-On the third line, we add all the files for our library: all files stored under lib and having as extension _"hpp"_ or _"cpp"_ our added as ingredients to our recipe. 
+The type of this recipe is `TargetType.Archive` as specified by the second (and optional) argument. The third and final argument is a callback functor, similarly when creating books.
+On the third line, we add all the files for our static library: all files stored under lib and having as extension _"hpp"_ or _"cpp"_ our added as ingredients to our recipe. 
 
-> _"**"_ is a globbing expression which means recursing all subfolders. Thus _"**.[hc]pp"_ means _recurse all subdirectories and add all files with extension .hpp or .cpp. Not recursing the subfolders can be done by using _*.[hc]pp_
+> _"**"_ is a globbing expression which means recursing all subfolders. Thus _"**.[hc]pp"_ means _recurse all subdirectories and add all files with extension .hpp or .cpp_. Not recursing the subfolders can be done by using _*.[hc]pp_
 
 If you're wondering why our recipe contains `r.add("lib", "**.[hc]pp")`, and not `r.add("./", "lib/**.[hc]pp")` (or even `r.add("lib/**.[hc]pp")`), bear with us for a moment. 
 
@@ -102,13 +102,13 @@ If you're wondering why our recipe contains `r.add("lib", "**.[hc]pp")`, and not
 Similarly as for _lib_, we add a new recipe named "app" as follows
 ```ruby
 ...
-    b.recipe("app", executable, fun(r) {
+    b.recipe("app", TargetType.Executable, fun(r) {
         r.add("app", "main.cpp")
         r.depends_on("lib")
     })
 ...
 ```
-The type of this recipe is an executable and we add a single main.cpp file to the recipe. Finally the recipe specifies a dependency `r.depends_on("lib")`, meaning that _/myProject/app_ depends on a recipe named _lib_. 
+The type of this recipe is an `TargetType.Executable` and we add a single main.cpp file to the recipe. Finally the recipe specifies a dependency `r.depends_on("lib")`, meaning that _/myProject/app_ depends on a recipe named _lib_. 
 
 > When cook tries to resolve the dependencies for a recipe, it starts at the current book and tries to resolve that dependency. If that doesn't work, we go to the parent book, and continue, until we reach the root book. So in our case, the dependency _lib_ implies that we first look for _/myProject/lib_, and if that does not exist, consider _/lib_. 
 
