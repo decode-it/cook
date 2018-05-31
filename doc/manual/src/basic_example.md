@@ -59,7 +59,7 @@ We can create a book for this project by adding the file `Mybook/recipes.chai` w
 }
 ```
 
-Our fresh and tasty application can be build as follows
+Our fresh and tasty application can be built as follows
 ```bash
 $ cd MyBook
 # building
