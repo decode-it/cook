@@ -45,15 +45,18 @@ int main(int argc, char ** argv)
 We can create a book for this project by adding the file `Mybook/recipes.chai` with the following contents:
 ```ruby
 # MyBook/recipes.chai
-root.book("myProject", fun(b) {
-    b.recipe("lib", TargetType.Archive, fun(r) {
+{
+    var my_book = cook["myProject"]
+    my_book.recipe("lib", TargetType.Archive, fun(r) {
         r.add("lib", "**.[hc]pp")
     })
-    b.recipe("app", TargetType.Executable, fun(r) {
-        r.add("app", "main.cpp")
-        r.depends_on("lib")
-    })
-})
+
+    {
+        var app = my_book.recipe("app", TargetType.Executable)
+        app.add("app", "main.cpp")
+        app.depends_on("lib")
+    }
+}
 ```
 
 Our fresh and tasty application can be build as follows
@@ -69,29 +72,29 @@ Time to dissect our `recipes.chai`, step by step.
 
 #### Creating a book
 
-Our book starts by creating a new book name _myProject_ in the root book. All recipes in cook are stored in books, and books can be nested within other books. Think of them as C++ namspaces. This way we can
+Our book starts by asking cook to create a new book, named _myProject_. All recipes in cook are stored in books, and books can be nested within other books (as we'll see lateron). Think of them as C++ namspaces. This way we can
  * organize all recipes in a tree-like structure
  * we avoid having name clashes.
-
+We store a reference to our book in the variable `my_book`
 ```ruby
-root.book("myProject", fun(b) {
+{
+    var my_book = cook["myProject"]
     ...
-})
+}
 ```
-The second argument to this `book` function is `fun(b){}` is the callback functor, with argument `b` the newly created book. (Note that the scope of `fun(b)` starts at first line and goes up to the final line of our script.)
+Why did wel place everything between semicolons? Well, that way, we are sure that the variable `my_book` will not clash, and thus we can reuse the name of that variable. Again, similar as in C/C++. 
 
 #### Creating a static library
 
-On line two, add a new recipe named _"lib"_ to `b`. So far, our `recipes.chai` contains a recipe named `/myProject/lib`. 
+On line two, add a new recipe named _lib_ to `my_book`. So far, our `recipes.chai` contains a single recipe named `/myProject/lib`. 
 ```ruby
 ...
-    b.recipe("lib", TargetType.Archive, fun(r) {
+    my_book.recipe("lib", TargetType.Archive, fun(r) {
         r.add("lib", "**.[hc]pp")
     })
 ...
 ```
-The type of this recipe is `TargetType.Archive` as specified by the second (and optional) argument. The third and final argument is a callback functor, similarly when creating books.
-On the third line, we add all the files for our static library: all files stored under lib and having as extension _"hpp"_ or _"cpp"_ our added as ingredients to our recipe. 
+The type of this recipe is `TargetType.Archive` as specified by the second (and optional) argument. The third argument is a callback functor, which is called with our recipe. This way, we can configure our recipe by means of the variable `r`. On the third line, we add all the files for our static library: all files stored under lib and having as extension _"hpp"_ or _"cpp"_ our added as ingredients to our recipe. 
 
 > _"**"_ is a globbing expression which means recursing all subfolders. Thus _"**.[hc]pp"_ means _recurse all subdirectories and add all files with extension .hpp or .cpp_. Not recursing the subfolders can be done by using _*.[hc]pp_
 
@@ -102,14 +105,60 @@ If you're wondering why our recipe contains `r.add("lib", "**.[hc]pp")`, and not
 Similarly as for _lib_, we add a new recipe named "app" as follows
 ```ruby
 ...
-    b.recipe("app", TargetType.Executable, fun(r) {
-        r.add("app", "main.cpp")
-        r.depends_on("lib")
-    })
+    {
+        var app = my_book.recipe("app", TargetType.Executable)
+        app.add("app", "main.cpp")
+        app.depends_on("lib")
+    }
 ...
 ```
-The type of this recipe is an `TargetType.Executable` and we add a single main.cpp file to the recipe. Finally the recipe specifies a dependency `r.depends_on("lib")`, meaning that _/myProject/app_ depends on a recipe named _lib_. 
+The type of this recipe is an `TargetType.Executable`. However, this time we did not supply a configuration callback function, and thus, similarly when we created our book, we get a reference to our recipe (which we store in the variable app). We add a single main.cpp file to the recipe. Finally the recipe specifies a dependency `r.depends_on("lib")`, meaning that _/myProject/app_ depends on a recipe named _lib_. 
 
 > When cook tries to resolve the dependencies for a recipe, it starts at the current book and tries to resolve that dependency. If that doesn't work, we go to the parent book, and continue, until we reach the root book. So in our case, the dependency _lib_ implies that we first look for _/myProject/lib_, and if that does not exist, consider _/lib_. 
 
 Let us reconsider the recipe.add() function. When given two arguments, the first one is the directory, and the second the pattern. When we write `r.add("lib", "**.[hc]pp")`, cook will add _lib/_ as an include path, if we would write `r.add("./", "lib/**.[hc]pp")`, the _./_ will be added as include path. And that's the reason why the header ""process.hpp" can be resolved in _/myProject/app_.
+
+
+## Nesting books 
+
+We mentioned that books can be nested, for clearer organization. There are many ways we can achieve this. Let us created a new book `test`, nested inside `myProject`, and a recipe `exe` in `/myProject/test`. This can be done as follows:
+```ruby
+{
+    # 1st alternative
+    var b1 = cook["myProject"]
+    var b2 = b1.book("test")
+    var r1 = b2.recipe("exe")
+}
+
+{
+    # 2nd alternative
+    var b = cook["myProject/test"]
+    var r = b.recipe("exe")
+}
+
+{
+    # 3th alternative
+    var r = cook["myProject/test"].recipe("exe")
+}
+
+{
+    # 4th alternative
+    var r = cook.recipe("myProject/test/exe")
+}
+
+{
+    # 5th alternative
+    var r = cook["myProject"].book("test").recipe("exe")
+}
+
+{
+    # 6th alternative
+    cook.book("myProject", fun(b1)
+    {
+        b1.book("test", fun(b2) {
+            b2.recipe("exe")
+        })
+    })
+}
+```
+These are some of the alternatives. Most alternatives, are quiet selfexplanatory, but take a look at the 4th. We can see that `cook` itself, acts as a book, on which we can create a recipe or a book (and a lot more than that). And thus `cook["myProject/test"]` is just shorthand for `cook.book("myProject/test")`

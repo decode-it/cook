@@ -8,8 +8,8 @@ A _book_ within cook is the mechanism to create a hierachycal structure, similar
 
 A book can be opened and re-opened as follows:
 
-* `cook[uri]`
-   * Directly returns the book specified via its `uri`, its _unique resource identifier_.
+* `cook[uri]` or `root.book(uri)`
+   * Directly returns the book specified via its `uri`, its _unique resource identifier_. 
 * `root.book(uri, callback)`
    * The `callback` will be called with the book passed as its argument.
 
@@ -46,6 +46,14 @@ A recipe is always created _within_ a book, as follows:
 * `book.recipe(name, target_type, callback)`
    * The `uri` of this recipe is created by adding `name` to the `uri` of `book`.
    * The `callback` will be called, passing the created recipe as argument.
+   * This function allows specification of the `TargetType`.
+* `book.recipe(name)`:
+   * The `uri` of this recipe is created by adding `name` to the `uri` of `book`.
+   * A reference to the actual recipe is returned
+   * The `TargetType` for this recipe will be `TargetType.Undefined`.
+* `book.recipe(name, target_type)`
+   * The `uri` of this recipe is created by adding `name` to the `uri` of `book`.
+   * A reference to the actual recipe is returned
    * This function allows specification of the `TargetType`.
 
 ### Recipe TargetType
