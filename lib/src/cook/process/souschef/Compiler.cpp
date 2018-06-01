@@ -89,7 +89,7 @@ Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recip
     auto adj = util::get_from_to_path("./", recipe);
 
     auto element = context.toolchain().element(toolchain::Element::Compile, language_, TargetType::Object);
-    MSS(!!element);
+    MSG_MSS(!!element, Error, "Could not find the toolchain compile element for " << language_);
     auto cp = element->create<process::command::Compile>();
     MSS(!!cp);
 

@@ -115,10 +115,11 @@ namespace :b0 do
         sh("#{ninja_exe} -f #{b0_ninja_fn} b0-cook.exe -v")
     end
 
+    desc "bootstrap-level0: Install b0-cook.exe as cook"
     task :install => :build do
         case GUBG::os
         when :linux, :macos then sh("sudo cp b0-cook.exe /usr/local/bin/cook")
-        when :windows then cp("b0-cook.exe", GUBG::shared("bin"))
+        when :windows then cp("b0-cook.exe", File.join(GUBG::shared("bin"), "cook.exe"))
         end
     end
 
