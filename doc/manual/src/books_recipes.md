@@ -93,6 +93,12 @@ The following functions can be used to interact with a recipe:
 * `rcp.each_key_value(callback)`: will run `callback` for each _key-value_ present in this recipe.
 * `rcp.set_config_callback()`: TBC
 
+### Dependencies and propagation
+
+By adding dependencies between recipes, we are creating a _directed graph_. To ensure cook can find an recipe order that respects all these dependencies, this graph should be a [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graphhttps://en.wikipedia.org/wiki/Directed_acyclic_graph). An ordering of the recipes that respects all dependencies is called a _topological ordering_.
+
+Once cook determined a topological ordering, it will process the recipes according to this ordering. In addition to this, files and key-value information is exchanged as well if the `Propagation` flag is `Public`. Depending on the recipe `TargetType`, the `Language` and `Type` of the different data items, cook determines these `Propagation` settings automatically. When needed, these can be overridden.
+
 ## URI
 
 Books and recipes are identified via a _unique resource identifier_. Within [chaiscript](http://chaiscript.com/), a _uri_ is expressed as a string, using the `/` symbol to separate the book and recipe names.
