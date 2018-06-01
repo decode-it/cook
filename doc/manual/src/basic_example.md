@@ -94,7 +94,7 @@ On line two, add a new recipe named _lib_ to `my_book`. So far, our `recipes.cha
     })
 ...
 ```
-The type of this recipe is `TargetType.Archive` as specified by the second (and optional) argument. The third argument is a callback functor, which is called with our recipe. This way, we can configure our recipe by means of the variable `r`. On the third line, we add all the files for our static library: all files stored under lib and having as extension _"hpp"_ or _"cpp"_ our added as ingredients to our recipe. 
+The type of this recipe is `TargetType.Archive` as specified by the second (and optional) argument. The third argument is a callback functor, which is called with our recipe. This way, we can configure our recipe by means of the variable `r`. On the third line, we add all the files for our static library: all files stored under lib and having as extension _"hpp"_ or _"cpp"_ are added as ingredients to our recipe. 
 
 > _"**"_ is a globbing expression which means recursing all subfolders. Thus _"**.[hc]pp"_ means _recurse all subdirectories and add all files with extension .hpp or .cpp_. Not recursing the subfolders can be done by using _*.[hc]pp_
 

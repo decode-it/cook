@@ -64,7 +64,7 @@ A recipe within cook always has a single and fixed `TargetType`. Currently, the 
 * `TargetType.Archive`: a static library.
 * `TargetType.SharedLibrary`: a shared library: a `.dll` for windows, a `.so` for linux/macos.
 * `TargetType.Executable`: an executable binary.
-* `TargetType.Script`: an external command/script that can eg. be used to generate source files on-the-fly. The command is executed by cook itself _before_ globbing operations for dependent recipes are executed. As such, source files created by this command will be taken into account. Note the this means that this command will not appear in any generated build system, like the ones created by the ninja or cmake generators.
+* `TargetType.Script`: an external command/script that can eg. be used to generate source files on-the-fly. The command is executed by cook itself _before_ globbing operations for dependent recipes are executed. As such, source files created by this command will be taken into account. Note that this means that this command will not appear in any generated build system, like the ones created by the ninja or cmake generators.
 * `TargetType.UserDefined`: TBC
 
 ### Adding/reading info to/from a recipe

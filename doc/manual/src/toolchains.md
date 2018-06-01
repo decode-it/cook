@@ -39,7 +39,7 @@ Additional toolchains can be specified via the `-t my_toolchain` CLI argument. T
 
 ## ToolchainElement translators and data
 
-Each toolchain element consists of _data_ and a prioritised list _translators_. For each _build graph_ operation, the corresponding toolchain element is looked-up, and the data is _copied_ for that specific operation: the toolchain element can be populated with default data, which is updated and expanded with the specific data for the specific _build graph_ operation. Eg, a macro definition that is specified at recipe-level via the `rcp.define()` function will be added into the data for the compilation operations. If a system-wide macro should be specified, this macro value could be added to the _data_ at toolchain-element level.
+Each toolchain element consists of _data_ and a prioritised list of _translators_. For each _build graph_ operation, the corresponding toolchain element is looked-up, and the data is _copied_ for that specific operation: the toolchain element can be populated with default data, which is updated and expanded with the specific data for the specific _build graph_ operation. Eg, a macro definition that is specified at recipe-level via the `rcp.define()` function will be added into the data for the compilation operations. If a system-wide macro should be specified, this macro value could be added to the _data_ at toolchain-element level.
 
 Internally, the _data_ consists of different types of information:
 
