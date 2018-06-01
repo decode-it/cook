@@ -36,7 +36,6 @@
 ## Recipe
 
 * Default generates all recipes.
-* `_list_` to list the available recipes.
 
 ## Future options
 
