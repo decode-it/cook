@@ -35,7 +35,7 @@ bool Options::parse(int argc, const char ** argv)
         opt.add_mandatory(  'T', "--toolchain-option     ", "Passes the option to the toolchain.", [&](const std::string & str) { toolchain_options.push_back(parse_key_value_pair(str)); });
         opt.add_mandatory(  'g', "--generator            ", "A generator to use [naft|ninja|cmake|build]. If none are specified, then build is used.", [&](const std::string & str) { generators.push_back(parse_key_value_pair(str)); });
         opt.add_mandatory(  'C', "--chef                 ", "Chef to use [scal|cal|void]", [&](const std::string &str){ chef = str; });
-        opt.add_switch(     'c', "--clean                ", "Clean the data for the specified generators before using them", [&](){ clean = true; });
+        opt.add_switch(     'c', "--clean                ", "Clean the data for the specified generators before using them", [&](){ clean_ = true; });
         opt.add_mandatory(  'D', "--data                 ", "Passes the chaiscript variables to the process.", [&](const std::string & str) { variables.push_back(parse_key_value_pair(str)); });
         opt.add_switch(     'h', "--help                 ", "Prints this help.", [&](){ print_help = true; });
         opt.add_mandatory(  'v', "--verbosity            ", "Verbosity level, 0 is silent. By default this is 1. ", [&](const std::string & str) { verbosity = std::max(0, std::stoi(str)); });
@@ -75,7 +75,7 @@ void Options::stream(log::Importance importance) const
     auto ss = log::scope("options", imp, [&](auto &n){
             n.attr("output_path", output_path);
             n.attr("temp_path", temp_path);
-            n.attr("clean", (clean ? "true" : "false"));
+            n.attr("clean", (clean_ ? "true" : "false"));
             n.attr("print_help", (print_help ? "true" : "false"));
             n.attr("verbosity", verbosity);
             });

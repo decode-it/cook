@@ -17,7 +17,7 @@ namespace cook { namespace app {
         std::string temp_path = ".cook";
         std::string chef;
         std::list<std::pair<std::string, std::string>> generators;
-        bool clean = false;
+        bool clean_ = false;
         std::list<std::pair<std::string, std::string>> variables;
 
         bool print_help = false;
