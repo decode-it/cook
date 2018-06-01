@@ -23,8 +23,7 @@ const static std::initializer_list<Language> default_supported_languages = { Lan
 
 }
 
-CompileArchiveLink::CompileArchiveLink(const std::string & name)
-    : name_(name)
+CompileArchiveLink::CompileArchiveLink(bool execute_scripts): execute_scripts_(execute_scripts)
 {
     linker_     = std::make_shared<souschef::Linker>();
     archiver_   = std::make_shared<souschef::Archiver>();
@@ -115,7 +114,7 @@ Result CompileArchiveLink::initialize()
             return true;
         };
 
-        set.souschefs.push_back(std::make_shared<souschef::ScriptRunner>());
+        set.souschefs.push_back(std::make_shared<souschef::ScriptRunner>(execute_scripts_));
         this->add_brigade(default_priority-2, std::move(set));
     }
 

@@ -34,7 +34,7 @@ bool Options::parse(int argc, const char ** argv)
         opt.add_mandatory(  't', "--toolchain-file       ", "The toolchain-file to use. If not found and any of [gcc,clang, msvc, default] a toolchain is generated in the working directory", [&](const std::string & str) { toolchains.push_back(str); });
         opt.add_mandatory(  'T', "--toolchain-option     ", "Passes the option to the toolchain.", [&](const std::string & str) { toolchain_options.push_back(parse_key_value_pair(str)); });
         opt.add_mandatory(  'g', "--generator            ", "A generator to use [naft|ninja|cmake|build]. If none are specified, then build is used.", [&](const std::string & str) { generators.push_back(parse_key_value_pair(str)); });
-        opt.add_mandatory(  'C', "--chef                 ", "Chef to use [cal|void]", [&](const std::string &str){ chef = str; });
+        opt.add_mandatory(  'C', "--chef                 ", "Chef to use [scal|cal|void]", [&](const std::string &str){ chef = str; });
         opt.add_switch(     'c', "--clean                ", "Clean the data for the specified generators before using them", [&](){ clean = true; });
         opt.add_mandatory(  'D', "--data                 ", "Passes the chaiscript variables to the process.", [&](const std::string & str) { variables.push_back(parse_key_value_pair(str)); });
         opt.add_switch(     'h', "--help                 ", "Prints this help.", [&](){ print_help = true; });

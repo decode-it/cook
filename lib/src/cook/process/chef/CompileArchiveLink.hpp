@@ -8,7 +8,7 @@ namespace cook { namespace process { namespace chef {
 
     struct CompileArchiveLink : public Interface
     {
-        explicit CompileArchiveLink(const std::string &name);
+        explicit CompileArchiveLink(bool execute_scripts);
 
         Result initialize() override;
 
@@ -18,9 +18,10 @@ namespace cook { namespace process { namespace chef {
         void set_archiver(SouschefPtr archiver);
 
     private:
+        const bool execute_scripts_;
+
         std::list<SouschefPtr> generate_compile_only_steps_() const;
 
-        std::string name_;
         std::map<Language, SouschefPtr> compilers_;
         SouschefPtr linker_;
         SouschefPtr archiver_;

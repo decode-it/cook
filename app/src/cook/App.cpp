@@ -91,17 +91,21 @@ Result App::process_()
         {
             auto chef_name = options_.chef;
             if (chef_name.empty())
-                //CompileArchiveLink chef is default
-                chef_name = "cal";
+                //CompileArchiveLink chef is default, with script execution
+                chef_name = "scal";
 
             if (false) {}
             else if (chef_name == "void")
             {
                 //No chef. This is useful when only the recipe names are needed, without the timeconsuming file resolving etc.
             }
+            else if (chef_name == "scal")
+            {
+                chef = std::make_shared<process::chef::CompileArchiveLink>(true);
+            }
             else if (chef_name == "cal")
             {
-                chef = std::make_shared<process::chef::CompileArchiveLink>("default");
+                chef = std::make_shared<process::chef::CompileArchiveLink>(false);
             }
         }
     }

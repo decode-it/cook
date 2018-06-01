@@ -102,6 +102,8 @@ Proof-of-concept version.
 
 ## 1.1.10 (open)
 
+* Added "scal" and "cal" chefs: "scal" runs the scripts as well ("cal" behaviour from 1.1.9), "cal" will not run the scripts
+
 ## 1.2.0 (open)
 
 * Boost libration

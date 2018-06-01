@@ -21,7 +21,7 @@ namespace cook { namespace process { namespace chef {
             brigade_priority_map_.emplace(priority, std::forward<Brigade>(brigade));
         }
 
-        // I know it should mets en place, but this corresponds to the cooking term :)
+        //I know it should be "mets en place", but this corresponds to the cooking term :)
         Result mis_en_place(Context & kitchen);
 
         Result find_brigade(const Brigade *& result, model::Recipe * recipe) const;
