@@ -16,7 +16,9 @@ By default, the cmake generator will create this `CMakeLists.txt` hierarchy in t
 
 ## HTML
 
-The `-g html` generator will create a set of HTML web pages that allows easy inspection of the different recipes and their interdependencies. Currently, only the recipe overview is implemented, detailed information for each recipe is still to come.
+The `-g html` generator will create a set of HTML web pages that allows easy inspection of the different recipes and their interdependencies.
+
+By default, the HTML pages are written in the output directory specified via the `-o <directory>` option. Within this output directory, the `html` subdirectory is used to not litter the output directory too much. The HTML generator takes an optional value to change the `html` subdirectory into a user-specified subdirectory via `-g html=<dir>`.
 
 ## Naft
 

@@ -226,6 +226,7 @@ Result HTML::set_option(const std::string & option)
 {
     MSS_BEGIN(Result, logns);
     L(C(option));
+    ns_ = option;
     MSS_END();
 }
 
@@ -241,7 +242,7 @@ Result HTML::process(const Context & context)
     Data data;
     MSS(data.process(context));
 
-    set_filename(fn("html/index"));
+    set_filename(fn(ns_+"/index"));
     std::ofstream fo;
     MSS(open_output_stream(context, fo));
 
@@ -252,7 +253,7 @@ Result HTML::process(const Context & context)
         const auto &uri = p.first;
         const auto &rcp = p.second;
 
-        set_filename(fn(uri, "html/details"));
+        set_filename(fn(uri, ns_+"/details"));
         std::ofstream fo;
         MSS(open_output_stream(context, fo));
 

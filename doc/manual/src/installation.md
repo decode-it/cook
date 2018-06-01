@@ -1,6 +1,12 @@
 # Installation
 
+## Using the prebuilt binaries
+
+Prebuilt binaries can be found [here](https://github.com/decode-it/cook-binary). Detailed instructions are given in the [readme](https://github.com/decode-it/cook-binary/blob/master/readme.md), it boils down to cloning the repository and making sure the platform-specific subdirectory is added to the `PATH` environment variable.
+
 ## Building from source
+
+For those who are interested in building cook from source, the following steps should suffice:
 
 * Install `git`
     * Windows: https://git-scm.com/

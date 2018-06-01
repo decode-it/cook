@@ -14,6 +14,9 @@ public:
 
     bool can_process(const Context & context) const override;
     Result process(const Context & context) override;
+
+private:
+    std::string ns_ = "html";
 };
 
 } }
