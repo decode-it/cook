@@ -8,139 +8,143 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
     {
         standard_config(oss);
 
-        oss << "cook.toolchain.configure(100, \"specific toolchain config\", fun(e,k,v,b) {" << std::endl;
-        oss << "" << std::endl;
-        oss << "    auto & kv = e.key_values();" << std::endl;
-        oss << "    auto & tm = e.translators();" << std::endl;
-        oss << "" << std::endl;
-        oss << "" << std::endl;
-        oss << "    if (false) {" << std::endl;
-        oss << "    } else if (e.element_type == ElementType.Compile) {" << std::endl;
-        oss << "        if (false) {" << std::endl;
-        oss << "        } else if (k == \"debug_symbols\" && v == \"true\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-g\")" << std::endl;
-        oss << "        } else if (k == \"optimization\" && v == \"max_speed\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-O3\")" << std::endl;
-        oss << "        } else if (k == \"config\" && v == \"rtc\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-fsanitize\", \"address\")" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-fno-omit-frame-pointer\")" << std::endl;
-        oss << "        } else if (k == \"config\" && v == \"profile\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-g\")" << std::endl;
-        oss << "        } else if (k == \"arch\" && v == \"x86\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-m32\")" << std::endl;
-        oss << "        } else if (k == \"arch\" && v == \"x64\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-m64\")" << std::endl;
-        oss << "        } else if (k == \"arch\" && v == \"armv7\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-arch armv7\")" << std::endl;
-        oss << "            b.add_config(\"position_independent_code\", \"true\")" << std::endl;
-        oss << "        } else if (k == \"arch\" && v == \"arm64\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-arch arm64\")" << std::endl;
-        oss << "            b.add_config(\"position_independent_code\", \"true\")" << std::endl;
-        oss << "        } else if (k == \"position_independent_code\" && v == \"true\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-fPIC\")" << std::endl;
-        oss << "        } else if (k == \"c++.std\" && e.language == Language.CXX) {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-std\", \"c++${v}\")" << std::endl;
-        oss << "        } else if (k == \"c.std\" && e.language == Language.C) {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-std\", \"c${v}\")" << std::endl;
-        oss << "        } else {" << std::endl;
-        oss << "            return false;" << std::endl;
-        oss << "        }" << std::endl;
-        oss << "    } else if (e.element_type == ElementType.Link) {" << std::endl;
-        oss << "        if (false) {" << std::endl;
-        oss << "        } else if (k == \"arch\" && v == \"x86\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-m32\", \"\")" << std::endl;
-        oss << "        } else if (k == \"arch\" && v == \"x64\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-m64\")" << std::endl;
-        oss << "        } else if (k == \"arch\" && v == \"armv7\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-arch armv7\", \"\")" << std::endl;
-        oss << "        } else if (k == \"arch\" && v == \"arm64\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-arch arm64\", \"\")" << std::endl;
-        oss << "        } else if (k == \"config\" && v == \"rtc\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-fsanitize\", \"address\") " << std::endl;
-        oss << "        } else if (k == \"config\" && v == \"profile\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-pg\", \"\") " << std::endl;
-        oss << "        } else if (k == \"c++.std\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-std\", \"c++${v}\") " << std::endl;
-        oss << "        } else if (k == \"c.std\") {" << std::endl;
-        oss << "            kv.append(Part.Pre, \"-std\", \"c${v}\")" << std::endl;
-        oss << "        } else {" << std::endl;
-        oss << "            return false" << std::endl;
-        oss << "        }" << std::endl;
-        oss << "    } else if (e.element_type == ElementType.Archive) {" << std::endl;
-        oss << "        if (false) {" << std::endl;
-        oss << "        } else {" << std::endl;
-        oss << "            return false" << std::endl;
-        oss << "        }" << std::endl;
-        oss << "    } else {" << std::endl;
-        oss << "        return false" << std::endl;
-        oss << "    }" << std::endl;
-        oss << "    return true" << std::endl;
-        oss << "})" << std::endl;
-        oss << std::endl;
+        oss << R"%(cook.toolchain.configure(100, "specific toolchain config", fun(e,k,v,b) {
+    auto & kv = e.key_values();
+    auto & tm = e.translators();
+
+    if (false) {
+    } else if (e.element_type == ElementType.Compile) {
+        if (false) {
+        } else if (k == "debug_symbols" && v == "true") {
+            kv.append(Part.Pre, "-g")
+        } else if (k == "optimization" && v == "max_speed") {
+            kv.append(Part.Pre, "-O3")
+        } else if (k == "config" && v == "rtc") {
+            kv.append(Part.Pre, "-fsanitize", "address")
+            kv.append(Part.Pre, "-fno-omit-frame-pointer")
+        } else if (k == "config" && v == "profile") {
+            kv.append(Part.Pre, "-g")
+        } else if (k == "arch" && v == "x86") {
+            kv.append(Part.Pre, "-m32")
+        } else if (k == "arch" && v == "x64") {
+            kv.append(Part.Pre, "-m64")
+        } else if (k == "arch" && v == "armv7") {
+            kv.append(Part.Pre, "-arch armv7")
+            b.add_config("position_independent_code", "true")
+        } else if (k == "arch" && v == "arm64") {
+            kv.append(Part.Pre, "-arch arm64")
+            b.add_config("position_independent_code", "true")
+        } else if (k == "position_independent_code" && v == "true") {
+            kv.append(Part.Pre, "-fPIC")
+        } else if (k == "c++.std" && e.language == Language.CXX) {
+            kv.append(Part.Pre, "-std", "c++${v}")
+        } else if (k == "c.std" && e.language == Language.C) {
+            kv.append(Part.Pre, "-std", "c${v}")
+        } else {
+            return false;
+        }
+    } else if (e.element_type == ElementType.Link) {
+        if (false) {
+        } else if (k == "arch" && v == "x86") {
+            kv.append(Part.Pre, "-m32", "")
+        } else if (k == "arch" && v == "x64") {
+            kv.append(Part.Pre, "-m64")
+        } else if (k == "arch" && v == "armv7") {
+            kv.append(Part.Pre, "-arch armv7", "")
+        } else if (k == "arch" && v == "arm64") {
+            kv.append(Part.Pre, "-arch arm64", "")
+        } else if (k == "config" && v == "rtc") {
+            kv.append(Part.Pre, "-fsanitize", "address") 
+        } else if (k == "config" && v == "profile") {
+            kv.append(Part.Pre, "-pg", "") 
+        } else if (k == "c++.std") {
+            kv.append(Part.Pre, "-std", "c++${v}") 
+        } else if (k == "c.std") {
+            kv.append(Part.Pre, "-std", "c${v}")
+        } else {
+            return false
+        }
+    } else if (e.element_type == ElementType.Archive) {
+        if (false) {
+        } else {
+            return false
+        }
+    } else {
+        return false
+    }
+    return true
+})
+
+)%";
 
         oss << "for( s: [";
         for(auto it = compilers.begin(); it != compilers.end(); ++it)
             oss << (it != compilers.begin() ? ", " : "") << "[Language." << it->first << ", \"" << it->second << "\"]";
-        oss << "]) {" << std::endl;
+        oss << "]) {";
 
-        oss << "    var compiler = cook.toolchain.element(ElementType.Compile, s[0], TargetType.Object)" << std::endl;
-        oss << "    var & kv = compiler.key_values()" << std::endl;
-        oss << "    var & tm = compiler.translators()" << std::endl;
-        oss << "" << std::endl;
-        oss << "    tm[Part.Cli]            = fun(k,v) { return k }" << std::endl;
-        oss << "    tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return \"${k}=${v}\" } }" << std::endl;
-        oss << "    tm[Part.Output]         = fun(k,v) { return \"-o ${k}\" }" << std::endl;
-        oss << "    tm[Part.Input]          = fun(k,v) { return k }" << std::endl;
-        oss << "    tm[Part.DepFile]        = fun(k,v) { return \"-MMD -MF ${k}\" }" << std::endl;
-        oss << "    tm[Part.Define]         = fun(k,v) { if (v.empty) { return \"-D${k}\" } else { return \"-D${k}=${v}\" } }" << std::endl;
-        oss << "    tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return \"-I./\" } else { return \"-I${k}\" } }" << std::endl;
-        oss << "    tm[Part.ForceInclude]   = fun(k,v) { return \"-include${k}\" }" << std::endl;
-        oss << "" << std::endl;
-        oss << "    kv.append(Part.Cli, s[1])" << std::endl;
-        oss << "    kv.append(Part.Pre, \"-c\")" << std::endl;
-        oss << "}" << std::endl;
-        oss << std::endl;
+        oss << R"%(
+    var compiler = cook.toolchain.element(ElementType.Compile, s[0], TargetType.Object)
+    var & kv = compiler.key_values()
+    var & tm = compiler.translators()
 
-        oss << "for(s : [TargetType.SharedLibrary, TargetType.Executable]){" << std::endl;
-        oss << "    var linker = cook.toolchain.element(ElementType.Link, Language.Binary, s)" << std::endl;
-        oss << "    var & kv = linker.key_values()" << std::endl;
-        oss << "    var & tm = linker.translators()" << std::endl;
-        oss << "" << std::endl;
-        oss << "    " << std::endl;
-        oss << "    tm[Part.Cli]            = fun(k,v) { return k }" << std::endl;
-        oss << "    tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return \"${k}=${v}\" } }" << std::endl;
-        oss << "    tm[Part.Output]         = fun(k,v) { return \"-o ${k}\" }" << std::endl;
-        oss << "    tm[Part.Input]          = fun(k,v) { return k }" << std::endl;
-        oss << "    tm[Part.Library]        = fun(k,v) { return \"-l${k}\" }" << std::endl;
-        oss << "    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return \"-L./\" } else { return \"-L${k}\" } }" << std::endl;
-        oss << "    tm[Part.ForceInclude]   = fun(k,v) { return \"-include${k}\" }" << std::endl;
-        oss << "    if(my(OS) == OS.MacOS) {" << std::endl;
-        oss << "        tm[Part.Framework]      = fun(k,v) { return \"-framework ${k}\" }" << std::endl;
-        oss << "        tm[Part.FrameworkPath]  = fun(k,v) { if (k.empty) { return \"-F./\" } else { return \"-F${k}\" } }" << std::endl;
-        oss << "    }" << std::endl;
-        oss << "" << std::endl;
+    tm[Part.Cli]            = fun(k,v) { return k }
+    tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return "${k}=${v}" } }
+    tm[Part.Output]         = fun(k,v) { return "-o ${k}" }
+    tm[Part.Input]          = fun(k,v) { return k }
+    tm[Part.DepFile]        = fun(k,v) { return "-MMD -MF ${k}" }
+    tm[Part.Define]         = fun(k,v) { if (v.empty) { return "-D${k}" } else { return "-D${k}=${v}" } }
+    tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "-I./" } else { return "-I${k}" } }
+    tm[Part.ForceInclude]   = fun(k,v) { return "-include${k}" }
+
+    kv.append(Part.Cli, s[1])
+    kv.append(Part.Pre, "-c")
+}
+
+for(s : [TargetType.SharedLibrary, TargetType.Executable]){
+    var linker = cook.toolchain.element(ElementType.Link, Language.Binary, s)
+    var & kv = linker.key_values()
+    var & tm = linker.translators()
+    
+    tm[Part.Cli]            = fun(k,v) { return k }
+    tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return "${k}=${v}" } }
+    tm[Part.Output]         = fun(k,v) { return "-o ${k}" }
+    tm[Part.Input]          = fun(k,v) { return k }
+    tm[Part.Library]        = fun(k,v) { return "-l${k}" }
+    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return "-L./" } else { return "-L${k}" } }
+    tm[Part.ForceInclude]   = fun(k,v) { return "-include${k}" }
+    if(my(OS) == OS.MacOS) {
+        tm[Part.Framework]      = fun(k,v) { return "-framework ${k}" }
+        tm[Part.FrameworkPath]  = fun(k,v) { if (k.empty) { return "-F./" } else { return "-F${k}" } }
+    }
+
+)%";
+
         oss << "    kv.append(Part.Cli, \"" << linker << "\")" << std::endl;
-        oss << "    if (s == TargetType.SharedLibrary) {" << std::endl;
-        oss << "        kv.append(Part.Pre, \"-shared\")" << std::endl;
-        oss << "    }" << std::endl;
-        oss << "}" << std::endl;
-        oss << "" << std::endl;
-        oss << "{" << std::endl;
-        oss << "    var archiver = cook.toolchain.element(ElementType.Archive, Language.Binary, TargetType.Archive)" << std::endl;
-        oss << "    var & kv = archiver.key_values()" << std::endl;
-        oss << "    var & tm = archiver.translators()" << std::endl;
-        oss << "" << std::endl;
-        oss << "    kv.append(Part.Cli, \"ar\")" << std::endl;
-        oss << "    tm[Part.Cli]            = fun(k,v) { return k }" << std::endl;
-        oss << "    tm[Part.Pre]            = fun(k,v) { return k }" << std::endl;
-        oss << "    tm[Part.Output]         = fun(k,v) { return k }" << std::endl;
-        oss << "    tm[Part.Input]          = fun(k,v) { return k }" << std::endl;
-        oss << "    if (my(OS) == OS.MacOS) {" << std::endl;
-        oss << "        kv.append(Part.Pre, \"crs\")" << std::endl;
-        oss << "    } else {" << std::endl;
-        oss << "        kv.append(Part.Pre, \"crf\")" << std::endl;
-        oss << "    }" << std::endl;
-        oss << "}" << std::endl;
+    
+        oss << R"%(
+    if (s == TargetType.SharedLibrary) {
+        kv.append(Part.Pre, "-shared")
+    }
+}
+
+{
+    var archiver = cook.toolchain.element(ElementType.Archive, Language.Binary, TargetType.Archive)
+    var & kv = archiver.key_values()
+    var & tm = archiver.translators()
+
+    kv.append(Part.Cli, "ar")
+    tm[Part.Cli]            = fun(k,v) { return k }
+    tm[Part.Pre]            = fun(k,v) { return k }
+    tm[Part.Output]         = fun(k,v) { return k }
+    tm[Part.Input]          = fun(k,v) { return k }
+    if (my(OS) == OS.MacOS) {
+        kv.append(Part.Pre, "crs")
+    } else {
+        kv.append(Part.Pre, "crf")
+    }
+}
+)%";
+
     }
 
 } } } }
