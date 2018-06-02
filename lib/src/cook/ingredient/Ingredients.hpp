@@ -1,5 +1,5 @@
-#ifndef HEADER_cook_ingredient_Properties_hpp_ALREADY_INCLUDED
-#define HEADER_cook_ingredient_Properties_hpp_ALREADY_INCLUDED
+#ifndef HEADER_cook_ingredient_Ingredients_hpp_ALREADY_INCLUDED
+#define HEADER_cook_ingredient_Ingredients_hpp_ALREADY_INCLUDED
 
 #include "cook/ingredient/Collection.hpp"
 #include "cook/LanguageTypePair.hpp"
@@ -9,6 +9,7 @@
 
 namespace cook { namespace ingredient {
 
+    //Map of Ingredient collections: for each LanguageTypePair, we store a collection of Ingredients
     template <typename Ingredient>
     class Ingredients
     {

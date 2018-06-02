@@ -6,7 +6,7 @@
 #include "cook/model/Element.hpp"
 #include "cook/model/GlobInfo.hpp"
 #include "cook/model/BuildTarget.hpp"
-#include "cook/ingredient/Properties.hpp"
+#include "cook/ingredient/Ingredients.hpp"
 #include "cook/ingredient/File.hpp"
 #include "cook/ingredient/KeyValue.hpp"
 #include "cook/util/ElementAt.hpp"
