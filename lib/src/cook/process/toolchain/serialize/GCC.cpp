@@ -15,6 +15,9 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
     if (false) {
     } else if (e.element_type == ElementType.Compile) {
         if (false) {
+        } else if (k == "compiler") {
+            kv.clear(Part.Cli)
+            kv.append(Part.Cli, v)
         } else if (k == "debug_symbols" && v == "true") {
             kv.append(Part.Pre, "-g")
         } else if (k == "optimization" && v == "max_speed") {
@@ -45,6 +48,9 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         }
     } else if (e.element_type == ElementType.Link) {
         if (false) {
+        } else if (k == "linker") {
+            kv.clear(Part.Cli)
+            kv.append(Part.Cli, v)
         } else if (k == "arch" && v == "x86") {
             kv.append(Part.Pre, "-m32", "")
         } else if (k == "arch" && v == "x64") {
@@ -125,12 +131,9 @@ for(s : [TargetType.SharedLibrary, TargetType.Executable]){
         tm[Part.Framework]      = fun(k,v) { return "-framework ${k}" }
         tm[Part.FrameworkPath]  = fun(k,v) { if (k.empty) { return "-F./" } else { return "-F${k}" } }
     }
-
 )%";
-
-        oss << "    kv.append(Part.Cli, \"" << linker << "\")" << std::endl;
-    
-        oss << R"%(
+            oss << "    kv.append(Part.Cli, \"" << linker << "\")" << std::endl;
+oss << R"%(
     if (s == TargetType.SharedLibrary) {
         kv.append(Part.Pre, "-shared")
     }
