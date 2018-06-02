@@ -4,7 +4,7 @@
 
 namespace cook { namespace process { namespace toolchain { namespace serialize {
 
-    void gcc_config(std::ostream & oss, const std::map<Language, std::string> & compilers, const std::string & linker)
+    void gcc_config(std::ostream & oss, const std::vector<Language> &languages, const std::string &compiler, const std::string & linker)
     {
         standard_config(oss);
 
@@ -77,13 +77,11 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
 
 )%";
 
-        oss << "for( s: [";
-        for(auto it = compilers.begin(); it != compilers.end(); ++it)
-            oss << (it != compilers.begin() ? ", " : "") << "[Language." << it->first << ", \"" << it->second << "\"]";
-        oss << "]) {";
-
-        oss << R"%(
-    var compiler = cook.toolchain.element(ElementType.Compile, s[0], TargetType.Object)
+        for (auto language: languages)
+        {
+            oss << "{" << std::endl;
+            oss << "    var compiler = cook.toolchain.element(ElementType.Compile, Language." << language << ", TargetType.Object)" << std::endl;
+            oss << R"%(
     var & kv = compiler.key_values()
     var & tm = compiler.translators()
 
@@ -96,9 +94,20 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
     tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "-I./" } else { return "-I${k}" } }
     tm[Part.ForceInclude]   = fun(k,v) { return "-include${k}" }
 
-    kv.append(Part.Cli, s[1])
-    kv.append(Part.Pre, "-c")
-}
+)%";
+            oss << "    kv.append(Part.Cli, \"" << compiler << "\")" << std::endl;
+            oss << "    kv.append(Part.Pre, \"-c\")" << std::endl;
+            switch (language)
+            {
+                case Language::C  : oss << "    kv.append(Part.Pre, \"-x c\")" << std::endl; break;
+                case Language::CXX: oss << "    kv.append(Part.Pre, \"-x c++\")" << std::endl; break;
+                case Language::ASM: oss << "    kv.append(Part.Pre, \"-x assembler\")" << std::endl; break;
+                default: break;
+            }
+            oss << "}" << std::endl;
+        }
+
+oss << R"%(
 
 for(s : [TargetType.SharedLibrary, TargetType.Executable]){
     var linker = cook.toolchain.element(ElementType.Link, Language.Binary, s)

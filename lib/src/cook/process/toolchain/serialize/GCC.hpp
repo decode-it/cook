@@ -3,11 +3,11 @@
 
 #include "cook/Language.hpp"
 #include <ostream>
-#include <map>
+#include <vector>
 
 namespace cook { namespace process { namespace toolchain { namespace serialize {
 
-    void gcc_config(std::ostream & oss, const std::map<Language, std::string> & compilers, const std::string & linker);
+    void gcc_config(std::ostream & oss, const std::vector<Language> &languages, const std::string & compiler, const std::string & linker);
 
 } } } }
 

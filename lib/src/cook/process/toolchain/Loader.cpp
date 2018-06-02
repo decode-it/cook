@@ -11,16 +11,16 @@ namespace cook { namespace process { namespace toolchain {
 
     namespace {
 
+        const std::vector<Language> languages = {Language::C, Language::CXX, Language::ASM};
+
         void serialize_gcc(std::ostream & oss) 
         { 
-            std::map<Language, std::string> compilers = { {Language::C, "gcc"}, {Language::CXX, "g++"}, {Language::ASM, "gcc"} };
-            serialize::gcc_config(oss, compilers, "g++");
+            serialize::gcc_config(oss, languages, "gcc", "g++");
         }
 
         void serialize_clang(std::ostream & oss)
         {
-            std::map<Language, std::string> compilers = { {Language::C, "clang"}, {Language::CXX, "clang++"}, {Language::ASM, "clang"} };
-            serialize::gcc_config(oss, compilers, "clang++");
+            serialize::gcc_config(oss, languages, "clang", "clang++");
         }
 
         void serialize_msvc(std::ostream & oss) 
