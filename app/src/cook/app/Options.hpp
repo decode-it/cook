@@ -10,15 +10,17 @@ namespace cook { namespace app {
 
     struct Options
     {
+        using KeyValue = std::pair<std::string, std::optional<std::string>>;
+
         std::list<std::string> recipe_files;
         std::list<std::string> toolchains;
-        std::list<std::pair<std::string, std::string>> toolchain_options;
+        std::list<KeyValue> toolchain_options;
         std::string output_path = "./";
         std::string temp_path = ".cook";
         std::string chef;
-        std::list<std::pair<std::string, std::string>> generators;
+        std::list<KeyValue> generators;
         bool clean_ = false;
-        std::list<std::pair<std::string, std::string>> variables;
+        std::list<KeyValue> variables;
 
         bool print_help = false;
         unsigned int verbosity = 1;

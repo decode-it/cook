@@ -20,7 +20,7 @@ private:
     Result load_recipes_();
     Result load_toolchains_();
     Result process_generators_() const;
-    Result process_generator_(const std::string & name, const std::string & value) const;
+    Result process_generator_(const std::string & name, const std::optional<std::string> & value) const;
 
     void write_(const Result & result);
 

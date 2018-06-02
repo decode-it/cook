@@ -8,14 +8,18 @@ namespace cook { namespace app {
 
 namespace  {
 
-std::pair<std::string, std::string> parse_key_value_pair(const std::string & str)
+Options::KeyValue parse_key_value_pair(const std::string & str)
 {
+    Options::KeyValue kv;
+
     const std::size_t pos = str.find('=');
 
+    kv.first = str.substr(0, pos);
+
     if (pos < str.size()-1)
-        return std::make_pair(str.substr(0, pos), str.substr(pos+1));
-    else
-        return std::make_pair(str.substr(0, pos), std::string());
+        kv.second = str.substr(pos+1);
+
+    return kv;
 }
 
 }
@@ -92,10 +96,10 @@ void Options::stream(log::Importance importance) const
     {
         auto ss = log::scope(name, imp, [&](auto & n) {
             for(const auto & el : range)
-                if (el.second.empty())
+                if (!el.second)
                     n.attr(el.first);
                 else
-                    n.attr(el.first, el.second);
+                    n.attr(el.first, *el.second);
         });
     };
 

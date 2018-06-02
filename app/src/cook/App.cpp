@@ -55,10 +55,10 @@ Result App::process_()
     // Set the toolchain options
     for(const auto & p : options_.toolchain_options)
     {
-        if (p.second.empty())
+        if (!p.second)
             kitchen_.add_toolchain_config(p.first);
         else
-            kitchen_.add_toolchain_config(p.first, p.second);
+            kitchen_.add_toolchain_config(p.first, *p.second);
     }
 
     // initialize the kitchen
@@ -66,7 +66,7 @@ Result App::process_()
 
     // set all the variables
     for(const auto & v : options_.variables)
-        MSS(kitchen_.set_variable(v.first, v.second));
+        MSS(kitchen_.set_variable(v.first, (!!v.second ? *v.second : "")));
 
     {
         auto ss = log::scope("Loading recipes", -2);
@@ -145,16 +145,17 @@ Result App::process_()
     MSS_END();
 }
 
-Result App::process_generator_(const std::string & name, const std::string & value) const
+Result App::process_generator_(const std::string & name, const std::optional<std::string> & value) const
 {
     MSS_BEGIN(Result);
 
-    auto ss = log::scope("process_generator", -2, [&](auto &n){n.attr("name", name).attr("value", value);});
+    auto ss = log::scope("process_generator", -2, [&](auto &n){n.attr("name", name).attr("value", (!!value ? *value : ""));});
 
     Context::GeneratorPtr ptr = kitchen_.get_generator(name);
     MSG_MSS(!!ptr, Error, "unknown generator '" << name << "'");
 
-    MSS(ptr->set_option(value));
+    if (value)
+        MSS(ptr->set_option(*value));
 
     if (ptr->can_process(kitchen_))
     {

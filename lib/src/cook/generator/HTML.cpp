@@ -242,7 +242,11 @@ Result HTML::process(const Context & context)
     Data data;
     MSS(data.process(context));
 
-    set_filename(fn(ns_+"/index"));
+    std::string ns = ns_;
+    if (!ns.empty() && ns.back() != '/')
+        ns.push_back('/');
+
+    set_filename(fn(ns+"index"));
     std::ofstream fo;
     MSS(open_output_stream(context, fo));
 
@@ -253,7 +257,7 @@ Result HTML::process(const Context & context)
         const auto &uri = p.first;
         const auto &rcp = p.second;
 
-        set_filename(fn(uri, ns_+"/details"));
+        set_filename(fn(uri, ns+"details"));
         std::ofstream fo;
         MSS(open_output_stream(context, fo));
 
