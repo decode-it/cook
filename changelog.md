@@ -104,6 +104,7 @@ Proof-of-concept version.
 
 * Added "scal" and "cal" chefs: "scal" runs the scripts as well ("cal" behaviour from 1.1.9), "cal" will not run the scripts
 * HTML generator now created the recipe details as well
+* Improved support custom gcclike toolchains via `-T compiler=<compiler>` and `-T linker=<linker>`
 
 ## 1.2.0 (open)
 

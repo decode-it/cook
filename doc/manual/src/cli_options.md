@@ -9,6 +9,8 @@
 * `-O <directory>`: Temporary build cache directory.
 * `-t <toolchain>`: Zero or more toolchains to use. If the `<toolchain>.chai` file cannot be found, cook will try to use any of the predefined toolchains (gcc|clang|msvc).
 * `-T <key>[=<value>]`: Zero or more toolchain options, as a _key_ or _key_-_value_-pair. These options are processed by the toolchain.
+  * `compiler=<compiler>`: Use `<compiler>` as compiler
+  * `linker=<linker>`: Use `<linker>` as linker
   * `[config=]debug|release|rtc|profile`: Enable a specific configuration.
   * `[arch=]x86|x64|x32|x64|armv7|arm64`: Enable a specific CPU architecture.
   * `c++.std=03|11|14|17`: Enable a specific C++ standard.
