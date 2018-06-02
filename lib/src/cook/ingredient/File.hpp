@@ -8,67 +8,67 @@
 
 namespace cook { namespace ingredient {
 
-class File : public Base<std::filesystem::path>
-{
-public:
-    File(const std::filesystem::path & dir, const std::filesystem::path & rel)
+    class File : public Base<std::filesystem::path>
+    {
+    public:
+        File(const std::filesystem::path & dir, const std::filesystem::path & rel)
         : Base<std::filesystem::path>(dir/rel),
-          dir_(dir),
-          rel_(rel)
-    {
-    }
-
-    bool operator==(const File & rhs) const
-    {
-        return equal_(rhs)
-                && dir() == rhs.dir()
-                && rel() == rhs.rel();
-    }
-
-    Result merge(const File & rhs)
-    {
-        MSS_BEGIN(Result);
-
-        auto ss = log::scope("merge ingredient");
+        dir_(dir),
+        rel_(rel)
         {
-            auto s = log::scope("source");
-            rhs.stream();
-        }
-        {
-            auto s = log::scope("target");
-            stream();
         }
 
-        MSS(merge_(*this, rhs));
+        bool operator==(const File & rhs) const
+        {
+            return equal_(rhs)
+            && dir() == rhs.dir()
+            && rel() == rhs.rel();
+        }
 
-        dir_ = rhs.dir();
-        rel_ = rhs.rel();
+        Result merge(const File & rhs)
+        {
+            MSS_BEGIN(Result);
 
-        MSS_END();
-    }
+            auto ss = log::scope("merge ingredient");
+            {
+                auto s = log::scope("source");
+                rhs.stream();
+            }
+            {
+                auto s = log::scope("target");
+                stream();
+            }
 
-    log::Scope stream(log::Importance importance = log::Importance()) const
+            MSS(merge_(*this, rhs));
+
+            dir_ = rhs.dir();
+            rel_ = rhs.rel();
+
+            MSS_END();
+        }
+
+        log::Scope stream(log::Importance importance = log::Importance()) const
+        {
+            const auto imp = log::importance(importance);
+
+            return log::scope("file", imp, [&](auto &n) {
+                    n.attr("full_name", key()).attr("dir", dir()).attr("rel", rel()).attr("prop", propagation());
+                    });
+        }
+
+        const std::filesystem::path & dir() const { return dir_; }
+        const std::filesystem::path & rel() const { return rel_; }
+
+    private:
+        std::filesystem::path dir_;
+        std::filesystem::path rel_;
+    };
+
+    inline std::ostream &operator<<(std::ostream &os, const File &file)
     {
-        const auto imp = log::importance(importance);
-
-        return log::scope("file", imp, [&](auto &n) {
-            n.attr("full_name", key()).attr("dir", dir()).attr("rel", rel()).attr("prop", propagation());
-        });
+        os << "File" << file.dir() << " | " << file.rel();
+        return os;
     }
-
-    const std::filesystem::path & dir() const { return dir_; }
-    const std::filesystem::path & rel() const { return rel_; }
-
-private:
-    std::filesystem::path dir_;
-    std::filesystem::path rel_;
-};
-
-inline std::ostream &operator<<(std::ostream &os, const File &file)
-{
-    os << "File" << file.dir() << " | " << file.rel();
-    return os;
-}
 
 
 } }
