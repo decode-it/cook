@@ -34,17 +34,27 @@ namespace cook { namespace generator {
             os << "<th>Name</th>" << std::endl;
             os << "<th>Filename</th>" << std::endl;
             os << "</tr>" << std::endl;
-            auto stream_rcp_link = [&](const model::Recipe &rcp){
-                const auto uri = rcp.uri();
-                const auto &bt = rcp.build_target();
+            auto stream_rcp_link = [&](model::Uri uri, const model::Recipe *rcp){
                 os << "<tr>" << std::endl;
+                if (rcp)
+                    uri = rcp->uri();
                 os << "<td><a href=\"" << fn(uri, "details") << "\">" << uri << "</a></td>" << std::endl;
-                os << "<td>" << bt.type << "</td>" << std::endl;
-                os << "<td>" << bt.name << "</td>" << std::endl;
-                os << "<td>" << (!!bt.filename ? *bt.filename : "") << "</td>" << std::endl;
+                if (rcp)
+                {
+                    const auto &bt = rcp->build_target();
+                    os << "<td>" << bt.type << "</td>" << std::endl;
+                    os << "<td>" << bt.name << "</td>" << std::endl;
+                    os << "<td>" << (!!bt.filename ? *bt.filename : "") << "</td>" << std::endl;
+                }
+                else
+                {
+                    os << "<td><font color=\"red\">Could not resolve</font></td>" << std::endl;
+                    os << "<td><font color=\"red\">Could not resolve</font></td>" << std::endl;
+                    os << "<td><font color=\"red\">Could not resolve</font></td>" << std::endl;
+                }
                 os << "</tr>" << std::endl;
             };
-            ftor([&](const model::Recipe &rcp){stream_rcp_link(rcp);});
+            ftor([&](const model::Uri &uri, const model::Recipe *rcp){stream_rcp_link(uri, rcp);});
             os << "</table>" << std::endl;
         }
 
@@ -75,6 +85,7 @@ struct RecipeData
 
     void stream_details(std::ostream &os) const
     {
+        S("");
         os << "<!DOCTYPE html>" << std::endl;
         os << "<html>" << std::endl;
         os << "<head>" << std::endl;
@@ -105,7 +116,12 @@ struct RecipeData
             }
 
             os << "<h2>Dependencies</h2>" << std::endl;
-            stream_rcp_links(os, [&](auto cb){for (const auto *dep: rcp->dependencies()) cb(*dep);});
+            auto lambda = [&](auto cb)
+            {
+                for (const auto &p: rcp->dependency_pairs())
+                    cb(p.first, p.second.recipe);
+            };
+            stream_rcp_links(os, lambda);
 
             os << "<h2>Key-values</h2>" << std::endl;
             os << "<table>" << std::endl;
@@ -213,7 +229,12 @@ struct Data
         else
             os << "<font color=\"green\">All recipes could be resolved</font>" << std::endl;
         os << "<h2>Recipes</h2>" << std::endl;
-        stream_rcp_links(os, [&](auto cb){for (const auto &p: recipe_data) cb(*p.second.rcp);});
+        auto lambda = [&](auto cb)
+        {
+            for (const auto &p: recipe_data)
+                cb(p.first, p.second.rcp);
+        };
+        stream_rcp_links(os, lambda);
         os << "</body>" << std::endl;
         os << "</html>" << std::endl;
     }
