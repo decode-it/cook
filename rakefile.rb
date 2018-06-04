@@ -185,7 +185,7 @@ namespace :b1 do
         else raise "stop" end
 
         b1_exe = "b1-cook.exe"
-        version = `#{here}#{b1_exe} -h`[/cook version (\d\.\d\.\d) /, 1]
+        version = `#{here}#{b1_exe} -h`[/cook version (\d+\.\d+\.\d+) /, 1]
         version_dir = GUBG::mkdir("cook-binary/#{version}")
         cp "changelog.md", version_dir
         arch = toolchain_options["arch"]
