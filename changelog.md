@@ -108,6 +108,8 @@ Proof-of-concept version.
 * Added recipe-selected callback `Hook.Selected` which is called before any processing on recipes selected to be built
 * Updated documentation
 
+## 1.1.11 (open)
+
 ## 1.2.0 (open)
 
 * Boost liberation
