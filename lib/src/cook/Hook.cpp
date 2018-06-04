@@ -7,6 +7,7 @@ namespace cook {
         switch(hook)
         {
 #define L_CASE(NAME) case Hook::NAME: return str << #NAME
+            L_CASE(Selected);
             L_CASE(Pre);
             L_CASE(Post);
 #undef L_CASE

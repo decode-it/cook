@@ -6,6 +6,7 @@ def create_recipe(uri)
 
 {
     var v = create_recipe("test")
+    var v3 = create_recipe("test22")
     var v2 = v
 
     v.set_config_callback(Hook.Post, fun(r)
@@ -18,6 +19,13 @@ def create_recipe(uri)
 
     v.set_config_callback(Hook.Pre, fun(){ 
         print("Pre called") 
+    })
+    v.set_config_callback(Hook.Selected, fun(r){ 
+        print("Recipe ${r.uri} has been selected") 
+    })
+
+    v3.set_config_callback(Hook.Selected, fun(r) {
+        assert(false, "Delibarate fail")
     })
 
     v.add("src", "**.*")

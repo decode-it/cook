@@ -294,6 +294,10 @@ build .b0/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj: compile gubg.algo/test
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp.obj: compile gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/gubg.algo/test/src/gubg/graph/Graph_tests.cpp.obj: compile gubg.algo/test/src/gubg/graph/Graph_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/gubg.algo/test/src/gubg/graph/NPartite_tests.cpp.obj: compile gubg.algo/test/src/gubg/graph/NPartite_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp.obj: compile gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/gubg.algo/test/src/gubg/network/DAG_tests.cpp.obj: compile gubg.algo/test/src/gubg/network/DAG_tests.cpp
@@ -556,6 +560,8 @@ build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj $
     .b0/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj $
     .b0/gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp.obj $
+    .b0/gubg.algo/test/src/gubg/graph/Graph_tests.cpp.obj $
+    .b0/gubg.algo/test/src/gubg/graph/NPartite_tests.cpp.obj $
     .b0/gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp.obj $
     .b0/gubg.algo/test/src/gubg/network/DAG_tests.cpp.obj $
     .b0/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp.obj $

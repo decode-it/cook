@@ -7,7 +7,8 @@ namespace cook {
 
     enum class Hook
     {
-        Pre = 0,
+        Selected = 0,
+        Pre,
         Post,
         _End
     };

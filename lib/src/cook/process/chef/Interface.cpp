@@ -16,6 +16,13 @@ Result Interface::mis_en_place(Context & context)
     MSS(menu.is_valid());
 
     const std::list<Recipe *> & order = menu.topological_order_recipes();
+    for(model::Recipe * recipe : order)
+    {
+        auto ss = log::scope("callback", [&](auto & n) { n.attr("selected"); });
+        auto cb = recipe->callback(Hook::Selected);
+        if (cb)
+            cb(*recipe);
+    }
 
     // process every recipe in topological order
     for(model::Recipe * recipe : order)

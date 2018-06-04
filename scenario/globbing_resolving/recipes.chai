@@ -1,5 +1,5 @@
 var lib = cook.recipe("lib")
-lib.add("${cook.working_directory(true)}/lib", "**.*")
+lib.add("${cook.script_local_directory()}/lib", "**.*")
 
 var exe = cook.recipe("exe", TargetType.Executable)
 exe.add("app", "**.*")

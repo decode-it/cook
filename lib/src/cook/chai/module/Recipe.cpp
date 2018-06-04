@@ -58,6 +58,7 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(make_user_defined), "UserDefined");
 
         EXPOSE_TYPE(Hook);
+        EXPOSE_VALUE(Hook, Selected);
         EXPOSE_VALUE(Hook, Pre);
         EXPOSE_VALUE(Hook, Post);
 
