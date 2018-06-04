@@ -88,7 +88,7 @@ Proof-of-concept version.
 * CMake better output, and less strict (skip script)
 * Naft output always has build target filename (if present)
 
-### 1.1.9
+## 1.1.9
 
 * CMake force include are platform independent
 * Added Framework and FrameworkDir
