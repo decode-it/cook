@@ -120,3 +120,4 @@ Proof-of-concept version.
 * Removing boost dependencies
 * Support for `COOK_PATH` search for scripts
 * Internal #include-based dependency detection for compilers that cannot output dependencies
+* Support for large MSVC link commands: when linking a lot of object files, the link command can become larger than 32k, causing an "CreateProcess: incorrect parameter" failure within ninja. Better is to add all the object filenames to a file, and give that to the linker.
