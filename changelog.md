@@ -100,15 +100,17 @@ Proof-of-concept version.
 * Renamed `working_directory()` into `script_local_directory()`
 * [wip] Support for HTML output
 
-## 1.1.10 (open)
+## 1.1.10
 
 * Added "scal" and "cal" chefs: "scal" runs the scripts as well ("cal" behaviour from 1.1.9), "cal" will not run the scripts
 * HTML generator now created the recipe details as well
 * Improved support custom gcclike toolchains via `-T compiler=<compiler>` and `-T linker=<linker>`
+* Added recipe-selected callback `Hook.Selected` which is called before any processing on recipes selected to be built
+* Updated documentation
 
 ## 1.2.0 (open)
 
-* Boost libration
+* Boost liberation
 
 ## Next
 
