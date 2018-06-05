@@ -9,6 +9,16 @@
 
 namespace cook { namespace generator { namespace {
 
+    std::list<const model::Recipe *> top_order(const std::list<model::Recipe*> & all_recipes, const std::unordered_set<const model::Recipe *> & recipes)
+    {
+        std::list<const model::Recipe *> result;
+        for(auto it = all_recipes.begin(); it != all_recipes.end(); ++it)
+            if(recipes.count(*it) > 0)
+                result.push_front(*it);
+
+        return result;
+    }
+
     using RecipeInfoMap = CMake::RecipeInfoMap;
     using CMakeType = CMake::CMakeType;
 
@@ -275,13 +285,13 @@ Result CMake::process(const Context & context)
                 MSS(add_object_library_(*str, recipe, context, output_to_source));
                 break;
             case CMakeType::StaticLibrary:
-                MSS(add_static_library_(*str, recipe, context, output_to_source, info.object_recipes_));
+                MSS(add_static_library_(*str, recipe, context, output_to_source, top_order(recipe_list, info.object_recipes_)));
                 break;
             case CMakeType::SharedLibrary:
-                MSS(add_shared_library_(*str, recipe, context, output_to_source, info.object_recipes_, info.link_targets_));
+                MSS(add_shared_library_(*str, recipe, context, output_to_source, top_order(recipe_list, info.object_recipes_), top_order(recipe_list, info.link_targets_)));
                 break;
             case CMakeType::Executable:
-                MSS(add_executable_(*str, recipe, context, output_to_source, info.object_recipes_, info.link_targets_));
+                MSS(add_executable_(*str, recipe, context, output_to_source, top_order(recipe_list, info.object_recipes_), top_order(recipe_list, info.link_targets_)));
                 break;
             case CMakeType::Interface:
                 MSS(add_interface_library_(*str, recipe, context, output_to_source));
@@ -308,7 +318,7 @@ Result CMake::add_object_library_(std::ofstream & str, model::Recipe * recipe, c
     str << "# " << recipe->uri() << std::endl;
 
     str << "add_library(" << recipe_name_(recipe) << " OBJECT" << std::endl;
-    add_source_and_header_(str, recipe, false, RecipeSet(), output_to_source);
+    add_source_and_header_(str, recipe, false, RecipeList(), output_to_source);
     str << ")" << std::endl;
 
     MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
@@ -318,7 +328,7 @@ Result CMake::add_object_library_(std::ofstream & str, model::Recipe * recipe, c
     MSS_END();
 }
 
-Result CMake::add_static_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeSet & objects)
+Result CMake::add_static_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeList & objects)
 {
     MSS_BEGIN(Result);
 
@@ -334,7 +344,7 @@ Result CMake::add_static_library_(std::ofstream & str, model::Recipe * recipe, c
     MSS_END();
 }
 
-Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeSet & objects, const RecipeSet & links)
+Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeList & objects, const RecipeList & links)
 {
     MSS_BEGIN(Result);
 
@@ -352,7 +362,7 @@ Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, c
     MSS_END();
 }
 
-Result CMake::add_executable_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeSet & objects, const RecipeSet & links)
+Result CMake::add_executable_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeList & objects, const RecipeList & links)
 {
     MSS_BEGIN(Result);
 
@@ -400,7 +410,7 @@ std::string CMake::recipe_name_(const model::Recipe * recipe) const
     return uri.string('_');
 }
 
-Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports, const RecipeSet & possible_object_dependencies,  const std::filesystem::path & output_to_source) const
+Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports, const RecipeList & possible_object_dependencies,  const std::filesystem::path & output_to_source) const
 {
     MSS_BEGIN(Result);
     auto add_files = [&](const LanguageTypePair & ltp, const ingredient::File & file)
@@ -481,20 +491,13 @@ void CMake::set_link_paths_(std::ostream & oss, model::Recipe * recipe, const st
     write_elements_(oss, [](auto & os) { os << "link_directories("; }, link_directories, false);
 }
 
-Result CMake::set_link_libraries(std::ostream & ofs, model::Recipe * recipe, const RecipeSet & dependencies, const std::string & keyword, const std::filesystem::path & output_to_source) const
+Result CMake::set_link_libraries(std::ostream & ofs, model::Recipe * recipe, const RecipeList & dependencies, const std::string & keyword, const std::filesystem::path & output_to_source) const
 {
     MSS_BEGIN(Result);
 
     const std::string & name = recipe_name_(recipe);
 
-    std::set<std::string> link_libraries;
-    for(const ingredient::KeyValue & lib : recipe->key_values().range(LanguageTypePair(Language::Binary, Type::Library)))
-    {
-        // only the ones added by the user
-        if (!is_internal_generated(lib.content()))
-            link_libraries.insert(gubg::stream([&](auto & os) { os << lib.key(); } ));
-    }
-
+    std::list<std::string> link_libraries;
     // add the dependencies on the recipes
     for (const model::Recipe * dep : dependencies)
     {
@@ -520,9 +523,17 @@ Result CMake::set_link_libraries(std::ostream & ofs, model::Recipe * recipe, con
         
             recipe->key_values().each(find_lib);
             if (found)
-                link_libraries.insert(recipe_name_(dep));
+                link_libraries.push_back(recipe_name_(dep));
         }
     }
+    
+    for(const ingredient::KeyValue & lib : recipe->key_values().range(LanguageTypePair(Language::Binary, Type::Library)))
+    {
+        // only the ones added by the user
+        if (!is_internal_generated(lib.content()))
+            link_libraries.push_back(gubg::stream([&](auto & os) { os << lib.key(); } ));
+    }
+
 
     {
         auto el = context_->toolchain().element(process::toolchain::Element::Link, Language::Binary, TargetType::Executable);
@@ -537,7 +548,7 @@ Result CMake::set_link_libraries(std::ostream & ofs, model::Recipe * recipe, con
                 if (ltp.type == Type::Framework)
                 {
                     const auto & str = gubg::string::escape_cmake(itf->second(key_value.key(), ""));
-                    link_libraries.insert(str);
+                    link_libraries.push_back(str);
                 }
                 return true;
             };
@@ -555,7 +566,7 @@ Result CMake::set_link_libraries(std::ostream & ofs, model::Recipe * recipe, con
                 if (ltp.type == Type::FrameworkPath)
                 {
                     const auto & str = gubg::string::escape_cmake(itfp->second(gubg::filesystem::combine(output_to_source, file.dir()).string(), ""));
-                    link_libraries.insert(str);
+                    link_libraries.push_back(str);
                 }
                 return true;
             };

@@ -4,13 +4,15 @@
 #include "cook/generator/Interface.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Dirs.hpp"
+#include <unordered_set>
 
 namespace cook { namespace generator {
 
 class CMake : public Interface
 {
 public:
-    using RecipeSet = std::set<const model::Recipe *>;
+    using RecipeSet = std::unordered_set<const model::Recipe *>;
+    using RecipeList = std::list<const model::Recipe *>;
     enum class CMakeType
     {
         Object,
@@ -43,9 +45,9 @@ public:
 private:
     Result check_types_(const Context & context);
     Result add_object_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source);
-    Result add_static_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeSet & objects);
-    Result add_shared_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeSet & object, const RecipeSet & link);
-    Result add_executable_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeSet & object, const RecipeSet & link);
+    Result add_static_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeList & objects);
+    Result add_shared_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeList & object, const RecipeList & link);
+    Result add_executable_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeList & object, const RecipeList & link);
     Result add_interface_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source);
     //Result can_build_recipe_(const model::Recipe & recipe) const;
     
@@ -58,10 +60,10 @@ private:
     std::string recipe_name_(const model::Recipe * recipe) const;
 //    std::string deduce_library_type_(const model::Recipe & recipe) const;
 
-    Result add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports,  const RecipeSet & dependencies, const std::filesystem::path &output_to_source) const;
+    Result add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports,  const RecipeList & dependencies, const std::filesystem::path &output_to_source) const;
     bool set_target_properties_(std::ostream & ofs, model::Recipe * recipe, const std::string &keyword, const std::filesystem::path & output_to_source) const;
     void set_link_paths_(std::ostream & oss, model::Recipe * recipe, const std::filesystem::path & output_to_source) const;
-    Result set_link_libraries(std::ostream & ofs, model::Recipe * recipe, const RecipeSet & dependencies, const std::string & keyword, const std::filesystem::path & output_to_source) const;
+    Result set_link_libraries(std::ostream & ofs, model::Recipe * recipe, const RecipeList & dependencies, const std::string & keyword, const std::filesystem::path & output_to_source) const;
 
     std::filesystem::path output_path_;
     RecipeInfoMap recipe_map_;

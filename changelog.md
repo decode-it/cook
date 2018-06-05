@@ -110,6 +110,8 @@ Proof-of-concept version.
 
 ## 1.1.11 (open)
 
+* CMake link library order is topological for recipes
+
 ## 1.2.0 (open)
 
 * Boost liberation
