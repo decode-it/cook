@@ -4,7 +4,7 @@
 
 namespace cook { namespace process { namespace toolchain { namespace serialize {
 
-    void gcc_config(std::ostream & oss, const std::vector<Language> &languages, const std::string &compiler, const std::string & linker)
+    void gcc_config(std::ostream & oss, const std::vector<Language> &languages, const std::string &compiler, const std::string &archiver, const std::string & linker)
     {
         standard_config(oss);
 
@@ -72,6 +72,9 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         }
     } else if (e.element_type == ElementType.Archive) {
         if (false) {
+        } else if (k == "archiver") {
+            kv.clear(Part.Cli)
+            kv.append(Part.Cli, v)
         } else {
             return false
         }
@@ -143,7 +146,9 @@ oss << R"%(
     var archiver = cook.toolchain.element(ElementType.Archive, Language.Binary, TargetType.Archive)
     var & kv = archiver.key_values()
     var & tm = archiver.translators()
-
+)%";
+            oss << "    kv.append(Part.Cli, \"" << archiver << "\")" << std::endl;
+oss << R"%(
     kv.append(Part.Cli, "ar")
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { return k }

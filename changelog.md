@@ -111,6 +111,7 @@ Proof-of-concept version.
 ## 1.1.11 (open)
 
 * CMake link library order is topological for recipes
+* Improved support custom gcclike toolchains via `-T archiver=<archiver>`
 
 ## 1.2.0 (open)
 

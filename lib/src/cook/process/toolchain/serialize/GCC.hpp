@@ -7,7 +7,7 @@
 
 namespace cook { namespace process { namespace toolchain { namespace serialize {
 
-    void gcc_config(std::ostream & oss, const std::vector<Language> &languages, const std::string & compiler, const std::string & linker);
+    void gcc_config(std::ostream & oss, const std::vector<Language> &languages, const std::string & compiler, const std::string &archiver, const std::string & linker);
 
 } } } }
 
