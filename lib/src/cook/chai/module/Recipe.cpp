@@ -149,7 +149,9 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&Recipe::set_callback1), "set_config_callback");
         ptr->add(chaiscript::fun(&Recipe::set_callback2), "set_config_callback");
 
+        //Getter and setter
         ptr->add(chaiscript::fun(&Recipe::build_target_name), "name");
+
         ptr->add(chaiscript::fun(&Recipe::build_target_filename), "primary_target_filename");
 
         ptr->add(chaiscript::fun(&Recipe::each_file), "each_file");

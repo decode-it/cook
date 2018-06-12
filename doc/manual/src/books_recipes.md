@@ -87,7 +87,7 @@ The following functions can be used to interact with a recipe:
 * `rcp.depends_on(uri)`: indicates that `rcp` depends on the the recipe indicated via `uri`. `uri` can be _absolute_ or _relative_, for the latter, cook will resolve it starting from the location of `rcp` in the book/recipe hierarchy. Note that cook allows you add dependencies on recipes that do not exist yet. It even allows you to specify dependencies on recipes that will never exist: only when the dependent recipes are actually needed by a generator, will cook fail on this missing dependency.
 * `rcp.add_file(dir, rel, [flags])`: basic method to add a single file. This function does not perform globbing nor automatic file type inference.
 * `rcp.add_key_value(key, [value], [flags])`: basic method to add a single key-value pair.
-* `rcp.name()`: returns the _name_ of the primary target created by this recipe, eg., for a static library, this is the name without the _lib_ prefix and _.a_ extension (in case of gcc-style library naming convention).
+* `rcp.name()`: returns a _reference_ to the _name_ of the primary target created by this recipe, eg., for a static library, this is the name without the _lib_ prefix and _.a_ extension (in case of gcc-style library naming convention). Because this is a reference, you can also assign to it.
 * `rcp.primary_target_filename()`: returns the _filename_ of the primary target created by this recipe, eg., for a static library, this is the full filename, including prefixes and extensions.
 * `rcp.each_file(callback)`: will run `callback` for each _file_ present in this recipe.
 * `rcp.each_key_value(callback)`: will run `callback` for each _key-value_ present in this recipe.
