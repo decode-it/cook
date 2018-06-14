@@ -164,7 +164,7 @@ namespace cook { namespace generator { namespace {
 CMake::CMake()
     : context_(nullptr)
 {
-    set_option("");
+    set_option("./");
 }
 
 Result CMake::set_option(const std::string & option)
@@ -188,7 +188,9 @@ Result CMake::process(const Context & context)
     auto get_output_dir = [&](const std::filesystem::path & recipe_local_dir)
     {
         std::filesystem::path adj = util::get_from_to_path(std::filesystem::current_path(), recipe_local_dir);
-        return output_path_ / adj;
+        std::filesystem::path res = output_path_ / adj;
+
+        return res.empty() ? "./" : res;
     };
 
     std::list<std::pair<std::filesystem::path, std::ofstream>> streams;
