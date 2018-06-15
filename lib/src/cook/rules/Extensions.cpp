@@ -14,17 +14,27 @@ namespace cook { namespace rules {
             if (false) {}
             else if (lang == Language::CXX)
             {
-                for (auto ext: Exts{ ".cpp", ".cxx", ".CPP", ".CXX", ".mm", ".MM" })
+                for (auto ext: Exts{ ".cpp", ".cxx", ".CPP", ".CXX" })
                     tm[ext] = Type::Source;
                 for (auto ext: Exts{ ".hpp", ".hxx", ".HPP", ".HXX" })
                     tm[ext] = Type::Header;
             }
+            else if (lang == Language::ObjectiveCXX)
+            {
+                for (auto ext: Exts{ ".mm", ".MM" })
+                    tm[ext] = Type::Source;
+            }
             else if (lang == Language::C)
             {
-                for (auto ext: Exts{ ".c", ".m", ".M" })
+                for (auto ext: Exts{ ".c", ".cc", ".C", ".CC" })
                     tm[ext] = Type::Source;
                 for (auto ext: Exts{ ".h" })
                     tm[ext] = Type::Header;
+            }
+            else if (lang == Language::ObjectiveC)
+            {
+                for (auto ext: Exts{ ".m", ".M" })
+                    tm[ext] = Type::Source;
             }
             else if (lang == Language::ASM)
             {

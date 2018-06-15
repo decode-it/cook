@@ -108,9 +108,11 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             oss << "    kv.append(Part.Pre, \"-c\")" << std::endl;
             switch (language)
             {
-                case Language::C  : oss << "    kv.append(Part.Pre, \"-x c\")" << std::endl; break;
-                case Language::CXX: oss << "    kv.append(Part.Pre, \"-x c++\")" << std::endl; break;
-                case Language::ASM: oss << "    kv.append(Part.Pre, \"-x assembler\")" << std::endl; break;
+                case Language::C            : oss << "    kv.append(Part.Pre, \"-x c\")" << std::endl; break;
+                case Language::CXX          : oss << "    kv.append(Part.Pre, \"-x c++\")" << std::endl; break;
+                case Language::ObjectiveC   : oss << "    kv.append(Part.Pre, \"-x objective-c\")" << std::endl; break;
+                case Language::ObjectiveCXX : oss << "    kv.append(Part.Pre, \"-x objective-c++\")" << std::endl; break;
+                case Language::ASM          : oss << "    kv.append(Part.Pre, \"-x assembler\")" << std::endl; break;
                 default: break;
             }
             oss << "}" << std::endl;
@@ -149,7 +151,6 @@ oss << R"%(
 )%";
             oss << "    kv.append(Part.Cli, \"" << archiver << "\")" << std::endl;
 oss << R"%(
-    kv.append(Part.Cli, "ar")
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { return k }
     tm[Part.Output]         = fun(k,v) { return k }

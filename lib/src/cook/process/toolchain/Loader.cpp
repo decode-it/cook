@@ -11,7 +11,7 @@ namespace cook { namespace process { namespace toolchain {
 
     namespace {
 
-        const std::vector<Language> languages = {Language::C, Language::CXX, Language::ASM};
+        const std::vector<Language> languages = {Language::C, Language::CXX, Language::ASM, Language::ObjectiveC, Language::ObjectiveCXX};
 
         void serialize_gcc(std::ostream & oss) 
         { 

@@ -42,6 +42,22 @@ namespace cook { namespace rules {
     private:
         static Extensions extensions_;
     };
+    class ObjectiveCXX: public C_family
+    {
+    public:
+        ObjectiveCXX(): C_family(Language::ObjectiveCXX, extensions_){}
+
+    private:
+        static Extensions extensions_;
+    };
+
+    class ObjectiveCc: public C_family
+    {
+    public:
+        ObjectiveCc(): C_family(Language::ObjectiveC, extensions_){}
+    private:
+        static Extensions extensions_;
+    };
 
 } }
 

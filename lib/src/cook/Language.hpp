@@ -11,6 +11,8 @@ enum class Language
     Binary,
     C,
     CXX,
+    ObjectiveC,
+    ObjectiveCXX,
     ASM,
     Script,
     Definition,
@@ -26,6 +28,8 @@ inline std::ostream & operator<<(std::ostream & os, Language type)
         L_CASE(Binary);
         L_CASE(C);
         L_CASE(CXX);
+        L_CASE(ObjectiveC);
+        L_CASE(ObjectiveCXX);
         L_CASE(ASM);
         L_CASE(Script);
         L_CASE(Definition);

@@ -19,7 +19,7 @@ namespace  {
 
 const static unsigned int default_priority = 100;
 
-const static std::initializer_list<Language> default_supported_languages = { Language::C, Language::CXX, Language::ASM };
+const static std::initializer_list<Language> default_supported_languages = { Language::C, Language::CXX, Language::ASM, Language::ObjectiveC, Language::ObjectiveCXX };
 
 }
 
@@ -148,6 +148,8 @@ std::list<SouschefPtr> CompileArchiveLink::generate_compile_only_steps_() const
     auto rule_set = rules::RuleSet::create();
     rule_set->add<rules::CXX>();
     rule_set->add<rules::Cc>();
+    rule_set->add<rules::ObjectiveCc>();
+    rule_set->add<rules::ObjectiveCXX>();
     rule_set->add<rules::ASM>();
     rule_set->add<rules::Definition>();
     result.push_back(std::make_shared<souschef::Resolver>(rule_set));

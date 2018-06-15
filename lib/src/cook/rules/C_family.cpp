@@ -5,6 +5,8 @@ namespace cook { namespace rules {
 
     Extensions CXX::extensions_{Language::CXX};
     Extensions Cc::extensions_{Language::C};
+    Extensions ObjectiveCc::extensions_{Language::ObjectiveC};
+    Extensions ObjectiveCXX::extensions_{Language::ObjectiveCXX};
 
     C_family::C_family(Language lang, Extensions &extensions): lang_(lang), extensions_(extensions) {}
 

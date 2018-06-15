@@ -68,6 +68,8 @@ ptr->add(chaiscript::fun([](const wrapper::TYPE##_t &) { return std::string(#TYP
         EXPOSE(Language, Binary);
         EXPOSE(Language, C);
         EXPOSE(Language, CXX);
+        EXPOSE(Language, ObjectiveC);
+        EXPOSE(Language, ObjectiveCXX);
         EXPOSE(Language, ASM);
         EXPOSE(Language, Script);
         EXPOSE(Language, Definition);
