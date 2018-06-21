@@ -108,12 +108,15 @@ Proof-of-concept version.
 * Added recipe-selected callback `Hook.Selected` which is called before any processing on recipes selected to be built
 * Updated documentation
 
-## 1.1.11 (open)
+## 1.1.11
 
 * CMake link library order is topological for recipes
 * Improved support custom gcclike toolchains via `-T archiver=<archiver>`
 * CMake fix for comparing empty paths
 * Added Support for Objective-C and Objective-C++ (in beta)
+
+## 1.1.12 (open)
+* Adding language standard also for Objective C/C++
 
 ## 1.2.0 (open)
 

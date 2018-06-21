@@ -43,6 +43,10 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             kv.append(Part.Pre, "-std", "c++${v}")
         } else if (k == "c.std" && e.language == Language.C) {
             kv.append(Part.Pre, "-std", "c${v}")
+        } else if (k == "c++.std" && e.language == Language.ObjectiveCXX) {
+            kv.append(Part.Pre, "-std", "c++${v}")
+        } else if (k == "c.std" && e.language == Language.ObjectiveC) {
+            kv.append(Part.Pre, "-std", "c${v}")
         } else {
             return false;
         }
