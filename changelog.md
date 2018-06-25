@@ -119,6 +119,7 @@ Proof-of-concept version.
 
 * Adding language standard also for Objective C/C++
 * Fixed problem in std::filesystem::path normalization that could lead to wrong include paths
+* Fixed issue with object paths not being placed in the temporary output directory
 
 ## 1.2.0 (open)
 

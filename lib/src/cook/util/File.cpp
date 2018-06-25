@@ -32,9 +32,9 @@ std::filesystem::path get_from_to_path(const std::filesystem::path & from, const
 std::filesystem::path get_from_to_path(const std::filesystem::path & from, const std::filesystem::path & to)
 {
     std::filesystem::path path;
-    gubg::filesystem::get_from_to(path, 
-                                  gubg::filesystem::combine(std::filesystem::current_path(), from),
-                                  gubg::filesystem::combine(std::filesystem::current_path(), to));
+    const auto from_comb = gubg::filesystem::combine(std::filesystem::current_path(), from);
+    const auto to_comb = gubg::filesystem::combine(std::filesystem::current_path(), to);
+    gubg::filesystem::get_from_to(path, from_comb, to_comb);
     return path;
 }
 

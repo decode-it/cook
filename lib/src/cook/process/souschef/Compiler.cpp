@@ -61,10 +61,10 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
 
 ingredient::File Compiler::construct_object_file(const ingredient::File & source, model::Recipe & recipe, const Context & context) const
 {
-    auto ss = log::scope("construct_object_file");
+    auto tmp_path = context.dirs().temporary(true);
 
-    // get the path to the file
-    std::filesystem::path p = context.dirs().temporary(true) / recipe.uri().string();
+    // get the path to the file, making sure the initial separator from the URI is dropped
+    std::filesystem::path p = tmp_path / recipe.uri().string(false);
     {
         gubg::hash::md5::Stream s;
         s << source.dir().string();
@@ -72,6 +72,7 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
     }
 
     std::filesystem::path dir = util::get_from_to_path(recipe, p);
+
     const std::filesystem::path rel = source.rel().string() + ".obj";
 
     ingredient::File object(dir, rel);
