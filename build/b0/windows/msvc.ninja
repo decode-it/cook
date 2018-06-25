@@ -7,7 +7,7 @@ rule archive
 rule link
     command = link /OUT:$out $in $user_libs_msvc
 
-defines = -DNDEBUG -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_ALL_NO_LIB -DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE -DNOMINMAX
+defines = -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_ALL_NO_LIB -DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE -DNOMINMAX
 cflags = /nologo /EHsc /std:c++latest /bigobj /showIncludes
 
 subninja build/b0/compile.ninja
