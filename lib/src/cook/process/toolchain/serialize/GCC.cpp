@@ -105,7 +105,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
     tm[Part.DepFile]        = fun(k,v) { return "-MMD -MF ${k}" }
     tm[Part.Define]         = fun(k,v) { if (v.empty) { return "-D${k}" } else { return "-D${k}=${v}" } }
     tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "-I./" } else { return "-I${k}" } }
-    tm[Part.ForceInclude]   = fun(k,v) { return "-include${k}" }
+    tm[Part.ForceInclude]   = fun(k,v) { return "-include ${k}" }
 
 )%";
             oss << "    kv.append(Part.Cli, \"" << compiler << "\")" << std::endl;
@@ -135,7 +135,7 @@ for(s : [TargetType.SharedLibrary, TargetType.Executable]){
     tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.Library]        = fun(k,v) { return "-l${k}" }
     tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return "-L./" } else { return "-L${k}" } }
-    tm[Part.ForceInclude]   = fun(k,v) { return "-include${k}" }
+    tm[Part.ForceInclude]   = fun(k,v) { return "-include ${k}" }
     if(my(OS) == OS.MacOS) {
         tm[Part.Framework]      = fun(k,v) { return "-framework ${k}" }
         tm[Part.FrameworkPath]  = fun(k,v) { if (k.empty) { return "-F./" } else { return "-F${k}" } }
