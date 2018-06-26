@@ -183,6 +183,7 @@ bool CMake::can_process(const Context & context) const
 Result CMake::process(const Context & context)
 {
     MSS_BEGIN(Result);
+
     context_ = &context;
 
     auto get_output_dir = [&](const std::filesystem::path & recipe_local_dir)
@@ -203,7 +204,9 @@ Result CMake::process(const Context & context)
         // an existing ?
         for(auto & p : streams)
         {
-            if (std::filesystem::equivalent(p.first, actual_path))
+            //We swallow any error due to underlying OS issues, hence the std::error_code
+            std::error_code ec;
+            if (std::filesystem::equivalent(p.first, actual_path, ec))
             {
                 str = &p.second;
                 MSS_RETURN_OK();
@@ -217,6 +220,7 @@ Result CMake::process(const Context & context)
         str = &streams.back().second;
 
         MSS(util::open_file(actual_path / default_filename(), *str));
+
         MSS_END();
     };
 
@@ -522,13 +526,13 @@ Result CMake::set_link_libraries(std::ostream & ofs, model::Recipe * recipe, con
 
                 return true;
             };
-        
+
             recipe->key_values().each(find_lib);
             if (found)
                 link_libraries.push_back(recipe_name_(dep));
         }
     }
-    
+
     for(const ingredient::KeyValue & lib : recipe->key_values().range(LanguageTypePair(Language::Binary, Type::Library)))
     {
         // only the ones added by the user

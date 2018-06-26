@@ -121,6 +121,10 @@ Proof-of-concept version.
 * Fixed problem in std::filesystem::path normalization that could lead to wrong include paths
 * Fixed issue with object paths not being placed in the temporary output directory
 
+## 1.1.13
+
+* fixed cmake generation
+
 ## 1.2.0 (open)
 
 * Boost liberation
