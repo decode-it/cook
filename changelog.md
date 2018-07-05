@@ -128,6 +128,7 @@ Proof-of-concept version.
 ## 1.1.14 (open)
 
 * [wip] Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd)
+** [todo] Add support for mixing debug/release and static/dynamic
 
 ## 1.2.0 (open)
 
