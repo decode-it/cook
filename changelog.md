@@ -125,6 +125,10 @@ Proof-of-concept version.
 
 * fixed cmake generation
 
+## 1.1.14 (open)
+
+* [wip] Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd)
+
 ## 1.2.0 (open)
 
 * Boost liberation

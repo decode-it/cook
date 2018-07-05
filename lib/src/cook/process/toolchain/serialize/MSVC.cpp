@@ -21,6 +21,10 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         } else if (k == "arch" && v == "x86") {
         } else if (k == "arch" && v == "x64") {
         } else if (k == "position_independent_code" && v == "true") {
+        } else if (k == "runtime") {
+            if (false) {}
+            else if (v == "dynamic") { kv.append(Part.Pre, "MD") }
+            else if (v == "static") { kv.append(Part.Pre, "MT") }
         } else if (k == "c++.std" && e.language == Language.CXX) {
             kv.append(Part.Pre, "std", "c++${v}")
         } else {
@@ -51,7 +55,7 @@ for( lang : [Language.C, Language.CXX, Language.ASM]) {
 
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return "/${k}" } else { return "/${k}:${v}" } }
-    tm[Part.Output]         = fun(k,v) { return "/Fo:${k}" }
+    tm[Part.Output]         = fun(k,v) { return "/Fo${k}" }
     tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.Deps]           = fun(k,v) { return "/showIncludes" }
     tm[Part.Define]         = fun(k,v) { if (v.empty) { return "/D${k}" } else { return "/D${k}=${v}" } }
