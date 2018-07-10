@@ -21,7 +21,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         } else if (k == "arch" && v == "x86") {
         } else if (k == "arch" && v == "x64") {
         } else if (k == "position_independent_code" && v == "true") {
-        } else if (k == "runtime") {
+        } else if (k == "c++.runtime") {
             if (false) {}
             else if (v == "dynamic") { kv.append(Part.Pre, "MD") }
             else if (v == "static") { kv.append(Part.Pre, "MT") }

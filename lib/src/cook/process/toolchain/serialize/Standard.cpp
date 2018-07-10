@@ -61,9 +61,9 @@ cook.toolchain.configure(1, "single key translations", fun(e,k,v,b) {
     } else if (k == "pic") {
         b.add_config("position_independent_code", "true")
     } else if (k == "md") {
-        b.add_config("runtime", "dynamic")
+        b.add_config("c++.runtime", "dynamic")
     } else if (k == "mt") {
-        b.add_config("runtime", "static")
+        b.add_config("c++.runtime", "static")
     } else {
         return false
     }

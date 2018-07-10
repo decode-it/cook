@@ -39,6 +39,10 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             b.add_config("position_independent_code", "true")
         } else if (k == "position_independent_code" && v == "true") {
             kv.append(Part.Pre, "-fPIC")
+        } else if (k == "c++.runtime") {
+            if (false) {}
+            else if (v == "dynamic") { }
+            else if (v == "static") { kv.append(Part.Pre, "-static-libstdc++") }
         } else if (k == "c++.std" && e.language == Language.CXX) {
             kv.append(Part.Pre, "-std", "c++${v}")
         } else if (k == "c.std" && e.language == Language.C) {
