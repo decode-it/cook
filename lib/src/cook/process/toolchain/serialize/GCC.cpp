@@ -71,6 +71,10 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             kv.append(Part.Pre, "-fsanitize", "address") 
         } else if (k == "config" && v == "profile") {
             kv.append(Part.Pre, "-pg", "") 
+        } else if (k == "c++.runtime") {
+            if (false) {}
+            else if (v == "dynamic") { }
+            else if (v == "static") { kv.append(Part.Pre, "-static-libstdc++") }
         } else if (k == "c++.std") {
             kv.append(Part.Pre, "-std", "c++${v}") 
         } else if (k == "c.std") {

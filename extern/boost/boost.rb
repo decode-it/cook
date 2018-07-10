@@ -66,7 +66,7 @@ namespace :boost do
                 end
                 
                 Dir.chdir(k) do
-                    sh "git fetch origin"
+                    sh "git fetch --depth=1 origin"
                     sh "git checkout #{tag}" 
                 end
                 puts "<< #{k}"
