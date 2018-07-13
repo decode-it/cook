@@ -7,7 +7,6 @@ rescue LoadError
     retry
 end
 require("gubg/shared")
-require_relative("extern/boost/boost.rb")
 
 require("mkmf")
 ninja_exe = find_executable("ninja")
@@ -76,11 +75,8 @@ namespace :uth do
             sh "git pull --rebase"
         end
     end
-
-    desc "Update boost to head"
-    task :boost => ["boost:load", "boost:update"]
 end
-desc "Update all non-boost"
+desc "Update all to head"
 task :uth => %w[uth:gubg uth:binary]
 
 task :update => :uth
@@ -96,7 +92,7 @@ namespace :b0 do
     end
 
     desc "bootstrap-level0: generater the ninja scripts (depends on gubg.build)"
-    task :generate => "boost:load" do
+    task :generate do
         require("gubg/build/expand_templates")
         GUBG::Build::expand_templates("build/b0/compile.ninja")
     end

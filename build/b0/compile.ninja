@@ -5,8 +5,6 @@
 #$cook_fns=FileList.new("lib/src/**/*.cpp").to_a
 #$cook_test_fns=FileList.new("lib/test/**/*_tests.cpp").to_a
 #$cook_app_fns=FileList.new("app/**/*.cpp").to_a
-#$boost_fns=FileList.new("extern/boost/modules/filesystem/src/*.cpp").to_a
-#$boost = $boost_modules
 #$obj = ->(fn){fn.gsub("/","_")+".obj"}
 #$obj = ->(fn){fn+".obj"}
 #){
@@ -34,9 +32,6 @@ gubg_test_include_paths = -I gubg.std/test/src -I gubg.io/test/src -I gubg.algo/
 cook_lib_include_paths  = -I lib/src $gubg_include_paths
 cook_app_include_paths  = -I app/src
 catch_include_paths = -I gubg.std/extern/catch/single_include
-#[output](script:output.print("boost_include_paths = ");$boost.map{|e|output.print(" -I extern/boost/modules/#{e}/include")};output.puts()){
-boost_include_paths =  -I extern/boost/modules/algorithm/include -I extern/boost/modules/any/include -I extern/boost/modules/array/include -I extern/boost/modules/asio/include -I extern/boost/modules/assert/include -I extern/boost/modules/atomic/include -I extern/boost/modules/bind/include -I extern/boost/modules/chrono/include -I extern/boost/modules/concept_check/include -I extern/boost/modules/config/include -I extern/boost/modules/container/include -I extern/boost/modules/conversion/include -I extern/boost/modules/core/include -I extern/boost/modules/date_time/include -I extern/boost/modules/detail/include -I extern/boost/modules/exception/include -I extern/boost/modules/filesystem/include -I extern/boost/modules/foreach/include -I extern/boost/modules/function/include -I extern/boost/modules/function_types/include -I extern/boost/modules/functional/include -I extern/boost/modules/fusion/include -I extern/boost/modules/graph/include -I extern/boost/modules/graph_parallel/include -I extern/boost/modules/integer/include -I extern/boost/modules/intrusive/include -I extern/boost/modules/io/include -I extern/boost/modules/iterator/include -I extern/boost/modules/lexical_cast/include -I extern/boost/modules/math/include -I extern/boost/modules/move/include -I extern/boost/modules/mpi/include -I extern/boost/modules/mpl/include -I extern/boost/modules/multi_index/include -I extern/boost/modules/numeric_conversion/include -I extern/boost/modules/optional/include -I extern/boost/modules/parameter/include -I extern/boost/modules/predef/include -I extern/boost/modules/preprocessor/include -I extern/boost/modules/process/include -I extern/boost/modules/property_map/include -I extern/boost/modules/proto/include -I extern/boost/modules/range/include -I extern/boost/modules/ratio/include -I extern/boost/modules/rational/include -I extern/boost/modules/serialization/include -I extern/boost/modules/smart_ptr/include -I extern/boost/modules/spirit/include -I extern/boost/modules/static_assert/include -I extern/boost/modules/system/include -I extern/boost/modules/thread/include -I extern/boost/modules/throw_exception/include -I extern/boost/modules/tokenizer/include -I extern/boost/modules/tti/include -I extern/boost/modules/tuple/include -I extern/boost/modules/type_index/include -I extern/boost/modules/type_traits/include -I extern/boost/modules/typeof/include -I extern/boost/modules/unordered/include -I extern/boost/modules/utility/include -I extern/boost/modules/variant/include -I extern/boost/modules/winapi/include -I extern/boost/modules/xpressive/include
-#}
 
 #[output](script:
 #$gubg_fns.each do |fn|
@@ -71,153 +66,153 @@ build .b0/gubg.io/src/gubg/std/filesystem.cpp.obj: compile gubg.io/src/gubg/std/
 #[output](script:
 #$cook_fns.each do |fn|
 #  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
-#  output.puts("    include_paths = $cook_lib_include_paths $boost_include_paths")
+#  output.puts("    include_paths = $cook_lib_include_paths")
 #end
 #){
 build .b0/lib/src/cook/Content.cpp.obj: compile lib/src/cook/Content.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/Context.cpp.obj: compile lib/src/cook/Context.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/Hook.cpp.obj: compile lib/src/cook/Hook.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/OS.cpp.obj: compile lib/src/cook/OS.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/algo/Book.cpp.obj: compile lib/src/cook/algo/Book.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/Book.cpp.obj: compile lib/src/cook/chai/Book.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/Context.cpp.obj: compile lib/src/cook/chai/Context.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/Cook.cpp.obj: compile lib/src/cook/chai/Cook.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/File.cpp.obj: compile lib/src/cook/chai/File.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/Flags.cpp.obj: compile lib/src/cook/chai/Flags.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/KeyValue.cpp.obj: compile lib/src/cook/chai/KeyValue.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/Recipe.cpp.obj: compile lib/src/cook/chai/Recipe.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/Toolchain.cpp.obj: compile lib/src/cook/chai/Toolchain.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/ToolchainElement.cpp.obj: compile lib/src/cook/chai/ToolchainElement.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/UserData.cpp.obj: compile lib/src/cook/chai/UserData.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/module/Basic.cpp.obj: compile lib/src/cook/chai/module/Basic.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/module/Book.cpp.obj: compile lib/src/cook/chai/module/Book.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/module/Cook.cpp.obj: compile lib/src/cook/chai/module/Cook.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/module/Flags.cpp.obj: compile lib/src/cook/chai/module/Flags.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/module/Ingredient.cpp.obj: compile lib/src/cook/chai/module/Ingredient.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/module/RaiiIngredient.cpp.obj: compile lib/src/cook/chai/module/RaiiIngredient.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/module/Recipe.cpp.obj: compile lib/src/cook/chai/module/Recipe.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/module/Toolchain.cpp.obj: compile lib/src/cook/chai/module/Toolchain.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/module/ToolchainElement.cpp.obj: compile lib/src/cook/chai/module/ToolchainElement.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/module/Uri.cpp.obj: compile lib/src/cook/chai/module/Uri.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/chai/mss.cpp.obj: compile lib/src/cook/chai/mss.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/generator/CMake.cpp.obj: compile lib/src/cook/generator/CMake.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/generator/HTML.cpp.obj: compile lib/src/cook/generator/HTML.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/generator/Naft.cpp.obj: compile lib/src/cook/generator/Naft.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/generator/Ninja.cpp.obj: compile lib/src/cook/generator/Ninja.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/generator/graphviz/Component.cpp.obj: compile lib/src/cook/generator/graphviz/Component.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/generator/graphviz/Dependency.cpp.obj: compile lib/src/cook/generator/graphviz/Dependency.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/log/Node.cpp.obj: compile lib/src/cook/log/Node.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/log/Scope.cpp.obj: compile lib/src/cook/log/Scope.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/log/level.cpp.obj: compile lib/src/cook/log/level.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/model/Book.cpp.obj: compile lib/src/cook/model/Book.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/model/Dirs.cpp.obj: compile lib/src/cook/model/Dirs.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/model/Element.cpp.obj: compile lib/src/cook/model/Element.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/model/Library.cpp.obj: compile lib/src/cook/model/Library.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/model/Recipe.cpp.obj: compile lib/src/cook/model/Recipe.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/model/Uri.cpp.obj: compile lib/src/cook/model/Uri.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/Menu.cpp.obj: compile lib/src/cook/process/Menu.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/RecipeFilteredGraph.cpp.obj: compile lib/src/cook/process/RecipeFilteredGraph.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/build/Graph.cpp.obj: compile lib/src/cook/process/build/Graph.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/chef/CompileArchiveLink.cpp.obj: compile lib/src/cook/process/chef/CompileArchiveLink.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/chef/Interface.cpp.obj: compile lib/src/cook/process/chef/Interface.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/command/CommonImpl.cpp.obj: compile lib/src/cook/process/command/CommonImpl.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/souschef/Archiver.cpp.obj: compile lib/src/cook/process/souschef/Archiver.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/souschef/Compiler.cpp.obj: compile lib/src/cook/process/souschef/Compiler.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/souschef/DependencyPropagator.cpp.obj: compile lib/src/cook/process/souschef/DependencyPropagator.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/souschef/IncludePathSetter.cpp.obj: compile lib/src/cook/process/souschef/IncludePathSetter.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/souschef/LinkLibrarySorter.cpp.obj: compile lib/src/cook/process/souschef/LinkLibrarySorter.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/souschef/Linker.cpp.obj: compile lib/src/cook/process/souschef/Linker.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/souschef/PathExtraction.cpp.obj: compile lib/src/cook/process/souschef/PathExtraction.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/souschef/RecipeNamer.cpp.obj: compile lib/src/cook/process/souschef/RecipeNamer.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/souschef/Resolver.cpp.obj: compile lib/src/cook/process/souschef/Resolver.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/souschef/ScriptRunner.cpp.obj: compile lib/src/cook/process/souschef/ScriptRunner.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/toolchain/Configuration.cpp.obj: compile lib/src/cook/process/toolchain/Configuration.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/toolchain/Element.cpp.obj: compile lib/src/cook/process/toolchain/Element.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/toolchain/Loader.cpp.obj: compile lib/src/cook/process/toolchain/Loader.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/toolchain/Manager.cpp.obj: compile lib/src/cook/process/toolchain/Manager.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/toolchain/serialize/GCC.cpp.obj: compile lib/src/cook/process/toolchain/serialize/GCC.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/toolchain/serialize/MSVC.cpp.obj: compile lib/src/cook/process/toolchain/serialize/MSVC.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/process/toolchain/serialize/Standard.cpp.obj: compile lib/src/cook/process/toolchain/serialize/Standard.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/rules/ASM.cpp.obj: compile lib/src/cook/rules/ASM.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/rules/Binary.cpp.obj: compile lib/src/cook/rules/Binary.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/rules/C_family.cpp.obj: compile lib/src/cook/rules/C_family.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/rules/Definition.cpp.obj: compile lib/src/cook/rules/Definition.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/rules/Extensions.cpp.obj: compile lib/src/cook/rules/Extensions.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/rules/Interface.cpp.obj: compile lib/src/cook/rules/Interface.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/rules/RuleSet.cpp.obj: compile lib/src/cook/rules/RuleSet.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 build .b0/lib/src/cook/util/File.cpp.obj: compile lib/src/cook/util/File.cpp
-    include_paths = $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths
 #}
 
 build .b0/gubg.std/src/catch_runner.cpp.obj: compile gubg.std/src/catch_runner.cpp
@@ -278,6 +273,8 @@ build .b0/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj: compile gubg.io/test/src
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj: compile gubg.io/test/src/gubg/naft/Document_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/gubg.io/test/src/gubg/naft/Reader_tests.cpp.obj: compile gubg.io/test/src/gubg/naft/Reader_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp
@@ -328,64 +325,41 @@ build .b0/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp.obj: compile gubg.c
 #[output](script:
 #$cook_test_fns.each do |fn|
 #  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
-#  output.puts("    include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths")
+#  output.puts("    include_paths = $cook_lib_include_paths $catch_include_paths ")
 #end
 #){
 build .b0/lib/test/src/cook/LanguageTypePair_tests.cpp.obj: compile lib/test/src/cook/LanguageTypePair_tests.cpp
-    include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths $catch_include_paths 
 build .b0/lib/test/src/cook/Menu_tests.cpp.obj: compile lib/test/src/cook/Menu_tests.cpp
-    include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths $catch_include_paths 
 build .b0/lib/test/src/cook/Result_tests.cpp.obj: compile lib/test/src/cook/Result_tests.cpp
-    include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths $catch_include_paths 
 build .b0/lib/test/src/cook/ingredient/Collection_tests.cpp.obj: compile lib/test/src/cook/ingredient/Collection_tests.cpp
-    include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths $catch_include_paths 
 build .b0/lib/test/src/cook/model/Uri_tests.cpp.obj: compile lib/test/src/cook/model/Uri_tests.cpp
-    include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths $catch_include_paths 
 build .b0/lib/test/src/cook/rules/C_family_tests.cpp.obj: compile lib/test/src/cook/rules/C_family_tests.cpp
-    include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths $catch_include_paths 
 build .b0/lib/test/src/cook/rules/Extensions_tests.cpp.obj: compile lib/test/src/cook/rules/Extensions_tests.cpp
-    include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths $catch_include_paths 
 build .b0/lib/test/src/cook/rules/Resolve_tests.cpp.obj: compile lib/test/src/cook/rules/Resolve_tests.cpp
-    include_paths = $cook_lib_include_paths $catch_include_paths $boost_include_paths
+    include_paths = $cook_lib_include_paths $catch_include_paths 
 #}
 
 #[output](script:
 #$cook_app_fns.each do |fn|
 #  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
-#  output.puts("    include_paths = $cook_app_include_paths $cook_lib_include_paths $boost_include_paths")
+#  output.puts("    include_paths = $cook_app_include_paths $cook_lib_include_paths ")
 #end
 #){
 build .b0/app/src/cook/App.cpp.obj: compile app/src/cook/App.cpp
-    include_paths = $cook_app_include_paths $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_app_include_paths $cook_lib_include_paths 
 build .b0/app/src/cook/app/Options.cpp.obj: compile app/src/cook/app/Options.cpp
-    include_paths = $cook_app_include_paths $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_app_include_paths $cook_lib_include_paths 
 build .b0/app/src/main.cpp.obj: compile app/src/main.cpp
-    include_paths = $cook_app_include_paths $cook_lib_include_paths $boost_include_paths
+    include_paths = $cook_app_include_paths $cook_lib_include_paths 
 #}
 
-#[output](script:
-#$boost_fns.each do |fn|
-#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
-#  output.puts("    include_paths = $boost_include_paths")
-#end
-#){
-build .b0/extern/boost/modules/filesystem/src/codecvt_error_category.cpp.obj: compile extern/boost/modules/filesystem/src/codecvt_error_category.cpp
-    include_paths = $boost_include_paths
-build .b0/extern/boost/modules/filesystem/src/operations.cpp.obj: compile extern/boost/modules/filesystem/src/operations.cpp
-    include_paths = $boost_include_paths
-build .b0/extern/boost/modules/filesystem/src/path.cpp.obj: compile extern/boost/modules/filesystem/src/path.cpp
-    include_paths = $boost_include_paths
-build .b0/extern/boost/modules/filesystem/src/path_traits.cpp.obj: compile extern/boost/modules/filesystem/src/path_traits.cpp
-    include_paths = $boost_include_paths
-build .b0/extern/boost/modules/filesystem/src/portability.cpp.obj: compile extern/boost/modules/filesystem/src/portability.cpp
-    include_paths = $boost_include_paths
-build .b0/extern/boost/modules/filesystem/src/unique_path.cpp.obj: compile extern/boost/modules/filesystem/src/unique_path.cpp
-    include_paths = $boost_include_paths
-build .b0/extern/boost/modules/filesystem/src/utf8_codecvt_facet.cpp.obj: compile extern/boost/modules/filesystem/src/utf8_codecvt_facet.cpp
-    include_paths = $boost_include_paths
-build .b0/extern/boost/modules/filesystem/src/windows_file_codecvt.cpp.obj: compile extern/boost/modules/filesystem/src/windows_file_codecvt.cpp
-    include_paths = $boost_include_paths
-#}
 
 #[output](script:
 #output.puts("build libb0-gubg.a: archive $")
@@ -493,30 +467,11 @@ build libb0-cook.a: archive $
 #}
 
 #[output](script:
-#output.puts("build libb0-boost.a: archive $")
-#$boost_fns.each do |fn|
-#  output.puts("    .b0/#{$obj.call(fn)} $")
-#end
-#output.puts
-#){
-build libb0-boost.a: archive $
-    .b0/extern/boost/modules/filesystem/src/codecvt_error_category.cpp.obj $
-    .b0/extern/boost/modules/filesystem/src/operations.cpp.obj $
-    .b0/extern/boost/modules/filesystem/src/path.cpp.obj $
-    .b0/extern/boost/modules/filesystem/src/path_traits.cpp.obj $
-    .b0/extern/boost/modules/filesystem/src/portability.cpp.obj $
-    .b0/extern/boost/modules/filesystem/src/unique_path.cpp.obj $
-    .b0/extern/boost/modules/filesystem/src/utf8_codecvt_facet.cpp.obj $
-    .b0/extern/boost/modules/filesystem/src/windows_file_codecvt.cpp.obj $
-
-#}
-
-#[output](script:
 #output.puts("build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $")
 #($cook_test_fns+$gubg_test_fns).each do |fn|
 #  output.puts("    .b0/#{$obj.call(fn)} $")
 #end
-#output.puts("    | libb0-cook.a libb0-gubg.a libb0-boost.a")
+#output.puts("    | libb0-cook.a libb0-gubg.a")
 #){
 build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/lib/test/src/cook/LanguageTypePair_tests.cpp.obj $
@@ -552,6 +507,7 @@ build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj $
     .b0/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj $
     .b0/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj $
+    .b0/gubg.io/test/src/gubg/naft/Reader_tests.cpp.obj $
     .b0/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp.obj $
     .b0/gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp.obj $
     .b0/gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp.obj $
@@ -575,25 +531,25 @@ build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj $
     .b0/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp.obj $
     .b0/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp.obj $
-    | libb0-cook.a libb0-gubg.a libb0-boost.a
+    | libb0-cook.a libb0-gubg.a
 #}
     library_paths =  -L./
-    user_libs_gcc = -lb0-cook -lb0-gubg -lb0-boost
-    user_libs_msvc = libb0-cook.a libb0-gubg.a libb0-boost.a
+    user_libs_gcc = -lb0-cook -lb0-gubg
+    user_libs_msvc = libb0-cook.a libb0-gubg.a
 
 #[output](script:
 #output.puts("build b0-cook.exe: link $")
 #$cook_app_fns.each do |fn|
 #  output.puts("    .b0/#{$obj.call(fn)} $")
 #end
-#output.puts("    | libb0-cook.a libb0-gubg.a libb0-boost.a")
+#output.puts("    | libb0-cook.a libb0-gubg.a")
 #){
 build b0-cook.exe: link $
     .b0/app/src/cook/App.cpp.obj $
     .b0/app/src/cook/app/Options.cpp.obj $
     .b0/app/src/main.cpp.obj $
-    | libb0-cook.a libb0-gubg.a libb0-boost.a
+    | libb0-cook.a libb0-gubg.a
 #}
     library_paths =  -L./
-    user_libs_gcc = -lb0-cook -lb0-gubg -lb0-boost
-    user_libs_msvc = libb0-cook.a libb0-gubg.a libb0-boost.a
+    user_libs_gcc = -lb0-cook -lb0-gubg
+    user_libs_msvc = libb0-cook.a libb0-gubg.a

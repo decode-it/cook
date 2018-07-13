@@ -2,6 +2,7 @@
 #define HEADER_cook_process_RecipeFilteredGraph_hpp_ALREADY_INCLUDED
 
 #include "cook/process/build/Graph.hpp"
+#include <unordered_set>
 
 namespace cook { namespace process {
 

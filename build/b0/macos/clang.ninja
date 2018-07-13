@@ -6,12 +6,12 @@ rule archive
 rule link
     command = clang++ -o $out $in $lflags $library_paths $user_libs_gcc $system_libs
 
-defines = -DNDEBUG -DBOOST_ERROR_CODE_HEADER_ONLY
+defines = -DNDEBUG 
 cflags = -O3 -static-libstdc++
 lflags = -static-libstdc++
 system_libs = -L/usr/local/opt/llvm/lib -ldl -lc++experimental -lpthread
 
-#defines = -DBOOST_ERROR_CODE_HEADER_ONLY
+#defines =
 #cflags = -g
 #lflags = -static-libstdc++
 #system_libs = -L/usr/local/opt/llvm/lib -ldl -lc++experimental -lpthread

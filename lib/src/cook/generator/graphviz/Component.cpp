@@ -1,6 +1,5 @@
 #include "cook/generator/graphviz/Component.hpp"
 #include "cook/Context.hpp"
-#include "boost/graph/graphviz.hpp"
 
 namespace cook { namespace generator { namespace graphviz {
 
@@ -33,9 +32,9 @@ Result Component::process(const Context & context)
     ofs << "digraph G {" << std::endl;
     ofs << "  compound=true;" << std::endl;
 
-    for(auto v : gubg::make_range(boost::vertices(comp_g)))
+    for(auto v : gubg::graph::vertices(comp_g))
     {
-        const auto & recipes = comp_g[v];
+        const auto & recipes = gubg::graph::vertex_label(v, comp_g);
 
         ofs << "  subgraph cluster_" << v << " {" << std::endl;
         for(model::Recipe * recipe : recipes)
@@ -53,8 +52,8 @@ Result Component::process(const Context & context)
     }
 
     const auto & dep_g = context.menu().dependency_graph().graph;
-    for (auto e : gubg::make_range(boost::edges(dep_g)))
-        ofs << "  " << boost::source(e, dep_g) << " -> " << boost::target(e, dep_g) << ";" << std::endl;
+    for (auto e : gubg::graph::edges(dep_g))
+        ofs << "  " << gubg::graph::source(e, dep_g) << " -> " << gubg::graph::target(e, dep_g) << ";" << std::endl;
 
     ofs << "}" << std::endl;
 

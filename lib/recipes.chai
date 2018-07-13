@@ -8,8 +8,6 @@
         for(dep : ["std", "io", "algo", "chaiscript"]) {
             r.depends_on("gubg/${dep}/func")
         }
-        r.depends_on("boost/all")
-
         if (my(OS) == OS.Linux) 
         {
             r.library("stdc++fs")
@@ -19,8 +17,6 @@
             r.library_path("/usr/local/opt/llvm/lib")
             r.library("c++experimental")
         }
-	
-        r.define("BOOST_ERROR_CODE_HEADER_ONLY")  
     }
 
     {

@@ -2,7 +2,6 @@
 #include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
-#include "boost/predef.h"
 
 namespace cook { namespace process { namespace souschef {
 

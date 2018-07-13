@@ -3,8 +3,8 @@
 
 #include "cook/process/command/Interface.hpp"
 #include "cook/model/Uri.hpp"
-#include "boost/graph/adjacency_list.hpp"
-#include "boost/variant.hpp"
+#include "gubg/graph/AdjacencyList.hpp"
+#include <variant>
 #include <memory>
 #include <vector>
 #include <list>
@@ -18,16 +18,16 @@ struct Graph
     using FileLabel = std::filesystem::path;
     using CommandLabel = command::Ptr;
 
-    using Label = boost::variant<FileLabel, CommandLabel>;
+    using Label = std::variant<FileLabel, CommandLabel>;
 
     enum EdgeType
     {
         Explicit = 0x01,
         Implicit = 0x02,
     };
-    using graph_type = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, Label, EdgeType>;
-    using vertex_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
-    using adjacent_descriptor = boost::graph_traits<graph_type>::vertex_descriptor;
+    using graph_type = gubg::graph::AdjacencyList<gubg::graph::use_vector, gubg::graph::use_list, gubg::graph::use_list, Label, EdgeType, gubg::graph::bidirectional>;
+    using vertex_descriptor = gubg::graph::Traits<graph_type>::vertex_descriptor;
+    using adjacent_descriptor = gubg::graph::Traits<graph_type>::vertex_descriptor;
 
     using OrderedVertices = std::vector<vertex_descriptor>;
 };
@@ -38,7 +38,7 @@ struct Graph : public config::Graph
 {
     Graph() = default;
 
-    size_t num_vertices() const {return boost::num_vertices(g_);}
+    size_t num_vertices() const {return gubg::graph::num_vertices(g_);}
 
     vertex_descriptor goc_vertex(const FileLabel & path);
     vertex_descriptor add_vertex(CommandLabel ptr);
@@ -51,17 +51,17 @@ struct Graph : public config::Graph
     template <typename Functor>
     void input(Functor && functor, vertex_descriptor command, EdgeType required = EdgeType()) const
     {
-        for(auto e : gubg::make_range(boost::out_edges(command, g_)))
-            if ((g_[e] & required) == required)
-                functor(boost::target(e, g_));
+        for(auto e : gubg::graph::out_edges(command, g_))
+            if ((gubg::graph::edge_label(e, g_) & required) == required)
+                functor(gubg::graph::target(e, g_));
     }
 
     template <typename Functor>
     void output(Functor && functor, vertex_descriptor command, EdgeType required = EdgeType()) const
     {
-        for(auto e : gubg::make_range(boost::in_edges(command, g_)))
-            if ((g_[e] & required) == required)
-                functor(boost::source(e, g_));
+        for(auto e : gubg::graph::in_edges(command, g_))
+            if ((gubg::graph::edge_label(e, g_) & required) == required)
+                functor(gubg::graph::source(e, g_));
     }
 
 private:

@@ -7,7 +7,6 @@
 #include "cook/model/Library.hpp"
 #include "cook/model/Dirs.hpp"
 #include "cook/process/Menu.hpp"
-#include "boost/graph/adjacency_list.hpp"
 #include <optional>
 
 namespace cook {

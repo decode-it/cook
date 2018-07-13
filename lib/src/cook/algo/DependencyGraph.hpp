@@ -4,7 +4,7 @@
 #include "cook/algo/Visit.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/Result.hpp"
-#include "boost/graph/adjacency_list.hpp"
+#include "gubg/graph/AdjacencyList.hpp"
 
 namespace cook { namespace algo {
 
@@ -13,7 +13,7 @@ Result make_DependencyGraph(const gubg::Range<It> & roots, Graph & g, RecipeVert
 {
     MSS_BEGIN(Result);
 
-    MSS(boost::num_vertices(g) == 0);
+    MSS(gubg::graph::num_vertices(g) == 0);
     MSS(translation_map.empty());
 
     auto initialization_function = [&](auto & stack)
@@ -22,7 +22,7 @@ Result make_DependencyGraph(const gubg::Range<It> & roots, Graph & g, RecipeVert
             if(translation_map.find(root) == translation_map.end())
             {
                 stack.push(root);
-                translation_map.emplace(root, boost::add_vertex(root, g));
+                translation_map.emplace(root, gubg::graph::add_vertex(root, g));
             }
     };
 
@@ -32,7 +32,7 @@ Result make_DependencyGraph(const gubg::Range<It> & roots, Graph & g, RecipeVert
         MSS_BEGIN(Result);
 
         MSS(!!recipe);
-        typename boost::graph_traits<Graph>::vertex_descriptor vd;
+        typename gubg::graph::Traits<Graph>::vertex_descriptor vd;
         {
             auto it = translation_map.find(recipe);
             MSS(it != translation_map.end());
@@ -48,13 +48,13 @@ Result make_DependencyGraph(const gubg::Range<It> & roots, Graph & g, RecipeVert
             else
             {
                 // insert  a dummy
-                auto it_bool_pair = translation_map.emplace(dep, boost::graph_traits<Graph>::null_vertex());
+                auto it_bool_pair = translation_map.emplace(dep, typename gubg::graph::Traits<Graph>::vertex_descriptor());
 
                 // it is a new entry
                 if (it_bool_pair.second)
-                    it_bool_pair.first->second = boost::add_vertex(dep, g);
+                    it_bool_pair.first->second = gubg::graph::add_vertex(dep, g);
 
-                boost::add_edge(vd, it_bool_pair.first->second, g);
+                gubg::graph::add_edge(vd, it_bool_pair.first->second, g);
 
                 stack.push(dep);
             }
@@ -74,7 +74,7 @@ Result make_DependencyGraph(const gubg::Range<It> & roots, Graph & g)
 {
     MSS_BEGIN(Result);
 
-    std::unordered_map<model::Recipe *, typename boost::graph_traits<Graph>::vertex_descriptor> translation_map;
+    std::unordered_map<model::Recipe *, typename gubg::graph::Traits<Graph>::vertex_descriptor> translation_map;
     MSS(make_DependencyGraph(roots, g, translation_map));
     MSS_END();
 }
