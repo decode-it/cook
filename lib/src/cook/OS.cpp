@@ -1,21 +1,23 @@
 #include "cook/OS.hpp"
-#include "boost/predef.h"
+#include "gubg/platform/os_api.h"
 
 namespace cook {
 
 OS get_os()
 {
-#if BOOST_OS_LINUX
+#if GUBG_OS_LINUX
     return OS::Linux;
 #endif
 
-#if BOOST_OS_WINDOWS
+#if GUBG_OS_WINDOWS
     return OS::Windows;
 #endif
 
-#if BOOST_OS_MACOS
+#if GUBG_OS_MACOS
     return OS::MacOS;
 #endif
+
+    throw std::runtime_error("Unsupported operating system");
 }
 
 std::ostream & operator<<(std::ostream & str, OS os)
