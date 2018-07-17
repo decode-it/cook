@@ -130,16 +130,20 @@ Proof-of-concept version.
 * [wip] Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd) and GCC/CLang via `-T md`, `-T mt`, `-T c++.runtime=<static|dynamic>`
 ** [todo] Add support for mixing debug/release and static/dynamic
 
-## 1.2.0 (open)
+## 1.2.0
 
 * Boost liberation
+* [wip] Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd) and GCC/CLang via `-T md`, `-T mt`, `-T c++.runtime=<static|dynamic>`
+** [todo] Add support for mixing debug/release and static/dynamic
+
+## 1.2.1 (open)
+
 * [wip] Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd) and GCC/CLang via `-T md`, `-T mt`, `-T c++.runtime=<static|dynamic>`
 ** [todo] Add support for mixing debug/release and static/dynamic
 
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements
-* Removing boost dependencies
 * Support for `COOK_PATH` search for scripts
 * Internal #include-based dependency detection for compilers that cannot output dependencies
 * Defines specified at toolchain level (eg NOMINMAX for MSVC) should be translated into cmake as well
