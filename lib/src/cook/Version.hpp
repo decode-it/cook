@@ -4,8 +4,8 @@
 #include <string>
 
 #define COOK_VERSION_MAJOR 1
-#define COOK_VERSION_MINOR 1
-#define COOK_VERSION_PATCH 14
+#define COOK_VERSION_MINOR 2
+#define COOK_VERSION_PATCH 0
 
 #define COOK_XSTR(A) COOK_STR(A)
 #define COOK_STR(A) #A

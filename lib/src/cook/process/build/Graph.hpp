@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include <list>
+#include <unordered_map>
 
 namespace cook { namespace process { namespace build {
 
