@@ -125,7 +125,7 @@ Proof-of-concept version.
 
 * fixed cmake generation
 
-## 1.1.14 (open)
+## 1.1.14
 
 * [wip] Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd) and GCC/CLang via `-T md`, `-T mt`, `-T c++.runtime=<static|dynamic>`
 ** [todo] Add support for mixing debug/release and static/dynamic
@@ -133,6 +133,8 @@ Proof-of-concept version.
 ## 1.2.0 (open)
 
 * Boost liberation
+* [wip] Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd) and GCC/CLang via `-T md`, `-T mt`, `-T c++.runtime=<static|dynamic>`
+** [todo] Add support for mixing debug/release and static/dynamic
 
 ## Next
 
