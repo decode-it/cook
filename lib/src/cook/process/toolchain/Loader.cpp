@@ -15,12 +15,12 @@ namespace cook { namespace process { namespace toolchain {
 
         void serialize_gcc(std::ostream & oss) 
         { 
-            serialize::gcc_config(oss, languages, "gcc", "ar", "g++");
+            serialize::gcc_config(oss, serialize::GCCVariant::Genuine, languages, "gcc", "ar", "g++");
         }
 
         void serialize_clang(std::ostream & oss)
         {
-            serialize::gcc_config(oss, languages, "clang", "ar", "clang++");
+            serialize::gcc_config(oss, serialize::GCCVariant::Clang, languages, "clang", "ar", "clang++");
         }
 
         void serialize_msvc(std::ostream & oss) 
