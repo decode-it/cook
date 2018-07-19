@@ -41,9 +41,14 @@ namespace cook { namespace rules {
                 for (auto ext: Exts{ ".asm", ".S" })
                     tm[ext] = Type::Source;
             }
+            else if (lang == Language::Resource)
+            {
+                for (auto ext: Exts{ ".rc" })
+                    tm[ext] = Type::Source;
+            }
             else if (lang == Language::Binary)
             {
-                for (auto ext: Exts{ ".o", ".obj" })
+                for (auto ext: Exts{ ".o", ".obj", ".res" })
                     tm[ext] = Type::Object;
                 for (auto ext: Exts{ ".a", ".so", ".lib", ".dll" })
                     tm[ext] = Type::Library;

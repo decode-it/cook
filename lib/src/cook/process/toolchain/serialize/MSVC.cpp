@@ -47,7 +47,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
 })
 
 
-for( lang : [Language.C, Language.CXX, Language.ASM]) {
+for( lang : [Language.C, Language.CXX, Language.ASM, Language.Resource]) {
 
     var compiler = cook.toolchain.element(ElementType.Compile, lang, TargetType.Object)
     var & kv = compiler.key_values()
@@ -65,7 +65,11 @@ for( lang : [Language.C, Language.CXX, Language.ASM]) {
     if (lang == Language.C) {
         kv.append(Part.Pre, "TC")
     }
-    kv.append(Part.Cli, "cl")
+    if (lang == Language.Resource) {
+        kv.append(Part.Cli, "rc")
+    } else {
+        kv.append(Part.Cli, "cl")
+    }
     kv.append(Part.Pre, "nologo")
     kv.append(Part.Pre, "EHsc")
     kv.append(Part.Pre, "bigobj")

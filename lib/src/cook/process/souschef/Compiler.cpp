@@ -73,7 +73,8 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
 
     std::filesystem::path dir = util::get_from_to_path(recipe, p);
 
-    const std::filesystem::path rel = source.rel().string() + ".obj";
+    const auto extension = (language_ == Language::Resource ? ".res" : ".obj");
+    const std::filesystem::path rel = source.rel().string() + extension;
 
     ingredient::File object(dir, rel);
     object.set_content(Content::Generated);
