@@ -3,6 +3,7 @@
 
 #include "cook/process/command/Interface.hpp"
 #include "cook/process/toolchain/Types.hpp"
+#include "cook/Language.hpp"
 #include "gubg/OnlyOnce.hpp"
 
 namespace cook { namespace process { namespace command { 
@@ -10,7 +11,7 @@ namespace cook { namespace process { namespace command {
     class CommonImpl: public Interface
     {
     public:
-        CommonImpl(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans);
+        CommonImpl(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans, Language language);
 
         void set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) override;
         bool stream_part(std::ostream & os, toolchain::Part part, const toolchain::Translator *trans_ptr = nullptr) const override;
@@ -19,6 +20,7 @@ namespace cook { namespace process { namespace command {
     protected:
         toolchain::KeyValuesMap kvm_;
         toolchain::TranslatorMapPtr trans_;
+        const Language language_;
     };
 
 } } } 

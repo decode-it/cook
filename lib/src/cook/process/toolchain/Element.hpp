@@ -30,7 +30,7 @@ namespace cook { namespace process { namespace toolchain {
             template <typename T>
             std::shared_ptr<T> create() const
             {
-                return std::make_shared<T>(key_values_map(), trans_);
+                return std::make_shared<T>(key_values_map(), trans_, language_);
             }
 
             KeyValuesMap & key_values_map();

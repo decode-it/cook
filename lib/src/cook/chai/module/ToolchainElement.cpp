@@ -29,6 +29,7 @@ namespace cook { namespace chai { namespace module {
         EXPOSE_VALUE(Part, LibraryPath);
         EXPOSE_VALUE(Part, Framework);
         EXPOSE_VALUE(Part, FrameworkPath);
+        EXPOSE_VALUE(Part, Resource);
 
         EXPOSE_TYPE(ElementType);
         EXPOSE_VALUE(ElementType, Compile);

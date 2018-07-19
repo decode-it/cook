@@ -2,7 +2,7 @@
 
 namespace cook { namespace process { namespace command { 
 
-    CommonImpl::CommonImpl(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans): kvm_(kvm), trans_(trans) {}
+    CommonImpl::CommonImpl(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans, Language language): kvm_(kvm), trans_(trans), language_(language) {}
 
     void CommonImpl::set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) 
     {

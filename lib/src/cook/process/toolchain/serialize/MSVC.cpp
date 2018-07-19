@@ -61,20 +61,24 @@ for( lang : [Language.C, Language.CXX, Language.ASM, Language.Resource]) {
     tm[Part.Define]         = fun(k,v) { if (v.empty) { return "/D${k}" } else { return "/D${k}=${v}" } }
     tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "/I./" } else { return "/I${k}" } }
     tm[Part.ForceInclude]   = fun(k,v) { return "/FI${k}" }
+    tm[Part.Resource]       = fun(k,v) { return "" }
 
     if (lang == Language.C) {
         kv.append(Part.Pre, "TC")
     }
     if (lang == Language.Resource) {
         kv.append(Part.Cli, "rc")
+        tm[Part.Pre]        = fun(k,v) { return "" }
+        tm[Part.Deps]       = fun(k,v) { return "" }
+        tm[Part.Resource]   = fun(k,v) { return k }
     } else {
         kv.append(Part.Cli, "cl")
     }
-    kv.append(Part.Pre, "nologo")
     kv.append(Part.Pre, "EHsc")
     kv.append(Part.Pre, "bigobj")
     kv.append(Part.Pre, "FS")
     kv.append(Part.Pre, "c")
+    kv.append(Part.Pre, "nologo")
     kv.append(Part.Define, "NOMINMAX")
     kv.append(Part.Deps, "msvc")
 }

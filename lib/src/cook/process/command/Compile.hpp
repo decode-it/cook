@@ -13,24 +13,42 @@ namespace cook { namespace process { namespace command {
     public:
         using Ptr = std::shared_ptr<Compile>;
 
-        Compile(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans): CommonImpl(kvm, trans) {}
+        Compile(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans, Language language): CommonImpl(kvm, trans, language) {}
 
         std::string name() const override {return "Compile";}
         Type type() const override {return Type::Compile;}
 
         void set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) override
         {
-            CommonImpl::set_inputs_outputs(input_files, output_files);
-
-            //Create the depfiles by appending ".d" to the output files
+            if (language_ == Language::Resource)
             {
-                const auto &outputs = kvm_[toolchain::Part::Output];
-                auto &depfiles = kvm_[toolchain::Part::DepFile];
-                depfiles.clear();
-                for (const auto &p: outputs)
                 {
-                    auto fn = p.first+".d";
-                    depfiles.emplace_back(fn, "");
+                    auto &inputs = kvm_[toolchain::Part::Resource];
+                    inputs.clear();
+                    for (const auto &fn: input_files)
+                        inputs.emplace_back(fn.string(), "");
+                }
+                {
+                    auto &outputs = kvm_[toolchain::Part::Output];
+                    outputs.clear();
+                    for (const auto &fn: output_files)
+                        outputs.emplace_back(fn.string(), "");
+                }
+            }
+            else
+            {
+                CommonImpl::set_inputs_outputs(input_files, output_files);
+
+                //Create the depfiles by appending ".d" to the output files
+                {
+                    const auto &outputs = kvm_[toolchain::Part::Output];
+                    auto &depfiles = kvm_[toolchain::Part::DepFile];
+                    depfiles.clear();
+                    for (const auto &p: outputs)
+                    {
+                        auto fn = p.first+".d";
+                        depfiles.emplace_back(fn, "");
+                    }
                 }
             }
         }
