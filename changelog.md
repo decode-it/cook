@@ -141,6 +141,7 @@ Proof-of-concept version.
 * [wip] Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd) and GCC/CLang via `-T md`, `-T mt`, `-T c++.runtime=<static|dynamic>`
 ** [todo] Add support for mixing debug/release and static/dynamic
 * [wip] Support for .rc files for MSVC
+* Escaping spaces for windows in ninja
 
 ## Next
 

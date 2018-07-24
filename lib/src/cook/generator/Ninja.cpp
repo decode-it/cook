@@ -157,10 +157,10 @@ Result Ninja::process(const Context & context)
             const auto build_command = goc_command(command);
             //The build basically specifies the dependency between the output and input files
             ofs << "build";
-            auto stream_escaped = [&](const std::string &str){
+            auto stream_escaped = [&](const std::string &str) {
                 for (const auto ch: str)
                 {
-                    if (ch == ':')
+                    if (ch == ':' || ch == ' ')
                         ofs << '$';
                     ofs << ch;
                 }
