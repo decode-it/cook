@@ -143,6 +143,7 @@ Proof-of-concept version.
 * [wip] Support for .rc files for MSVC
 * Escaping spaces for windows in ninja
 * Added `has_config(key)` and `has_config(key, value)` for toolchain in ninja
+* Wrap LIBPATH argument in double quotes. 
 
 ## Next
 

@@ -106,7 +106,7 @@ for(s : [TargetType.Executable, TargetType.SharedLibrary]){
     tm[Part.Output]         = fun(k,v) { return "/OUT:${k}" }
     tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.Library]        = fun(k,v) { return "${k}.lib" }
-    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return "/LIBPATH:./" } else { return "/LIBPATH:${k}" } }
+    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return "/LIBPATH:./" } else { return "/LIBPATH:\"${k}\"" } }
     
     kv.append(Part.Cli, "link")
     if (s == TargetType.SharedLibrary){
