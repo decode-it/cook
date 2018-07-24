@@ -144,6 +144,7 @@ Proof-of-concept version.
 * Escaping spaces for windows in ninja
 * Added `has_config(key)` and `has_config(key, value)` for toolchain in ninja
 * Wrap LIBPATH argument in double quotes. 
+** [todo] Add support for relative (parent) path in the recipe.add() method. e.g. r.add("some/include/dir", "../some/other/path/*.[hp](pp)?")
 
 ## Next
 
