@@ -35,6 +35,9 @@ namespace cook { namespace chai {
         using IterationCallback2 = std::function<void (const std::string &value)>;
         void each_config_2(const std::string &key, const IterationCallback2 &);
 
+        bool has_config_1(const std::string & key) const;
+        bool has_config_2(const std::string & key, const std::string & value) const;
+
         void set_primary_name_functor(const PrimaryNameFunctor & functor);
 
     private:

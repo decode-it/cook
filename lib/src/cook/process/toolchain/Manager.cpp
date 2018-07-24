@@ -158,6 +158,11 @@ namespace cook { namespace process { namespace toolchain {
     {
         return board_.has_config(key, value);
     }
+    
+    bool Manager::has_config(const std::string & key) const
+    {
+        return board_.has_config(key);
+    }
 
     void Manager::add_configuration_callback(Configuration && cb)
     {

@@ -142,6 +142,7 @@ Proof-of-concept version.
 ** [todo] Add support for mixing debug/release and static/dynamic
 * [wip] Support for .rc files for MSVC
 * Escaping spaces for windows in ninja
+* Added `has_config(key)` and `has_config(key, value)` for toolchain in ninja
 
 ## Next
 

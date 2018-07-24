@@ -39,6 +39,14 @@ namespace cook { namespace process { namespace toolchain {
     {
         return config_.find(ConfigPair(key, value)) != config_.end();
     }
+    bool ConfigurationBoard::has_config(const std::string & key) const
+    {
+        auto lambda = [&](const auto & p )
+        {
+            return p.first.first == key;
+        };
+        return std::find_if(config_.begin(), config_.end(), lambda) != config_.end();
+    }
 
     std::list<std::string> ConfigurationBoard::config_values(const std::string & key) const
     {

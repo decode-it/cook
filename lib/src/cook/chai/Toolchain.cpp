@@ -55,6 +55,16 @@ namespace cook { namespace chai {
 
             manager_->add_config(key, value);
         }
+        
+        bool Toolchain::has_config_1(const std::string & key) const
+        {
+            return manager_->has_config(key);
+        }
+
+        bool Toolchain::has_config_2(const std::string & key, const std::string & value) const
+        {
+            return manager_->has_config(key, value);
+        }
 
         void Toolchain::configure(unsigned int priority, const std::string & uuid, const ConfigurationCallback & cb)
         {
