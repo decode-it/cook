@@ -38,6 +38,9 @@ namespace cook { namespace chai {
         bool has_config_1(const std::string & key) const;
         bool has_config_2(const std::string & key, const std::string & value) const;
 
+        bool remove_config_1(const std::string & key);
+        bool remove_config_2(const std::string & key, const std::string & value);
+
         void set_primary_name_functor(const PrimaryNameFunctor & functor);
 
     private:

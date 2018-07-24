@@ -35,6 +35,10 @@ namespace cook { namespace process { namespace toolchain {
 
         bool has_config(const std::string & key, const std::string & value) const;
         bool has_config(const std::string & key) const;
+
+        bool remove_config(const std::string & key, const std::string & value);
+        bool remove_config(const std::string & key);
+
         std::list<std::string> config_values(const std::string & key) const { return board_.config_values(key); }
         std::list<std::pair<std::string, std::string>> all_config_values() const;
 

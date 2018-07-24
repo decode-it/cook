@@ -28,6 +28,9 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&Toolchain::has_config_1), "has_config");
         ptr->add(chaiscript::fun(&Toolchain::has_config_2), "has_config");
 
+        ptr->add(chaiscript::fun(&Toolchain::remove_config_1), "remove_config");
+        ptr->add(chaiscript::fun(&Toolchain::remove_config_2), "remove_config");
+
         ptr->add(chaiscript::user_type<Toolchain::PrimaryNameFunctor>(), "PrimaryNameFunctor");
         ptr->add(chaiscript::fun(&Toolchain::set_primary_name_functor), "set_target_namer");
 

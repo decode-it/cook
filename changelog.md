@@ -138,13 +138,12 @@ Proof-of-concept version.
 
 ## 1.2.1 (open)
 
-* [wip] Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd) and GCC/CLang via `-T md`, `-T mt`, `-T c++.runtime=<static|dynamic>`
-** [todo] Add support for mixing debug/release and static/dynamic
+* Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd) and GCC/CLang via `-T md`, `-T mt`, `-T c++.runtime=<static|dynamic>`
 * [wip] Support for .rc files for MSVC
 * Escaping spaces for windows in ninja
 * Added `has_config(key)` and `has_config(key, value)` for toolchain in ninja
+* Added `remove_config(key)` and `remove_config(key, value)` for toolchain in ninja
 * Wrap LIBPATH argument in double quotes. 
-** [todo] Add support for relative (parent) path in the recipe.add() method. e.g. r.add("some/include/dir", "../some/other/path/*.[hp](pp)?")
 
 ## Next
 
@@ -153,3 +152,4 @@ Proof-of-concept version.
 * Internal #include-based dependency detection for compilers that cannot output dependencies
 * Defines specified at toolchain level (eg NOMINMAX for MSVC) should be translated into cmake as well
 * Support for large MSVC link commands: when linking a lot of object files, the link command can become larger than 32k, causing an "CreateProcess: incorrect parameter" failure within ninja. Better is to add all the object filenames to a file, and give that to the linker.
+* Add support for relative (parent) path in the recipe.add() method. e.g. r.add("some/include/dir", "../some/other/path/*.[hp](pp)?")

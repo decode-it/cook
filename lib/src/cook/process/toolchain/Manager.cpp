@@ -153,15 +153,22 @@ namespace cook { namespace process { namespace toolchain {
         MSS_END();
     }
 
-
     bool Manager::has_config(const std::string & key, const std::string & value) const
     {
         return board_.has_config(key, value);
     }
-    
     bool Manager::has_config(const std::string & key) const
     {
         return board_.has_config(key);
+    }
+
+    bool Manager::remove_config(const std::string & key, const std::string & value)
+    {
+        return board_.remove_config(key, value);
+    }
+    bool Manager::remove_config(const std::string & key)
+    {
+        return board_.remove_config(key);
     }
 
     void Manager::add_configuration_callback(Configuration && cb)

@@ -45,7 +45,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         } else if (k == "c++.runtime") {
             if (false) {}
             else if (v == "dynamic") { }
-            else if (v == "static") { kv.append(Part.Pre, "-static-libstdc++") })%";
+            else if (v == "static") { kv.append(Part.Runtime, "-static-libstdc++") })%";
         }
         oss << R"%(
         } else if (k == "c++.std" && e.language == Language.CXX) {
@@ -82,7 +82,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         } else if (k == "c++.runtime") {
             if (false) {}
             else if (v == "dynamic") { }
-            else if (v == "static") { kv.append(Part.Pre, "-static-libstdc++") })%";
+            else if (v == "static") { kv.append(Part.Runtime, "-static-libstdc++") })%";
         }
         oss << R"%(
         } else if (k == "c++.std") {
@@ -118,6 +118,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
 
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return "${k}=${v}" } }
+    tm[Part.Runtime]        = fun(k,v) { return k }
     tm[Part.Output]         = fun(k,v) { return "-o ${k}" }
     tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.DepFile]        = fun(k,v) { return "-MMD -MF ${k}" }
@@ -149,6 +150,7 @@ for(s : [TargetType.SharedLibrary, TargetType.Executable]){
     
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return "${k}=${v}" } }
+    tm[Part.Runtime]        = fun(k,v) { return k }
     tm[Part.Output]         = fun(k,v) { return "-o ${k}" }
     tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.Library]        = fun(k,v) { return "-l${k}" }
