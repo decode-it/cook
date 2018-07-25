@@ -143,7 +143,8 @@ Proof-of-concept version.
 * Escaping spaces for windows in ninja
 * Added `has_config(key)` and `has_config(key, value)` for toolchain in ninja
 * Added `remove_config(key)` and `remove_config(key, value)` for toolchain in ninja
-* Wrap LIBPATH argument in double quotes. 
+* Wrap LIBPATH argument in double quotes.
+* Naft and HTML show configuration
 
 ## Next
 
