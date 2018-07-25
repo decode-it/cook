@@ -1,5 +1,6 @@
 #include "cook/generator/HTML.hpp"
 #include "cook/model/Uri.hpp"
+#include "cook/process/toolchain/Manager.hpp"
 #include "gubg/mss.hpp"
 #include <fstream>
 #include <map>
@@ -179,10 +180,14 @@ struct Data
 {
     bool has_unresolved_dependencies = false;
     std::map<model::Uri, RecipeData> recipe_data;
+    const process::toolchain::Manager * manager;
 
     bool process(const Context &context)
     {
         MSS_BEGIN(bool);
+
+        manager = &context.toolchain();
+
         has_unresolved_dependencies = !context.menu().is_valid();
         if (!has_unresolved_dependencies)
         {
@@ -205,11 +210,11 @@ struct Data
 
                 cur->each_book([&](auto * book){ todo.push(book); return true; });
                 cur->each_recipe([&](auto * rcp) {
-                        RecipeData data;
-                        data.rcp = rcp;
-                        recipe_data.emplace(rcp->uri(), data);
-                        return true;
-                        });
+                                 RecipeData data;
+                                 data.rcp = rcp;
+                                 recipe_data.emplace(rcp->uri(), data);
+                                 return true;
+                                 });
             }
         }
         MSS_END();
@@ -223,6 +228,7 @@ struct Data
         os << "<title>Recipes overview</title>" << std::endl;
         os << "</head>" << std::endl;
         os << "<body>" << std::endl;
+        stream_config_(os);
         os << "<h1>Recipes overview</h1>" << std::endl;
         if (has_unresolved_dependencies)
             os << "<font color=\"red\">Not all recipes could be resolved</font>" << std::endl;
@@ -235,10 +241,37 @@ struct Data
                 cb(p.first, p.second.rcp);
         };
         stream_rcp_links(os, lambda);
+
+
         os << "</body>" << std::endl;
         os << "</html>" << std::endl;
     }
+
+    private:
+    void stream_config_(std::ostream & os) const
+    {
+        os << "<h1>Configuration overview</h1>" << std::endl;
+        os << "<table>" << std::endl;
+        os << "<tr>" << std::endl;
+        os << "<th>Key</th>" << std::endl;
+        os << "<th>Value</th>" << std::endl;
+        os << "<th>Resolved</th>" << std::endl;
+        os << "</tr>" << std::endl;
+
+        auto lambda = [&](const std::string & key, const std::string & value, bool resolved)
+        {
+            os << "<tr>";
+            os << "<td>" << key << "</td>";
+            os << "<td>" << value << "</td>";
+            os << "<td>" << (resolved ? "resolved" : "unresolved") << "</td>";
+            os << "</tr>" << std::endl;
+        };
+        manager->each_config(lambda);
+
+        os << "</table>" << std::endl;
+    }
 };
+
 } 
 
 static constexpr const char *logns = "";
@@ -267,11 +300,12 @@ Result HTML::process(const Context & context)
     if (!ns.empty() && ns.back() != '/')
         ns.push_back('/');
 
-    set_filename(fn(ns+"index"));
-    std::ofstream fo;
-    MSS(open_output_stream(context, fo));
-
-    data.stream_index(fo);
+    {
+        set_filename(fn(ns+"index"));
+        std::ofstream fo;
+        MSS(open_output_stream(context, fo));
+        data.stream_index(fo);
+    }
 
     for (const auto &p: data.recipe_data)
     {

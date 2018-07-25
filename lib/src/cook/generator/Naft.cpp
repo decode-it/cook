@@ -122,7 +122,7 @@ void Processor::process(gubg::naft::Node & node, model::Recipe * recipe)
 
         return true;
     });
-
+    
     recipe->key_values().each([&](const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
     {
         auto nn = n.node("key_value");
@@ -164,12 +164,26 @@ Result Naft::process(const Context & context)
     std::ofstream ofs;
     MSS(open_output_stream(context, ofs));
 
-    Processor p(context);
-    p.construct_book_list();
+    
+    auto doc = gubg::naft::Document(ofs);
+    // the config
+    {
+        auto n = doc.node("configuration");
+        auto lambda = [&](const auto & key, const auto & value, bool resolved)
+        {
+            auto nn = n.node("config");
+            nn.attr("key", key).attr("value", value).attr(resolved ? "resolved" : "unresolved");
+        };
+        context.toolchain().each_config(lambda);
+    }
 
-    auto n = gubg::naft::Document(ofs).node("structure");
-
-    p.process(n, context.root_book());
+    // the structure
+    {
+        Processor p(context);
+        p.construct_book_list();
+        auto n = doc.node("structure");
+        p.process(n, context.root_book());
+    }
 
     MSS_END();
 }

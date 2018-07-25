@@ -194,7 +194,7 @@ namespace cook { namespace process { namespace toolchain {
 
     }
 
-    void Manager::each_config(const std::function<void(const std::string &, const std::string &)> &cb)
+    void Manager::each_config(const std::function<void(const std::string &, const std::string &)> &cb) const
     {
         auto lambda = [&](const std::string &key, const std::string &value, ConfigurationBoard::State)
         {
@@ -203,7 +203,16 @@ namespace cook { namespace process { namespace toolchain {
         };
         board_.each_config(lambda);
     }
-    void Manager::each_config(const std::string &wanted_key, const std::function<void(const std::string &)> &cb)
+    void Manager::each_config(const std::function<void (const std::string &, const std::string &, bool resolved)> &cb) const
+    {
+        auto lambda = [&](const std::string & key, const std::string & value, ConfigurationBoard::State s)
+        {
+            cb(key, value, s == ConfigurationBoard::Resolved);
+            return Result{};
+        };
+        board_.each_config(lambda);
+    }
+    void Manager::each_config(const std::string &wanted_key, const std::function<void(const std::string &)> &cb) const
     {
         auto lambda = [&](const std::string &key, const std::string &value, ConfigurationBoard::State)
         {
