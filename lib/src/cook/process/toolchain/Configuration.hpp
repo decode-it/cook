@@ -74,6 +74,9 @@ namespace cook { namespace process { namespace toolchain {
 
         bool add_callback(const Configuration & config);
         bool has_config(const std::string & key, const std::string & value) const;
+        bool has_config(const std::string & key) const;
+        bool remove_config(const std::string & key);
+        bool remove_config(const std::string & key, const std::string & value);
         std::list<std::string> config_values(const std::string & key) const;
 
         template <typename Functor>

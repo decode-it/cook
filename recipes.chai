@@ -2,6 +2,5 @@ auto gubg = ["std", "io", "math", "algo", "chaiscript"]
 for_each(gubg, fun(g) { include("gubg.${g}") })
 cook.toolchain.add_config("c++.std", "17")
 
-include("extern/boost")
 include("lib")
 include("app")

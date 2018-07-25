@@ -14,6 +14,7 @@ enum class Language
     ObjectiveC,
     ObjectiveCXX,
     ASM,
+    Resource,
     Script,
     Definition,
     UserDefined
@@ -31,6 +32,7 @@ inline std::ostream & operator<<(std::ostream & os, Language type)
         L_CASE(ObjectiveC);
         L_CASE(ObjectiveCXX);
         L_CASE(ASM);
+        L_CASE(Resource);
         L_CASE(Script);
         L_CASE(Definition);
 #undef L_CASE

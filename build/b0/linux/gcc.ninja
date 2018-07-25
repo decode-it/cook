@@ -6,12 +6,12 @@ rule archive
 rule link
     command = g++ -o $out $in $lflags $library_paths $user_libs_gcc $system_libs
 
-#defines = -DNDEBUG -DBOOST_ERROR_CODE_HEADER_ONLY
+#defines = -DNDEBUG 
 #cflags = -O3
 #lflags = -static-libstdc++
 #system_libs = -ldl -lstdc++fs -lpthread
 
-defines = -DBOOST_ERROR_CODE_HEADER_ONLY
+defines = 
 cflags = -g -Werror=return-type -Wall -fdiagnostics-show-option -static-libstdc++
 lflags = -static-libstdc++
 system_libs = -ldl -lstdc++fs -lpthread

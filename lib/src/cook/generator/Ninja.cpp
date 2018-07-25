@@ -106,7 +106,7 @@ Result Ninja::process(const Context & context)
         {
 
             const auto &label = build_graph[vertex];
-            auto command_ptr = boost::get<process::build::Graph::CommandLabel>(&label);
+            auto command_ptr = std::get_if<process::build::Graph::CommandLabel>(&label);
             MSS(!!command_ptr);
             auto &command = *command_ptr;
 
@@ -116,7 +116,7 @@ Result Ninja::process(const Context & context)
             {
                 auto func = [&](const auto & v)
                 {
-                    input_files.push_back(boost::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                    input_files.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
                 };
                 build_graph.input(func, vertex, cook::process::RecipeFilteredGraph::Explicit);
 
@@ -130,7 +130,7 @@ Result Ninja::process(const Context & context)
             {
                 auto func = [&](const auto & v)
                 {
-                    input_dependencies.push_back(boost::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                    input_dependencies.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
                 };
                 build_graph.input(func, vertex, cook::process::RecipeFilteredGraph::Implicit);
 
@@ -144,7 +144,7 @@ Result Ninja::process(const Context & context)
             {
                 auto func = [&](const auto & v)
                 {
-                    output_files.push_back(boost::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                    output_files.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
                 };
                 build_graph.output(func, vertex);
 
@@ -157,10 +157,10 @@ Result Ninja::process(const Context & context)
             const auto build_command = goc_command(command);
             //The build basically specifies the dependency between the output and input files
             ofs << "build";
-            auto stream_escaped = [&](const std::string &str){
+            auto stream_escaped = [&](const std::string &str) {
                 for (const auto ch: str)
                 {
-                    if (ch == ':')
+                    if (ch == ':' || ch == ' ')
                         ofs << '$';
                     ofs << ch;
                 }

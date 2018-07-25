@@ -17,7 +17,6 @@ Result ScriptRunner::process(model::Recipe & recipe, RecipeFilteredGraph & /*fil
         if (do_execute_)
         {
             const auto command = cmd.key();
-            //Replaced boost::process::system() with std::system() due to boost crashing for windows
             const int retval = std::system(command.c_str());
             MSG_MSS(retval == 0, Error, "Executing of script " << command << " failed with code " << retval);
         }

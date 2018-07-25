@@ -5,7 +5,6 @@
 #include "cook/chai/Flags.hpp"
 #include "cook/ingredient/Base.hpp"
 #include "cook/LanguageTypePair.hpp"
-#include <boost/variant.hpp>
 
 namespace cook { namespace chai {
 

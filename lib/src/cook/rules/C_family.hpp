@@ -59,6 +59,14 @@ namespace cook { namespace rules {
         static Extensions extensions_;
     };
 
+    class Resource: public C_family
+    {
+    public:
+        Resource(): C_family(Language::Resource, extensions_){}
+    private:
+        static Extensions extensions_;
+    };
+
 } }
 
 #endif

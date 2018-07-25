@@ -4,7 +4,7 @@
 
 namespace cook { namespace process { namespace toolchain { namespace serialize {
 
-    void gcc_config(std::ostream & oss, const std::vector<Language> &languages, const std::string &compiler, const std::string &archiver, const std::string & linker)
+    void gcc_config(std::ostream & oss, GCCVariant gcc_variant, const std::vector<Language> &languages, const std::string &compiler, const std::string &archiver, const std::string & linker)
     {
         standard_config(oss);
 
@@ -38,11 +38,16 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             kv.append(Part.Pre, "-arch arm64")
             b.add_config("position_independent_code", "true")
         } else if (k == "position_independent_code" && v == "true") {
-            kv.append(Part.Pre, "-fPIC")
+            kv.append(Part.Pre, "-fPIC"))%";
+        if (gcc_variant == GCCVariant::Genuine)
+        {
+        oss << R"%(
         } else if (k == "c++.runtime") {
             if (false) {}
             else if (v == "dynamic") { }
-            else if (v == "static") { kv.append(Part.Pre, "-static-libstdc++") }
+            else if (v == "static") { kv.append(Part.Runtime, "-static-libstdc++") })%";
+        }
+        oss << R"%(
         } else if (k == "c++.std" && e.language == Language.CXX) {
             kv.append(Part.Pre, "-std", "c++${v}")
         } else if (k == "c.std" && e.language == Language.C) {
@@ -70,11 +75,16 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         } else if (k == "config" && v == "rtc") {
             kv.append(Part.Pre, "-fsanitize", "address") 
         } else if (k == "config" && v == "profile") {
-            kv.append(Part.Pre, "-pg", "") 
+            kv.append(Part.Pre, "-pg", ""))%";
+        if (gcc_variant == GCCVariant::Genuine)
+        {
+        oss << R"%(
         } else if (k == "c++.runtime") {
             if (false) {}
             else if (v == "dynamic") { }
-            else if (v == "static") { kv.append(Part.Pre, "-static-libstdc++") }
+            else if (v == "static") { kv.append(Part.Runtime, "-static-libstdc++") })%";
+        }
+        oss << R"%(
         } else if (k == "c++.std") {
             kv.append(Part.Pre, "-std", "c++${v}") 
         } else if (k == "c.std") {
@@ -108,6 +118,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
 
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return "${k}=${v}" } }
+    tm[Part.Runtime]        = fun(k,v) { return k }
     tm[Part.Output]         = fun(k,v) { return "-o ${k}" }
     tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.DepFile]        = fun(k,v) { return "-MMD -MF ${k}" }
@@ -139,6 +150,7 @@ for(s : [TargetType.SharedLibrary, TargetType.Executable]){
     
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return "${k}=${v}" } }
+    tm[Part.Runtime]        = fun(k,v) { return k }
     tm[Part.Output]         = fun(k,v) { return "-o ${k}" }
     tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.Library]        = fun(k,v) { return "-l${k}" }

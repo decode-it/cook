@@ -28,3 +28,4 @@ default.chai
 gcc.chai
 clang.chai
 msvc.chai
+mkmf.log

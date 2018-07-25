@@ -16,6 +16,8 @@ OS get_os()
 #if GUBG_OS_MACOS
     return OS::MacOS;
 #endif
+
+    throw std::runtime_error("Unsupported operating system");
 }
 
 std::ostream & operator<<(std::ostream & str, OS os)

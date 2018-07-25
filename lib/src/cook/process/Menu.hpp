@@ -6,6 +6,7 @@
 #include "cook/model/Recipe.hpp"
 #include "cook/model/Book.hpp"
 #include "cook/Log.hpp"
+#include "gubg/graph/AdjacencyList.hpp"
 #include <unordered_map>
 
 namespace cook { namespace process {
@@ -15,8 +16,8 @@ class Menu
 public:
     struct DependencyGraph
     {
-        using Graph = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, model::Recipe*>;
-        using VertexDescriptor = boost::graph_traits<Graph>::vertex_descriptor;
+        using Graph = gubg::graph::AdjacencyList<gubg::graph::use_vector, gubg::graph::use_list, gubg::graph::use_list, model::Recipe *, gubg::graph::no_label, gubg::graph::bidirectional>;
+        using VertexDescriptor = gubg::graph::Traits<Graph>::vertex_descriptor;
 
         Graph graph;
         std::unordered_map<model::Recipe *, VertexDescriptor> translation_map;
@@ -24,8 +25,8 @@ public:
 
     struct ComponentGraph
     {
-        using Graph = boost::adjacency_list<boost::listS, boost::vecS, boost::bidirectionalS, std::set<model::Recipe *>>;
-        using VertexDescriptor = boost::graph_traits<Graph>::vertex_descriptor;
+        using Graph = gubg::graph::AdjacencyList<gubg::graph::use_vector, gubg::graph::use_list, gubg::graph::use_list, std::set<model::Recipe*>, gubg::graph::no_label, gubg::graph::bidirectional>;
+        using VertexDescriptor = gubg::graph::Traits<Graph>::vertex_descriptor;
 
         Graph graph;
         std::unordered_map<model::Recipe *, VertexDescriptor> translation_map;

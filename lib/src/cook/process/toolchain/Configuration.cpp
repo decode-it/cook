@@ -39,6 +39,38 @@ namespace cook { namespace process { namespace toolchain {
     {
         return config_.find(ConfigPair(key, value)) != config_.end();
     }
+    bool ConfigurationBoard::has_config(const std::string & key) const
+    {
+        auto lambda = [&](const auto & p )
+        {
+            return p.first.first == key;
+        };
+        return std::find_if(config_.begin(), config_.end(), lambda) != config_.end();
+    }
+
+    bool ConfigurationBoard::remove_config(const std::string & key)
+    {
+        unsigned int nr = 0;
+        for (auto it = config_.begin(); it != config_.end();)
+        {
+            if (it->first.first == key)
+            {
+                it = config_.erase(it);
+                ++nr;
+            }
+            else
+                ++it;
+        }
+        return nr > 0;
+    }
+    bool ConfigurationBoard::remove_config(const std::string & key, const std::string & value)
+    {
+        auto it = config_.find(ConfigPair(key, value));
+        if (it == config_.end())
+            return false;
+        config_.erase(it);
+        return true;
+    }
 
     std::list<std::string> ConfigurationBoard::config_values(const std::string & key) const
     {

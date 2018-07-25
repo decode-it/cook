@@ -2,8 +2,7 @@
 #include "cook/algo/TopologicalOrder.hpp"
 #include "cook/algo/DependencyGraph.hpp"
 #include "cook/algo/ComponentGraph.hpp"
-#include "boost/graph/adjacency_list.hpp"
-#include "boost/graph/topological_sort.hpp"
+#include "gubg/graph/TopologicalSort.hpp"
 #include <cassert>
 
 namespace cook { namespace process {
@@ -86,7 +85,7 @@ Result Menu::construct_()
 
     valid_ = false;
 
-    using ComponentVertex = boost::graph_traits<ComponentGraph::Graph>::vertex_descriptor;
+    using ComponentVertex = gubg::graph::Traits<ComponentGraph::Graph>::vertex_descriptor;
 
     // build the dependency graph
     MSS(algo::make_DependencyGraph(gubg::make_range(root_recipes()), dependency_graph_.graph, dependency_graph_.translation_map));
@@ -98,15 +97,9 @@ Result Menu::construct_()
     MSS(algo::make_ComponentGraph(dependency_graph_.graph, component_graph_.graph, component_graph_.translation_map));
 
     // try to order the component graph topologically
-    std::vector<ComponentVertex> vertices(boost::num_vertices(component_graph().graph));
-    try
-    {
-        boost::topological_sort(component_graph().graph, vertices.begin());
-    }
-    catch(boost::not_a_dag)
-    {
-        MSS(false);
-    }
+    std::vector<ComponentVertex> vertices(gubg::graph::num_vertices(component_graph().graph));
+
+    MSS(gubg::graph::construct_topological_order(component_graph().graph, vertices.rbegin()));
 
     // process the components in topological order
     for(ComponentVertex v : vertices)
@@ -115,7 +108,8 @@ Result Menu::construct_()
         build::GraphPtr ptr = std::make_shared<build::Graph>();
 
         // and use the graph for every recipe in the component
-        for(auto * recipe : component_graph().graph[v])
+        const auto & comp = gubg::graph::vertex_label(v, component_graph().graph);
+        for(auto * recipe : comp)
             recipe_filtered_graphs_.emplace(recipe, RecipeFilteredGraph(ptr));
 
         // and assign the build graph order to the topological list
