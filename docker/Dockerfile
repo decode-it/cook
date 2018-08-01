@@ -1,0 +1,3 @@
+FROM ubuntu:latest
+
+RUN apt update && apt install -y git rake g++-8 gcc-8 ruby-dev ninja-build && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 1 && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 1 && git clone https://github.com/decode-it/cook --recurse-submodules && cd cook && rake b1:build
