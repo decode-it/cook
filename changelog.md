@@ -158,4 +158,5 @@ Proof-of-concept version.
 * Internal #include-based dependency detection for compilers that cannot output dependencies
 * Defines specified at toolchain level (eg NOMINMAX for MSVC) should be translated into cmake as well
 * Support for large MSVC link commands: when linking a lot of object files, the link command can become larger than 32k, causing an "CreateProcess: incorrect parameter" failure within ninja. Better is to add all the object filenames to a file, and give that to the linker.
-* Add support for relative (parent) path in the recipe.add() method. e.g. r.add("some/include/dir", "../some/other/path/*.[hp](pp)?")
+* Add support for relative (parent) path in the recipe.add() method. e.g. `r.add("some/include/dir", "../some/other/path/*.[hp](pp)?")`
+* Support in cmake for self-chosen archive name, see `scenario/app_arch_func`
