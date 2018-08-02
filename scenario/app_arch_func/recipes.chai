@@ -1,0 +1,11 @@
+cook["test"].recipe("func", fun(r){
+    r.add("func", "*.[hc]pp")
+})
+cook["test"].recipe("lib", TargetType.Archive, fun(r){
+    r.depends_on("func")
+    r.name = "mylib"
+})
+cook["test"].recipe("app", TargetType.Executable, fun(r){
+    r.add("app", "*.cpp")
+    r.depends_on("lib")
+})
