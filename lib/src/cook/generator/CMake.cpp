@@ -261,6 +261,9 @@ Result CMake::process(const Context & context)
     set_property("c++.std", "CMAKE_CXX_STANDARD");
     set_property("c.std", "CMAKE_C_STANDARD");
 
+    if (context.toolchain().has_config("position_independent_code", "true"))
+        ofs << "set(CMAKE_POSITION_INDEPENDENT_CODE ON)" << std::endl;
+
     recipe_map_.clear();
     MSS(construct_recipe_map(recipe_map_, context));
     for(model::Recipe * recipe : recipe_list)
@@ -641,6 +644,21 @@ bool CMake::set_target_properties_(std::ostream & ofs, model::Recipe * recipe, c
             return true;
         };
         recipe->files().each(add_fi);
+
+        if (options.size() > 1)
+        {
+            std::ostringstream oss;
+            std::set<std::string> new_options;
+            for (const auto &str: options)
+            {
+                //Needed to get rid of the de-duplication cmake performs on target_compile_options()
+                //See https://gitlab.kitware.com/cmake/cmake/merge_requests/1841
+                oss.str("");
+                oss << "\"SHELL:" << str << "\"";
+                new_options.insert(oss.str());
+            }
+            options.swap(new_options);
+        }
 
         write_elements_(ofs, [&](auto & os) { os << "target_compile_options(" << name << " " << keyword; }, options);
     }

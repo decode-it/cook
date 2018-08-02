@@ -136,7 +136,7 @@ Proof-of-concept version.
 * [wip] Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd) and GCC/CLang via `-T md`, `-T mt`, `-T c++.runtime=<static|dynamic>`
 ** [todo] Add support for mixing debug/release and static/dynamic
 
-## 1.2.1 (open)
+## 1.2.1
 
 * Support for dynamic and static runtime for MSVC (MD, MT, MDd, MTd) and GCC/CLang via `-T md`, `-T mt`, `-T c++.runtime=<static|dynamic>`
 * [wip] Support for .rc files for MSVC
@@ -145,6 +145,11 @@ Proof-of-concept version.
 * Added `remove_config(key)` and `remove_config(key, value)` for toolchain in ninja
 * Wrap LIBPATH argument in double quotes.
 * Naft and HTML show configuration
+
+## 1.2.2 (open)
+
+* Added support for cmake position-independent code
+* Added support for multiple force include files for cmake via the `SHELL:` annotation (requires cmake 3.12+)
 
 ## Next
 
