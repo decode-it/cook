@@ -160,3 +160,4 @@ Proof-of-concept version.
 * Support for large MSVC link commands: when linking a lot of object files, the link command can become larger than 32k, causing an "CreateProcess: incorrect parameter" failure within ninja. Better is to add all the object filenames to a file, and give that to the linker.
 * Add support for relative (parent) path in the recipe.add() method. e.g. `r.add("some/include/dir", "../some/other/path/*.[hp](pp)?")`
 * Support in cmake for self-chosen archive name, see `scenario/app_arch_func`
+* Link with gcc iso g++, adding -lstdc++ when binary items are present that carry the c++ language. When adding libraries, we should be able to control this, and avoid adding the -lstdc++ lib during linking.
