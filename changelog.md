@@ -150,6 +150,7 @@ Proof-of-concept version.
 
 * Added support for cmake position-independent code
 * Added support for multiple force include files for cmake via the `SHELL:` annotation (requires cmake 3.12+)
+* CMake output handles files with spaces
 
 ## Next
 

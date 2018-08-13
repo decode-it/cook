@@ -282,7 +282,7 @@ Result CMake::process(const Context & context)
         if (is_new)
         {
             std::filesystem::path p = util::get_from_to_path(std::filesystem::current_path(), recipe->working_directory());
-            ofs << "add_subdirectory(\"" << gubg::string::escape_cmake(p.string()) << "\")" << std::endl;
+            ofs << "add_subdirectory(" << gubg::string::escape_cmake(p.string()) << ")" << std::endl;
         }
 
         std::filesystem::path output_dir = get_output_dir(recipe->working_directory());
@@ -654,7 +654,9 @@ bool CMake::set_target_properties_(std::ostream & ofs, model::Recipe * recipe, c
                 //Needed to get rid of the de-duplication cmake performs on target_compile_options()
                 //See https://gitlab.kitware.com/cmake/cmake/merge_requests/1841
                 oss.str("");
-                oss << "\"SHELL:" << str << "\"";
+
+                // dequote the str string, we add our own quotes
+                oss << "\"SHELL:" << gubg::string::dequote(str) << "\"";
                 new_options.insert(oss.str());
             }
             options.swap(new_options);
