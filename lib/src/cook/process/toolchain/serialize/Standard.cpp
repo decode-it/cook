@@ -77,7 +77,6 @@ cook.toolchain.configure(10, "standard toolchain config", fun(e, k, v, b) {
         if (false) {
         } else if (k == "config" && v == "debug") {
             b.add_config("debug_symbols")
-            b.add_config("config", "rtc")
         }
         else if (k == "config" && v == "release") {
             b.add_config("optimization", "max_speed")
@@ -87,8 +86,6 @@ cook.toolchain.configure(10, "standard toolchain config", fun(e, k, v, b) {
         }
     } else if (e.element_type == ElementType.Link) {
         if (false) {
-        } else if (k == "config" && v == "debug") {
-            b.add_config("config", "rtc")
         } else {
             return false
         }

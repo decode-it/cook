@@ -146,11 +146,15 @@ Proof-of-concept version.
 * Wrap LIBPATH argument in double quotes.
 * Naft and HTML show configuration
 
-## 1.2.2 (open)
+## 1.2.2
 
 * Added support for cmake position-independent code
 * Added support for multiple force include files for cmake via the `SHELL:` annotation (requires cmake 3.12+)
 * CMake output handles files with spaces
+
+## 1.2.3 (open)
+
+* debug does not imply rtc by default (use -T rtc)
 
 ## Next
 
