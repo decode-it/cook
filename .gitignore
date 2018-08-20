@@ -30,3 +30,4 @@ clang.chai
 msvc.chai
 mkmf.log
 doc/_build
+.ycm_extra_conf.py

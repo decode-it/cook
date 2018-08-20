@@ -169,7 +169,7 @@ namespace :b1 do
         b0cook = case GUBG::os
                  when :linux, :macos then "./b0-cook.exe"
                  when :windows then "b0-cook.exe" end
-                                                     
+
         sh "#{b0cook} -f ./ -g ninja -o #{odir} -O #{tdir} #{opts} cook/app/exe"
         sh "#{ninja_exe} -f #{odir}/build.ninja #{ninja_opts}"
         exe = "cook.app.exe"
@@ -249,43 +249,28 @@ end
 namespace :doc do
     mdbook_exe = nil
     task :setup do
-        mdbook_exe = File.join(ENV["HOME"], ".cargo", "bin", "mdbook")
-        if !File.exists?(mdbook_exe)
-            sh "yaourt rustup"
-            sh "rustup install stable"
-            sh "rustup default stable"
-            sh "cargo install mdbook"
+        sphinx_exe = File.join("/", "usr", "bin", "sphinx-build")
+        puts sphinx_exe
+        if !File.exists?(sphinx_exe)
+            sh "yaourt python-sphinx"
         end
     end
-    desc "Manual documentation"
-    task :manual => :setup do
-        Dir.chdir("doc/manual") do
-            sh(mdbook_exe, "serve")
-        end
+
+    desc "Clean documentation"
+    task :clean do
+        Dir.chdir("doc") { sh "make clean" }
     end
-    desc "Desgin documentation"
-    task :design => :setup do
-        Dir.chdir("doc/design") do
-            sh(mdbook_exe, "serve")
-        end
+
+    desc "Build documentation"
+    task :build => :setup do
+        Dir.chdir("doc") { sh "make html" }
     end
+
+
     desc "Publish the static pages on the web"
-    task :publish, [:filter] do |t,args|
-        infos = {
-            site: {src: "site", dst: ""},
-            doc:  {src: "doc",  dst: "doc"},
-        }
-        infos.each do |name,info|
-            name = name.to_s
-            puts("[#{name}](src:#{info[:src]})(dst:#{info[:dst]})")
-            if args[:filter] == name
-                puts("Publishing #{name}")
-                Dir.chdir(info[:src]) do
-                    sh "scp -r * web-gfannes@ssh.linuxsystems.be:fannes.com/cook/#{info[:dst]}"
-                end
-            else
-                puts("Not publishing #{name}")
-            end
+    task :publish => [:clean, :build] do
+        Dir.chdir("doc/_build/html") do
+            sh "scp -r * web-gfannes@ssh.linuxsystems.be:fannes.com/cook"
         end
     end
 end
