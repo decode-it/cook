@@ -29,3 +29,4 @@ gcc.chai
 clang.chai
 msvc.chai
 mkmf.log
+doc/_build
