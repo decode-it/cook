@@ -38,6 +38,8 @@ task :default do
 end
 
 gubg_submods = %w[build std math io algo chaiscript].map{|e|"gubg.#{e}"}
+cook_submods = %w[cook-binary doc/sphinx-chai]
+all_submods = gubg_submods+cook_submods
 
 desc "Prepare the submods"
 task :prepare do
@@ -58,26 +60,14 @@ namespace :setup do
     end
 end
 
-namespace :uth do
-    desc "Update gubg to head"
-    task :gubg do
-        GUBG::each_submod(submods: gubg_submods) do |info|
-            sh "git checkout #{info[:branch]}"
-            sh "git pull --rebase"
-            sh "rake uth" if `rake -AT`["rake uth"]
-        end
-    end
-
-    desc "Update binary to head"
-    task :binary do
-        GUBG::each_submod(submods: %w[cook-binary]) do |info|
-            sh "git checkout #{info[:branch]}"
-            sh "git pull --rebase"
-        end
+desc "Update all to head"
+task :uth do
+    GUBG::each_submod(submods: all_submods) do |info|
+        sh "git checkout #{info[:branch]}"
+        sh "git pull --rebase"
+        sh "rake uth" if (info[:name][/^gubg\./] and `rake -AT`["rake uth"])
     end
 end
-desc "Update all to head"
-task :uth => %w[uth:gubg uth:binary]
 
 task :update => :uth
 
