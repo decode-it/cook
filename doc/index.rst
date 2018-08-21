@@ -3,21 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
 ********************************
 Welcome to Cook's documentation!
 ********************************
 
-Cook documentation
-==================
 
 .. toctree::
-   :caption: Cook Doc
-   :maxdepth: 2
+   :caption: Content overview
+   :maxdepth: 4
 
-   cook/uri
-   cook/recipe
-   cook/book
-   cook/ingredient
-   cook/enumerations
-   gen_index
+   reference
 

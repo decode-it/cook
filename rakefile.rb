@@ -252,7 +252,7 @@ namespace :doc do
         sphinx_exe = File.join("/", "usr", "bin", "sphinx-build")
         puts sphinx_exe
         if !File.exists?(sphinx_exe)
-            sh "yaourt python-sphinx"
+            sh "yaourt -S python-sphinx"
         end
     end
 

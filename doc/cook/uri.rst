@@ -1,7 +1,8 @@
 .. _uri:
 
+***
 Uri
-===
+***
 
 A uri, short for `uniform resource identifier <https://en.wikipedia.org/wiki/Uniform_Resource_Identifier>`_, is used in cook to uniquely identify :class:`books <Book>` and :class:`recipes <Recipe>`. Similarly as to a filesystem path, a uri consists of components, separated by a forward slash. For example, the uri ``/cook/lib/ut`` represents
 
