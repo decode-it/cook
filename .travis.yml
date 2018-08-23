@@ -16,7 +16,6 @@ language: ruby
 
 services:
   - docker
-    if os = linux
 
 addons:
   apt:
@@ -24,15 +23,22 @@ addons:
     - sshpass
 
 script:
-  - docker build -t decode-it/cook .
-  - docker run --name cook decode-it/cook
-  - docker cp cook:/usr/bin/cook ./
-  - tar cvzf cook.linux.latest.tar.gz cook
+  # linux build steps
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t decode-it/cook .; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --name cook decode-it/cook; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker cp cook:/usr/bin/cook ./; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar cvzf cook.linux.latest.tar.gz cook; fi
+
+  # macosx build steps
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install --with-clang llvm ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/usr/local/opt/llvm/bin:$PATH ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rake build ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar cvzf cook.osx.latest.tar.gz cook; fi
 
 before_deploy:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker tag decode-it/cook thomasfannes/cook:latest
-  - docker push thomasfannes/cook:latest
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker tag decode-it/cook thomasfannes/cook:latest; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker push thomasfannes/cook:latest; fi
 
 deploy:
     on:
@@ -41,4 +47,4 @@ deploy:
     provider: script
     script:
       - export SSHPASS=$DEPLOY_PASS
-      - sshpass -e scp cook.linux.atest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+      - sshpass -e scp cook.${TRAVIS_OS_NAME}.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
