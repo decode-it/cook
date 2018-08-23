@@ -36,7 +36,7 @@ script:
   # non-os specific steps 
   - tar cvzf cook.$TRAVIS_OS_NAME.latest.tar.gz cook
   - export SSHPASS=$DEPLOY_PASS
-  - sshpass -e scp cook.$TRAVIS_OS_NAME.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+  - sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null cook.$TRAVIS_OS_NAME.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
 
 before_deploy:
     #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
