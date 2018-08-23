@@ -6,26 +6,34 @@ env:
   - secure: kyEzBxPppXdAyYEnoyj/nOCnCaf7osY9WZ/Rr1zvbHrrxgEJ2L7LUqOGSbueizfH3MJQU0Qo29EoVgxvlvWENBdSdYxSzQL2oqyphRoWLBjxdHp8N4JEZBeIn9X8zTnGee8ydXYupOapwlNecNiYi4ESDkCmMJqp++4HA4x7oZUcIyHdaq8jaFRNg/GkeVv4e3C3KQ9wFKJRei9K7fMLkpHYFg2IPWukNLYx/+HM3TpkiRVNLgRc0Td8cSn75HDvs/Jhn9YAO7CiqvonYVDarQ/jOIXkPC4VaiAHHSUUw133LuxEo8EaV7MHyaBzEUAy9uqmfiuFNLZgkHAtnN17Gx0FoM6bhw72VN5QvTVGqhJkUmgetgjGEdYkiWtao6feMNgLmwT7ia+79BXClRFTWc1pGajI640cXXfEnZE2sQwd5Pa4IpKaFtzMl46Vewm6dFAAF+uRTn7weg/sw7P9iZx5Op9EnWtDn4bwVNz1xHQRUC8Bs8uuSXYNS3Ky/7rUjLWFUU6PSvjUZ+sf4dOqAMw4gPAlTYknTHBzGynFSIndhH1sn7h55J4RQ+ULA9SZBjjzcMTrnyMo4mqvSKvwsEL7kw0szlARw+B9M45Z5PQ+trl/ImlCPD7jGDLAfJDa9vALB9xGCWB2h/oh7nfw+HBxvmsGioQRfLL8cIjCte8=
 git:
   submodules: false
+
 sudo: required
 language: ruby
+
 services:
-- docker
+  - docker
+
 addons:
   apt:
     packages:
     - sshpass
+
 script:
-- docker build -t decode-it/cook .
-- docker run --name cook decode-it/cook
-- docker cp cook:/usr/bin/cook ./
-- tar cvzf cook.latest.tar.gz cook
+  - docker build -t decode-it/cook .
+  - docker run --name cook decode-it/cook
+  - docker cp cook:/usr/bin/cook ./
+  - tar cvzf cook.linux.latest.tar.gz cook
+
 before_deploy:
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-- docker tag decode-it/cook thomasfannes/cook:latest
-- docker push thomasfannes/cook:latest
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker tag decode-it/cook thomasfannes/cook:latest
+  - docker push thomasfannes/cook:latest
+
 deploy:
-  skip_cleanup: true
-  provider: script
-  script:
-  - export SSHPASS=$DEPLOY_PASS
-  - sshpass -e scp cook.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+    on:
+        branch: master
+    skip_cleanup: true
+    provider: script
+    script:
+      - export SSHPASS=$DEPLOY_PASS
+      - sshpass -e scp cook.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
