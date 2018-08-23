@@ -50,4 +50,4 @@ deploy:
     provider: script
     script:
       - export SSHPASS=$DEPLOY_PASS
-      - sshpass -e scp cook.$TRAVIS_OS_NAME.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+      - sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null cook.$TRAVIS_OS_NAME.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
