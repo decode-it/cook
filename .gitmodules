@@ -23,7 +23,7 @@
 	url = https://github.com/gfannes/gubg.math
 	branch = master
 [submodule "cook-binary"]
-	path = cook-binary
+	path = binary
 	url = https://github.com/decode-it/cook-binary
 	branch = master
 [submodule "doc/sphinx-chai"]

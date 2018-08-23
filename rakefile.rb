@@ -38,7 +38,7 @@ task :default do
 end
 
 gubg_submods = %w[build std math io algo chaiscript].map{|e|"gubg.#{e}"}
-cook_submods = %w[cook-binary doc/sphinx-chai]
+cook_submods = %w[binary doc/sphinx-chai]
 all_submods = gubg_submods+cook_submods
 
 desc "Prepare the submods"
@@ -167,7 +167,7 @@ namespace :b1 do
         cp "#{odir}/#{exe}", "b1-cook.exe"
     end
 
-    desc "bootstrap-level1: Publish b1-cook.exe into cook-binary"
+    desc "bootstrap-level1: Publish b1-cook.exe into binary"
     task :publish => :build do
         here, ext = nil
         case GUBG::os
@@ -177,12 +177,12 @@ namespace :b1 do
 
         b1_exe = "b1-cook.exe"
         version = `#{here}#{b1_exe} -h`[/cook version (\d+\.\d+\.\d+) /, 1]
-        version_dir = GUBG::mkdir("cook-binary/#{version}")
+        version_dir = GUBG::mkdir("binary/#{version}")
         cp "changelog.md", version_dir
         arch = toolchain_options["arch"]
         dst_dir = GUBG::mkdir("#{version_dir}/#{GUBG::os}/#{arch}")
         cp b1_exe, File.join(dst_dir, "cook#{ext}")
-        latest_dir = GUBG::mkdir("cook-binary/latest/#{GUBG::os}/#{arch}")
+        latest_dir = GUBG::mkdir("binary/latest/#{GUBG::os}/#{arch}")
         cp b1_exe, File.join(latest_dir, "cook#{ext}")
     end
 
