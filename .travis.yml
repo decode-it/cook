@@ -1,18 +1,12 @@
-language: cpp
-os:
-- linux
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - g++-7
-    - rake
-    - ninja-build
-install:
-- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
-script:
-- rake uth
-- rake b1:build
-- rake test
+sudo: required
+
+language: ruby
+
+services:
+    - docker
+
+before_install:
+    docker build -t decode-it/cook .
+    docker ps -a
+
   
