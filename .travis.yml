@@ -31,6 +31,7 @@ script:
     #  # macosx build steps
     #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ninja ; fi
     #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install --with-clang llvm ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb ; fi
     #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/usr/local/opt/llvm/bin:$PATH ; fi
     #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rake build ; fi
     #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rake test ; fi
@@ -39,5 +40,5 @@ script:
   # non-os specific steps 
   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then tar cvzf cook.$TRAVIS_OS_NAME.latest.tar.gz cook; fi
   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then export SSHPASS=$DEPLOY_PASS; fi
-  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null cook.$TRAVIS_OS_NAME.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH; fi
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null cook.$TRAVIS_OS_NAME.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/; fi
 
