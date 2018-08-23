@@ -7,11 +7,16 @@ env:
 git:
   submodules: false
 
+os:
+  - linux
+  - osx
+
 sudo: required
 language: ruby
 
 services:
   - docker
+    if os = linux
 
 addons:
   apt:
