@@ -38,7 +38,7 @@ task :default do
 end
 
 gubg_submods = %w[build std math io algo chaiscript].map{|e|"extern/gubg.#{e}"}
-cook_submods = %w[releases doc/sphinx-chai]
+cook_submods = %w[releases doc/sphinx/sphinx-chai]
 all_submods = gubg_submods+cook_submods
 
 desc "Prepare the submods"
