@@ -14,9 +14,13 @@ script:
 
     # extract the cook binary
     - docker run --name cook decode-it/cook
-    - docker cp cook:/var/cook/cook ./
+    - docker cp cook:/usr/bin/cook ./
 
-    # and do some cleanup
-    - docker run decode-it/cook /bin/bash -c "rm -rf /var/cook"
+before_deploy:
+    # store the docker
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker tag decode-it/cook thomasfannes/cook:latest
+    - docker push thomasfannes/cook:latest
 
-
+deploy:
+    skip_cleanup: true
