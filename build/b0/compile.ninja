@@ -1,5 +1,5 @@
 #[output](script:
-#$gubg_mods=%w[std io algo math chaiscript].map{|str|"gubg.#{str}"}
+#$gubg_mods=%w[std io algo math chaiscript].map{|str|"extern/gubg.#{str}"}
 #$gubg_fns=$gubg_mods.map{|mod|FileList.new("#{mod}/src/gubg/**/*.cpp").exclude("gubg.io/src/gubg/file/Descriptor.cpp").to_a}.flatten
 #$gubg_test_fns=$gubg_mods.map{|mod|FileList.new("#{mod}/test/src/gubg/**/*_tests.cpp").to_a}.flatten+%w[gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp]
 #$cook_fns=FileList.new("lib/src/**/*.cpp").to_a

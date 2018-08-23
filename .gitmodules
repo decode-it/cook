@@ -1,25 +1,25 @@
 [submodule "gubg.build"]
-	path = gubg.build
+	path = extern/gubg.build
 	url = https://github.com/gfannes/gubg.build
 	branch = master
 [submodule "gubg.std"]
-	path = gubg.std
+	path = extern/gubg.std
 	url = https://github.com/gfannes/gubg.std
 	branch = master
 [submodule "gubg.chaiscript"]
-	path = gubg.chaiscript
+	path = extern/gubg.chaiscript
 	url = https://github.com/gfannes/gubg.chaiscript
 	branch = master
 [submodule "gubg.io"]
-	path = gubg.io
+	path = extern/gubg.io
 	url = https://github.com/gfannes/gubg.io
 	branch = master
 [submodule "gubg.algo"]
-	path = gubg.algo
+	path = extern/gubg.algo
 	url = https://github.com/gfannes/gubg.algo
 	branch = master
 [submodule "gubg.math"]
-	path = gubg.math
+	path = extern/gubg.math
 	url = https://github.com/gfannes/gubg.math
 	branch = master
 [submodule "cook-binary"]
