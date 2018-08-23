@@ -216,6 +216,13 @@ task :clean do
     Rake::Task["b1:clean"].invoke
 end
 
+def release_filename()
+        case GUBG::os
+        when :linux, :macos then "cook"
+        when :windows then "cook.exe"
+        end
+end
+
 desc "Install"
 task :install, [:path] => "build" do |task, args|
     path = args[:path]
