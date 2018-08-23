@@ -9,7 +9,6 @@ RUN cd /var/cook/repo; rake prepare
 RUN cd /var/cook/repo; rake b0:build
 RUN cd /var/cook/repo; rake b1:build
 RUN cd /var/cook/repo; rake test
-RUN cd /var/cook/repo; rake install
 
 # copy to a location where we can extract it
 RUN cp /var/cook/repo/cook.exe /var/cook/cook
