@@ -8,7 +8,7 @@ git:
   submodules: false
 
 os:
-  - linux
+    #  - linux
   - osx
 
 sudo: required
@@ -30,6 +30,7 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar cvzf cook.linux.latest.tar.gz cook; fi
 
   # macosx build steps
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ninja ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install --with-clang llvm ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/usr/local/opt/llvm/bin:$PATH ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rake build ; fi
