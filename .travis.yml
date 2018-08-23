@@ -24,7 +24,10 @@ script:
     #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run --name cook decode-it/cook; fi
     #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker cp cook:/usr/bin/cook ./; fi
     #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar cvzf cook.linux.latest.tar.gz cook; fi
-    #
+    #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
+    #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker tag decode-it/cook thomasfannes/cook:latest; fi
+    #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker push thomasfannes/cook:latest; fi
+    # 
     #  # macosx build steps
     #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ninja ; fi
     #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install --with-clang llvm ; fi
@@ -32,22 +35,9 @@ script:
     #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rake build ; fi
     #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rake test ; fi
     #  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cp cook.exe cook ; fi
-    #
+ 
   # non-os specific steps 
-  - tar cvzf cook.$TRAVIS_OS_NAME.latest.tar.gz cook
-  - export SSHPASS=$DEPLOY_PASS
-  - sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null cook.$TRAVIS_OS_NAME.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then tar cvzf cook.$TRAVIS_OS_NAME.latest.tar.gz cook; fi
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then export SSHPASS=$DEPLOY_PASS; fi
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null cook.$TRAVIS_OS_NAME.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH; fi
 
-before_deploy:
-    #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin; fi
-    #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker tag decode-it/cook thomasfannes/cook:latest; fi
-    #  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker push thomasfannes/cook:latest; fi
-
-deploy:
-    on:
-        branch: master
-    skip_cleanup: true
-    provider: script
-    script:
-      - export SSHPASS=$DEPLOY_PASS
-      - sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null cook.$TRAVIS_OS_NAME.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
