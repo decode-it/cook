@@ -1,3 +1,10 @@
+env:
+    global:
+      - secure: "SqihEgUFFH3fmrZYP0jeA7/VEZRUSEXio3uN/+wJQPuqDR4g9v9o16enzIZ4+5UAPbxTCx1zGSSLcsd5gmXIe5wEJij9/r1B7Irw2b+R8tlEc9xU1HmdsENSdoCf/xMOyLdIryVFZ2zEVAItCn/Pa8tQbOi7Kqp1zGzfloXzxCqOn+DUIdIwEoW6FZiVyu11LFqMfHpw3pnTxuM+MnydrQT+zZ+bKRDGuvmdjlYXSOHsugUSeWOJiPVoWqGf5CRovMxblVIanZ6gH9mxQdyk3vK7RYqOu7lKY48Jb5Nin5CV68spGobPhwKiU0G2MKyuCRR9p1oQgvxwj8vBKD8OjH4giQ/4H85V80vBfSILYSCYTY/8+8okUDuU2RuZpETC0jnGbPkibtiuUBZexLcA2l7hawYlP24AAr52xRw4RLjNY2VOHUxZC1POiI8rIU8Ez1EvC5HN/VAijgdecUVg4tgFswaUJCpaRIF19gD7xc1KVw82pYuYQaQDQishYY1mONli90C2b1v6Qp3H4T58OMpM4kGtejzrPiW0w5D0tojiDI4l9U9onaAaLzzhCywjFDy+TBhFCksUtMJPuRP7v5ACTo3nUlDP5M1O0iFK3jMY5ReSthrO8Dg1kfhgw/3QrPMFY4zDyf48J88z3L1gEbcqq23YF8GQcA4beuMeDRM="
+      - secure: "Yzpm9IDExHdToOtkSzBTwNgEI//0maykkj235cOlucsWdYhg7RGvwvv1G8NsJA8lD94V5Kk+daQ5Esn2VhvVmMC+EzMx4LuI28xQr/o1mvz9WzdVZw8mNv05YFhfWrYNmVq7nlO2O+9b1WdyLQxiSBWHvM73gM5Gw/J4arm8L3J+QU76CFTo+PEKw/CsZu8tqT8KJ4mS9kLBrTafiFl7WTZxhace2K0GqYwv59vG+pwJXdoo22i2h/T4NzjaUavIO23unal8tx8TSPXadFrAo9Oma3QgipMBHgW6iDUUqPB1YrXW/GoqaG1GNdd5/8Png7OKdtNMcOKYVNDkNomJrPegFP/3mOQZbUN6ILuziiZHpBqBZFGLdcpQikXbO5DpdAf7jtdTNP6Z8V5HQAp1jng8xzBxt2xHC66zjyB20zeNdfrMdbb8O79DDLSmqwqTjjzulEtgPRDFNaiK9oLA2wdHx5up/GReeesmXNHvfOHoXaLjM7Vw+yeJcOCAzaraojbPzZhWV4H/B1tecstvw+cdK3IynSL5V3A7mO/89tnkaTPLPwR9FIRbQyAAinDZHBikDGKe9468x+8JRddNIH9wEC9qDd00Ji72fSJ2vA6+XJ5YciTu3DqDwKbvdr6jdpNwvdei7iypftEYuqj+uTXBWSv3T+271ao2QmYPctQ="
+      - secure: "itEmmHRhB0lmEdIY6d/b+YMic2923ntVEUyy5akfHDEoBJI68ZPrPlOVeE/d/P3XhlOaszhX6wNX9oTdNZi8YMJxHw9Ny62ygs6beP2P3kQv/VWVwvykBihfPQSbJSMomVRJcC5W4vZO64dIL6r1GjI1SXG+vhqhps9ZWxiOeEPpmDjzxfy3EBJE7893Ix0xDnLnD2vzdE+Xt9kdXeNVYpNtpY8w7Yeq2dCGVkVGkua0GYGGk9DvVVWNozXWJaKu4tzRNhDgBJMkYvH90kTd4RMDU1qeYeYur/NnYrYB/YM7tWlCdHE/3rE/wKbTHksVVLwZ2dIgP99Nn7ZOvJ5D/7oPTrnnwZRBbyeRtMydhw6fJKVMDLefu2AjMQZOYlonohCrDxDavfCw83vvW8DeCA32UhbhrEbLFsMLPTMR3ygRsJC4vsaAcAb+ipolC1eNNJgHAa1kezrhMRRTTssEPiFa9hCi/jwuJxATiyeBnLstFtbBPC+RVBRuRldDBjoUM/7Fha28WvemDPudQVg3vcPoAKejqA/mCtZv9mtvPuuDotDnq7setPbhOsMwSfviz6vvZ+nkJrrN5vJP8/CAcz4bGmVscyqmJBUzc+D3t2xfbuiHmyhPS72PyAmBm+jj3hSJ8m2qhMD4htBnPSLrJ+ToBnY77deZR1Yo04fNwQU="
+      - secure: "w8IT8kYBVm4sw/0IP7nJBCOKcP7jfLtxl8jfqKY0gF6NMMHSsucnghEJy9Vs+GwAOPTi92+0OBfyjjQlPiAAllb8o8ieFolwY9E9w/ypR9f1ELjYmP4FIlFMP9DvvHZ0NtWckuPyWQtm4o7rzq57l9nlVgsLpWvpLFg/fVVo+XLJxFv4OAku46Wa8YbDuXb56nu7MX1iPniTdRv2O8Lc9h7lIVwrDiwUH00KriCAML78AX7eleycz08vnfnmIsINXHGKUka7KaP3wD/1gIz4Apu8VC81ixuk1HL9blGVcYvuMM8qljeI4xusCrzB2hEf6j0imtZuml/+F9Dn8ke2FDaigBsuvrvdYhXHeOjukMHLQCCnaFrC8RdgqwrVElPog58nqICM/pUD+UDz/PVrtnOi9NtT/UE9boEjBtvIMscaNeZCxVUXn/SYMpm/G3QIYvdk+K5Rq8kuWKj0CcTch4sdjdGZYxJpoxLW+8oF5dVIvEnlHh+l6JT0ISsvX7lDYGiq7+F/wwyIEFL3btjpDAbfLo0A6T/ibQZrEm6IULbuaaUre51kARNZ+Z0mFID1PIQrBmjBBwmtEibBPRNIU3Vr9WH5wg98bJnBNgo7MyPADlucef1iuc6LUmwQ5rLdRH+k5ZI7xMl0TpdIrB0FdR7hZfsbdNrTizb+wCATX00="
+
 git:
     submodules: false
 
@@ -8,6 +15,11 @@ language: ruby
 services:
     - docker
 
+addons:
+    apt:
+        packages:
+            - sshpass
+
 script:
     # build all the tests
     - docker build -t decode-it/cook .
@@ -16,6 +28,9 @@ script:
     - docker run --name cook decode-it/cook
     - docker cp cook:/usr/bin/cook ./
 
+    # and tar ball it
+    - tar cvzf cook.latest.tar.gz cook
+
 before_deploy:
     # store the docker
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
@@ -23,6 +38,8 @@ before_deploy:
     - docker push thomasfannes/cook:latest
 
 deploy:
-    skip_cleanup: true
-  - provider: script
-    script: ls -lh cook
+      skip_cleanup: true
+      provider: script
+      script: 
+         - export SSHPASS=$DEPLOY_PASS
+         - sshpass -e scp cook.latest.tar.gz $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
