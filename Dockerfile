@@ -13,5 +13,3 @@ RUN cd /var/cook/repo; rake test
 # copy to a location where we can extract it
 RUN cp /var/cook/repo/cook.exe /var/cook/cook
 
-# cleanup
-RUN rm -rf /var/cook/repo

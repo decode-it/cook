@@ -1,3 +1,6 @@
+git:
+    submodules: false
+
 sudo: required
 
 language: ruby
@@ -5,7 +8,15 @@ language: ruby
 services:
     - docker
 
-before_install:
-    docker build -t decode-it/cook .
+script:
+    # build all the tests
+    - docker build -t decode-it/cook .
 
-  
+    # extract the cook binary
+    - docker run --name cook decode-it/cook
+    - docker cp cook:/var/cook/cook ./
+
+    # and do some cleanup
+    - docker run decode-it/cook /bin/bash -c "rm -rf /var/cook"
+
+
