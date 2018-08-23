@@ -4,3 +4,7 @@ lib.add("${cook.script_local_directory()}/lib", "**.*")
 var exe = cook.recipe("exe", TargetType.Executable)
 exe.add("app", "**.*")
 exe.depends_on(lib.uri)
+
+var bad_globbing = cook.recipe("empty")
+bad_globbing.add("unexisting", "**.*")
+

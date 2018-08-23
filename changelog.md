@@ -155,6 +155,7 @@ Proof-of-concept version.
 ## 1.2.3 (open)
 
 * debug does not imply rtc by default (use -T rtc)
+* globbing with no result yields a warning (use -v >= 2)
 
 ## Next
 

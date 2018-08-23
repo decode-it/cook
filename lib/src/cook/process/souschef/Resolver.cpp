@@ -41,6 +41,7 @@ Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & glo
     }
 
     const bool should_add = globber.mode == model::GlobInfo::Add;
+    unsigned int count = 0;
 
     // find all dirs matching the pattern
     auto cb = [&](const std::filesystem::path & fn)
@@ -70,11 +71,16 @@ Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & glo
                 interface.remove_file(recipe, key, file);
         }
 
+        ++count;
+
         MSS_END();
     };
 
     std::string regex = glob_to_regex_(globber.pattern);
     MSS(util::recurse_all_files(dir, regex, cb));
+
+
+    MSG_MSS(count > 0, Warning, "No file match expression '" << globber.dir << "/" << globber.pattern << "'");
 
     MSS_END();
 }
