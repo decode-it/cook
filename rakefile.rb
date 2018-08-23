@@ -231,6 +231,9 @@ task :install, [:path] => "build" do |task, args|
 end
 
 namespace :doc do
+
+    sphinxdir = "doc/sphinx"
+
     mdbook_exe = nil
     task :setup do
         sphinx_exe = File.join("/", "usr", "bin", "sphinx-build")
@@ -242,27 +245,19 @@ namespace :doc do
 
     desc "Clean documentation"
     task :clean do
-        Dir.chdir("doc") { sh "make clean" }
+        Dir.chdir(sphinxdir) { sh "make clean" }
     end
 
     desc "Build documentation"
     task :build => :setup do
-        Dir.chdir("doc") { sh "make html" }
+        Dir.chdir(sphinxdir) { sh "make html" }
     end
 
 
     desc "Publish the static pages on the web"
     task :publish => [:clean, :build] do
-        Dir.chdir("doc/_build/html") do
+        Dir.chdir(File.join(sphinxdir, "_build/html")) do
             sh "scp -r * web-gfannes@ssh.linuxsystems.be:fannes.com/cook"
-        end
-    end
-end
-task :old_doc do
-    Dir.chdir("doc") do
-        %w[abc complex].each do |name|
-            sh "dot -T png -o #{name}.png #{name}.dot"
-            sh "mimeopen #{name}.png"
         end
     end
 end

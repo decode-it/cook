@@ -16,5 +16,5 @@ output.txt
 *.user
 test.svg
 mkmf.log
-doc/_build
+doc/sphinx/_build
 .ycm_extra_conf.py

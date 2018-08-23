@@ -27,6 +27,6 @@
 	url = https://github.com/decode-it/cook-binary
 	branch = master
 [submodule "doc/sphinx-chai"]
-	path = doc/sphinx-chai
+	path = doc/sphinx/sphinx-chai
 	url = https://gitlab.com/jimson/sphinx-chai
 	branch = master
