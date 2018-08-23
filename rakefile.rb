@@ -37,9 +37,9 @@ task :default do
     sh "rake -T"
 end
 
-gubg_submods = %w[build std math io algo chaiscript].map{|e|"extern/gubg.#{e}"}
+gubg_submods = %w[build std math io algo chaiscript].map{|e| "gubg.#{e}"}
 cook_submods = %w[releases doc/sphinx/sphinx-chai]
-all_submods = gubg_submods+cook_submods
+all_submods = gubg_submods.map { |e| "extern/#{e}" }+cook_submods
 
 desc "Prepare the submods"
 task :prepare do
