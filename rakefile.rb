@@ -1,5 +1,5 @@
 begin
-    require_relative("gubg.build/bootstrap.rb")
+    require_relative("extern/gubg.build/bootstrap.rb")
 rescue LoadError
     puts("This seems to be a fresh clone: I will update all required submodules for you.")
     sh "git submodule update --init"
@@ -38,7 +38,7 @@ task :default do
 end
 
 gubg_submods = %w[build std math io algo chaiscript].map{|e|"extern/gubg.#{e}"}
-cook_submods = %w[binary doc/sphinx-chai]
+cook_submods = %w[releases doc/sphinx-chai]
 all_submods = gubg_submods+cook_submods
 
 desc "Prepare the submods"
@@ -48,17 +48,6 @@ task :prepare do
     end
 end
 task :run
-
-namespace :setup do
-    desc "Setup for ubuntu"
-    task :ubuntu do
-        #We rely on ninja
-        sh "sudo apt install ninja-build"
-        #Fixes problems with #including bits/c++config.h
-        sh "sudo apt install gcc-multilib g++-multilib"
-        Rake::Task["gubg:run"].invoke
-    end
-end
 
 desc "Update all to head"
 task :uth do
@@ -70,21 +59,33 @@ task :uth do
 end
 
 task :update => :uth
+    
+$b0_build_dir   = "build/b0"
+$b0_tmp         = ".b0"
+$b0_ut          = File.join($b0_build_dir, "unit_tests.exe")
+$b0_cook        = File.join($b0_build_dir, "cook.exe")
+
+$b1_build_dir   = "build/b1"
+$b1_tmp         = ".b1"
+$b1_ut          = File.join($b1_build_dir, "unit_tests.exe")
+$b1_cook        = File.join($b1_build_dir, "cook.exe")
 
 #Bootstrap level 0: uses manually updated ninja scripts
 namespace :b0 do
+
+
     def b0_ninja_fn()
         case GUBG::os
-        when :linux then "build/b0/linux/gcc.ninja"
-        when :windows then "build/b0/windows/msvc.ninja"
-        when :macos then "build/b0/macos/clang.ninja"
+        when :linux then "#{$b0_build_dir}/linux/gcc.ninja"
+        when :windows then "#{$b0_build_dir}/windows/msvc.ninja"
+        when :macos then "#{$b0_build_dir}/macos/clang.ninja"
         end
     end
 
     desc "bootstrap-level0: generater the ninja scripts (depends on gubg.build)"
     task :generate do
         require("gubg/build/expand_templates")
-        GUBG::Build::expand_templates("build/b0/compile.ninja")
+        GUBG::Build::expand_templates("#{$b0_build_dir}/compile.ninja")
     end
 
 
@@ -92,30 +93,29 @@ namespace :b0 do
     task :ut, [:filter] do |t,args|
         filter = args[:filter] || "ut"
         filter = filter.split(":").map{|e|"[#{e}]"}*""
-        sh("#{ninja_exe} -f #{b0_ninja_fn} -v b0-unit_tests.exe")
-        sh("./b0-unit_tests.exe -a -d yes #{filter}")
+        sh("#{ninja_exe} -f #{b0_ninja_fn} -v #{$b0_ut}")
+        sh("#{$b0_ut} -a -d yes #{filter}")
     end
 
     desc "bootstrap-level0: Build b0-cook.exe"
     task :build, [:ninja_opts] => :generate do |t,args|
         ninja_opts = args[:ninja_opts]||""
         # ninja_opts = "-v -j 1"
-        sh "#{ninja_exe} -f #{b0_ninja_fn} b0-cook.exe #{ninja_opts}"
+        sh "#{ninja_exe} -f #{b0_ninja_fn} #{$b0_cook} #{ninja_opts}"
     end
 
     desc "bootstrap-level0: Install b0-cook.exe as cook"
     task :install => :build do
         case GUBG::os
-        when :linux, :macos then sh("sudo cp b0-cook.exe /usr/local/bin/cook")
-        when :windows then cp("b0-cook.exe", File.join(GUBG::shared("bin"), "cook.exe"))
+        when :linux, :macos then sh("sudo cp #{$b0_cook} /usr/local/bin/cook")
+        when :windows then cp($b0_cook, File.join(GUBG::shared("bin"), "cook.exe"))
         end
     end
 
     desc "bootstrap-level0: Clean"
     task :clean do
         sh("#{ninja_exe} -f #{b0_ninja_fn} -t clean")
-        rm_rf(".b0")
-        rm_rf("default.chai")
+        rm_rf($b0_tmp)
     end
 
     desc "bootstrap-level0: Update rtags"
@@ -130,14 +130,13 @@ namespace :b0 do
 end
 #Bootstrap level 1: uses output from bootstrap level 0
 namespace :b1 do
-    out_base = "build/b1"
     tmp_base = ".cook/b1"
 
-    desc "bootstrap-level1: Build and run the unit tests"
-    task :ut do
-        sh("#{ninja_exe} -f #{b0_ninja_fn} -v unit_tests.exe")
-        sh("./unit_tests.exe -a -d yes")
-    end
+#    desc "bootstrap-level1: Build and run the unit tests"
+#    task :ut do
+#        sh("#{ninja_exe} -f #{b0_ninja_fn} -v unit_tests.exe")
+#        sh("./unit_tests.exe -a -d yes")
+#    end
 
     toolchain_options = {"c++.std" => 17, "c++.runtime" => "static", "release" => nil}
     case GUBG::os
@@ -147,70 +146,65 @@ namespace :b1 do
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
     task :build, [:ninja_opts] do |t,args|
-        ninja_opts = args[:ninja_opts]||""
 
+        ninja_opts = args[:ninja_opts]||""
         Rake::Task["b0:build"].invoke(ninja_opts)
 
-        odir = File.join(out_base, "ninja")
-        tdir = File.join(tmp_base, "ninja")
+        odir = File.join($b1_build_dir, "ninja")
+        tdir = File.join($b1_tmp, "ninja")
 
         opts = toolchain_options.map {|k,v| "-T " + (v ? "#{k}=#{v}" : "#{k}") }.join(" ")
 
-        b0cook = case GUBG::os
-                 when :linux, :macos then "./b0-cook.exe"
-                 when :windows then "b0-cook.exe" end
-
-        sh "#{b0cook} -f ./ -g ninja -o #{odir} -O #{tdir} #{opts} cook/app/exe"
+        sh "#{$b0_cook} -f ./ -g ninja -o #{odir} -O #{tdir} #{opts} cook/app/exe"
         sh "#{ninja_exe} -f #{odir}/build.ninja #{ninja_opts}"
         exe = "cook.app.exe"
         exe += ".exe" if GUBG::os == :windows
-        cp "#{odir}/#{exe}", "b1-cook.exe"
+        cp "#{odir}/#{exe}", $b1_cook
     end
 
-    desc "bootstrap-level1: Publish b1-cook.exe into binary"
+    desc "bootstrap-level1: Publish b1-cook.exe into releases"
     task :publish => :build do
-        here, ext = nil
+        ext = nil
         case GUBG::os
-        when :macos, :linux then here, ext = "./", ""
-        when :windows then here, ext = "", ".exe"
+        when :macos, :linux then ext = ""
+        when :windows then ext = ".exe"
         else raise "stop" end
 
-        b1_exe = "b1-cook.exe"
-        version = `#{here}#{b1_exe} -h`[/cook version (\d+\.\d+\.\d+) /, 1]
-        version_dir = GUBG::mkdir("binary/#{version}")
+        version = `#{$b1_cook} -h`[/cook version (\d+\.\d+\.\d+) /, 1]
+        version_dir = GUBG::mkdir("releases/#{version}")
         cp "changelog.md", version_dir
         arch = toolchain_options["arch"]
         dst_dir = GUBG::mkdir("#{version_dir}/#{GUBG::os}/#{arch}")
-        cp b1_exe, File.join(dst_dir, "cook#{ext}")
-        latest_dir = GUBG::mkdir("binary/latest/#{GUBG::os}/#{arch}")
-        cp b1_exe, File.join(latest_dir, "cook#{ext}")
+        cp $b1_cook, File.join(dst_dir, "cook#{ext}")
+        latest_dir = GUBG::mkdir("releases/latest/#{GUBG::os}/#{arch}")
+        cp $b1_cook, File.join(latest_dir, "cook#{ext}")
     end
 
     desc "bootstrap-level1-cmake: Build b1-cook.exe using b0-cook.exe"
-    task :build_cmake => ["b0:update", "b0:build"] do
-        odir = File.join(out_base, "cmake")
-        tdir = File.join(tmp_base, "cmake")
-
-        sh "./b0-cook.exe -f ./ -g CMake -o #{odir} -O #{tdir} cook/app/exe"
-        Dir::chdir(odir) do
-            sh "cmake ./"
+    task :build_cmake => "b0:build" do
+        cmake_dir = File.join($b1_tmp, "cmake")
+        FileUtils.mkdir_p(cmake_dir) 
+        current = Dir.pwd()
+        sh "#{$b0_cook} -f ./ -g CMake cook/app/exe"
+        Dir::chdir(cmake_dir) do
+            sh "cmake #{current}"
             sh "make -j8"
         end
-        cp "#{odir}/cook_app_exe", "b1-cook.exe"
+        cp "#{cmake_dir}/app/cook_app_exe", $b1_cook
 
 
     end
 
     desc "bootstrap-level1: Clean"
     task :clean do
-        rm_rf out_base
-        rm_rf tmp_base
+        rm_rf $b1_build_dir
+        rm_rf $b1_tmp
     end
 end
 
 desc "Build cook.exe"
 task :build => "b1:build" do
-    cp "b1-cook.exe", "cook.exe"
+    cp $b1_cook, "cook.exe"
 end
 
 desc "Clean"

@@ -1,7 +1,7 @@
 #[output](script:
 #$gubg_mods=%w[std io algo math chaiscript].map{|str|"extern/gubg.#{str}"}
-#$gubg_fns=$gubg_mods.map{|mod|FileList.new("#{mod}/src/gubg/**/*.cpp").exclude("gubg.io/src/gubg/file/Descriptor.cpp").to_a}.flatten
-#$gubg_test_fns=$gubg_mods.map{|mod|FileList.new("#{mod}/test/src/gubg/**/*_tests.cpp").to_a}.flatten+%w[gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp]
+#$gubg_fns=$gubg_mods.map{|mod|FileList.new("#{mod}/src/gubg/**/*.cpp").exclude("extern/gubg.io/src/gubg/file/Descriptor.cpp").to_a}.flatten
+#$gubg_test_fns=$gubg_mods.map{|mod|FileList.new("#{mod}/test/src/gubg/**/*_tests.cpp").to_a}.flatten+%w[extern/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp]
 #$cook_fns=FileList.new("lib/src/**/*.cpp").to_a
 #$cook_test_fns=FileList.new("lib/test/**/*_tests.cpp").to_a
 #$cook_app_fns=FileList.new("app/**/*.cpp").to_a
@@ -15,10 +15,10 @@
 #$gubg_mods.each do |mod|
 #  output.print(" -I #{mod}/src")
 #end
-#output.print(" -I gubg.chaiscript/extern/ChaiScript/include")
+#output.print(" -I extern/gubg.chaiscript/extern/ChaiScript/include")
 #output.puts("")
 #){
-gubg_include_paths = -I gubg.std/src -I gubg.io/src -I gubg.algo/src -I gubg.math/src -I gubg.chaiscript/src -I gubg.chaiscript/extern/ChaiScript/include
+gubg_include_paths = -I extern/gubg.std/src -I extern/gubg.io/src -I extern/gubg.algo/src -I extern/gubg.math/src -I extern/gubg.chaiscript/src -I extern/gubg.chaiscript/extern/ChaiScript/include
 #}
 #[output](script:
 #output.print("gubg_test_include_paths =")
@@ -27,45 +27,45 @@ gubg_include_paths = -I gubg.std/src -I gubg.io/src -I gubg.algo/src -I gubg.mat
 #end
 #output.puts("")
 #){
-gubg_test_include_paths = -I gubg.std/test/src -I gubg.io/test/src -I gubg.algo/test/src -I gubg.math/test/src -I gubg.chaiscript/test/src
+gubg_test_include_paths = -I extern/gubg.std/test/src -I extern/gubg.io/test/src -I extern/gubg.algo/test/src -I extern/gubg.math/test/src -I extern/gubg.chaiscript/test/src
 #}
 cook_lib_include_paths  = -I lib/src $gubg_include_paths
 cook_app_include_paths  = -I app/src
-catch_include_paths = -I gubg.std/extern/catch/single_include
+catch_include_paths = -I extern/gubg.std/extern/catch/single_include
 
 #[output](script:
 #$gubg_fns.each do |fn|
-#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
+#  output.puts("build #{$b0_tmp}/#{$obj.call(fn)}: compile #{fn}")
 #  output.puts("    include_paths = $gubg_include_paths")
 #end
 #){
-build .b0/gubg.std/src/gubg/platform/spawn.cpp.obj: compile gubg.std/src/gubg/platform/spawn.cpp
+build .b0/extern/gubg.std/src/gubg/platform/spawn.cpp.obj: compile extern/gubg.std/src/gubg/platform/spawn.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/OptionParser.cpp.obj: compile gubg.io/src/gubg/OptionParser.cpp
+build .b0/extern/gubg.io/src/gubg/OptionParser.cpp.obj: compile extern/gubg.io/src/gubg/OptionParser.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/Strange.cpp.obj: compile gubg.io/src/gubg/Strange.cpp
+build .b0/extern/gubg.io/src/gubg/Strange.cpp.obj: compile extern/gubg.io/src/gubg/Strange.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj: compile gubg.io/src/gubg/bitmagic/bitmagic.cpp
+build .b0/extern/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj: compile extern/gubg.io/src/gubg/bitmagic/bitmagic.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/file/File.cpp.obj: compile gubg.io/src/gubg/file/File.cpp
+build .b0/extern/gubg.io/src/gubg/file/File.cpp.obj: compile extern/gubg.io/src/gubg/file/File.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/file/Filesystem.cpp.obj: compile gubg.io/src/gubg/file/Filesystem.cpp
+build .b0/extern/gubg.io/src/gubg/file/Filesystem.cpp.obj: compile extern/gubg.io/src/gubg/file/Filesystem.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/file/Forest.cpp.obj: compile gubg.io/src/gubg/file/Forest.cpp
+build .b0/extern/gubg.io/src/gubg/file/Forest.cpp.obj: compile extern/gubg.io/src/gubg/file/Forest.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/hash/MD5.cpp.obj: compile gubg.io/src/gubg/hash/MD5.cpp
+build .b0/extern/gubg.io/src/gubg/hash/MD5.cpp.obj: compile extern/gubg.io/src/gubg/hash/MD5.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/parse/basic.cpp.obj: compile gubg.io/src/gubg/parse/basic.cpp
+build .b0/extern/gubg.io/src/gubg/parse/basic.cpp.obj: compile extern/gubg.io/src/gubg/parse/basic.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile gubg.io/src/gubg/parse/xml/Coding.cpp
+build .b0/extern/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile extern/gubg.io/src/gubg/parse/xml/Coding.cpp
     include_paths = $gubg_include_paths
-build .b0/gubg.io/src/gubg/std/filesystem.cpp.obj: compile gubg.io/src/gubg/std/filesystem.cpp
+build .b0/extern/gubg.io/src/gubg/std/filesystem.cpp.obj: compile extern/gubg.io/src/gubg/std/filesystem.cpp
     include_paths = $gubg_include_paths
 #}
     
 #[output](script:
 #$cook_fns.each do |fn|
-#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
+#  output.puts("build #{$b0_tmp}/#{$obj.call(fn)}: compile #{fn}")
 #  output.puts("    include_paths = $cook_lib_include_paths")
 #end
 #){
@@ -215,122 +215,122 @@ build .b0/lib/src/cook/util/File.cpp.obj: compile lib/src/cook/util/File.cpp
     include_paths = $cook_lib_include_paths
 #}
 
-build .b0/gubg.std/src/catch_runner.cpp.obj: compile gubg.std/src/catch_runner.cpp
+build .b0/gubg.std/src/catch_runner.cpp.obj: compile extern/gubg.std/src/catch_runner.cpp
     include_paths = $catch_include_paths
 #[output](script:
 #$gubg_test_fns.each do |fn|
-#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
+#  output.puts("build #{$b0_tmp}/#{$obj.call(fn)}: compile #{fn}")
 #  output.puts("    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths")
 #end
 #){
-build .b0/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj: compile gubg.std/test/src/gubg/OnlyOnce_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/OnlyOnce_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/Range_tests.cpp.obj: compile gubg.std/test/src/gubg/Range_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/Range_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/Range_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/Transition_tests.cpp.obj: compile gubg.std/test/src/gubg/Transition_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/Transition_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/Transition_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj: compile gubg.std/test/src/gubg/array/Pool_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/array/Pool_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/iterator/Transform_tests.cpp.obj: compile gubg.std/test/src/gubg/iterator/Transform_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/iterator/Transform_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/iterator/Transform_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj: compile gubg.std/test/src/gubg/macro/variadic_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/macro/variadic_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/mss_tests.cpp.obj: compile gubg.std/test/src/gubg/mss_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/mss_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/mss_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj: compile gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj: compile gubg.std/test/src/gubg/thread/Semaphore_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/If_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/If_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/tmp/If_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/tmp/If_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/IntType_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/IntType_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/tmp/IntType_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/tmp/IntType_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tmp/TypeList_tests.cpp.obj: compile gubg.std/test/src/gubg/tmp/TypeList_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/tmp/TypeList_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/tmp/TypeList_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tuple/ForEach_tests.cpp.obj: compile gubg.std/test/src/gubg/tuple/ForEach_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/tuple/ForEach_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/tuple/ForEach_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp.obj: compile gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp
+build .b0/extern/gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/Integer_tests.cpp.obj: compile gubg.io/test/src/gubg/Integer_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/Integer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/Integer_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/Strange_tests.cpp.obj: compile gubg.io/test/src/gubg/Strange_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/Strange_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/Strange_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp.obj: compile gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/file/Creater_tests.cpp.obj: compile gubg.io/test/src/gubg/file/Creater_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/file/Creater_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/file/Creater_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/file/File_tests.cpp.obj: compile gubg.io/test/src/gubg/file/File_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/file/File_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/file/File_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/file/Filesystem_tests.cpp.obj: compile gubg.io/test/src/gubg/file/Filesystem_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/file/Filesystem_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/file/Filesystem_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj: compile gubg.io/test/src/gubg/file/Forest_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/file/Forest_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj: compile gubg.io/test/src/gubg/hash/MD5_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/hash/MD5_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj: compile gubg.io/test/src/gubg/naft/Document_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/naft/Document_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/naft/Reader_tests.cpp.obj: compile gubg.io/test/src/gubg/naft/Reader_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/naft/Reader_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/naft/Reader_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp.obj: compile gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/s11n/Reader_tests.cpp.obj: compile gubg.io/test/src/gubg/s11n/Reader_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/s11n/Reader_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/s11n/Reader_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/s11n/Writer_tests.cpp.obj: compile gubg.io/test/src/gubg/s11n/Writer_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/s11n/Writer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/s11n/Writer_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/string_tests.cpp.obj: compile gubg.io/test/src/gubg/string_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/string_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/string_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj: compile gubg.io/test/src/gubg/svg/Turtle_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/svg/Turtle_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj: compile gubg.io/test/src/gubg/xml/Builder_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/xml/Builder_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj: compile gubg.io/test/src/gubg/xml/SVG_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/xml/SVG_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj: compile gubg.algo/test/src/gubg/gp/World_tests.cpp
+build .b0/extern/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/gp/World_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp.obj: compile gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp
+build .b0/extern/gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/graph/Graph_tests.cpp.obj: compile gubg.algo/test/src/gubg/graph/Graph_tests.cpp
+build .b0/extern/gubg.algo/test/src/gubg/graph/Graph_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/graph/Graph_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/graph/NPartite_tests.cpp.obj: compile gubg.algo/test/src/gubg/graph/NPartite_tests.cpp
+build .b0/extern/gubg.algo/test/src/gubg/graph/NPartite_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/graph/NPartite_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp.obj: compile gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp
+build .b0/extern/gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/network/DAG_tests.cpp.obj: compile gubg.algo/test/src/gubg/network/DAG_tests.cpp
+build .b0/extern/gubg.algo/test/src/gubg/network/DAG_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/network/DAG_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp.obj: compile gubg.algo/test/src/gubg/optimization/SCG_tests.cpp
+build .b0/extern/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/pid/Controller_tests.cpp.obj: compile gubg.algo/test/src/gubg/pid/Controller_tests.cpp
+build .b0/extern/gubg.algo/test/src/gubg/pid/Controller_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/pid/Controller_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj: compile gubg.algo/test/src/gubg/planning/Planning_tests.cpp
+build .b0/extern/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/planning/Planning_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj: compile gubg.algo/test/src/gubg/planning/Task_tests.cpp
+build .b0/extern/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/planning/Task_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.math/test/src/gubg/Matrix_tests.cpp.obj: compile gubg.math/test/src/gubg/Matrix_tests.cpp
+build .b0/extern/gubg.math/test/src/gubg/Matrix_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/Matrix_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj: compile gubg.math/test/src/gubg/RunningSum_tests.cpp
+build .b0/extern/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/RunningSum_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj: compile gubg.math/test/src/gubg/decay/Average_tests.cpp
+build .b0/extern/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/decay/Average_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj: compile gubg.math/test/src/gubg/decay/Sum_tests.cpp
+build .b0/extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj: compile gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp
+build .b0/extern/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj: compile extern/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp.obj: compile gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp
+build .b0/extern/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp.obj: compile extern/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp.obj: compile gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp
+build .b0/extern/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp.obj: compile extern/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 #}
 #[output](script:
 #$cook_test_fns.each do |fn|
-#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
+#  output.puts("build #{$b0_tmp}/#{$obj.call(fn)}: compile #{fn}")
 #  output.puts("    include_paths = $cook_lib_include_paths $catch_include_paths ")
 #end
 #){
@@ -354,7 +354,7 @@ build .b0/lib/test/src/cook/rules/Resolve_tests.cpp.obj: compile lib/test/src/co
 
 #[output](script:
 #$cook_app_fns.each do |fn|
-#  output.puts("build .b0/#{$obj.call(fn)}: compile #{fn}")
+#  output.puts("build #{$b0_tmp}/#{$obj.call(fn)}: compile #{fn}")
 #  output.puts("    include_paths = $cook_app_include_paths $cook_lib_include_paths ")
 #end
 #){
@@ -368,35 +368,35 @@ build .b0/app/src/main.cpp.obj: compile app/src/main.cpp
 
 
 #[output](script:
-#output.puts("build libb0-gubg.a: archive $")
+#output.puts("build #{$b0_build_dir}/libgubg.a: archive $")
 #$gubg_fns.each do |fn|
-#  output.puts("    .b0/#{$obj.call(fn)} $")
+#  output.puts("    #{$b0_tmp}/#{$obj.call(fn)} $")
 #end
 #output.puts
 #){
-build libb0-gubg.a: archive $
-    .b0/gubg.std/src/gubg/platform/spawn.cpp.obj $
-    .b0/gubg.io/src/gubg/OptionParser.cpp.obj $
-    .b0/gubg.io/src/gubg/Strange.cpp.obj $
-    .b0/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
-    .b0/gubg.io/src/gubg/file/File.cpp.obj $
-    .b0/gubg.io/src/gubg/file/Filesystem.cpp.obj $
-    .b0/gubg.io/src/gubg/file/Forest.cpp.obj $
-    .b0/gubg.io/src/gubg/hash/MD5.cpp.obj $
-    .b0/gubg.io/src/gubg/parse/basic.cpp.obj $
-    .b0/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
-    .b0/gubg.io/src/gubg/std/filesystem.cpp.obj $
+build build/b0/libgubg.a: archive $
+    .b0/extern/gubg.std/src/gubg/platform/spawn.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/OptionParser.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/Strange.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/file/File.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/file/Filesystem.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/file/Forest.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/hash/MD5.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/parse/basic.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/std/filesystem.cpp.obj $
 
 #}
 
 #[output](script:
-#output.puts("build libb0-cook.a: archive $")
+#output.puts("build #{$b0_build_dir}/libcook.a: archive $")
 #$cook_fns.each do |fn|
-#  output.puts("    .b0/#{$obj.call(fn)} $")
+#  output.puts("    #{$b0_tmp}/#{$obj.call(fn)} $")
 #end
 #output.puts
 #){
-build libb0-cook.a: archive $
+build build/b0/libcook.a: archive $
     .b0/lib/src/cook/Content.cpp.obj $
     .b0/lib/src/cook/Context.cpp.obj $
     .b0/lib/src/cook/Hook.cpp.obj $
@@ -473,13 +473,15 @@ build libb0-cook.a: archive $
 #}
 
 #[output](script:
-#output.puts("build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $")
+#output.puts("build #{$b0_ut}: link .b0/gubg.std/src/catch_runner.cpp.obj $")
 #($cook_test_fns+$gubg_test_fns).each do |fn|
-#  output.puts("    .b0/#{$obj.call(fn)} $")
+#  output.puts("    #{$b0_tmp}/#{$obj.call(fn)} $")
 #end
-#output.puts("    | libb0-cook.a libb0-gubg.a")
+#output.puts("    | #{$b0_build_dir}/libcook.a #{$b0_build_dir}/libgubg.a")
+    
+#output.puts("    library_paths =  -L#{$b0_build_dir}")
 #){
-build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
+build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/lib/test/src/cook/LanguageTypePair_tests.cpp.obj $
     .b0/lib/test/src/cook/Menu_tests.cpp.obj $
     .b0/lib/test/src/cook/Result_tests.cpp.obj $
@@ -488,77 +490,78 @@ build b0-unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/lib/test/src/cook/rules/C_family_tests.cpp.obj $
     .b0/lib/test/src/cook/rules/Extensions_tests.cpp.obj $
     .b0/lib/test/src/cook/rules/Resolve_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/Range_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/Transition_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/iterator/Transform_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/mss_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/If_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/IntType_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tmp/TypeList_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tuple/ForEach_tests.cpp.obj $
-    .b0/gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/Integer_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/Strange_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/file/Creater_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/file/File_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/file/Filesystem_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/naft/Reader_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/s11n/Reader_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/s11n/Writer_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/string_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj $
-    .b0/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/graph/Graph_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/graph/NPartite_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/network/DAG_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/pid/Controller_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj $
-    .b0/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj $
-    .b0/gubg.math/test/src/gubg/Matrix_tests.cpp.obj $
-    .b0/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj $
-    .b0/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj $
-    .b0/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj $
-    .b0/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj $
-    .b0/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp.obj $
-    .b0/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp.obj $
-    | libb0-cook.a libb0-gubg.a
+    .b0/extern/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/Range_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/Transition_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/iterator/Transform_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/mss_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/tmp/If_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/tmp/IntType_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/tmp/SFINAE_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/tmp/TypeList_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/tuple/ForEach_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/Integer_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/Strange_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/file/Creater_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/file/File_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/file/Filesystem_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/naft/Reader_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/parse/xml/Coding_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/parse/xml/Parser_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/s11n/Reader_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/s11n/Writer_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/string_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/graph/Graph_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/graph/NPartite_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/network/DAG_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/pid/Controller_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj $
+    .b0/extern/gubg.math/test/src/gubg/Matrix_tests.cpp.obj $
+    .b0/extern/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj $
+    .b0/extern/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj $
+    .b0/extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj $
+    .b0/extern/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj $
+    .b0/extern/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp.obj $
+    .b0/extern/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp.obj $
+    | build/b0/libcook.a build/b0/libgubg.a
+    library_paths =  -Lbuild/b0
 #}
-    library_paths =  -L./
-    user_libs_gcc = -lb0-cook -lb0-gubg
-    user_libs_msvc = libb0-cook.a libb0-gubg.a
+    user_libs_gcc = -lcook -lgubg
+    user_libs_msvc = libcook.a libgubg.a
 
 #[output](script:
-#output.puts("build b0-cook.exe: link $")
+#output.puts("build #{$b0_cook}: link $")
 #$cook_app_fns.each do |fn|
-#  output.puts("    .b0/#{$obj.call(fn)} $")
+#  output.puts("    #{$b0_tmp}/#{$obj.call(fn)} $")
 #end
-#output.puts("    | libb0-cook.a libb0-gubg.a")
+#output.puts("    | #{$b0_build_dir}/libcook.a #{$b0_build_dir}/libgubg.a")
+#output.puts("    library_paths =  -L#{$b0_build_dir}")
 #){
-build b0-cook.exe: link $
+build build/b0/cook.exe: link $
     .b0/app/src/cook/App.cpp.obj $
     .b0/app/src/cook/app/Options.cpp.obj $
     .b0/app/src/main.cpp.obj $
-    | libb0-cook.a libb0-gubg.a
+    | build/b0/libcook.a build/b0/libgubg.a
+    library_paths =  -Lbuild/b0
 #}
-    library_paths =  -L./
-    user_libs_gcc = -lb0-cook -lb0-gubg
-    user_libs_msvc = libb0-cook.a libb0-gubg.a
+    user_libs_gcc = -lcook -lgubg
+    user_libs_msvc = libcook.a libgubg.a
