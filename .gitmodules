@@ -1,32 +1,32 @@
-[submodule "gubg.build"]
+[submodule "extern/gubg.build"]
 	path = extern/gubg.build
 	url = https://github.com/gfannes/gubg.build
 	branch = master
-[submodule "gubg.std"]
+[submodule "extern/gubg.std"]
 	path = extern/gubg.std
 	url = https://github.com/gfannes/gubg.std
 	branch = master
-[submodule "gubg.chaiscript"]
+[submodule "extern/gubg.chaiscript"]
 	path = extern/gubg.chaiscript
 	url = https://github.com/gfannes/gubg.chaiscript
 	branch = master
-[submodule "gubg.io"]
+[submodule "extern/gubg.io"]
 	path = extern/gubg.io
 	url = https://github.com/gfannes/gubg.io
 	branch = master
-[submodule "gubg.algo"]
+[submodule "extern/gubg.algo"]
 	path = extern/gubg.algo
 	url = https://github.com/gfannes/gubg.algo
 	branch = master
-[submodule "gubg.math"]
+[submodule "extern/gubg.math"]
 	path = extern/gubg.math
 	url = https://github.com/gfannes/gubg.math
 	branch = master
-[submodule "cook-binary"]
+[submodule "releases"]
 	path = releases
 	url = https://github.com/decode-it/cook-binary
 	branch = master
-[submodule "doc/sphinx-chai"]
+[submodule "doc/sphinx/sphinx-chai"]
 	path = doc/sphinx/sphinx-chai
 	url = https://gitlab.com/jimson/sphinx-chai
 	branch = master
