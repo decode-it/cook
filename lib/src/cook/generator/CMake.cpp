@@ -639,28 +639,14 @@ bool CMake::set_target_properties_(std::ostream & ofs, model::Recipe * recipe, c
             if (ltp.type == Type::ForceInclude)
             {
                 const auto & str = gubg::string::escape_cmake(it->second(file.rel().string(), ""));
-                options.insert(str);
+                
+                std::ostringstream oss;
+                oss << "\"SHELL:" << gubg::string::dequote(str) << "\"";
+                options.insert(oss.str());
             }
             return true;
         };
         recipe->files().each(add_fi);
-
-        if (options.size() > 1)
-        {
-            std::ostringstream oss;
-            std::set<std::string> new_options;
-            for (const auto &str: options)
-            {
-                //Needed to get rid of the de-duplication cmake performs on target_compile_options()
-                //See https://gitlab.kitware.com/cmake/cmake/merge_requests/1841
-                oss.str("");
-
-                // dequote the str string, we add our own quotes
-                oss << "\"SHELL:" << gubg::string::dequote(str) << "\"";
-                new_options.insert(oss.str());
-            }
-            options.swap(new_options);
-        }
 
         write_elements_(ofs, [&](auto & os) { os << "target_compile_options(" << name << " " << keyword; }, options);
     }
