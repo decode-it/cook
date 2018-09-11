@@ -5,7 +5,7 @@ rule compile
 rule archive
     command = lib /OUT:$out $in
 rule link
-    command = link /OUT:$out $in $user_libs_msvc
+    command = link /OUT:$out $in $user_libs_msvc $library_paths_msvc
 
 defines = -DNOMINMAX
 cflags = /nologo /EHsc /std:c++latest /bigobj /showIncludes
