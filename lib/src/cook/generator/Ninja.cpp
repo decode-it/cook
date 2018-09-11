@@ -176,6 +176,13 @@ Result Ninja::process(const Context & context)
             {
                 ofs << " ";
                 stream_escaped(f.string());
+
+//                if (response_file)
+//                {
+//                    // translator opvragen
+//                    auto trans = ;
+//                    (*response_file) << trans(f.string()) << std::endl;
+//                }
             }
             ofs << " |";
             for (const auto & f: input_dependencies)

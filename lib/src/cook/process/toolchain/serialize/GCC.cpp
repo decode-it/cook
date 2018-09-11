@@ -151,6 +151,7 @@ for(s : [TargetType.SharedLibrary, TargetType.Executable]){
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return "${k}=${v}" } }
     tm[Part.Runtime]        = fun(k,v) { return k }
+    tm[Part.Response]       = fun(k,v) { return "@${k}" }
     tm[Part.Output]         = fun(k,v) { return "-o ${k}" }
     tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.Library]        = fun(k,v) { return "-l${k}" }
@@ -177,6 +178,7 @@ oss << R"%(
 oss << R"%(
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { return k }
+    tm[Part.Response]       = fun(k,v) { return "@${k}" }
     tm[Part.Output]         = fun(k,v) { return k }
     tm[Part.Input]          = fun(k,v) { return k }
     if (my(OS) == OS.MacOS) {

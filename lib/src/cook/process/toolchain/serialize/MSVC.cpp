@@ -93,6 +93,7 @@ for( lang : [Language.C, Language.CXX, Language.ASM, Language.Resource]) {
 
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { return k }
+    tm[Part.Response]       = fun(k,v) { return "@${k}" }
     tm[Part.Output]         = fun(k,v) { return "/OUT:${k}" }
     tm[Part.Input]          = fun(k,v) { return k }
 
@@ -106,6 +107,7 @@ for(s : [TargetType.Executable, TargetType.SharedLibrary]){
 
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return "/${k}" } else { return "/${k}:${v}" } }
+    tm[Part.Response]       = fun(k,v) { return "@${k}" }
     tm[Part.Output]         = fun(k,v) { return "/OUT:${k}" }
     tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.Library]        = fun(k,v) { return "${k}.lib" }
