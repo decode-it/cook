@@ -19,6 +19,12 @@ namespace cook { namespace process { namespace command {
                 outputs.emplace_back(fn.string(), "");
         }
     }
+    std::string CommonImpl::get_kv_part(toolchain::Part part, const std::string & key, const std::string & value, toolchain::Translator * trans_ptr) const
+    {
+        const auto &trans = (!!trans_ptr ? *trans_ptr : (*trans_)[part]);
+        return trans(key, value);
+    }
+
     bool CommonImpl::stream_part(std::ostream & os, toolchain::Part part, const toolchain::Translator *trans_ptr) const 
     {
         auto kvs_it = kvm_.find(part);
@@ -27,11 +33,11 @@ namespace cook { namespace process { namespace command {
         const auto &kvs = kvs_it->second;
         if (kvs.empty())
             return false;
+
         const auto &trans = (!!trans_ptr ? *trans_ptr : (*trans_)[part]);
         gubg::OnlyOnce skip_space;
         for (const auto &kv: kvs)
         {
-
             const auto str = trans(kv.first, kv.second);
             if (!str.empty())
             {

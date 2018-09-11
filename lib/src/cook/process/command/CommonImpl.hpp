@@ -15,6 +15,7 @@ namespace cook { namespace process { namespace command {
 
         void set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) override;
         bool stream_part(std::ostream & os, toolchain::Part part, const toolchain::Translator *trans_ptr = nullptr) const override;
+        std::string get_kv_part(toolchain::Part part, const std::string & key, const std::string & value = std::string(), toolchain::Translator * trans_ptr = nullptr) const override;
         void stream_command(std::ostream & os) const override;
 
     protected:

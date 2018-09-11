@@ -25,9 +25,14 @@ Result Ninja::process(const Context & context)
     std::ofstream ofs;
     MSS(open_output_stream(context, ofs));
 
+    std::unique_ptr<std::ofstream> response_file;
+
+
+
     std::map<cook::process::command::Ptr, std::string> command_map;
-    auto goc_command = [&](cook::process::command::Ptr ptr)
+    auto goc_command = [&](cook::process::command::Ptr ptr, std::string & cmd_name)
     {
+        MSS_BEGIN(Result);
         auto it = command_map.find(ptr);
         if (it == command_map.end())
         {
@@ -37,11 +42,27 @@ Result Ninja::process(const Context & context)
             // add to them map
             it = command_map.insert(std::make_pair(ptr, name)).first;
 
+            process::command::Filenames input = { "${in}" };
+            process::command::Filenames output = { "${out}" };
+
+            // check whether we want a response file
+            {
+                response_file.reset();
+                std::filesystem::path response_filename = context.dirs().temporary() / (name + "_resp");
+                std::string resp = ptr->get_kv_part(process::toolchain::Part::Response, response_filename.string());
+
+                if (!resp.empty())
+                {
+                    input = { resp };
+
+                    response_file = std::make_unique<std::ofstream>(resp);
+                    MSS(util::open_file(response_filename, *response_file));
+                }
+            }
+
             // and write out the command
             ofs << std::endl;
             ofs << "#Parent recipe: " << ptr->recipe_uri() << std::endl;
-            const process::command::Filenames input = { "${in}" };
-            const process::command::Filenames output = { "${out}" };
             ptr->set_inputs_outputs(input, output);
             bool has_deps = false;
             {
@@ -84,7 +105,8 @@ Result Ninja::process(const Context & context)
             ofs << std::endl;
         }
 
-        return it->second;
+        cmd_name = it->second;
+        MSS_END();
     };
 
     for (auto recipe: context.menu().topological_order_recipes())
@@ -154,7 +176,8 @@ Result Ninja::process(const Context & context)
                 });
             }
 
-            const auto build_command = goc_command(command);
+            std::string build_command;
+            MSS(goc_command(command, build_command));
             //The build basically specifies the dependency between the output and input files
             ofs << "build";
             auto stream_escaped = [&](const std::string &str) {
@@ -177,12 +200,8 @@ Result Ninja::process(const Context & context)
                 ofs << " ";
                 stream_escaped(f.string());
 
-//                if (response_file)
-//                {
-//                    // translator opvragen
-//                    auto trans = ;
-//                    (*response_file) << trans(f.string()) << std::endl;
-//                }
+                if (response_file)
+                    (*response_file) << "\"" << f.string() << "\"" << std::endl;
             }
             ofs << " |";
             for (const auto & f: input_dependencies)
