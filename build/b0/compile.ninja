@@ -565,3 +565,4 @@ build build/b0/cook.exe: link $
 #}
     user_libs_gcc = -lcook -lgubg
     user_libs_msvc = libcook.a libgubg.a
+    library_paths_msvc =  /LIBPATH:build/b0
