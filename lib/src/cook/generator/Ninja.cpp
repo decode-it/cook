@@ -5,42 +5,43 @@
 
 namespace cook { namespace generator { 
 
-Result Ninja::set_option(const std::string & option)
-{
-    MSS_BEGIN(Result);
-    set_filename(option);
-    MSS_END();
-}
-
-bool Ninja::can_process(const Context & context) const
-{
-    return context.menu().is_valid();
-}
-
-Result Ninja::process(const Context & context)
-{
-    MSS_BEGIN(Result);
-    auto ss = log::scope("process");
-
-    std::ofstream ofs;
-    MSS(open_output_stream(context, ofs));
-
-    std::unique_ptr<std::ofstream> response_file;
-
-
-
-    std::map<cook::process::command::Ptr, std::string> command_map;
-    auto goc_command = [&](cook::process::command::Ptr ptr, std::string & cmd_name)
+    Result Ninja::set_option(const std::string & option)
     {
         MSS_BEGIN(Result);
-        auto it = command_map.find(ptr);
-        if (it == command_map.end())
-        {
-            // generate the name
-            std::string name = gubg::stream([&](auto & os) { os << ptr->type() << "_" << command_map.size(); });
+        set_filename(option);
+        MSS_END();
+    }
 
-            // add to them map
-            it = command_map.insert(std::make_pair(ptr, name)).first;
+    bool Ninja::can_process(const Context & context) const
+    {
+        return context.menu().is_valid();
+    }
+
+    Result Ninja::process(const Context & context)
+    {
+        MSS_BEGIN(Result);
+        auto ss = log::scope("process");
+
+        std::ofstream ofs;
+        MSS(open_output_stream(context, ofs));
+
+        std::unique_ptr<std::ofstream> response_file;
+        unsigned int command_counter = 0;
+
+        std::map<cook::process::command::Ptr, std::string> command_map;
+        auto goc_command = [&](cook::process::command::Ptr ptr, std::string & cmd_name)
+        {
+            MSS_BEGIN(Result);
+            auto it = command_map.find(ptr);
+            if (it != command_map.end())
+            {
+                cmd_name = it->second;
+                MSS_RETURN_OK();
+            }
+
+            // generate the name
+            cmd_name = gubg::stream([&](auto & os) { os << ptr->type() << "_" << command_counter++; });
+            bool add_to_map = true;
 
             process::command::Filenames input = { "${in}" };
             process::command::Filenames output = { "${out}" };
@@ -48,7 +49,9 @@ Result Ninja::process(const Context & context)
             // check whether we want a response file
             {
                 response_file.reset();
-                std::filesystem::path response_filename = context.dirs().temporary() / (name + "_resp");
+                std::ostringstream oss;
+                oss << cmd_name + ".resp.";
+                std::filesystem::path response_filename = context.dirs().output() / oss.str();
                 std::string resp = ptr->get_kv_part(process::toolchain::Part::Response, response_filename.string());
 
                 if (!resp.empty())
@@ -57,6 +60,8 @@ Result Ninja::process(const Context & context)
 
                     response_file = std::make_unique<std::ofstream>(resp);
                     MSS(util::open_file(response_filename, *response_file));
+
+                    add_to_map = false;
                 }
             }
 
@@ -75,7 +80,7 @@ Result Ninja::process(const Context & context)
                     ofs << "msvc_deps_prefix = Note: including file:" << std::endl;
                 }
             }
-            ofs << "rule " << name << std::endl;
+            ofs << "rule " << cmd_name << std::endl;
             {
                 //Identity translator, used to get the kv.first directly
                 process::toolchain::Translator trans = [](const std::string &k, const std::string &v){return k;};
@@ -103,121 +108,123 @@ Result Ninja::process(const Context & context)
             ofs << "   command = ";
             ptr->stream_command(ofs);
             ofs << std::endl;
-        }
 
-        cmd_name = it->second;
-        MSS_END();
-    };
+            // add to them map
+            if (add_to_map)
+                command_map[ptr] = cmd_name;
 
-    for (auto recipe: context.menu().topological_order_recipes())
-    {
-        recipe->stream();
+            MSS_END();
+        };
 
-        auto build_graph_ptr = context.menu().recipe_filtered_graph(recipe);
-        L(C(build_graph_ptr));
-        MSS(!!build_graph_ptr);
-        auto &build_graph = *build_graph_ptr;
-        process::RecipeFilteredGraph::OrderedVertices commands;
-        MSS(build_graph.topological_commands(commands));
-
-        auto ss = log::scope("commands", [&](auto & node) {
-            node.attr("size", commands.size());
-        });
-
-        for (auto vertex: commands)
+        for (auto recipe: context.menu().topological_order_recipes())
         {
+            recipe->stream();
 
-            const auto &label = build_graph[vertex];
-            auto command_ptr = std::get_if<process::build::Graph::CommandLabel>(&label);
-            MSS(!!command_ptr);
-            auto &command = *command_ptr;
+            auto build_graph_ptr = context.menu().recipe_filtered_graph(recipe);
+            L(C(build_graph_ptr));
+            MSS(!!build_graph_ptr);
+            auto &build_graph = *build_graph_ptr;
+            process::RecipeFilteredGraph::OrderedVertices commands;
+            MSS(build_graph.topological_commands(commands));
 
-            auto ss = log::scope("vertex", [&](auto & n) { n.attr("name", command->name()); });
+            auto ss = log::scope("commands", [&](auto & node) {
+                                 node.attr("size", commands.size());
+                                 });
 
-            std::list<std::filesystem::path> input_files;
+            for (auto vertex: commands)
             {
-                auto func = [&](const auto & v)
+
+                const auto &label = build_graph[vertex];
+                auto command_ptr = std::get_if<process::build::Graph::CommandLabel>(&label);
+                MSS(!!command_ptr);
+                auto &command = *command_ptr;
+
+                auto ss = log::scope("vertex", [&](auto & n) { n.attr("name", command->name()); });
+
+                std::list<std::filesystem::path> input_files;
                 {
-                    input_files.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
-                };
-                build_graph.input(func, vertex, cook::process::RecipeFilteredGraph::Explicit);
+                    auto func = [&](const auto & v)
+                    {
+                        input_files.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                    };
+                    build_graph.input(func, vertex, cook::process::RecipeFilteredGraph::Explicit);
 
-                auto ss = log::scope("inputs", [&](auto & n) {
-                    for (const auto & f: input_files)
-                        n.attr("file", f);
-                });
-            }
-
-            std::list<std::filesystem::path> input_dependencies;
-            {
-                auto func = [&](const auto & v)
-                {
-                    input_dependencies.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
-                };
-                build_graph.input(func, vertex, cook::process::RecipeFilteredGraph::Implicit);
-
-                auto ss = log::scope("implicit inputs", [&](auto & n) {
-                    for (const auto & f: input_dependencies)
-                        n.attr("file", f);
-                });
-            }
-
-            std::list<std::filesystem::path> output_files;
-            {
-                auto func = [&](const auto & v)
-                {
-                    output_files.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
-                };
-                build_graph.output(func, vertex);
-
-                auto ss = log::scope("outputs", [&](auto & n) {
-                    for (const auto & f: output_files)
-                        n.attr("file", f);
-                });
-            }
-
-            std::string build_command;
-            MSS(goc_command(command, build_command));
-            //The build basically specifies the dependency between the output and input files
-            ofs << "build";
-            auto stream_escaped = [&](const std::string &str) {
-                for (const auto ch: str)
-                {
-                    if (ch == ':' || ch == ' ')
-                        ofs << '$';
-                    ofs << ch;
+                    auto ss = log::scope("inputs", [&](auto & n) {
+                                         for (const auto & f: input_files)
+                                         n.attr("file", f);
+                                         });
                 }
-            };
-            for (const auto & f: output_files)
-            {
-                ofs << " ";
-                stream_escaped(f.string());
-            }
-            ofs << ": ";
-            stream_escaped(build_command);
-            for (const auto & f: input_files)
-            {
-                ofs << " ";
-                stream_escaped(f.string());
 
-                if (response_file)
-                    (*response_file) << "\"" << f.string() << "\"" << std::endl;
+                std::list<std::filesystem::path> input_dependencies;
+                {
+                    auto func = [&](const auto & v)
+                    {
+                        input_dependencies.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                    };
+                    build_graph.input(func, vertex, cook::process::RecipeFilteredGraph::Implicit);
+
+                    auto ss = log::scope("implicit inputs", [&](auto & n) {
+                                         for (const auto & f: input_dependencies)
+                                         n.attr("file", f);
+                                         });
+                }
+
+                std::list<std::filesystem::path> output_files;
+                {
+                    auto func = [&](const auto & v)
+                    {
+                        output_files.push_back(std::get<process::build::config::Graph::FileLabel>(build_graph[v]));
+                    };
+                    build_graph.output(func, vertex);
+
+                    auto ss = log::scope("outputs", [&](auto & n) {
+                                         for (const auto & f: output_files)
+                                         n.attr("file", f);
+                                         });
+                }
+
+                std::string build_command;
+                MSS(goc_command(command, build_command));
+                //The build basically specifies the dependency between the output and input files
+                ofs << "build";
+                auto stream_escaped = [&](const std::string &str) {
+                    for (const auto ch: str)
+                    {
+                        if (ch == ':' || ch == ' ')
+                            ofs << '$';
+                        ofs << ch;
+                    }
+                };
+                for (const auto & f: output_files)
+                {
+                    ofs << " ";
+                    stream_escaped(f.string());
+                }
+                ofs << ": ";
+                stream_escaped(build_command);
+                for (const auto & f: input_files)
+                {
+                    ofs << " ";
+                    stream_escaped(f.string());
+
+                    if (response_file)
+                        (*response_file) << "\"" << f.string() << "\"" << std::endl;
+                }
+                ofs << " |";
+                for (const auto & f: input_dependencies)
+                {
+                    ofs << " ";
+                    stream_escaped(f.string());
+                }
+                ofs << std::endl;
             }
-            ofs << " |";
-            for (const auto & f: input_dependencies)
-            {
-                ofs << " ";
-                stream_escaped(f.string());
-            }
-            ofs << std::endl;
         }
+        MSS_END();
     }
-    MSS_END();
-}
 
-std::filesystem::path Ninja::output_filename(const model::Dirs & dirs) const
-{
-    return dirs.output() / "build.ninja";
-}
+    std::filesystem::path Ninja::output_filename(const model::Dirs & dirs) const
+    {
+        return dirs.output() / "build.ninja";
+    }
 
 } } 
