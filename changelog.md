@@ -158,7 +158,9 @@ Proof-of-concept version.
 * globbing with no result yields a warning (use -v >= 2)
 
 ## 1.2.4 (open)
+
 * Support for response files for input files (by default, gcc/clang/msvc link & archive use this)
+* Update on ninja rule names
 
 ## Next
 

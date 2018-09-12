@@ -26,12 +26,14 @@ namespace cook { namespace generator {
         MSS(open_output_stream(context, ofs));
 
         std::unique_ptr<std::ofstream> response_file;
-        unsigned int command_counter = 0;
 
+        std::map<std::string, unsigned int> uri_count_map;
         std::map<cook::process::command::Ptr, std::string> command_map;
-        auto goc_command = [&](cook::process::command::Ptr ptr, std::string & cmd_name)
+        auto goc_command = [&](cook::process::command::Ptr ptr, const std::string & uri, std::string & cmd_name)
         {
             MSS_BEGIN(Result);
+
+            // do we have this command
             auto it = command_map.find(ptr);
             if (it != command_map.end())
             {
@@ -39,8 +41,10 @@ namespace cook { namespace generator {
                 MSS_RETURN_OK();
             }
 
+            unsigned int count = uri_count_map[uri]++;
+
             // generate the name
-            cmd_name = gubg::stream([&](auto & os) { os << ptr->type() << "_" << command_counter++; });
+            cmd_name = gubg::stream([&](auto & os) { os << uri << "_" << count; });
             bool add_to_map = true;
 
             process::command::Filenames input = { "${in}" };
@@ -50,7 +54,7 @@ namespace cook { namespace generator {
             {
                 response_file.reset();
                 std::ostringstream oss;
-                oss << cmd_name + ".resp.";
+                oss << cmd_name + ".resp";
                 std::filesystem::path response_filename = context.dirs().output() / oss.str();
                 std::string resp = ptr->get_kv_part(process::toolchain::Part::Response, response_filename.string());
 
@@ -184,7 +188,7 @@ namespace cook { namespace generator {
                 }
 
                 std::string build_command;
-                MSS(goc_command(command, build_command));
+                MSS(goc_command(command, recipe->uri().string(false, '_'), build_command));
                 //The build basically specifies the dependency between the output and input files
                 ofs << "build";
                 auto stream_escaped = [&](const std::string &str) {
