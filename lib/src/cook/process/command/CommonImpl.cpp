@@ -25,7 +25,7 @@ namespace cook { namespace process { namespace command {
         return trans(key, value);
     }
 
-    bool CommonImpl::stream_part(std::ostream & os, toolchain::Part part, const toolchain::Translator *trans_ptr) const 
+    bool CommonImpl::stream_part(std::ostream & os, toolchain::Part part, const toolchain::Translator *trans_ptr, const PartEscapeFunctor & functor) const 
     {
         auto kvs_it = kvm_.find(part);
         if (kvs_it == kvm_.end())
@@ -43,17 +43,20 @@ namespace cook { namespace process { namespace command {
             {
                 if (!skip_space())
                     os << ' ';
-                os << str;
+                if (functor)
+                    os << functor(part, str);
+                else
+                    os << str;
             }
         }
         return true;
     }
-    void CommonImpl::stream_command(std::ostream & os) const 
+    void CommonImpl::stream_command(std::ostream & os, const PartEscapeFunctor & functor) const 
     {
 
         auto lambda = [&](toolchain::Part part) 
         { 
-            if (stream_part(os, part)) 
+            if (stream_part(os, part, nullptr, functor)) 
                 os << ' '; 
         };
         toolchain::each_part(lambda);

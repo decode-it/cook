@@ -15,6 +15,8 @@ namespace cook { namespace process { namespace command {
     class Interface
     {
     public:
+        using PartEscapeFunctor = std::function<std::string (toolchain::Part, const std::string &)>;
+        
         enum Type {
             Compile,
             Archive,
@@ -28,9 +30,9 @@ namespace cook { namespace process { namespace command {
         virtual Type type() const = 0;
 
         virtual void set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) = 0;
-        virtual bool stream_part(std::ostream &, toolchain::Part, const toolchain::Translator * = nullptr) const = 0;
+        virtual bool stream_part(std::ostream &, toolchain::Part, const toolchain::Translator * = nullptr, const PartEscapeFunctor & functor = PartEscapeFunctor()) const = 0;
         virtual std::string get_kv_part(toolchain::Part part, const std::string & key, const std::string & value = std::string(), toolchain::Translator * trans_ptr = nullptr) const = 0;
-        virtual void stream_command(std::ostream &) const = 0;
+        virtual void stream_command(std::ostream &, const PartEscapeFunctor & functor = PartEscapeFunctor()) const = 0;
         virtual Result process() = 0;
 
         virtual void set_recipe_uri(const std::string &uri) {recipe_uri_ = uri;}

@@ -17,6 +17,20 @@ namespace cook { namespace generator {
         return context.menu().is_valid();
     }
 
+    namespace {
+        std::string escape_ninja(const std::string & str)
+        {
+            std::string res;
+            for (const auto ch: str)
+            {
+                if (ch == ':' || ch == ' ')
+                    res += '$';
+                res += ch;
+            }
+            return res;
+        }
+    }
+
     Result Ninja::process(const Context & context)
     {
         MSS_BEGIN(Result);
@@ -110,7 +124,12 @@ namespace cook { namespace generator {
                 }
             }
             ofs << "   command = ";
-            ptr->stream_command(ofs);
+
+            auto escape = [](process::toolchain::Part p, const std::string & str)
+            {
+                return escape_ninja(str);
+            };
+            ptr->stream_command(ofs, escape);
             ofs << std::endl;
 
             // add to them map
@@ -192,12 +211,7 @@ namespace cook { namespace generator {
                 //The build basically specifies the dependency between the output and input files
                 ofs << "build";
                 auto stream_escaped = [&](const std::string &str) {
-                    for (const auto ch: str)
-                    {
-                        if (ch == ':' || ch == ' ')
-                            ofs << '$';
-                        ofs << ch;
-                    }
+                    ofs << escape_ninja(str);
                 };
                 for (const auto & f: output_files)
                 {
