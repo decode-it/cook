@@ -157,10 +157,13 @@ Proof-of-concept version.
 * debug does not imply rtc by default (use -T rtc)
 * globbing with no result yields a warning (use -v >= 2)
 
-## 1.2.4 (open)
+## 1.2.4
 
 * Support for response files for input files (by default, gcc/clang/msvc link & archive use this)
 * Update on ninja rule names
+
+## 1.2.5
+
 * Add quotes around include paths in the msvc toolchain file.
 
 ## Next
