@@ -164,7 +164,7 @@ Proof-of-concept version.
 
 ## 1.2.5
 
-* Add quotes around include paths in the msvc toolchain file.
+* Add quotes around all files in msvc, gcc and clang toolchain files.
 
 ## Next
 
