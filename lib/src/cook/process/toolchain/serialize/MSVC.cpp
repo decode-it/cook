@@ -61,7 +61,7 @@ for( lang : [Language.C, Language.CXX, Language.ASM, Language.Resource]) {
     tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.Deps]           = fun(k,v) { return "/showIncludes" }
     tm[Part.Define]         = fun(k,v) { if (v.empty) { return "/D${k}" } else { return "/D${k}=${v}" } }
-    tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "/I./" } else { return "/I${k}" } }
+    tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "/I./" } else { return "/I\"${k}\"" } }
     tm[Part.ForceInclude]   = fun(k,v) { return "/FI${k}" }
     tm[Part.Resource]       = fun(k,v) { return "" }
 
