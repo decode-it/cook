@@ -19,6 +19,8 @@ namespace cook { namespace process { namespace command {
         void stream_command(std::ostream & os, const PartEscapeFunctor & functor = PartEscapeFunctor()) const override;
 
     protected:
+        static std::string escape_spaces(const std::string & str);
+        
         toolchain::KeyValuesMap kvm_;
         toolchain::TranslatorMapPtr trans_;
         const Language language_;

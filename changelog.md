@@ -166,6 +166,10 @@ Proof-of-concept version.
 
 * Add quotes around all files in msvc, gcc and clang toolchain files.
 
+## 1.2.6
+
+* Quotes are no longer in toolchain files, but inside commands.
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements

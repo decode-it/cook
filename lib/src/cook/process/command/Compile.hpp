@@ -26,13 +26,13 @@ namespace cook { namespace process { namespace command {
                     auto &inputs = kvm_[toolchain::Part::Resource];
                     inputs.clear();
                     for (const auto &fn: input_files)
-                        inputs.emplace_back(fn.string(), "");
+                        inputs.emplace_back(escape_spaces(fn.string()), "");
                 }
                 {
                     auto &outputs = kvm_[toolchain::Part::Output];
                     outputs.clear();
                     for (const auto &fn: output_files)
-                        outputs.emplace_back(fn.string(), "");
+                        outputs.emplace_back(escape_spaces(fn.string()), "");
                 }
             }
             else
@@ -47,7 +47,7 @@ namespace cook { namespace process { namespace command {
                     for (const auto &p: outputs)
                     {
                         auto fn = p.first+".d";
-                        depfiles.emplace_back(fn, "");
+                        depfiles.emplace_back(escape_spaces(fn), "");
                     }
                 }
             }
@@ -59,13 +59,14 @@ namespace cook { namespace process { namespace command {
             kvm_[toolchain::Part::Define].emplace_back(name, value);
         }
         void add_define(const std::string & name) { add_define(name, ""); }
+
         void add_include_path(const std::filesystem::path & path)
         {
-            kvm_[toolchain::Part::IncludePath].emplace_back(path.string(), "");
+            kvm_[toolchain::Part::IncludePath].emplace_back(escape_spaces(path.string()), "");
         }
         void add_force_include(const std::filesystem::path & path)
         {
-            kvm_[toolchain::Part::ForceInclude].emplace_back(path.string(), "");
+            kvm_[toolchain::Part::ForceInclude].emplace_back(escape_spaces(path.string()), "");
         }
     };
 

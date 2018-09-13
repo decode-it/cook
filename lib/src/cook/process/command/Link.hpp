@@ -25,7 +25,7 @@ namespace cook { namespace process { namespace command {
         }
         void add_library_path(const std::filesystem::path & path)
         {
-            kvm_[toolchain::Part::LibraryPath].emplace_back(path.string(), "");
+            kvm_[toolchain::Part::LibraryPath].emplace_back(escape_spaces(path.string()), "");
         }
         void add_framework(const std::string & name)
         {
@@ -33,11 +33,11 @@ namespace cook { namespace process { namespace command {
         }
         void add_framework_path(const std::filesystem::path & path)
         {
-            kvm_[toolchain::Part::FrameworkPath].emplace_back(path.string(), "");
+            kvm_[toolchain::Part::FrameworkPath].emplace_back(escape_spaces(path.string()), "");
         }
-        void add_export(const std::string & name)
+        void add_export(const std::filesystem::path & path)
         {
-            kvm_[toolchain::Part::Export].emplace_back(name, "");
+            kvm_[toolchain::Part::Export].emplace_back(escape_spaces(path.string()), "");
         }
     };
 

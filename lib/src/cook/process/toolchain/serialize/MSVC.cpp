@@ -57,12 +57,12 @@ for( lang : [Language.C, Language.CXX, Language.ASM, Language.Resource]) {
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return "/${k}" } else { return "/${k}:${v}" } }
     tm[Part.Runtime]        = fun(k,v) { return "/${k}" }
-    tm[Part.Output]         = fun(k,v) { return "/Fo\"${k}\"" }
-    tm[Part.Input]          = fun(k,v) { return \"k\" }
+    tm[Part.Output]         = fun(k,v) { return "/Fo${k}" }
+    tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.Deps]           = fun(k,v) { return "/showIncludes" }
     tm[Part.Define]         = fun(k,v) { if (v.empty) { return "/D${k}" } else { return "/D${k}=${v}" } }
-    tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "/I./" } else { return "/I\"${k}\"" } }
-    tm[Part.ForceInclude]   = fun(k,v) { return "/FI\"${k}\"" }
+    tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "/I./" } else { return "/I${k}" } }
+    tm[Part.ForceInclude]   = fun(k,v) { return "/FI${k}" }
     tm[Part.Resource]       = fun(k,v) { return "" }
 
     if (lang == Language.C) {
@@ -93,9 +93,9 @@ for( lang : [Language.C, Language.CXX, Language.ASM, Language.Resource]) {
 
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { return k }
-    tm[Part.Response]       = fun(k,v) { return "@\"${k}\"" }
-    tm[Part.Output]         = fun(k,v) { return "/OUT:\"${k}\"" }
-    tm[Part.Input]          = fun(k,v) { return ""\"${k}\"" }
+    tm[Part.Response]       = fun(k,v) { return "@${k}" }
+    tm[Part.Output]         = fun(k,v) { return "/OUT:${k}" }
+    tm[Part.Input]          = fun(k,v) { return k }
 
     kv.append(Part.Cli, "lib")
 }
@@ -107,11 +107,11 @@ for(s : [TargetType.Executable, TargetType.SharedLibrary]){
 
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return "/${k}" } else { return "/${k}:${v}" } }
-    tm[Part.Response]       = fun(k,v) { return "@\"${k}\"" }
-    tm[Part.Output]         = fun(k,v) { return "/OUT:\"${k}\"" }
-    tm[Part.Input]          = fun(k,v) { return "\"${k}\"" }
-    tm[Part.Library]        = fun(k,v) { return "\"${k}.lib\"" }
-    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return "/LIBPATH:./" } else { return "/LIBPATH:\"${k}\"" } }
+    tm[Part.Response]       = fun(k,v) { return "@${k}" }
+    tm[Part.Output]         = fun(k,v) { return "/OUT:${k}" }
+    tm[Part.Input]          = fun(k,v) { return "${k}" }
+    tm[Part.Library]        = fun(k,v) { return "${k}.lib" }
+    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return "/LIBPATH:./" } else { return "/LIBPATH:${k}" } }
     
     kv.append(Part.Cli, "link")
     if (s == TargetType.SharedLibrary){

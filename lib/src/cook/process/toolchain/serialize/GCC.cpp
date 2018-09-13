@@ -119,11 +119,11 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return "${k}=${v}" } }
     tm[Part.Runtime]        = fun(k,v) { return k }
-    tm[Part.Output]         = fun(k,v) { return "-o \"${k}\"" }
-    tm[Part.Input]          = fun(k,v) { return "\"${k}\"" }
-    tm[Part.DepFile]        = fun(k,v) { return "-MMD -MF \"${k}\"" }
+    tm[Part.Output]         = fun(k,v) { return "-o ${k}" }
+    tm[Part.Input]          = fun(k,v) { return k }
+    tm[Part.DepFile]        = fun(k,v) { return "-MMD -MF ${k}" }
     tm[Part.Define]         = fun(k,v) { if (v.empty) { return "-D${k}" } else { return "-D${k}=${v}" } }
-    tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "-I./" } else { return "-I\"${k}\"" } }
+    tm[Part.IncludePath]    = fun(k,v) { if (k.empty) { return "-I./" } else { return "-I${k}" } }
     tm[Part.ForceInclude]   = fun(k,v) { return "-include ${k}" }
 
 )%";
@@ -151,15 +151,15 @@ for(s : [TargetType.SharedLibrary, TargetType.Executable]){
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { if (v.empty) { return k } else { return "${k}=${v}" } }
     tm[Part.Runtime]        = fun(k,v) { return k }
-    tm[Part.Response]       = fun(k,v) { return "@\"${k}\"" }
-    tm[Part.Output]         = fun(k,v) { return "-o \"${k}\"" }
-    tm[Part.Input]          = fun(k,v) { return "\"${k}\"" }
+    tm[Part.Response]       = fun(k,v) { return "@${k}" }
+    tm[Part.Output]         = fun(k,v) { return "-o ${k}" }
+    tm[Part.Input]          = fun(k,v) { return k }
     tm[Part.Library]        = fun(k,v) { return "-l${k}" }
-    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return "-L./" } else { return "-L\"${k}\"" } }
-    tm[Part.ForceInclude]   = fun(k,v) { return "-include \"${k}\"" }
+    tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return "-L./" } else { return "-L${k}" } }
+    tm[Part.ForceInclude]   = fun(k,v) { return "-include ${k}" }
     if(my(OS) == OS.MacOS) {
-        tm[Part.Framework]      = fun(k,v) { return "-framework \"${k}\"" }
-        tm[Part.FrameworkPath]  = fun(k,v) { if (k.empty) { return "-F./" } else { return "-F\"${k}\"" } }
+        tm[Part.Framework]      = fun(k,v) { return "-framework ${k}" }
+        tm[Part.FrameworkPath]  = fun(k,v) { if (k.empty) { return "-F./" } else { return "-F${k}" } }
     }
 )%";
             oss << "    kv.append(Part.Cli, \"" << linker << "\")" << std::endl;
@@ -178,9 +178,9 @@ oss << R"%(
 oss << R"%(
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { return k }
-    tm[Part.Response]       = fun(k,v) { return "@\"${k}\"" }
-    tm[Part.Output]         = fun(k,v) { return "\"${k}\"" }
-    tm[Part.Input]          = fun(k,v) { return "\"${k}\"" }
+    tm[Part.Response]       = fun(k,v) { return "@${k}" }
+    tm[Part.Output]         = fun(k,v) { return k }
+    tm[Part.Input]          = fun(k,v) { return k }
     if (my(OS) == OS.MacOS) {
         kv.append(Part.Pre, "crs")
     } else {

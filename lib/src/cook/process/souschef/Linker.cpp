@@ -181,7 +181,7 @@ Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, co
 
     // set the export files
     for(const ingredient::File & exp: recipe.files().range(LanguageTypePair(Language::Definition, Type::Export)))
-        lp->add_export(gubg::filesystem::combine({adj, exp.dir(), exp.rel()}).string());
+        lp->add_export(gubg::filesystem::combine({adj, exp.dir(), exp.rel()}));
 
     lp->set_recipe_uri(recipe.uri().string());
     ptr = lp;

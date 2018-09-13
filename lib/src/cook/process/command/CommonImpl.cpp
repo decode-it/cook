@@ -10,13 +10,13 @@ namespace cook { namespace process { namespace command {
             auto &inputs = kvm_[toolchain::Part::Input];
             inputs.clear();
             for (const auto &fn: input_files)
-                inputs.emplace_back(fn.string(), "");
+                inputs.emplace_back(escape_spaces(fn.string()), "");
         }
         {
             auto &outputs = kvm_[toolchain::Part::Output];
             outputs.clear();
             for (const auto &fn: output_files)
-                outputs.emplace_back(fn.string(), "");
+                outputs.emplace_back(escape_spaces(fn.string()), "");
         }
     }
     std::string CommonImpl::get_kv_part(toolchain::Part part, const std::string & key, const std::string & value, toolchain::Translator * trans_ptr) const
@@ -60,6 +60,16 @@ namespace cook { namespace process { namespace command {
                 os << ' '; 
         };
         toolchain::each_part(lambda);
+    }
+    
+    std::string CommonImpl::escape_spaces(const std::string & str)
+    {
+        if (str.find_first_of(' ') == std::string::npos)
+            return str;
+
+        std::string res(str.size() + 2, '\"');
+        std::copy(str.begin(), str.end(), res.begin()+1);
+        return res;
     }
 
 } } } 
