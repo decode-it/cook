@@ -161,6 +161,7 @@ Proof-of-concept version.
 
 * Support for response files for input files (by default, gcc/clang/msvc link & archive use this)
 * Update on ninja rule names
+* Add quotes around include paths in the msvc toolchain file.
 
 ## Next
 
