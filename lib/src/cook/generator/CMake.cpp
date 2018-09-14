@@ -234,7 +234,7 @@ Result CMake::process(const Context & context)
 
     std::ofstream & ofs = *root;
     const auto & recipe_list = context.menu().topological_order_recipes();
-    ofs << "cmake_minimum_required (VERSION 3.1)" << std::endl;
+    ofs << "cmake_minimum_required (VERSION 3.12)" << std::endl;
 
     {
         std::string name = context.project_name();

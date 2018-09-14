@@ -170,6 +170,10 @@ Proof-of-concept version.
 
 * Quotes are no longer in toolchain files, but inside commands.
 
+## 1.2.7
+
+* `cmake_minimum_required` is now version 3.12 (from 3.1), which is needed for the `SHELL:` prefix in `target_compile_options()`
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements
