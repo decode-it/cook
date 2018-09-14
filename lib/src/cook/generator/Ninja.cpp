@@ -220,13 +220,19 @@ namespace cook { namespace generator {
                 }
                 ofs << ": ";
                 stream_escaped(build_command);
-                for (const auto & f: input_files)
+                //Emile: This is a workaround for 1 specific problem on windows:
+                //To build with mfc properly, the translation units (.obj) containing
+                //stdafx.h need to be linked first, otherwise we have a
+                //duplicate dllmain() definition.
+                //I noticed that the recipe's own object files were always
+                //last, so I reversed the order here.
+                for (auto f = input_files.rbegin(); f != input_files.rend(); ++f)
                 {
                     ofs << " ";
-                    stream_escaped(f.string());
+                    stream_escaped(f->string());
 
                     if (response_file)
-                        (*response_file) << "\"" << f.string() << "\"" << std::endl;
+                        (*response_file) << "\"" << f->string() << "\"" << std::endl;
                 }
                 ofs << " |";
                 for (const auto & f: input_dependencies)
