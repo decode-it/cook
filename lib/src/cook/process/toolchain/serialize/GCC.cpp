@@ -178,7 +178,9 @@ oss << R"%(
 oss << R"%(
     tm[Part.Cli]            = fun(k,v) { return k }
     tm[Part.Pre]            = fun(k,v) { return k }
-    tm[Part.Response]       = fun(k,v) { return "@${k}" }
+    if (my(OS) != OS.MacOS) {
+        tm[Part.Response]       = fun(k,v) { return "@${k}" }
+    }
     tm[Part.Output]         = fun(k,v) { return k }
     tm[Part.Input]          = fun(k,v) { return k }
     if (my(OS) == OS.MacOS) {
