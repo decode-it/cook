@@ -173,6 +173,7 @@ Proof-of-concept version.
 ## 1.2.7
 
 * `cmake_minimum_required` is now version 3.12 (from 3.1), which is needed for the `SHELL:` prefix in `target_compile_options()`
+* Don't use /MD(d) option when compiler is msvc rc (Resource)
 
 ## Next
 

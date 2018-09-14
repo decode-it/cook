@@ -14,7 +14,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
     if (false) {
     } else if (e.element_type == ElementType.Compile) {
         if (false) {
-        } else if (k == "debug_symbols" && v == "true") {
+        } else if (k == "debug_symbols" && v == "true" && e.language != Language.Resource) {
             kv.append(Part.Pre, "Zi")
             tm[Part.Runtime] = fun(k,v) { return "/${k}d" }
         } else if (k == "optimization" && v == "max_speed") {
