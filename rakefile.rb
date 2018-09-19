@@ -41,13 +41,37 @@ gubg_submods = %w[build std math io algo chaiscript].map{|e| "extern/gubg.#{e}"}
 cook_submods = %w[releases doc/sphinx/sphinx-chai]
 all_submods = gubg_submods + cook_submods
 
-desc "Prepare the submods"
-task :prepare do
-    GUBG::each_submod(submods: gubg_submods) do |info|
-        sh "rake prepare"
+namespace :gubg do
+    task :prepare do
+        GUBG::each_submod(submods: gubg_submods) { |info| sh "rake prepare" }
+    end
+    task :clean do
+        GUBG::each_submod(submods: gubg_submods) { |info| sh "rake clean" }
+    end
+    task :proper do
+        GUBG::each_submod(submods: gubg_submods) { |info| sh "rake proper" }
     end
 end
-task :run
+
+desc "Prepare the submods"
+task :prepare do
+    Rake::Task["gubg:prepare"].invoke
+end
+
+desc "Clean"
+task :clean do
+    rm(FileList.new("**/*.obj"))
+    rm(FileList.new("*.exe"))
+    rm_f(FileList.new("compile_commands.json"))
+    Rake::Task["b0:clean"].invoke
+    Rake::Task["b1:clean"].invoke
+    Rake::Task["gubg:clean"].invoke
+end
+
+desc "Proper"
+task :proper do
+    Rake::Task["gubg:proper"].invoke
+end
 
 desc "Update all to head"
 task :uth do
@@ -59,7 +83,7 @@ task :uth do
 end
 
 task :update => :uth
-    
+
 $b0_build_dir   = "build/b0"
 $b0_tmp         = ".b0"
 $b0_ut          = File.join($b0_build_dir, "unit_tests.exe")
@@ -132,11 +156,11 @@ end
 namespace :b1 do
     tmp_base = ".cook/b1"
 
-#    desc "bootstrap-level1: Build and run the unit tests"
-#    task :ut do
-#        sh("#{ninja_exe} -f #{b0_ninja_fn} -v unit_tests.exe")
-#        sh("./unit_tests.exe -a -d yes")
-#    end
+    #    desc "bootstrap-level1: Build and run the unit tests"
+    #    task :ut do
+    #        sh("#{ninja_exe} -f #{b0_ninja_fn} -v unit_tests.exe")
+    #        sh("./unit_tests.exe -a -d yes")
+    #    end
 
     toolchain_options = {"c++.std" => 17, "c++.runtime" => "static", "release" => nil}
     case GUBG::os
@@ -207,20 +231,11 @@ task :build => "b1:build" do
     cp $b1_cook, "cook.exe"
 end
 
-desc "Clean"
-task :clean do
-    rm(FileList.new("**/*.obj"))
-    rm(FileList.new("*.exe"))
-    rm_f(FileList.new("compile_commands.json"))
-    Rake::Task["b0:clean"].invoke
-    Rake::Task["b1:clean"].invoke
-end
-
 def release_filename()
-        case GUBG::os
-        when :linux, :macos then "cook"
-        when :windows then "cook.exe"
-        end
+    case GUBG::os
+    when :linux, :macos then "cook"
+    when :windows then "cook.exe"
+    end
 end
 
 desc "Install"
