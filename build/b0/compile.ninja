@@ -271,6 +271,8 @@ build .b0/extern/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj: compile extern
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/hash/MD5_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/markup/Node_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/markup/Node_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/naft/Document_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/naft/Reader_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/naft/Reader_tests.cpp
@@ -518,6 +520,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/file/Filesystem_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/markup/Node_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/naft/Reader_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp.obj $

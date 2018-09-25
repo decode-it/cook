@@ -87,6 +87,17 @@ namespace cook { namespace generator { namespace {
 
         for (const model::Recipe * recipe : context.menu().topological_order_recipes())
         {
+            bool has_object_deps = false;
+            for(const auto * dep : recipe->dependencies())
+            {
+                auto it = map.find(dep);
+                MSS(it != map.end());
+                const CMake::RecipeInfo & dep_info = it->second;
+
+                has_object_deps = has_object_deps || !dep_info.object_recipes_.empty();
+            }
+
+
             bool has_sources = contains_sources(*recipe, map);
             CMake::RecipeInfo & info  = map[recipe];
             info.links_away_objects = info.links_away_libraries = false;
@@ -121,7 +132,8 @@ namespace cook { namespace generator { namespace {
                     break;
 
                 case TargetType::Archive:
-                    info.type = has_sources ? CMakeType::StaticLibrary : CMakeType::Interface;
+                    
+                    info.type = has_sources || has_object_deps ? CMakeType::StaticLibrary : CMakeType::Interface;
                     info.links_away_objects = true;
                     break;
 
