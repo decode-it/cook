@@ -177,6 +177,10 @@ Proof-of-concept version.
 * Reverse the order of object files in the response file
 * CMake: Archive from objects only possible
 
+## 1.2.8
+
+* Chaiscript File.open() works in binary mode now
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements
