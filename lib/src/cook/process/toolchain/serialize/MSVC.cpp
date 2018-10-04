@@ -33,6 +33,8 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         }
     } else if (e.element_type == ElementType.Link) {
         if (false) {
+        } else if (k == "debug_symbols" && v == "true") {
+            kv.append(Part.Pre, "DEBUG")
         } else {
             return false
         }

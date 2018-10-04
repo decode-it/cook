@@ -181,6 +181,10 @@ Proof-of-concept version.
 
 * Chaiscript File.open() works in binary mode now
 
+## 1.2.9
+
+* MSVC fix: added the `/DEBUG` flag during linking to allow actual debugging in debug mode
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements
