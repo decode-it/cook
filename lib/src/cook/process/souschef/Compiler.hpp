@@ -3,6 +3,7 @@
 
 #include "cook/process/souschef/Interface.hpp"
 #include "cook/process/command/Interface.hpp"
+#include "cook/process/toolchain/Element.hpp"
 #include "gubg/stream.hpp"
 
 namespace cook { namespace process { namespace souschef {
@@ -17,7 +18,7 @@ public:
 
 private:
     ingredient::File construct_object_file(const ingredient::File & source, model::Recipe &recipe, const Context &context) const;
-    Result compile_command_(command::Ptr &, const model::Recipe &recipe, const Context & context) const;
+    Result compile_command_(command::Ptr &, const model::Recipe &recipe, const toolchain::Element &element) const;
 
     Language language_;
 };

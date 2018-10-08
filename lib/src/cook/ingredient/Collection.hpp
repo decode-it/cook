@@ -41,6 +41,7 @@ namespace cook { namespace ingredient {
         }
 
         std::size_t size() const { return ingredients_.size(); }
+        bool empty() const {return ingredients_.empty();}
 
     private:
         template <typename It>

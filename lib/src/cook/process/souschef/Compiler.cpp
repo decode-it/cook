@@ -25,12 +25,22 @@ Result Compiler::process(model::Recipe & recipe, RecipeFilteredGraph & file_comm
         file.set_propagation(Propagation::Private);
 
     auto it = files.find(LanguageTypePair(language_, Type::Source));
-    if (it == files.end())
+    if (it == files.end() || it->second.empty())
         MSS_RETURN_OK();
     L("Found source files for " << language_);
 
+    auto element_ptr = context.toolchain().element(toolchain::Element::Compile, language_, TargetType::Object);
+    if (!element_ptr)
+    {
+        std::ostringstream oss;
+        for (const ingredient::File & source : it->second)
+            oss << std::endl << " * " << source;
+        MSG_MSS(false, Error, "Could not find the toolchain compile element for language \"" << language_ << "\", either add such an element, or remove all files using this language:" << oss.str());
+    }
+    auto &element = *element_ptr;
+
     command::Ptr cc;
-    MSG_MSS(compile_command_(cc, recipe, context), Error, "Could not create compile command");
+    MSG_MSS(compile_command_(cc, recipe, element), Error, "Could not create compile command");
 
     for (const ingredient::File & source : it->second)
     {
@@ -85,17 +95,15 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
     return object;
 }
 
-Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recipe, const Context & context) const
+Result Compiler::compile_command_(command::Ptr &ptr, const model::Recipe & recipe, const toolchain::Element &element) const
 {
     MSS_BEGIN(Result);
-    auto adj = util::get_from_to_path("./", recipe);
 
-    auto element = context.toolchain().element(toolchain::Element::Compile, language_, TargetType::Object);
-    MSG_MSS(!!element, Error, "Could not find the toolchain compile element for " << language_);
-    auto cp = element->create<process::command::Compile>();
+    auto cp = element.create<process::command::Compile>();
     MSS(!!cp);
 
     // add the include paths
+    auto adj = util::get_from_to_path("./", recipe);
     for (const ingredient::File & f : recipe.files().range(LanguageTypePair(Language::Undefined, Type::IncludePath)))
         cp->add_include_path(gubg::filesystem::combine(adj, f.dir()));
 
