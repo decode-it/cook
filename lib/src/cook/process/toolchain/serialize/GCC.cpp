@@ -37,6 +37,11 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         } else if (k == "arch" && v == "arm64") {
             kv.append(Part.Pre, "-arch arm64")
             b.add_config("position_independent_code", "true")
+        } else if (k == "arch" && v == "a53") {
+            kv.append(Part.Pre, "-mcpu", "cortex-a53")
+            kv.append(Part.Pre, "-mfpu", "auto")
+            kv.append(Part.Pre, "-funsafe-math-optimizations")
+            kv.append(Part.Pre, "-ftree-vectorize")
         } else if (k == "position_independent_code" && v == "true") {
             kv.append(Part.Pre, "-fPIC"))%";
         if (gcc_variant == GCCVariant::Genuine)
@@ -56,6 +61,8 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             kv.append(Part.Pre, "-std", "c++${v}")
         } else if (k == "c.std" && e.language == Language.ObjectiveC) {
             kv.append(Part.Pre, "-std", "c${v}")
+        } else if (k == "sysroot") {
+            kv.append(Part.Pre, "--sysroot", v)
         } else {
             return false;
         }

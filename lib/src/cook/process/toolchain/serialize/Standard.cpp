@@ -52,7 +52,7 @@ cook.toolchain.configure(1, "single key translations", fun(e,k,v,b) {
     }
 
     if (false) {
-    } else if (k == "x86" || k == "x64" || k == "armv7" || k == "arm64") {
+    } else if (k == "x86" || k == "x64" || k == "armv7" || k == "arm64" || k == "a53" || k == "a5") {
         b.add_config("arch", k);
     } else if (k == "x32") {
         b.add_config("x86")

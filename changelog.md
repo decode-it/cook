@@ -185,6 +185,8 @@ Proof-of-concept version.
 
 * MSVC fix: added the `/DEBUG` flag during linking to allow actual debugging in debug mode
 * When a compile toolchain element is missing, cook will now report what source files are actually requiring this language support.
+* Added gcc support for sysroot
+* Added gcc support for a53
 
 ## Next
 

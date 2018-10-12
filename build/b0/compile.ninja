@@ -307,8 +307,6 @@ build .b0/extern/gubg.algo/test/src/gubg/graph/NPartite_tests.cpp.obj: compile e
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/extern/gubg.algo/test/src/gubg/network/DAG_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/network/DAG_tests.cpp
-    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/pid/Controller_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/pid/Controller_tests.cpp
@@ -538,7 +536,6 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/graph/Graph_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/graph/NPartite_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/graph/TopologicalSort_tests.cpp.obj $
-    .b0/extern/gubg.algo/test/src/gubg/network/DAG_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/optimization/SCG_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/pid/Controller_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj $
