@@ -26,7 +26,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             kv.append(Part.Pre, "-fsanitize", "address")
             kv.append(Part.Pre, "-fno-omit-frame-pointer")
         } else if (k == "config" && v == "profile") {
-            kv.append(Part.Pre, "-g")
+            kv.append(Part.Pre, "-pg")
         } else if (k == "arch" && v == "x86") {
             kv.append(Part.Pre, "-m32")
         } else if (k == "arch" && v == "x64") {

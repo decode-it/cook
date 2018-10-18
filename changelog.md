@@ -187,6 +187,7 @@ Proof-of-concept version.
 * When a compile toolchain element is missing, cook will now report what source files are actually requiring this language support.
 * Added gcc support for sysroot
 * Added gcc support for a53
+* Fixed bug in gcc toolchain: enabling profiling via `-T profile` resulted in `-g` compilation flag iso `-pg`.
 
 ## Next
 
