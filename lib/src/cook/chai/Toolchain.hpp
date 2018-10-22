@@ -19,6 +19,7 @@ namespace cook { namespace chai {
         using ConfigurationBoard = process::toolchain::ConfigurationBoard;
         using ConfigurationCallback = std::function<bool (ToolchainElement, const std::string &, const std::string &, ConfigurationBoard &)>;
         using PrimaryNameFunctor = std::function<std::string (Recipe)>;
+        using IntermediaryNameFunctor = std::function<std::string (const std::string &, const Flags &, const Flags &, ElementType )>;
 
         Toolchain(Manager * manager, const Context * context);
 
@@ -42,6 +43,7 @@ namespace cook { namespace chai {
         bool remove_config_2(const std::string & key, const std::string & value);
 
         void set_primary_name_functor(const PrimaryNameFunctor & functor);
+        void set_intermediary_name_functor(const IntermediaryNameFunctor & functor);
 
     private:
         Result check_language_(const Flags & language);

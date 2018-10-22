@@ -73,11 +73,30 @@ namespace cook { namespace process { namespace toolchain {
 
             return std::filesystem::path(oss.str());
         }
+
+        std::filesystem::path intermediary_namer(const std::filesystem::path & file, const LanguageTypePair & src, const LanguageTypePair & dst, Element::Type type)
+        {
+            switch(type)
+            {
+                case Element::Compile:
+                    if (src.language == Language::Resource && dst.type == Type::Object)
+                        return file.string() + ".res";
+                    else if (dst.type == Type::Object)
+                        return file.string() + ".obj";
+                    break;
+
+
+                default:
+                    break;
+            }
+            return file;
+        }
     }
 
 
-    Manager::Manager()
-    : primary_target_functor_(get_os() == OS::Windows ? windows_namer : linux_namer)
+    Manager::Manager(): 
+        primary_target_functor_(get_os() == OS::Windows ? windows_namer : linux_namer),
+        intermediary_name_(intermediary_namer)
     {
     }
 
@@ -233,12 +252,22 @@ namespace cook { namespace process { namespace toolchain {
         primary_target_functor_ = functor;
     }
 
+    void Manager::set_intermediary_name_functor(const IntermediaryName & functor)
+    {
+        intermediary_name_ = functor;
+    }
+
     std::filesystem::path Manager::get_primary_target(const model::Recipe & recipe) const
     {
         if (!primary_target_functor_)
             return std::filesystem::path();
 
         return primary_target_functor_(recipe);
+    }
+        
+    std::filesystem::path Manager::intermediary_name(const std::filesystem::path & file, const LanguageTypePair & src, const LanguageTypePair & dst, Element::Type element_type) const
+    {
+        return intermediary_name_(file, src, dst, element_type);
     }
 
 } } } 

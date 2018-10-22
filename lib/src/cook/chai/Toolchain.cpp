@@ -111,4 +111,16 @@ namespace cook { namespace chai {
             };
             manager_->set_primary_target_functor(lambda);
         }
+        
+        void Toolchain::set_intermediary_name_functor(const IntermediaryNameFunctor & functor)
+        {
+            auto lambda = [=](const std::filesystem::path & path, const LanguageTypePair & src, const LanguageTypePair & dst, ElementType type)
+            {
+                auto flags_src = Flags(src.language) | src.type;
+                auto flags_dst = Flags(dst.language) | dst.type;
+
+                return functor(path.string(), flags_src, flags_dst, type);
+            };
+            manager_->set_intermediary_name_functor(lambda);
+        }
 } }

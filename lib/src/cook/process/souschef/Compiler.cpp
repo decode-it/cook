@@ -82,9 +82,7 @@ ingredient::File Compiler::construct_object_file(const ingredient::File & source
     }
 
     std::filesystem::path dir = util::get_from_to_path(recipe, p);
-
-    const auto extension = (language_ == Language::Resource ? ".res" : ".obj");
-    const std::filesystem::path rel = source.rel().string() + extension;
+    const std::filesystem::path rel = context.toolchain().intermediary_name(source.rel(), LanguageTypePair(language_, Type::Source), LanguageTypePair(Language::Binary, Type::Object), process::toolchain::Element::Compile);
 
     ingredient::File object(dir, rel);
     object.set_content(Content::Generated);

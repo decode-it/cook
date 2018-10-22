@@ -15,6 +15,7 @@ namespace cook { namespace process { namespace toolchain {
     {
     public:
         using NameFunctor = std::function<std::filesystem::path (const model::Recipe &)>;
+        using IntermediaryName = std::function<std::filesystem::path (const std::filesystem::path &, const LanguageTypePair &, const LanguageTypePair, Element::Type)>;
         
         Manager();
 
@@ -45,7 +46,10 @@ namespace cook { namespace process { namespace toolchain {
 
         const NameFunctor & primary_target_functor() const;
         void set_primary_target_functor(const NameFunctor & functor);
+        void set_intermediary_name_functor(const IntermediaryName & functor);
         std::filesystem::path get_primary_target(const model::Recipe & recipe) const;
+
+        std::filesystem::path intermediary_name(const std::filesystem::path & file, const LanguageTypePair & src, const LanguageTypePair & dst, Element::Type element_type) const;
 
 
     private:
@@ -79,6 +83,7 @@ namespace cook { namespace process { namespace toolchain {
         std::map<Key, Element::Ptr> elements_;
         ConfigurationBoard board_;
         NameFunctor primary_target_functor_;
+        IntermediaryName intermediary_name_;
     };
 
 } } } 

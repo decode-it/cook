@@ -189,6 +189,9 @@ Proof-of-concept version.
 * Added gcc support for a53
 * Fixed bug in gcc toolchain: enabling profiling via `-T profile` resulted in `-g` compilation flag iso `-pg`.
 
+## 1.2.10
+* Toolchain has a `set_intermediary_namer` function to set the name for intermediary files (temporary fix)
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements

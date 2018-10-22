@@ -39,6 +39,17 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
 })
 )%";
              }
+            
+            oss << R"%(cook.toolchain.set_intermediary_namer(fun(file, src, dst, element_type) {
+    if (element_type == ElementType.Compile) {
+        if (src & Language.Resource) {
+            return "${file}.res"
+        } else {
+            return "${file}.obj"
+        }
+    }
+})
+)%";
         }
     }
 
