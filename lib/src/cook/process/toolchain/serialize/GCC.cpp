@@ -15,6 +15,9 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
     if (false) {
     } else if (e.element_type == ElementType.Compile) {
         if (false) {
+        } else if (k == "ctng.tuple") {
+            kv.clear(Part.Cli)
+            kv.append(Part.Cli, "${getenv("HOME")}/x-tools/${v}/bin/${v}-gcc")
         } else if (k == "compiler") {
             kv.clear(Part.Cli)
             kv.append(Part.Cli, v)
@@ -68,6 +71,9 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         }
     } else if (e.element_type == ElementType.Link) {
         if (false) {
+        } else if (k == "ctng.tuple") {
+            kv.clear(Part.Cli)
+            kv.append(Part.Cli, "${getenv("HOME")}/x-tools/${v}/bin/${v}-g++")
         } else if (k == "linker") {
             kv.clear(Part.Cli)
             kv.append(Part.Cli, v)
@@ -101,6 +107,9 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         }
     } else if (e.element_type == ElementType.Archive) {
         if (false) {
+        } else if (k == "ctng.tuple") {
+            kv.clear(Part.Cli)
+            kv.append(Part.Cli, "${getenv("HOME")}/x-tools/${v}/bin/${v}-ar")
         } else if (k == "archiver") {
             kv.clear(Part.Cli)
             kv.append(Part.Cli, v)

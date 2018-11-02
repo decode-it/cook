@@ -307,6 +307,10 @@ build .b0/extern/gubg.io/test/src/gubg/string_tests.cpp.obj: compile extern/gubg
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/svg/Turtle_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/t2/Builder_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/t2/Builder_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/t2/Parser_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/t2/Parser_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/terminal/Color_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/terminal/Color_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/xml/Builder_tests.cpp
@@ -552,6 +556,8 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/s11n/Writer_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/string_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/t2/Builder_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/t2/Parser_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/terminal/Color_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj $
