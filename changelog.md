@@ -191,6 +191,7 @@ Proof-of-concept version.
 
 ## 1.2.10
 * Toolchain has a `set_intermediary_namer` function to set the name for intermediary files (temporary fix)
+* chai file IO is by default non-binary
 
 ## Next
 
