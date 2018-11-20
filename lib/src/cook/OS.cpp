@@ -1,19 +1,19 @@
 #include "cook/OS.hpp"
-#include "gubg/platform/os_api.h"
+#include "gubg/platform.h"
 
 namespace cook {
 
 OS get_os()
 {
-#if GUBG_OS_LINUX
+#if GUBG_PLATFORM_OS_LINUX
     return OS::Linux;
 #endif
 
-#if GUBG_OS_WINDOWS
+#if GUBG_PLATFORM_OS_WINDOWS
     return OS::Windows;
 #endif
 
-#if GUBG_OS_MACOS
+#if GUBG_PLATFORM_OS_OSX
     return OS::MacOS;
 #endif
 
