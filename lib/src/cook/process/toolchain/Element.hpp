@@ -5,6 +5,7 @@
 #include "cook/process/command/Compile.hpp"
 #include "cook/process/command/Archive.hpp"
 #include "cook/process/command/Link.hpp"
+#include "cook/model/Recipe.hpp"
 #include "cook/Language.hpp"
 #include "cook/TargetType.hpp"
 #include "gubg/mss.hpp"
@@ -26,6 +27,10 @@ namespace cook { namespace process { namespace toolchain {
             using Ptr = std::shared_ptr<Element>;
 
             Element(Type type, Language language, TargetType target_type);
+            Element(const Element &) = default;
+            Element(Element &&) = default;
+            Element & operator=(const Element &) = default;
+            Element & operator=(Element &&) = default;
 
             template <typename T>
             std::shared_ptr<T> create() const
@@ -42,13 +47,9 @@ namespace cook { namespace process { namespace toolchain {
             TargetType target_type() const;
 
         private:
-            Element(const Element &) = delete;
-            Element(Element &&) = delete;
-            Element & operator=(const Element &) = delete;
-            Element & operator=(Element &&) = delete;
 
             KeyValuesMap kvm_;
-            TranslatorMapPtr trans_;
+            TranslatorMap trans_;
             Type element_type_;
             Language language_;
             TargetType target_type_;

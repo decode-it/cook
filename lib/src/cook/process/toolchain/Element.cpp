@@ -3,12 +3,12 @@
 namespace cook { namespace process { namespace toolchain { 
 
     Element::Element(Type element_type, Language language, TargetType target_type) : 
-        trans_(std::make_shared<TranslatorMap>()), element_type_(element_type), language_(language),
+        trans_(), element_type_(element_type), language_(language),
         target_type_(target_type)
     {
         auto lambda = [&](toolchain::Part part)
         {
-            (*trans_)[part] = [](const std::string &, const std::string &){return "";};
+            trans_[part] = [](const std::string &, const std::string &){return "";};
         };
         toolchain::each_part(lambda);
     }
@@ -20,7 +20,7 @@ namespace cook { namespace process { namespace toolchain {
 
     TranslatorMap & Element::translator_map() 
     { 
-        return *trans_; 
+        return trans_; 
     }
 
     const KeyValuesMap & Element::key_values_map() const 
@@ -30,7 +30,7 @@ namespace cook { namespace process { namespace toolchain {
 
     const TranslatorMap & Element::translator_map() const 
     { 
-        return *trans_; 
+        return trans_; 
     }
 
     Language Element::language() const 

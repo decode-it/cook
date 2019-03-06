@@ -1,5 +1,6 @@
 #include "cook/chai/Toolchain.hpp"
 #include "cook/chai/Recipe.hpp"
+#include "cook/process/toolchain/Element.hpp"
 
 namespace cook { namespace chai {
 
@@ -123,4 +124,17 @@ namespace cook { namespace chai {
             };
             manager_->set_intermediary_name_functor(lambda);
         }
+        
+        void Toolchain::set_command_configuration_functor(const CommandConfigurationFunctor & functor)
+        {
+            const Context * ctx = context_;
+            auto lambda = [=](process::toolchain::Element::Ptr element, model::Recipe * recipe)
+            {
+                auto te = ToolchainElement(element);
+                auto re = Recipe(recipe, ctx);
+                functor(te, re);
+            };
+            manager_->set_command_configuration_functor(lambda);
+        }
+
 } }

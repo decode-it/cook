@@ -198,6 +198,7 @@ Proof-of-concept version.
 
 ## 1.2.12 (open)
 * More file functionality exposed in chai (basename, dirname, extname)
+* Exposing toolchain configuration per recipe in chai
 
 ## Next
 

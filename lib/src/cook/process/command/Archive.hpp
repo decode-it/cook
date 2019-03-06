@@ -12,7 +12,7 @@ namespace cook { namespace process { namespace command {
     public:
         using Ptr = std::shared_ptr<Archive>;
 
-        Archive(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans, Language language): CommonImpl(kvm, trans, language) {}
+        Archive(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMap &trans, Language language): CommonImpl(kvm, trans, language) {}
 
         std::string name() const override {return "Archive";}
         Type type() const override {return Type::Archive;}

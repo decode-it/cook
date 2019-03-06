@@ -13,7 +13,7 @@ namespace cook { namespace process { namespace command {
     public:
         using Ptr = std::shared_ptr<Compile>;
 
-        Compile(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans, Language language): CommonImpl(kvm, trans, language) {}
+        Compile(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMap &trans, Language language): CommonImpl(kvm, trans, language) {}
 
         std::string name() const override {return "Compile";}
         Type type() const override {return Type::Compile;}

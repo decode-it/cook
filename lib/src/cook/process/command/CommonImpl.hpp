@@ -11,7 +11,7 @@ namespace cook { namespace process { namespace command {
     class CommonImpl: public Interface
     {
     public:
-        CommonImpl(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans, Language language);
+        CommonImpl(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMap &trans, Language language);
 
         void set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) override;
         bool stream_part(std::ostream & os, toolchain::Part part, const toolchain::Translator *trans_ptr = nullptr, const PartEscapeFunctor & functor = PartEscapeFunctor()) const override;
@@ -22,7 +22,7 @@ namespace cook { namespace process { namespace command {
         static std::string escape_spaces(const std::string & str);
         
         toolchain::KeyValuesMap kvm_;
-        toolchain::TranslatorMapPtr trans_;
+        toolchain::TranslatorMap trans_;
         const Language language_;
     };
 

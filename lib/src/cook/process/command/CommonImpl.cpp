@@ -1,8 +1,9 @@
 #include "cook/process/command/CommonImpl.hpp"
+#include <cassert>
 
 namespace cook { namespace process { namespace command { 
 
-    CommonImpl::CommonImpl(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans, Language language): kvm_(kvm), trans_(trans), language_(language) {}
+    CommonImpl::CommonImpl(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMap &trans, Language language): kvm_(kvm), trans_(trans), language_(language) {}
 
     void CommonImpl::set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) 
     {
@@ -21,7 +22,9 @@ namespace cook { namespace process { namespace command {
     }
     std::string CommonImpl::get_kv_part(toolchain::Part part, const std::string & key, const std::string & value, toolchain::Translator * trans_ptr) const
     {
-        const auto &trans = (!!trans_ptr ? *trans_ptr : (*trans_)[part]);
+        auto it = trans_.find(part);
+        assert(it != trans_.end());
+        const auto &trans = (!!trans_ptr ? *trans_ptr : it->second);
         return trans(key, value);
     }
 
@@ -34,7 +37,9 @@ namespace cook { namespace process { namespace command {
         if (kvs.empty())
             return false;
 
-        const auto &trans = (!!trans_ptr ? *trans_ptr : (*trans_)[part]);
+        auto it = trans_.find(part);
+        assert(it != trans_.end());
+        const auto &trans = (!!trans_ptr ? *trans_ptr : it->second);
         gubg::OnlyOnce skip_space;
         for (const auto &kv: kvs)
         {

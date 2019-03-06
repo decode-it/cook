@@ -12,7 +12,7 @@ namespace cook { namespace process { namespace command {
     public:
         using Ptr = std::shared_ptr<Link>;
 
-        Link(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMapPtr &trans, Language language): CommonImpl(kvm, trans, language) {}
+        Link(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMap &trans, Language language): CommonImpl(kvm, trans, language) {}
 
         std::string name() const override {return "Link";}
         Type type() const override {return Type::Link;}

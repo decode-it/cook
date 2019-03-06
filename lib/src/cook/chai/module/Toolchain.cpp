@@ -34,6 +34,7 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::user_type<Toolchain::PrimaryNameFunctor>(), "PrimaryNameFunctor");
         ptr->add(chaiscript::fun(&Toolchain::set_primary_name_functor), "set_target_namer");
         ptr->add(chaiscript::fun(&Toolchain::set_intermediary_name_functor), "set_intermediary_namer");
+        ptr->add(chaiscript::fun(&Toolchain::set_command_configuration_functor), "configure_for_recipe");
         ptr->add(chaiscript::user_type<Toolchain::IntermediaryNameFunctor>(), "IntermediaryNameFunctor");
 
         return ptr;

@@ -14,7 +14,7 @@ public:
     Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
 
 private:
-    Result archive_command_(command::Ptr &, const model::Recipe &recipe, const Context & context) const;
+    Result archive_command_(command::Ptr &, model::Recipe & recipe, const Context & context) const;
 };
 
 } } }

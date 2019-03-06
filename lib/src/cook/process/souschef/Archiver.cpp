@@ -85,13 +85,11 @@ namespace cook { namespace process { namespace souschef {
         MSS_END();
     }
 
-    Result Archiver::archive_command_(command::Ptr &ptr, const model::Recipe & recipe, const Context & context) const
+    Result Archiver::archive_command_(command::Ptr &ptr, model::Recipe & recipe, const Context & context) const
     {
         MSS_BEGIN(Result);
 
-        auto element = context.toolchain().element(toolchain::Element::Archive, Language::Binary, recipe.build_target().type);
-        MSS(!!element);
-        auto ap = element->create<process::command::Archive>();
+        auto ap = context.toolchain().create_command<process::command::Archive>(toolchain::Element::Archive, Language::Binary, recipe.build_target().type, &recipe);
         MSS(!!ap);
 
         ap->set_recipe_uri(recipe.uri().string());

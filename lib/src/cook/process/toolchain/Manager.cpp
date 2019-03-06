@@ -111,6 +111,14 @@ namespace cook { namespace process { namespace toolchain {
         auto it = elements_.find(k);
         return it == elements_.end() ? Element::Ptr() : it->second;
     }
+        
+    Element::Ptr Manager::clone_(Element::Type element_type, Language language, TargetType target_type) const
+    {
+        Element::Ptr e = element(element_type, language, target_type);
+        if (e)
+            e = std::make_shared<Element>(*e);
+        return e;
+    }
 
     Element::Ptr Manager::goc_element(Element::Type type, Language language, TargetType target_type)
     {
@@ -255,6 +263,11 @@ namespace cook { namespace process { namespace toolchain {
     void Manager::set_intermediary_name_functor(const IntermediaryName & functor)
     {
         intermediary_name_ = functor;
+    }
+        
+    void Manager::set_command_configuration_functor(const CommandConfigurationFunctor & functor)
+    {
+        configure_command_ = functor;
     }
 
     std::filesystem::path Manager::get_primary_target(const model::Recipe & recipe) const

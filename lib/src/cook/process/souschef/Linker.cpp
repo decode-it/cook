@@ -152,13 +152,11 @@ ingredient::File Linker::construct_link_file(model::Recipe & recipe, const Conte
     return archive;
 }
 
-Result Linker::link_command_(command::Ptr &ptr, const model::Recipe & recipe, const model::Recipe::KeyValues::Range &libs, const model::Recipe::KeyValues::Range &frameworks, const Context & context) const
+Result Linker::link_command_(command::Ptr &ptr, model::Recipe & recipe, const model::Recipe::KeyValues::Range &libs, const model::Recipe::KeyValues::Range &frameworks, const Context & context) const
 {
     MSS_BEGIN(Result);
     
-    auto element = context.toolchain().element(toolchain::Element::Link, Language::Binary, recipe.build_target().type);
-    MSS(!!element);
-    auto lp = element->create<process::command::Link>();
+    auto lp = context.toolchain().create_command<process::command::Link>(toolchain::Element::Link, Language::Binary, recipe.build_target().type, &recipe);
     MSS(!!lp);
 
     auto adj = util::get_from_to_path(".", recipe);
