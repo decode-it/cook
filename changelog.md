@@ -193,8 +193,11 @@ Proof-of-concept version.
 * Toolchain has a `set_intermediary_namer` function to set the name for intermediary files (temporary fix)
 * chai file IO is by default non-binary
 
-## 1.2.11 (open)
+## 1.2.11
 * File functionality exposed in chai (join, each\_line, absolute)
+
+## 1.2.12 (open)
+* More file functionality exposed in chai (basename, dirname, extname)
 
 ## Next
 
