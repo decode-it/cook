@@ -38,7 +38,7 @@ namespace cook { namespace rules {
             }
             else if (lang == Language::ASM)
             {
-                for (auto ext: Exts{ ".asm", ".S" })
+                for (auto ext: Exts{ ".asm", ".S", ".s", ".ASM" })
                     tm[ext] = Type::Source;
             }
             else if (lang == Language::Resource)

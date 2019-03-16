@@ -196,9 +196,12 @@ Proof-of-concept version.
 ## 1.2.11
 * File functionality exposed in chai (join, each\_line, absolute)
 
-## 1.2.12 (open)
+## 1.2.12 
 * More file functionality exposed in chai (basename, dirname, extname)
 * Exposing toolchain configuration per recipe in chai
+
+## 1.2.13 (open)
+* Different extensions for assembly
 
 ## Next
 
