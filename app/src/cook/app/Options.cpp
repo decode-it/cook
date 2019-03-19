@@ -43,6 +43,7 @@ bool Options::parse(int argc, const char ** argv)
         opt.add_mandatory(  'D', "--data                 ", "Passes the chaiscript variables to the process.", [&](const std::string & str) { variables.push_back(parse_key_value_pair(str)); });
         opt.add_switch(     'h', "--help                 ", "Prints this help.", [&](){ print_help = true; });
         opt.add_mandatory(  'v', "--verbosity            ", "Verbosity level, 0 is silent. By default this is 1. ", [&](const std::string & str) { verbosity = std::max(0, std::stoi(str)); });
+        opt.add_response (  '@', "--response             ", "Add the arguments from a response file.");
     }
 
     // set the help message

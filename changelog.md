@@ -202,6 +202,7 @@ Proof-of-concept version.
 
 ## 1.2.13 (open)
 * Different extensions for assembly
+* Response file for command line arguments
 
 ## Next
 
