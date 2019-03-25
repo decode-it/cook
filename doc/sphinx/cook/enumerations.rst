@@ -131,6 +131,7 @@ TargetType
    * ``TargetType.Object``
    * ``TargetType.Archive``: Make a static archive
    * ``TargetType.SharedLibrary``: Make a shared library
+   * ``TargetType.Plugin``: Make a plugin library
    * ``TargetType.Executable``: Make an executable
    * ``TargetType.Script``: Execute a script
 

@@ -11,6 +11,7 @@ enum class TargetType
     Object,    
     Archive,
     SharedLibrary,
+    Plugin,
     Executable,
     Script,
     UserDefined
@@ -25,6 +26,7 @@ inline std::ostream & operator<<(std::ostream & os, TargetType type)
         L_CASE(Object);
         L_CASE(Archive);
         L_CASE(SharedLibrary);
+        L_CASE(Plugin);
         L_CASE(Executable);
         L_CASE(Script);
 #undef L_CASE

@@ -13,7 +13,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
     if (false) {
     } else if (r.type == TargetType.Executable) {
         return "${r.name}.exe"
-    } else if (r.type == TargetType.SharedLibrary) {
+    } else if (r.type == TargetType.SharedLibrary || r.type == TargetType.Plugin) {
         return "${r.name}.dll"
     } else if(r.type == TargetType.Archive) {
         return "${r.name}.lib"
@@ -29,7 +29,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
     if (false) {
     } else if (r.type == TargetType.Executable) {
         return "${r.name}"
-    } else if (r.type == TargetType.SharedLibrary) {
+    } else if (r.type == TargetType.SharedLibrary || r.type == TargetType.Plugin) {
         return "lib${r.name}.so"
     } else if(r.type == TargetType.Archive) {
         return "lib${r.name}.a"

@@ -200,9 +200,12 @@ Proof-of-concept version.
 * More file functionality exposed in chai (basename, dirname, extname)
 * Exposing toolchain configuration per recipe in chai
 
-## 1.2.13 (open)
+## 1.2.13 
 * Different extensions for assembly
 * Response file for command line arguments
+
+## 1.2.14 
+* New TargetType Plugin for runtime-loaded libraries (mac bundle)
 
 ## Next
 

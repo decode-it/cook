@@ -30,7 +30,8 @@ Recipe
    * ``TargetType.Undefined``: see TargetType.Object
    * ``TargetType.Object``: Compiles source files into objects
    * ``TargetType.Archive``: Compiles source files and constructs a static archive
-   * ``TargetType.SharedLibrary``: Compile source files and link into a dynamic library
+   * ``TargetType.SharedLibrary``: Compile source files and link into a dynamic library. This is library is linked into the executable and loaded at runtime.
+   * ``TargetType.Plugin``: Compile source files and link into a dynamic library. This is library is not linked into the executable, but should be loaded at runtime using, e.g., dlopen.
    * ``TargetType.Executable``: Compile source files and link into an executable
    * ``TargetType.Script``: Call a script (see :meth:`Recipe.run`)
 

@@ -33,6 +33,8 @@ namespace cook { namespace generator { namespace {
                 return CMakeType::StaticLibrary;
             case TargetType::SharedLibrary:
                 return CMakeType::SharedLibrary;
+            case TargetType::Plugin:
+                return CMakeType::Module;
             case TargetType::Executable:
                 return CMakeType::Executable;
             default:
@@ -61,6 +63,7 @@ namespace cook { namespace generator { namespace {
         {
             case CMakeType::Executable:
             case CMakeType::SharedLibrary:
+            case CMakeType::Module:
             case CMakeType::StaticLibrary:
                 break;
 
@@ -126,6 +129,19 @@ namespace cook { namespace generator { namespace {
                     else
                     {
                         info.type = CMakeType::SharedLibrary;
+                        info.links_away_objects = info.links_away_libraries = true;
+
+                    }
+                    break;
+                case TargetType::Plugin:
+                    if (!has_sources)
+                    {
+                        MSS_RC << MESSAGE(Warning, "CMake: skipping " << recipe->uri() << ", shared library without sources");
+                        info.type = CMakeType::Skip;
+                    }
+                    else
+                    {
+                        info.type = CMakeType::Module;
                         info.links_away_objects = info.links_away_libraries = true;
 
                     }
@@ -309,7 +325,10 @@ Result CMake::process(const Context & context)
                 MSS(add_static_library_(*str, recipe, context, output_to_source, top_order(recipe_list, info.object_recipes_)));
                 break;
             case CMakeType::SharedLibrary:
-                MSS(add_shared_library_(*str, recipe, context, output_to_source, top_order(recipe_list, info.object_recipes_), top_order(recipe_list, info.link_targets_)));
+                MSS(add_shared_library_(*str, recipe, context, output_to_source, top_order(recipe_list, info.object_recipes_), top_order(recipe_list, info.link_targets_), CMakeType::SharedLibrary));
+                break;
+            case CMakeType::Module:
+                MSS(add_shared_library_(*str, recipe, context, output_to_source, top_order(recipe_list, info.object_recipes_), top_order(recipe_list, info.link_targets_), CMakeType::Module));
                 break;
             case CMakeType::Executable:
                 MSS(add_executable_(*str, recipe, context, output_to_source, top_order(recipe_list, info.object_recipes_), top_order(recipe_list, info.link_targets_)));
@@ -365,13 +384,14 @@ Result CMake::add_static_library_(std::ofstream & str, model::Recipe * recipe, c
     MSS_END();
 }
 
-Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeList & objects, const RecipeList & links)
+Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, const Context & context, const std::filesystem::path & output_to_source, const RecipeList & objects, const RecipeList & links, CMakeType type)
 {
     MSS_BEGIN(Result);
 
     str << "# " << recipe->uri() << std::endl;
 
-    str << "add_library(" << recipe_name_(recipe) << " SHARED" << std::endl;
+    std::string str_type = (type == CMakeType::Module ? "MODULE" : "SHARED");
+    str << "add_library(" << recipe_name_(recipe) << " " << str_type << std::endl;
 
     add_source_and_header_(str, recipe, true, objects, output_to_source);
     str << ")" << std::endl;

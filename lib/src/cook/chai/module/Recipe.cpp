@@ -53,6 +53,7 @@ namespace cook { namespace chai { namespace module {
         EXPOSE_VALUE(TargetType, Object);
         EXPOSE_VALUE(TargetType, Archive);
         EXPOSE_VALUE(TargetType, SharedLibrary);
+        EXPOSE_VALUE(TargetType, Plugin);
         EXPOSE_VALUE(TargetType, Executable);
         EXPOSE_VALUE(TargetType, Script);
         ptr->add(chaiscript::fun(make_user_defined), "UserDefined");

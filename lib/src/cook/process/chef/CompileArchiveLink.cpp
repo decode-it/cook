@@ -41,11 +41,20 @@ Result CompileArchiveLink::initialize()
         Brigade set;
 
         set.name = "Link dynamic library";
-        set.can_cook = [](const model::Recipe * recipe, std::string & reason) {
-            if (recipe->build_target().type == TargetType::SharedLibrary || recipe->build_target().type == TargetType::Executable)
-                return true;
+        set.can_cook = [](const model::Recipe * recipe, std::string & reason) 
+        {
+            switch(recipe->build_target().type)
+            {
+                case TargetType::SharedLibrary:
+                case TargetType::Plugin:
+                case TargetType::Executable:
+                    return true;;
 
-            reason = gubg::stream([](auto & os) { os << "Only recipes of type " << TargetType::SharedLibrary << " or " << TargetType::Executable << " will be linked"; });
+                default:
+                    break;
+            }
+    
+            reason = gubg::stream([](auto & os) { os << "Only recipes of type " << TargetType::SharedLibrary << " , " << TargetType::Plugin << " or " << TargetType::Executable << " will be linked"; });
             return false;
         };
 

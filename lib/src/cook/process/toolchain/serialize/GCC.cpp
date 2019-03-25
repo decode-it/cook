@@ -159,7 +159,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
 
 oss << R"%(
 
-for(s : [TargetType.SharedLibrary, TargetType.Executable]){
+for(s : [TargetType.SharedLibrary, TargetType.Plugin, TargetType.Executable]){
     var linker = cook.toolchain.element(ElementType.Link, Language.Binary, s)
     var & kv = linker.key_values()
     var & tm = linker.translators()
@@ -182,6 +182,12 @@ for(s : [TargetType.SharedLibrary, TargetType.Executable]){
 oss << R"%(
     if (s == TargetType.SharedLibrary) {
         kv.append(Part.Pre, "-shared")
+    } else if (s == TargetType.Plugin) {
+        if (my(OS) == OS.MacOS) {
+            kv.append(Part.Pre, "-bundle")
+        } else {
+            kv.append(Part.Pre, "-shared")
+        }       
     }
 }
 

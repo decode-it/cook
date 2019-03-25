@@ -102,7 +102,7 @@ for( lang : [Language.C, Language.CXX, Language.ASM, Language.Resource]) {
     kv.append(Part.Cli, "lib")
 }
 
-for(s : [TargetType.Executable, TargetType.SharedLibrary]){
+for(s : [TargetType.Executable, TargetType.Plugin, TargetType.SharedLibrary]){
     var linker = cook.toolchain.element(ElementType.Link, Language.Binary, s)
     var & kv = linker.key_values()
     var & tm = linker.translators()
@@ -116,7 +116,7 @@ for(s : [TargetType.Executable, TargetType.SharedLibrary]){
     tm[Part.LibraryPath]    = fun(k,v) { if (k.empty) { return "/LIBPATH:./" } else { return "/LIBPATH:${k}" } }
     
     kv.append(Part.Cli, "link")
-    if (s == TargetType.SharedLibrary){
+    if (s == TargetType.SharedLibrary || s == TargetType.Plugin){
         tm[Part.Export]     = fun(k,v) { return "/DEF:${k}" }
         kv.append(Part.Pre, "DLL")
     }

@@ -39,6 +39,7 @@ namespace cook { namespace process { namespace toolchain {
                     oss << name;
                     break;
                 case TargetType::SharedLibrary:
+                case TargetType::Plugin:
                     oss << "lib" << name << ".so";
                     break;
 
@@ -64,6 +65,7 @@ namespace cook { namespace process { namespace toolchain {
                     oss << name << ".exe";
                     break;
                 case TargetType::SharedLibrary:
+                case TargetType::Plugin:
                     oss << name << ".dll";
                     break;
 
