@@ -207,6 +207,9 @@ Proof-of-concept version.
 ## 1.2.14 
 * New TargetType Plugin for runtime-loaded libraries (mac bundle)
 
+## 1.2.15 (open)
+* Added `sysroot` support for gcc/clang linker as well
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements

@@ -102,6 +102,8 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             kv.append(Part.Pre, "-std", "c++${v}") 
         } else if (k == "c.std") {
             kv.append(Part.Pre, "-std", "c${v}")
+        } else if (k == "sysroot") {
+            kv.append(Part.Pre, "--sysroot", v)
         } else {
             return false
         }
