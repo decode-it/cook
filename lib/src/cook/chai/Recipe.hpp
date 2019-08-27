@@ -26,7 +26,7 @@ public:
     Recipe(model::Recipe * recipe, const Context *context);
 
     void add(const std::string & dir, const std::string & pattern, const Flags & flags = Flags(), const GlobFunctor & functor = GlobFunctor());
-    void remove(const std::string & dir, const std::string & pattern, const GlobFunctor & functor = GlobFunctor());
+    void remove(const std::string & dir, const std::string & pattern, const Flags & flags = Flags(), const GlobFunctor & functor = GlobFunctor());
     void depends_on(const model::Uri &dependency, const DepFileFilter & file_filter = DepFileFilter(), const DepKeyValueFilter & key_value_filter = DepKeyValueFilter());
     void set_type(TargetType type);
     TargetType type() const;

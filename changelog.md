@@ -209,6 +209,8 @@ Proof-of-concept version.
 
 ## 1.2.15 (open)
 * Added `sysroot` support for gcc/clang linker as well
+* Added support for Recipe.remove(dir, rel, flags, functor)
+* Added documentation for Recip.remove()
 
 ## Next
 

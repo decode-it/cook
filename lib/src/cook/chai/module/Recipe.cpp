@@ -111,8 +111,20 @@ namespace cook { namespace chai { namespace module {
             ptr->add(chaiscript::fun(remove), "remove");
         }
         {
+            auto remove = [](Recipe & recipe, const std::string & dir, const std::string & rel, const Flags &flags) {
+                recipe.remove(dir, rel, flags);
+            };
+            ptr->add(chaiscript::fun(remove), "remove");
+        }
+        {
             auto remove = [](Recipe & recipe, const std::string & dir, const std::string & rel, const Recipe::GlobFunctor & functor) {
-                recipe.remove(dir, rel);
+                recipe.remove(dir, rel, Flags(), functor);
+            };
+            ptr->add(chaiscript::fun(remove), "remove");
+        }
+        {
+            auto remove = [](Recipe & recipe, const std::string & dir, const std::string & rel, const Flags &flags, const Recipe::GlobFunctor & functor) {
+                recipe.remove(dir, rel, flags, functor);
             };
             ptr->add(chaiscript::fun(remove), "remove");
         }

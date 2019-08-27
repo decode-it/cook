@@ -63,7 +63,7 @@ Recipe
    .. code-block:: ruby
 
       var r = cook.recipe("lib")
-      r.add("src", "system/defines.hpp", Type.ForcInclude)
+      r.add("src", "system/defines.hpp", Type.ForceInclude)
 
    Finally, the user can also supply a filter functor to filter out which files are passed to the resolver, or change the flags for those files. A filter functor should have the signature ``filter_functor(f) -> bool`` where ``f`` is a :class:`File` .
    
@@ -77,7 +77,22 @@ Recipe
    :type filter_functor: A unary predicate accepting a :class:`File`.
 
 
-.. method:: Recipe.remove(dir, rel)
+.. method:: Recipe.remove(dir, rel[, flags])
+.. method:: Recipe.remove(dir, rel, flags[, filter_functor])
+
+   Remove all files under ``dir`` matching regular expresssion ``rel`` that were added before via the ``Recipe.add()`` function. These files are passed to the resolved (`Resolver`_) and then the flags are decided. By specifying some flags, the caller can override these flags.
+
+   Finally, the user can also supply a filter functor to filter out which files are passed to the resolver, or change the flags for those files. A filter functor should have the signature ``filter_functor(f) -> bool`` where ``f`` is a :class:`File` .
+   
+   :param dir: The directory. If relative, it is taken relative to :meth:`Recipe.working_dir`. No globbing or regular expression can be used.
+   :type dir: String
+   :param rel: The relative part. All files under dir matching globbing expression ``rel``, are considered for removal.
+   :type rel: String
+   :param flags: The flags to overwrite the default flags are set by the resolver.
+   :type flags: :class:`Flag`
+   :param filter_functor: A functor to filter which files are passed to the resolver.
+   :type filter_functor: A unary predicate accepting a :class:`File`.
+
 
 .. method:: Recipe.library(name)
 
@@ -209,6 +224,7 @@ Recipe
       assert_equal(r.name, "cook.lib.func")
       r.name = cook.func
       assert_equal(r.name, "cook.func")
+
 
 
 

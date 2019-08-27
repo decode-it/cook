@@ -43,7 +43,7 @@ namespace cook { namespace model {
 
     inline std::ostream &operator<<(std::ostream &os, const GlobInfo &globber)
     {
-        os << "[GlobInfo](dir:" << globber.dir << ")(pattern: " << globber.pattern << ")";
+        os << "[GlobInfo](dir:" << globber.dir << ")(pattern: " << globber.pattern << ")(mode:" << (globber.mode == GlobInfo::Add ? "add" : "remove") << ")";
         return os;
     }
 

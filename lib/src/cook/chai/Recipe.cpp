@@ -91,12 +91,14 @@ namespace cook { namespace chai {
         recipe_->add_globber(info);
     }
 
-    void Recipe::remove(const std::string & dir, const std::string & pattern, const GlobFunctor & functor)
+    void Recipe::remove(const std::string & dir, const std::string & pattern, const Flags & flags, const GlobFunctor & functor)
     {
         model::GlobInfo info;
         info.dir = dir;
         info.pattern = pattern;
         info.mode = model::GlobInfo::Remove;
+        info.language = flags.get_or(Language::Undefined);
+        info.type = flags.get_or(Type::Undefined);
 
         const Context * context = context_;
         if (functor)
@@ -104,8 +106,27 @@ namespace cook { namespace chai {
             info.filter_and_adaptor = [=](LanguageTypePair & ltp, ingredient::File & file)
             {
                 File f(ltp, file, context);
-                return functor(f);
+
+                auto p = functor(f);
+                if (!p)
+                    return false;
+
+                ltp = f.language_type_pair();
+                file = f.element();
+                return true;
             };
+        }
+
+        {
+            auto p = flags.overwrite();
+            if (p.second)
+                info.overwrite = p.first;
+        }
+
+        {
+            auto p = flags.propagation();
+            if (p.second)
+                info.propagation = p.first;
         }
 
         recipe_->add_globber(info);
