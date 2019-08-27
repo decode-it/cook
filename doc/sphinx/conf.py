@@ -23,13 +23,13 @@ def setup(sphinx):
 # -- Project information -----------------------------------------------------
 
 project = 'Cook'
-copyright = '2018, Thomas Fannes, Geert Fannes'
+copyright = '2019, Thomas Fannes, Geert Fannes'
 author = 'Thomas Fannes, Geert Fannes'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '1.2.3'
+release = '1.2.15'
 
 
 # -- General configuration ---------------------------------------------------
