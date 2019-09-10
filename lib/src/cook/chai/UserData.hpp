@@ -14,7 +14,7 @@ class UserData
 
 public:
     UserData();
-    ~UserData();
+    virtual ~UserData();
 
     UserData clone() const;
 

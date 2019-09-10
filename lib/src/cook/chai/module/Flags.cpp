@@ -1,4 +1,5 @@
 #include "cook/chai/module/Flags.hpp"
+#include "cook/chai/UserData.hpp"
 #include "cook/chai/Flags.hpp"
 #include "gubg/chai/Module.hpp"
 
@@ -10,19 +11,37 @@ namespace cook { namespace chai { namespace module {
 
         struct Propagation_t {};
         struct Overwrite_t {};
-        struct Type_t
+        struct Type_t : public UserData
 	{
-            Flags make_UserDefined(unsigned int v) const { return Flags(static_cast<Type>(static_cast<unsigned int>(Type::UserDefined) + v)); }
+
+            Flags make_new_UserDefined() const
+            { 
+                return Flags(static_cast<Type>(static_cast<unsigned int>(Type::UserDefined) +  user_defined_index++)); 
+            }
+            Flags make_UserDefined(unsigned int v) const 
+            { 
+                return Flags(static_cast<Type>(static_cast<unsigned int>(Type::UserDefined) + v)); 
+            }
+            mutable std::size_t user_defined_index = 0;
 	};
-        struct Language_t 
+        struct Language_t : public UserData
         {
-            Flags make_UserDefined(unsigned int v) const { return Flags(static_cast<Language>(static_cast<unsigned int>(Language::UserDefined) + v)); }
+            Flags make_new_UserDefined() const
+            { 
+                return Flags(static_cast<Language>(static_cast<unsigned int>(Type::UserDefined) +  user_defined_index++)); 
+            }
+            Flags make_UserDefined(unsigned int v) const 
+            { 
+                return Flags(static_cast<Language>(static_cast<unsigned int>(Language::UserDefined) + v)); 
+            }
+            
+            mutable std::size_t user_defined_index = 0;
         };
 
-        static const Propagation_t Propagation; 
-        static const Overwrite_t Overwrite;
-        static const Type_t Type;
-        static const Language_t Language;
+        static Propagation_t Propagation; 
+        static Overwrite_t Overwrite;
+        static Type_t Type;
+        static Language_t Language;
 
         }
     }
@@ -75,9 +94,15 @@ ptr->add(chaiscript::fun([](const wrapper::TYPE##_t &) { return std::string(#TYP
         EXPOSE(Language, Script);
         EXPOSE(Language, Definition);
 #undef EXPOSE
+
+        ptr->add(chaiscript::base_class<UserData, wrapper::Type_t>());
+        ptr->add(chaiscript::base_class<UserData, wrapper::Language_t>());
         
         ptr->add(chaiscript::fun(&wrapper::Type_t::make_UserDefined), "UserDefined");
+        ptr->add(chaiscript::fun(&wrapper::Type_t::make_new_UserDefined), "UserDefined");
+        
         ptr->add(chaiscript::fun(&wrapper::Language_t::make_UserDefined), "UserDefined");
+        ptr->add(chaiscript::fun(&wrapper::Language_t::make_new_UserDefined), "UserDefined");
 
 
         ptr->add(chaiscript::user_type<Flags>(), "Flags");

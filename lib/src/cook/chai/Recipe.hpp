@@ -2,7 +2,6 @@
 #define HEADER_cook_chai_Recipe_hpp_ALREADY_INCLUDED
 
 #include "cook/chai/UserData.hpp"
-#include "cook/chai/UserData.hpp"
 #include "cook/chai/Flags.hpp"
 #include "cook/model/Recipe.hpp"
 #include "cook/Logger.hpp"

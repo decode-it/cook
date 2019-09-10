@@ -116,3 +116,19 @@ test_to_string(Language, "UserDefined(4)")
     assert_not_equal(v3 & Language.Binary, Language.Binary)
     assert_equal(v3 & Language.CXX, Language.CXX)
 }
+
+{
+    # generating and storing user defined types
+    Type.NewType = Type.UserDefined()
+    assert_equal(Type.NewType, Type.UserDefined(0))
+    assert_equal(Type.UserDefined(1), Type.UserDefined())
+    assert_equal(Type.UserDefined(2), Type.UserDefined())
+}
+
+{
+    # generating and storing user defined languages 
+    Language.NewLang = Language.UserDefined()
+    # assert_equal(Language.NewLang, Language.UserDefined(0))
+    # assert_equal(Language.UserDefined(), Language.UserDefined(1))
+    # assert_equal(Language.UserDefined(), Language.UserDefined(2))
+}

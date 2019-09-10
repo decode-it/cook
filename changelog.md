@@ -207,10 +207,13 @@ Proof-of-concept version.
 ## 1.2.14 
 * New TargetType Plugin for runtime-loaded libraries (mac bundle)
 
-## 1.2.15 (open)
+## 1.2.15
 * Added `sysroot` support for gcc/clang linker as well
 * Added support for Recipe.remove(dir, rel, flags, functor)
 * Added documentation for Recip.remove()
+
+## 1.2.16 (open)
+* Type and Flag can easilty be extended, e.g., Type.A = Type.UserDefined()
 
 ## Next
 
