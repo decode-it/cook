@@ -3,6 +3,9 @@
 
 #include "cook/Result.hpp"
 #include "cook/process/toolchain/Types.hpp"
+#include "cook/LanguageTypePair.hpp"
+#include "cook/ingredient/File.hpp"
+#include "cook/ingredient/KeyValue.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <string>
 #include <memory>
@@ -35,11 +38,10 @@ namespace cook { namespace process { namespace command {
         virtual void stream_command(std::ostream &, const PartEscapeFunctor & functor = PartEscapeFunctor()) const = 0;
         virtual Result process() = 0;
 
-        virtual void set_recipe_uri(const std::string &uri) {recipe_uri_ = uri;}
-        virtual const std::string &recipe_uri() const {return recipe_uri_;}
+        virtual std::string recipe_uri() const  = 0;
 
-    private:
-        std::string recipe_uri_;
+        virtual bool process_ingredient(const LanguageTypePair& ltp, const ingredient::File& file)  = 0;
+        virtual bool process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& key_value)  = 0;
     };
 
     inline std::ostream & operator<<(std::ostream & str, Interface::Type type)

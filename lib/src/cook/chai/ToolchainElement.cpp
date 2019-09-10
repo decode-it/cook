@@ -32,8 +32,9 @@ namespace cook { namespace chai {
         return (*map_)[part];
     }
 
-    ToolchainElement::ToolchainElement(Element::Ptr element)
-    : element_(element)
+    ToolchainElement::ToolchainElement(Element::Ptr element, const Context* context)
+        : element_(element)
+        , context_(context)
     {
     }
 
@@ -64,6 +65,27 @@ namespace cook { namespace chai {
     TargetType ToolchainElement::target_type() const
     {
         return element_->target_type();
+    }
+        
+    void ToolchainElement::set_file_processing_function(const FileProcessingFctr & fctr)
+    {
+        const Context * context = context_;
+        auto fct = [=](const LanguageTypePair & ltp, const ingredient::File & file)
+        {
+            File f(ltp, file, context);
+            return fctr(f);
+        };
+        element_->set_file_processing_function(fct);
+    }
+    void ToolchainElement::set_key_value_processing_function(const KeyValueProcessingFctr & fctr)
+    {
+        const Context * context = context_;
+        auto fct = [=](const LanguageTypePair & ltp, const ingredient::KeyValue& kv)
+        {
+            KeyValue k(ltp, kv, context);
+            return fctr(k);
+        };
+        element_->set_key_value_processing_function(fct);
     }
 
 } }

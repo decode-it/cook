@@ -1,4 +1,5 @@
 #include "cook/process/souschef/Archiver.hpp"
+#include "cook/process/command/Archive.hpp"
 #include "cook/process/toolchain/Manager.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
@@ -25,10 +26,8 @@ namespace cook { namespace process { namespace souschef {
         MSS(archive_command_(ac, recipe, context));
         auto archive_vertex = g.add_vertex(ac);
 
-        // stop the propagation, this file is contained in the library
         for(ingredient::File & object : objects)
         {
-            object.set_propagation(Propagation::Private);
             auto ss = log::scope("object", [&](auto &node){node.attr("file", object);});
             const std::filesystem::path & obj_fn = gubg::filesystem::combine({ recipe.working_directory(), object.dir(), object.rel() });
             MSS(g.add_edge(archive_vertex, g.goc_vertex(obj_fn)));
@@ -89,11 +88,9 @@ namespace cook { namespace process { namespace souschef {
     {
         MSS_BEGIN(Result);
 
-        auto ap = context.toolchain().create_command<process::command::Archive>(toolchain::Element::Archive, Language::Binary, recipe.build_target().type, &recipe);
-        MSS(!!ap);
-
-        ap->set_recipe_uri(recipe.uri().string());
-        ptr = ap;
+        ptr = context.toolchain().create_command<process::command::Archive>(toolchain::Element::Archive, Language::Binary, recipe.build_target().type, &recipe);
+        MSS(!!ptr);
+        
         MSS_END();
     }
 

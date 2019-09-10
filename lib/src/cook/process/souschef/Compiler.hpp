@@ -18,6 +18,7 @@ public:
 
 private:
     ingredient::File construct_object_file(const ingredient::File & source, model::Recipe &recipe, const Context &context) const;
+    Result compile_command_(command::Ptr &, model::Recipe & recipe, const Context & context) const;
 
     Language language_;
 };

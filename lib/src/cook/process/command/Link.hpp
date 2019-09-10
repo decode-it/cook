@@ -3,6 +3,7 @@
 
 #include "cook/process/command/CommonImpl.hpp"
 #include "cook/process/toolchain/Types.hpp"
+#include "cook/util/File.hpp"
 #include <memory>
 
 namespace cook { namespace process { namespace command { 
@@ -12,33 +13,97 @@ namespace cook { namespace process { namespace command {
     public:
         using Ptr = std::shared_ptr<Link>;
 
-        Link(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMap &trans, Language language): CommonImpl(kvm, trans, language) {}
+        Link(toolchain::Element::Ptr ptr)
+            : CommonImpl(ptr)
+            , rcp_path_(util::get_from_to_path(".", ptr->recipe()))
+        {
+        }
 
         std::string name() const override {return "Link";}
         Type type() const override {return Type::Link;}
 
         Result process() override {return Result();}
+        
+        virtual bool process_ingredient(const LanguageTypePair& ltp, const ingredient::File& file) override
+        { 
+            if (false)
+            {
+            }
+            else if (ltp.language == Language::Binary && ltp.type == cook::Type::Object)
+            {
+                return true;
+            }
+            else if (ltp.language == Language::Binary && ltp.type == cook::Type::Dependency)
+            {
+                return true;
+            }
+            else if (ltp.language == Language::Binary && ltp.type == cook::Type::LibraryPath)
+            {
+                add_library_path_(gubg::filesystem::combine(rcp_path_, file.dir()));
+            }
+            else if (ltp.language == Language::Binary && ltp.type == cook::Type::FrameworkPath)
+            {
+                add_framework_path_(gubg::filesystem::combine(rcp_path_, file.dir()));
+            }
+            else if(ltp.language == Language::Definition && ltp.type == cook::Type::Export)
+            {
+                add_export_(gubg::filesystem::combine({rcp_path_, file.dir(), file.rel()}));
+                return true;
+            }
+            else
+            {
+                return CommonImpl::process_ingredient(ltp, file);
+            }
+                
+            return false; 
+        }
 
-        void add_library(const std::string & name)
+        virtual bool process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& kv) override
+        {
+            if (false)
+            {
+            }
+            else if (ltp.language == Language::Binary && ltp.type == cook::Type::Library)
+            {
+                add_library_(kv.key());
+                return true;
+            }
+            else if (ltp.language == Language::Binary && ltp.type == cook::Type::Framework)
+            {
+                add_framework_(kv.key());
+                return true;
+            }
+            else
+            {
+                return CommonImpl::process_ingredient(ltp, kv);
+            }
+            return false; 
+        }
+
+    private:
+        void add_library_(const std::string & name)
         {
             kvm_[toolchain::Part::Library].emplace_back(name, "");
         }
-        void add_library_path(const std::filesystem::path & path)
+        void add_library_path_(const std::filesystem::path & path)
         {
             kvm_[toolchain::Part::LibraryPath].emplace_back(escape_spaces(path.string()), "");
         }
-        void add_framework(const std::string & name)
+        void add_framework_(const std::string & name)
         {
             kvm_[toolchain::Part::Framework].emplace_back(name, "");
         }
-        void add_framework_path(const std::filesystem::path & path)
+        void add_framework_path_(const std::filesystem::path & path)
         {
             kvm_[toolchain::Part::FrameworkPath].emplace_back(escape_spaces(path.string()), "");
         }
-        void add_export(const std::filesystem::path & path)
+        void add_export_(const std::filesystem::path & path)
         {
             kvm_[toolchain::Part::Export].emplace_back(escape_spaces(path.string()), "");
         }
+
+    private:
+        std::filesystem::path rcp_path_;
     };
 
 } } } 

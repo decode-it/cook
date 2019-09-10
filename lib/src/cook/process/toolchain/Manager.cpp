@@ -106,6 +106,23 @@ namespace cook { namespace process { namespace toolchain {
     {
         return initialized_;
     }
+        
+    bool Manager::process_ingredients_(command::Interface & cmd, model::Recipe & recipe) const
+    {
+        MSS_BEGIN(bool);
+
+        auto process_ingredient = [&](const LanguageTypePair& ltp, auto& ingredient) {
+            if (cmd.process_ingredient(ltp, ingredient))
+                ingredient.set_propagation(Propagation::Private);
+
+            return true;
+        };
+
+        MSS(recipe.key_values().each(process_ingredient));
+        MSS(recipe.files().each(process_ingredient));
+
+        MSS_END();
+    }
 
     Element::Ptr Manager::element(Element::Type type, Language language, TargetType target_type) const
     {

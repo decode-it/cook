@@ -28,7 +28,7 @@ namespace cook { namespace chai {
             if (is_frozen())
                 CHAI_MSS_MSG(!!manager_->element(type, lang, target_type), Error, "No toolchain element with type " << type << " and language " << lang << " exists");
             
-            ToolchainElement el(manager_->goc_element(type, lang, target_type));
+            ToolchainElement el(manager_->goc_element(type, lang, target_type), context_);
             el.set_freeze_flag(is_frozen());
 
             return el;
@@ -85,7 +85,7 @@ namespace cook { namespace chai {
             CFG cfg(priority, uuid);
             cfg.callback = [=](process::toolchain::Element::Ptr e, const std::string & k, const std::string & v, ConfigurationBoard & b)
             {
-                return cb(ToolchainElement(e), k, v, b);
+                return cb(ToolchainElement(e, context_), k, v, b);
             };
             manager_->add_configuration_callback(std::move(cfg));
 
@@ -130,7 +130,7 @@ namespace cook { namespace chai {
             const Context * ctx = context_;
             auto lambda = [=](process::toolchain::Element::Ptr element, model::Recipe * recipe)
             {
-                auto te = ToolchainElement(element);
+                auto te = ToolchainElement(element, context_);
                 auto re = Recipe(recipe, ctx);
                 functor(te, re);
             };

@@ -1,16 +1,19 @@
 #include "cook/process/toolchain/Element.hpp"
 
-namespace cook { namespace process { namespace toolchain { 
+namespace cook { namespace process { namespace toolchain {
 
-    Element::Element(Type element_type, Language language, TargetType target_type) : 
-        trans_(), element_type_(element_type), language_(language),
-        target_type_(target_type)
-    {
-        auto lambda = [&](toolchain::Part part)
+        Element::Element(Type element_type, Language language, TargetType target_type)
+            : trans_()
+            , element_type_(element_type)
+            , language_(language)
+            , target_type_(target_type)
+            , process_file_([](const auto & , const auto & ){return false; })
+            , process_key_value_([](const auto & , const auto & ){return false; })
         {
-            trans_[part] = [](const std::string &, const std::string &){return "";};
-        };
-        toolchain::each_part(lambda);
+            auto lambda = [&](toolchain::Part part) {
+                trans_[part] = [](const std::string&, const std::string&) { return ""; };
+            };
+            toolchain::each_part(lambda);
     }
 
     KeyValuesMap & Element::key_values_map() 
@@ -46,6 +49,16 @@ namespace cook { namespace process { namespace toolchain {
     TargetType Element::target_type() const
     {
         return target_type_;
+    }
+            
+    bool Element::process_ingredient(const LanguageTypePair & ltp, const ingredient::File & file)
+    {
+        return process_file_(ltp, file);
+    }
+
+    bool Element::process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& key_value)
+    {
+        return process_key_value_(ltp, key_value);
     }
 
     std::ostream & operator<<(std::ostream & str, Element::Type type)

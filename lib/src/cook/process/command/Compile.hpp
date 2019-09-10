@@ -3,7 +3,9 @@
 
 #include "cook/process/command/CommonImpl.hpp"
 #include "cook/process/toolchain/Types.hpp"
+#include "cook/util/File.hpp"
 #include "gubg/OnlyOnce.hpp"
+#include "gubg/std/filesystem.hpp"
 #include <memory>
 
 namespace cook { namespace process { namespace command { 
@@ -13,10 +15,54 @@ namespace cook { namespace process { namespace command {
     public:
         using Ptr = std::shared_ptr<Compile>;
 
-        Compile(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMap &trans, Language language): CommonImpl(kvm, trans, language) {}
+        Compile(toolchain::Element::Ptr ptr)
+            : CommonImpl(ptr)
+            , rcp_path_(util::get_from_to_path("./", ptr->recipe()))
+        {
+        }
 
         std::string name() const override {return "Compile";}
         Type type() const override {return Type::Compile;}
+
+        virtual bool process_ingredient(const LanguageTypePair& ltp, const ingredient::File& file) override
+        { 
+            if (false) 
+            {
+            }
+            else if (ltp.language == Language::Undefined && ltp.type == cook::Type::IncludePath)
+            {
+                add_include_path_(gubg::filesystem::combine(rcp_path_, file.dir()));
+            }
+            else if (ltp.language == language_ && ltp.type == cook::Type::ForceInclude)
+            {
+                //The necessary include path is already added by IncludePathSetter
+                add_force_include_(file.rel());
+            }
+            else
+            {
+                return CommonImpl::process_ingredient(ltp, file);
+            }
+            return false; 
+        }
+
+        virtual bool process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& kv) override
+        {
+            if (false)
+            {
+            }
+            else if (ltp.language == Language::Undefined && ltp.type == cook::Type::Define)
+            {
+                if (kv.has_value())
+                    add_define_(kv.key(), kv.value());
+                else
+                    add_define_(kv.key());
+            }
+            else
+            {
+                return CommonImpl::process_ingredient(ltp, kv);
+            }
+            return false; 
+        }
 
         void set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) override
         {
@@ -54,20 +100,22 @@ namespace cook { namespace process { namespace command {
         }
         Result process() override {return Result();}
 
-        void add_define(const std::string & name, const std::string & value)
+    private:
+        void add_define_(const std::string & name, const std::string & value)
         {
             kvm_[toolchain::Part::Define].emplace_back(name, value);
         }
-        void add_define(const std::string & name) { add_define(name, ""); }
+        void add_define_(const std::string & name) { add_define_(name, ""); }
 
-        void add_include_path(const std::filesystem::path & path)
+        void add_include_path_(const std::filesystem::path & path)
         {
             kvm_[toolchain::Part::IncludePath].emplace_back(escape_spaces(path.string()), "");
         }
-        void add_force_include(const std::filesystem::path & path)
+        void add_force_include_(const std::filesystem::path & path)
         {
             kvm_[toolchain::Part::ForceInclude].emplace_back(escape_spaces(path.string()), "");
         }
+        std::filesystem::path rcp_path_;
     };
 
 } } } 

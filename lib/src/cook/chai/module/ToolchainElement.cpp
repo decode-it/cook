@@ -7,6 +7,27 @@ namespace cook { namespace chai { namespace module {
     
     CREATE_WRAPPER_TYPE(Part);
     CREATE_WRAPPER_TYPE(ElementType);
+    
+    using IngredientProcessor = std::function<bool (chaiscript::Boxed_Value vt)>;
+
+    namespace {
+
+        void set_ingredient_processor(ToolchainElement & element, IngredientProcessor process)
+        {
+            auto process_file = [=](const File & file)
+            {
+                return process(chaiscript::const_var(file));
+            };
+            element.set_file_processing_function(process_file);
+            
+            auto process_key_value = [=](const KeyValue & kv)
+            {
+                return process(chaiscript::const_var(kv));
+            };
+            element.set_key_value_processing_function(process_key_value);
+        }
+
+    }
 
     gubg::chai::ModulePtr toolchain_element()
     {
@@ -57,6 +78,8 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::fun(&ToolchainElement::language), "language");
         ptr->add(chaiscript::fun(&ToolchainElement::target_type), "target_type");
         ptr->add(chaiscript::fun(&ToolchainElement::element_type), "element_type");
+        
+        ptr->add(chaiscript::fun(set_ingredient_processor), "set_ingredient_processor");
 
         return ptr;
     }

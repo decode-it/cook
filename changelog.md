@@ -214,6 +214,7 @@ Proof-of-concept version.
 
 ## 1.2.16 (open)
 * Type and Flag can easilty be extended, e.g., Type.A = Type.UserDefined()
+* ToolchainElement has a `set_ingredient_processor` callback function with a single argument an ingredient, and should return true if propagation should stop, false otherwise.
 
 ## Next
 

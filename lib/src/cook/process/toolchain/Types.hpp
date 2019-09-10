@@ -63,7 +63,6 @@ namespace cook { namespace process { namespace toolchain {
 
     using Translator = std::function<std::string (const std::string &, const std::string &)>;
     using TranslatorMap = std::map<Part, Translator>;
-    using TranslatorMapPtr = std::shared_ptr<TranslatorMap>;
 
 } } } 
 

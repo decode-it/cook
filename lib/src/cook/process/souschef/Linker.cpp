@@ -1,5 +1,6 @@
 #include "cook/process/souschef/Linker.hpp"
 #include "cook/process/toolchain/Manager.hpp"
+#include "cook/process/command/Link.hpp"
 #include "cook/util/File.hpp"
 #include "gubg/stream.hpp"
 
@@ -14,23 +15,9 @@ namespace cook { namespace process { namespace souschef {
         model::Recipe::Files & files = recipe.files();
         auto & g = file_command_graph;
 
-        auto stop_propagation = [](auto & ingredients)
-        {
-            for(auto & ingredient : ingredients)
-                ingredient.set_propagation(Propagation::Private);
-        };
-
         auto objects    = recipe.files().range(LanguageTypePair(Language::Binary, Type::Object));
-        auto libs       = recipe.key_values().range(LanguageTypePair(Language::Binary, Type::Library));
-        auto frameworks = recipe.key_values().range(LanguageTypePair(Language::Binary, Type::Framework));
         auto deps       = recipe.files().range(LanguageTypePair(Language::Binary, Type::Dependency));
         auto exports    = recipe.files().range(LanguageTypePair(Language::Definition, Type::Export));
-
-        stop_propagation(objects);
-        stop_propagation(libs);
-        stop_propagation(frameworks);
-        stop_propagation(deps);
-        stop_propagation(exports);
 
         if (objects.empty() && deps.empty())
         {
@@ -42,7 +29,7 @@ namespace cook { namespace process { namespace souschef {
         build::Graph::vertex_descriptor link_vertex;
         {
             command::Ptr lc;
-            MSS(link_command_(lc, recipe, libs, frameworks, context));
+            MSS(link_command_(lc, recipe, context));
             link_vertex = g.add_vertex(lc);
         }
 
@@ -149,46 +136,20 @@ namespace cook { namespace process { namespace souschef {
         const std::filesystem::path dir = context.dirs().output();
         const std::filesystem::path rel = *recipe.build_target().filename;
 
-        ingredient::File archive(dir, rel);
-        archive.set_content(Content::Generated);
-        archive.set_overwrite(Overwrite::IfSame);
-        archive.set_owner(&recipe);
-        archive.set_propagation(Propagation::Public);
+        ingredient::File link(dir, rel);
+        link.set_content(Content::Generated);
+        link.set_overwrite(Overwrite::IfSame);
+        link.set_owner(&recipe);
+        link.set_propagation(Propagation::Public);
 
-        return archive;
+        return link;
     }
 
-    Result Linker::link_command_(command::Ptr &ptr, model::Recipe & recipe, const model::Recipe::KeyValues::Range &libs, const model::Recipe::KeyValues::Range &frameworks, const Context & context) const
+    Result Linker::link_command_(command::Ptr &ptr, model::Recipe & recipe, const Context & context) const
     {
         MSS_BEGIN(Result);
 
-        auto lp = context.toolchain().create_command<process::command::Link>(toolchain::Element::Link, Language::Binary, recipe.build_target().type, &recipe);
-        MSS(!!lp);
-
-        auto adj = util::get_from_to_path(".", recipe);
-
-        // set the libraries
-        for(const ingredient::KeyValue & lib : libs)
-            lp->add_library(lib.key());
-
-        // set the frameworks
-        for(const ingredient::KeyValue & framework : frameworks)
-            lp->add_framework(framework.key());
-
-        // set the library paths
-        for(const ingredient::File & lib: recipe.files().range(LanguageTypePair(Language::Binary, Type::LibraryPath)))
-            lp->add_library_path(gubg::filesystem::combine(adj, lib.dir()));
-
-        // set the framework paths
-        for(const ingredient::File & framework_path: recipe.files().range(LanguageTypePair(Language::Binary, Type::FrameworkPath)))
-            lp->add_framework_path(gubg::filesystem::combine(adj, framework_path.dir()));
-
-        // set the export files
-        for(const ingredient::File & exp: recipe.files().range(LanguageTypePair(Language::Definition, Type::Export)))
-            lp->add_export(gubg::filesystem::combine({adj, exp.dir(), exp.rel()}));
-
-        lp->set_recipe_uri(recipe.uri().string());
-        ptr = lp;
+        ptr = context.toolchain().create_command<process::command::Link>(toolchain::Element::Link, Language::Binary, recipe.build_target().type, &recipe);
 
         MSS_END();
     }

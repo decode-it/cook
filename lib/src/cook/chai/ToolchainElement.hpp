@@ -2,6 +2,9 @@
 #define HEADER_cook_chai_ToolchainElement_hpp_ALREADY_INCLUDED
 
 #include "cook/chai/Freezable.hpp"
+#include "cook/chai/Flags.hpp"
+#include "cook/chai/File.hpp"
+#include "cook/chai/KeyValue.hpp"
 #include "cook/process/toolchain/Element.hpp"
 
 namespace cook { namespace chai {
@@ -45,8 +48,10 @@ namespace cook { namespace chai {
 
     public:
         using key_values_type = process::toolchain::KeyValuesMap;
+        using FileProcessingFctr = std::function<bool (const File &)>;
+        using KeyValueProcessingFctr = std::function<bool (const KeyValue &)>;
         
-        ToolchainElement(Element::Ptr element);
+        ToolchainElement(Element::Ptr element, const Context * context);
 
         KeyValues key_values() const;
         Translators translators() const;
@@ -55,8 +60,12 @@ namespace cook { namespace chai {
         ElementType element_type() const;
         TargetType target_type() const;
 
+        void set_file_processing_function(const FileProcessingFctr & fctr);
+        void set_key_value_processing_function(const KeyValueProcessingFctr & fctr);
+
     private:
         Element::Ptr element_;
+        const Context * context_;
     };
 
 } }

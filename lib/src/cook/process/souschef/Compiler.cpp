@@ -1,35 +1,11 @@
 #include "cook/process/souschef/Compiler.hpp"
 #include "cook/process/toolchain/Manager.hpp"
+#include "cook/process/command/Compile.hpp"
 #include "cook/util/File.hpp"
 #include "cook/log/Scope.hpp"
 #include "gubg/hash/MD5.hpp"
 
 namespace cook { namespace process { namespace souschef {
-
-    namespace { 
-
-        void initialize_compile_command_(process::command::Compile & cp, const model::Recipe & recipe, Language language) 
-        {
-            // add the include paths
-            auto adj = util::get_from_to_path("./", recipe);
-            for (const ingredient::File & f : recipe.files().range(LanguageTypePair(Language::Undefined, Type::IncludePath)))
-                cp.add_include_path(gubg::filesystem::combine(adj, f.dir()));
-
-            // add the force includes
-            for (const ingredient::File & f : recipe.files().range(LanguageTypePair(language, Type::ForceInclude)))
-                //The necessary include path is already added by IncludePathSetter
-                cp.add_force_include(f.rel());
-
-            // add the defines
-            for (const ingredient::KeyValue & f : recipe.key_values().range(LanguageTypePair(Language::Undefined, Type::Define)))
-                if (f.has_value())
-                    cp.add_define(f.key(), f.value());
-                else
-                    cp.add_define(f.key());
-
-            cp.set_recipe_uri(recipe.uri().string());
-        }
-    }
 
     Compiler::Compiler(Language language)
     : language_(language)
@@ -54,15 +30,9 @@ namespace cook { namespace process { namespace souschef {
             MSS_RETURN_OK();
         L("Found source files for " << language_);
 
-        auto cp = context.toolchain().create_command<process::command::Compile>(toolchain::Element::Compile, language_, TargetType::Object, &recipe);
-        if (!cp)
-        {
-            std::ostringstream oss;
-            for (const ingredient::File & source : it->second)
-                oss << std::endl << " * " << source;
-            MSG_MSS(false, Error, "Could not find the toolchain compile element for language \"" << language_ << "\", either add such an element, or remove all files using this language:" << oss.str());
-        }
-        initialize_compile_command_(*cp, recipe, language_);
+        command::Ptr cp;
+        MSS(compile_command_(cp, recipe, context));
+    
 
         for (const ingredient::File & source : it->second)
         {
@@ -113,6 +83,16 @@ namespace cook { namespace process { namespace souschef {
         object.set_propagation(Propagation::Public);
 
         return object;
+    }
+    
+    Result Compiler::compile_command_(command::Ptr &ptr, model::Recipe & recipe, const Context & context) const
+    {
+        MSS_BEGIN(Result);
+        
+        ptr = context.toolchain().create_command<process::command::Compile>(toolchain::Element::Compile, language_, TargetType::Object, &recipe);
+        MSS(!!ptr);
+
+        MSS_END();
     }
 
 

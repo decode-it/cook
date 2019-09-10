@@ -3,7 +3,7 @@
 
 namespace cook { namespace process { namespace command { 
 
-    CommonImpl::CommonImpl(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMap &trans, Language language): kvm_(kvm), trans_(trans), language_(language) {}
+    CommonImpl::CommonImpl(toolchain::Element::Ptr ptr): ptr_(ptr), kvm_(ptr_->key_values_map()), trans_(ptr->translator_map()), language_(ptr_->language()) {}
 
     void CommonImpl::set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) 
     {
@@ -75,6 +75,16 @@ namespace cook { namespace process { namespace command {
         std::string res(str.size() + 2, '\"');
         std::copy(str.begin(), str.end(), res.begin()+1);
         return res;
+    }
+        
+    bool CommonImpl::process_ingredient(const LanguageTypePair& ltp, const ingredient::File& file)
+    {
+        return ptr_->process_ingredient(ltp, file); 
+    }
+
+    bool CommonImpl::process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& key_value)
+    {
+        return ptr_->process_ingredient(ltp, key_value); 
     }
 
 } } } 

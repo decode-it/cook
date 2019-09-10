@@ -12,7 +12,24 @@ namespace cook { namespace process { namespace command {
     public:
         using Ptr = std::shared_ptr<Archive>;
 
-        Archive(const toolchain::KeyValuesMap &kvm, const toolchain::TranslatorMap &trans, Language language): CommonImpl(kvm, trans, language) {}
+        Archive(toolchain::Element::Ptr ptr) : CommonImpl(ptr) {}
+        
+        virtual bool process_ingredient(const LanguageTypePair& ltp, const ingredient::File& file) override
+        { 
+            if (false)
+            {
+            }
+            else if (ltp.language == Language::Binary && ltp.type == cook::Type::Object)
+            {
+                return true;
+            }
+            else
+            {
+                return CommonImpl::process_ingredient(ltp, file);
+            }
+                
+            return false; 
+        }
 
         std::string name() const override {return "Archive";}
         Type type() const override {return Type::Archive;}

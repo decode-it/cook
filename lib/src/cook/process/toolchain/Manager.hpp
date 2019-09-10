@@ -4,6 +4,7 @@
 #include "cook/Language.hpp"
 #include "cook/process/toolchain/Element.hpp"
 #include "cook/process/toolchain/Configuration.hpp"
+#include "cook/process//command/Interface.hpp"
 #include "cook/TargetType.hpp"
 #include "cook/Result.hpp"
 #include "cook/model/Recipe.hpp"
@@ -40,8 +41,14 @@ namespace cook { namespace process { namespace toolchain {
 
             if (configure_command_)
                 configure_command_(e, recipe);
+
+            e->set_recipe(recipe);
            
-            return std::make_shared<CommandType>(e->key_values_map(), e->translator_map(), e->language());
+            auto cmd = std::make_shared<CommandType>(e);
+            if (!cmd || !process_ingredients_(*cmd, *recipe))
+                return nullptr;
+
+            return cmd;
         }
 
         Result initialize();
@@ -65,6 +72,7 @@ namespace cook { namespace process { namespace toolchain {
 
 
     private:
+        bool process_ingredients_(command::Interface & cmd, model::Recipe & recipe) const;
         Element::Ptr clone_(Element::Type element_type, Language language, TargetType target_type) const;
         struct Key
         {
