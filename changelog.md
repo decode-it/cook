@@ -212,7 +212,7 @@ Proof-of-concept version.
 * Added support for Recipe.remove(dir, rel, flags, functor)
 * Added documentation for Recip.remove()
 
-## 1.2.16 (open)
+## 1.2.16
 * Type and Flag can easilty be extended, e.g., Type.A = Type.UserDefined()
 * ToolchainElement has a `set_ingredient_processor` callback function:
    * bool (ToolchainElement, Recipe, Ingredient): should return true if the propagation for this ingredient should stop, false otherwise
