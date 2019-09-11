@@ -1,4 +1,5 @@
 #include "cook/chai/module/ToolchainElement.hpp"
+#include "cook/chai/module/Recipe.hpp"
 #include "cook/chai/module/EnumHelper.hpp"
 #include "cook/chai/ToolchainElement.hpp"
 #include "gubg/chai/Module.hpp"
@@ -8,21 +9,21 @@ namespace cook { namespace chai { namespace module {
     CREATE_WRAPPER_TYPE(Part);
     CREATE_WRAPPER_TYPE(ElementType);
     
-    using IngredientProcessor = std::function<bool (chaiscript::Boxed_Value vt)>;
+    using IngredientProcessor = std::function<bool (ToolchainElement e, Recipe r, chaiscript::Boxed_Value vt)>;
 
     namespace {
 
         void set_ingredient_processor(ToolchainElement & element, IngredientProcessor process)
         {
-            auto process_file = [=](const File & file)
+            auto process_file = [=](ToolchainElement e, Recipe r, const File & file)
             {
-                return process(chaiscript::const_var(file));
+                return process(e, r, chaiscript::const_var(file));
             };
             element.set_file_processing_function(process_file);
             
-            auto process_key_value = [=](const KeyValue & kv)
+            auto process_key_value = [=](ToolchainElement e, Recipe r, const KeyValue & kv)
             {
-                return process(chaiscript::const_var(kv));
+                return process(e, r, chaiscript::const_var(kv));
             };
             element.set_key_value_processing_function(process_key_value);
         }

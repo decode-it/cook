@@ -69,8 +69,8 @@ namespace cook { namespace process { namespace toolchain {
         include_paths_.push_back("./");
         include_paths_.push_back(get_cook_home_path());
     }
-
-    void Loader::add_include_path(const std::filesystem::path & path) 
+        
+    void Loader::append_include_path(const std::filesystem::path & path) 
     {
         for(const std::filesystem::path & p : include_paths_)
             if (p == path)
@@ -78,7 +78,7 @@ namespace cook { namespace process { namespace toolchain {
 
         {
             auto second_to_last = include_paths_.end();
-            --second_to_last;
+            std::advance(second_to_last, -2);
             include_paths_.insert(second_to_last, path);
         }
     }

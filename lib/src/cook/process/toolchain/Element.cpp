@@ -7,8 +7,8 @@ namespace cook { namespace process { namespace toolchain {
             , element_type_(element_type)
             , language_(language)
             , target_type_(target_type)
-            , process_file_([](const auto & , const auto & ){return false; })
-            , process_key_value_([](const auto & , const auto & ){return false; })
+            , process_file_([](const auto &, const auto & , const auto & ){return false; })
+            , process_key_value_([](const auto &, const auto & , const auto & ){return false; })
         {
             auto lambda = [&](toolchain::Part part) {
                 trans_[part] = [](const std::string&, const std::string&) { return ""; };
@@ -53,12 +53,12 @@ namespace cook { namespace process { namespace toolchain {
             
     bool Element::process_ingredient(const LanguageTypePair & ltp, const ingredient::File & file)
     {
-        return process_file_(ltp, file);
+        return process_file_(*this, ltp, file);
     }
 
     bool Element::process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& key_value)
     {
-        return process_key_value_(ltp, key_value);
+        return process_key_value_(*this, ltp, key_value);
     }
 
     std::ostream & operator<<(std::ostream & str, Element::Type type)

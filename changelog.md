@@ -214,7 +214,12 @@ Proof-of-concept version.
 
 ## 1.2.16 (open)
 * Type and Flag can easilty be extended, e.g., Type.A = Type.UserDefined()
-* ToolchainElement has a `set_ingredient_processor` callback function with a single argument an ingredient, and should return true if propagation should stop, false otherwise.
+* ToolchainElement has a `set_ingredient_processor` callback function:
+   * bool (ToolchainElement, Recipe, Ingredient): should return true if the propagation for this ingredient should stop, false otherwise
+* `include` has no automatic guards against multiple inclusion
+* Command line option `-I` adds extra directories to seach when using `include` in chai
+* `include_relative` only tries to include from the relative directory
+* `load` loads and evaluates the file without any guards
 
 ## Next
 

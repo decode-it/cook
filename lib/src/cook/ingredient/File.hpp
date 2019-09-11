@@ -17,6 +17,15 @@ namespace cook { namespace ingredient {
         rel_(rel)
         {
         }
+        
+        File(const File & rhs, const std::filesystem::path & rdir)
+        : File(gubg::filesystem::combine(rdir, rhs.dir()), rhs.rel())
+        {
+            this->set_propagation(rhs.propagation());
+            this->set_overwrite(rhs.overwrite());
+            this->set_owner(rhs.owner());
+            this->set_content(rhs.content());
+        }
 
         bool operator==(const File & rhs) const
         {

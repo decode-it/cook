@@ -78,7 +78,9 @@ struct Context::Pimpl
 
     void initialize_engine_(Context * kitchen)
     {
+        engine.add(chaiscript::fun([=](const std::string & name) { kitchen->load_(name); }), "load");
         engine.add(chaiscript::fun([=](const std::string & name) { kitchen->include_(name); }), "include");
+        engine.add(chaiscript::fun([=](const std::string & name) { kitchen->include_relative_(name); }), "include_relative");
         engine.add(module::flags());
         engine.add(module::basic());
         engine.add(module::uri());
@@ -204,22 +206,26 @@ Result Context::load_toolchain(const std::string & toolchain)
 {
     MSS_BEGIN(Result);
 
-    std::filesystem::path fn;
-    MSS(loader_.load(toolchain, fn));
+    process::toolchain::Loader loader;
+    for(const auto & d : dirs().include_dirs())
+        loader.append_include_path(d);
 
-    MSS(load_(fn.string()));
+    std::filesystem::path fn;
+    MSS(loader.load(toolchain, fn));
+
+    MSS(run_(fn.string()));
     MSS_END();
 }
 
 Result Context::load_recipe(const std::string & recipe)
 {
     MSS_BEGIN(Result);
-    MSS(load_(recipe));
+    MSS(run_(recipe));
     MSS_END();
 }
 
 
-Result Context::load_(const std::string & recipe)
+Result Context::run_(const std::string & recipe)
 {
     MSS_BEGIN(Result);
 
@@ -258,7 +264,12 @@ Result Context::load_(const std::string & recipe)
     MSS_END();
 }
 
-std::filesystem::path Context::generate_file_path_(const std::string & file) const
+std::filesystem::path Context::current_working_directory() const
+{
+    return pimpl_->top_level_path();
+}
+
+void Context::load_(const std::string & file)
 {
     // make the path to the file
     std::filesystem::path script_fn = gubg::filesystem::combine(pimpl_->top_level_path(), file);
@@ -268,26 +279,63 @@ std::filesystem::path Context::generate_file_path_(const std::string & file) con
     else if (std::filesystem::is_directory(script_fn))
         script_fn /= "recipes.chai";
 
-    return script_fn;
+    load_script_(script_fn);
+
 }
 
-std::filesystem::path Context::current_working_directory() const
+void Context::load_script_(const std::filesystem::path & fn)
 {
-    return pimpl_->top_level_path();
-}
-
-void Context::include_(const std::string & file)
-{
-    const std::filesystem::path script_fn = generate_file_path_(file);
-
     auto ss = log::scope("chai script", [&](auto & n) {
-        n.attr("filename", script_fn.string());
+        n.attr("filename", fn.string());
     });
 
     // push the script
-    pimpl_->scripts.push(script_fn);
-    pimpl_->engine.eval_file(script_fn.string());
+    pimpl_->scripts.push(fn);
+    pimpl_->engine.eval_file(fn.string());
     pimpl_->scripts.pop();
+
+}
+
+bool Context::try_include(std::filesystem::path fn)
+{
+    if (std::filesystem::is_directory(fn))
+        fn /= "recipes.chai";
+    
+    // does the file exist?
+    if (!std::filesystem::exists(fn))
+    {
+        fn += ".chai";
+        if (!std::filesystem::exists(fn))
+            return false;
+    }
+
+    std::filesystem::path p = std::filesystem::canonical(fn);
+    if (imported_.insert(p).second)
+        load_script_(p);
+
+    return true;
+}
+    
+void Context::include_(const std::string & file)
+{
+    // see if we can find it in the import directories
+    for(const auto & d : dirs().include_dirs())
+    {
+        if (try_include(gubg::filesystem::combine(d, file)))
+            return;
+    }
+
+    include_relative_(file);
+}
+
+void Context::include_relative_(const std::string& file)
+{
+    if (try_include(gubg::filesystem::combine(pimpl_->top_level_path(), file)))
+        return;
+
+    Result r;
+    r << Message(Message::Type::Error, "Could not import file");
+    throw Error(r);
 }
 
 } }

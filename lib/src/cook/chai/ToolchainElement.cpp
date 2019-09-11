@@ -70,20 +70,26 @@ namespace cook { namespace chai {
     void ToolchainElement::set_file_processing_function(const FileProcessingFctr & fctr)
     {
         const Context * context = context_;
-        auto fct = [=](const LanguageTypePair & ltp, const ingredient::File & file)
+        
+        auto fct = [=](process::toolchain::Element & e, const LanguageTypePair & ltp, const ingredient::File & file)
         {
+
             File f(ltp, file, context);
-            return fctr(f);
+            ToolchainElement el(e.shared_from_this(), context);
+            Recipe r(&e.recipe(), context);
+            return fctr(el, r, f);
         };
         element_->set_file_processing_function(fct);
     }
     void ToolchainElement::set_key_value_processing_function(const KeyValueProcessingFctr & fctr)
     {
         const Context * context = context_;
-        auto fct = [=](const LanguageTypePair & ltp, const ingredient::KeyValue& kv)
+        auto fct = [=](process::toolchain::Element & e, const LanguageTypePair & ltp, const ingredient::KeyValue& kv)
         {
             KeyValue k(ltp, kv, context);
-            return fctr(k);
+            ToolchainElement el(e.shared_from_this(), context);
+            Recipe r(&e.recipe(), context);
+            return fctr(el, r, k);
         };
         element_->set_key_value_processing_function(fct);
     }

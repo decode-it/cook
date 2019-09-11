@@ -37,6 +37,7 @@ bool Options::parse(int argc, const char ** argv)
         opt.add_mandatory(  'O', "--temp-dir             ", "Temporary build cache directory. Default is .cook", [&](const std::string & str) {temp_path = str; });
         opt.add_mandatory(  't', "--toolchain-file       ", "The toolchain-file to use. If not found and any of [gcc,clang, msvc, default] a toolchain is generated in the working directory", [&](const std::string & str) { toolchains.push_back(str); });
         opt.add_mandatory(  'T', "--toolchain-option     ", "Passes the option to the toolchain.", [&](const std::string & str) { toolchain_options.push_back(parse_key_value_pair(str)); });
+        opt.add_mandatory(  'I', "--include-dir           ", "Use the specified directory as include directory", [&](const std::string & str) { include_dirs.push_back(str); });
         opt.add_mandatory(  'g', "--generator            ", "A generator to use [naft|ninja|cmake|build]. If none are specified, then build is used.", [&](const std::string & str) { generators.push_back(parse_key_value_pair(str)); });
         opt.add_mandatory(  'C', "--chef                 ", "Chef to use [scal|cal|void]", [&](const std::string &str){ chef = str; });
         opt.add_switch(     'c', "--clean                ", "Clean the data for the specified generators before using them", [&](){ clean_ = true; });
@@ -106,6 +107,7 @@ void Options::stream(log::Importance importance) const
 
     log_single_range("recipes", recipe_files);
     log_single_range("toolchains", toolchains);
+    log_single_range("include_dirs", include_dirs);
 
     log_pair_range("toolchain-options", toolchain_options);
     log_pair_range("generators", generators);

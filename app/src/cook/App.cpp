@@ -48,6 +48,9 @@ Result App::process_()
     // set the directories
     kitchen_.dirs().set_output(options_.output_path);
     kitchen_.dirs().set_temporary(options_.temp_path);
+    for(const auto & d : options_.include_dirs)
+        kitchen_.dirs().add_include_dir(d);
+    
 
     // load the toolchains from file
     MSS(load_toolchains_());

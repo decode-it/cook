@@ -15,7 +15,7 @@ namespace cook { namespace process { namespace toolchain {
     public:
         Loader();
 
-        void add_include_path(const std::filesystem::path & path);        
+        void append_include_path(const std::filesystem::path & path);        
         Result load(const std::string & name, std::filesystem::path & toolchain_filename) const;
 
     private:

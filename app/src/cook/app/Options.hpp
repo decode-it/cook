@@ -14,6 +14,7 @@ namespace cook { namespace app {
 
         std::list<std::string> recipe_files;
         std::list<std::string> toolchains;
+        std::list<std::string> include_dirs;
         std::list<KeyValue> toolchain_options;
         std::string output_path = "./";
         std::string temp_path = ".cook";

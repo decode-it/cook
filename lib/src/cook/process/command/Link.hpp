@@ -3,7 +3,6 @@
 
 #include "cook/process/command/CommonImpl.hpp"
 #include "cook/process/toolchain/Types.hpp"
-#include "cook/util/File.hpp"
 #include <memory>
 
 namespace cook { namespace process { namespace command { 
@@ -15,7 +14,6 @@ namespace cook { namespace process { namespace command {
 
         Link(toolchain::Element::Ptr ptr)
             : CommonImpl(ptr)
-            , rcp_path_(util::get_from_to_path(".", ptr->recipe()))
         {
         }
 
@@ -39,15 +37,15 @@ namespace cook { namespace process { namespace command {
             }
             else if (ltp.language == Language::Binary && ltp.type == cook::Type::LibraryPath)
             {
-                add_library_path_(gubg::filesystem::combine(rcp_path_, file.dir()));
+                add_library_path_(gubg::filesystem::combine(recipe_path_, file.dir()));
             }
             else if (ltp.language == Language::Binary && ltp.type == cook::Type::FrameworkPath)
             {
-                add_framework_path_(gubg::filesystem::combine(rcp_path_, file.dir()));
+                add_framework_path_(gubg::filesystem::combine(recipe_path_, file.dir()));
             }
             else if(ltp.language == Language::Definition && ltp.type == cook::Type::Export)
             {
-                add_export_(gubg::filesystem::combine({rcp_path_, file.dir(), file.rel()}));
+                add_export_(gubg::filesystem::combine({recipe_path_, file.dir(), file.rel()}));
                 return true;
             }
             else
@@ -101,9 +99,6 @@ namespace cook { namespace process { namespace command {
         {
             kvm_[toolchain::Part::Export].emplace_back(escape_spaces(path.string()), "");
         }
-
-    private:
-        std::filesystem::path rcp_path_;
     };
 
 } } } 

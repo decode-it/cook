@@ -28,7 +28,7 @@ namespace cook { namespace chai { namespace module {
         {
             Flags make_new_UserDefined() const
             { 
-                return Flags(static_cast<Language>(static_cast<unsigned int>(Type::UserDefined) +  user_defined_index++)); 
+                return Flags(static_cast<Language>(static_cast<unsigned int>(Language::UserDefined) +  user_defined_index++)); 
             }
             Flags make_UserDefined(unsigned int v) const 
             { 

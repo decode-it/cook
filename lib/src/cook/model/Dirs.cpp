@@ -17,6 +17,11 @@ void Dirs::set_temporary(const std::filesystem::path & dir)
 {
     temporary_ = dir;
 }
+        
+void Dirs::add_include_dir(const std::filesystem::path & dir)
+{
+    include_dirs_.push_back(std::filesystem::absolute(dir));
+}
 
 std::filesystem::path Dirs::output(bool make_absolute) const
 {
@@ -29,6 +34,11 @@ std::filesystem::path Dirs::output(bool make_absolute) const
 std::filesystem::path Dirs::temporary(bool make_absolute) const
 {
     return gubg::filesystem::combine(output(make_absolute), temporary_);
+}
+        
+gubg::Range<Dirs::IncludeDirIt> Dirs::include_dirs() const
+{
+    return gubg::make_range(include_dirs_);
 }
 
 } }

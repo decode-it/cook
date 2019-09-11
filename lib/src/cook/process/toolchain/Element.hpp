@@ -6,10 +6,11 @@
 #include "cook/Language.hpp"
 #include "cook/TargetType.hpp"
 #include "gubg/mss.hpp"
+#include <memory>
 
 namespace cook { namespace process { namespace toolchain { 
 
-    class Element 
+    class Element : public std::enable_shared_from_this<Element>
     {
         public:
             enum Type
@@ -22,8 +23,8 @@ namespace cook { namespace process { namespace toolchain {
             };
 
             using Ptr = std::shared_ptr<Element>;
-            using FileProcessingFctr = std::function<bool(const LanguageTypePair&, const ingredient::File&)>;
-            using KeyValueProcessingFctr = std::function<bool(const LanguageTypePair&, const ingredient::KeyValue&)>;
+            using FileProcessingFctr = std::function<bool(Element & element, const LanguageTypePair&, const ingredient::File&)>;
+            using KeyValueProcessingFctr = std::function<bool(Element & element, const LanguageTypePair&, const ingredient::KeyValue&)>;
 
             Element(Type type, Language language, TargetType target_type);
             Element(const Element &) = default;
@@ -47,6 +48,7 @@ namespace cook { namespace process { namespace toolchain {
             Type element_type() const;
             TargetType target_type() const;
             const model::Recipe & recipe() const { return *recipe_; }
+            model::Recipe & recipe() { return *recipe_; }
             
             void set_file_processing_function(const FileProcessingFctr & fctr) { process_file_ = fctr; }
             void set_key_value_processing_function(const KeyValueProcessingFctr & fctr) { process_key_value_ = fctr; }

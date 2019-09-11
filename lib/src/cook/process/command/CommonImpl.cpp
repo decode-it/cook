@@ -1,22 +1,29 @@
 #include "cook/process/command/CommonImpl.hpp"
+#include "cook/util/File.hpp"
 #include <cassert>
 
-namespace cook { namespace process { namespace command { 
+namespace cook { namespace process { namespace command {
 
-    CommonImpl::CommonImpl(toolchain::Element::Ptr ptr): ptr_(ptr), kvm_(ptr_->key_values_map()), trans_(ptr->translator_map()), language_(ptr_->language()) {}
+        CommonImpl::CommonImpl(toolchain::Element::Ptr ptr)
+            : ptr_(ptr)
+            , kvm_(ptr_->key_values_map())
+            , trans_(ptr->translator_map())
+            , language_(ptr_->language())
+            , recipe_path_(util::get_from_to_path(".", ptr->recipe()))
+        {}
 
-    void CommonImpl::set_inputs_outputs(const Filenames & input_files, const Filenames & output_files) 
+    void CommonImpl::set_inputs_outputs(const Filenames& input_files, const Filenames& output_files)
     {
         {
-            auto &inputs = kvm_[toolchain::Part::Input];
+            auto& inputs = kvm_[toolchain::Part::Input];
             inputs.clear();
-            for (const auto &fn: input_files)
+            for (const auto& fn : input_files)
                 inputs.emplace_back(escape_spaces(fn.string()), "");
         }
         {
-            auto &outputs = kvm_[toolchain::Part::Output];
+            auto& outputs = kvm_[toolchain::Part::Output];
             outputs.clear();
-            for (const auto &fn: output_files)
+            for (const auto& fn : output_files)
                 outputs.emplace_back(escape_spaces(fn.string()), "");
         }
     }
@@ -79,7 +86,8 @@ namespace cook { namespace process { namespace command {
         
     bool CommonImpl::process_ingredient(const LanguageTypePair& ltp, const ingredient::File& file)
     {
-        return ptr_->process_ingredient(ltp, file); 
+        ingredient::File f(file, recipe_path_);
+        return ptr_->process_ingredient(ltp, f); 
     }
 
     bool CommonImpl::process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& key_value)

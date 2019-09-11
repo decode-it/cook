@@ -21,15 +21,19 @@ public:
     std::filesystem::path current_working_directory() const;
 
 private:
-    Result load_(const std::string & filename);
+    Result run_(const std::string & filename);
+    void load_script_(const std::filesystem::path & fn);
+
+    bool try_include(std::filesystem::path fn);
+    void load_(const std::string & file);
     void include_(const std::string & file);
+    void include_relative_(const std::string & file);
     void reset_engine_();
-    std::filesystem::path generate_file_path_(const std::string & file) const;
 
     struct Pimpl;
     std::unique_ptr<Pimpl> pimpl_;
     UserData data_;
-    process::toolchain::Loader loader_;
+    std::set<std::filesystem::path> imported_;
 };
 
 } }

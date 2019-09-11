@@ -3,7 +3,6 @@
 
 #include "cook/process/command/CommonImpl.hpp"
 #include "cook/process/toolchain/Types.hpp"
-#include "cook/util/File.hpp"
 #include "gubg/OnlyOnce.hpp"
 #include "gubg/std/filesystem.hpp"
 #include <memory>
@@ -17,7 +16,6 @@ namespace cook { namespace process { namespace command {
 
         Compile(toolchain::Element::Ptr ptr)
             : CommonImpl(ptr)
-            , rcp_path_(util::get_from_to_path("./", ptr->recipe()))
         {
         }
 
@@ -31,7 +29,7 @@ namespace cook { namespace process { namespace command {
             }
             else if (ltp.language == Language::Undefined && ltp.type == cook::Type::IncludePath)
             {
-                add_include_path_(gubg::filesystem::combine(rcp_path_, file.dir()));
+                add_include_path_(gubg::filesystem::combine(recipe_path_, file.dir()));
             }
             else if (ltp.language == language_ && ltp.type == cook::Type::ForceInclude)
             {
@@ -115,7 +113,6 @@ namespace cook { namespace process { namespace command {
         {
             kvm_[toolchain::Part::ForceInclude].emplace_back(escape_spaces(path.string()), "");
         }
-        std::filesystem::path rcp_path_;
     };
 
 } } } 

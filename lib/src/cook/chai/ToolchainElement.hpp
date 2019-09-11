@@ -4,6 +4,7 @@
 #include "cook/chai/Freezable.hpp"
 #include "cook/chai/Flags.hpp"
 #include "cook/chai/File.hpp"
+#include "cook/chai/Recipe.hpp"
 #include "cook/chai/KeyValue.hpp"
 #include "cook/process/toolchain/Element.hpp"
 
@@ -48,8 +49,8 @@ namespace cook { namespace chai {
 
     public:
         using key_values_type = process::toolchain::KeyValuesMap;
-        using FileProcessingFctr = std::function<bool (const File &)>;
-        using KeyValueProcessingFctr = std::function<bool (const KeyValue &)>;
+        using FileProcessingFctr = std::function<bool (ToolchainElement, Recipe, const File &)>;
+        using KeyValueProcessingFctr = std::function<bool (ToolchainElement, Recipe, const KeyValue &)>;
         
         ToolchainElement(Element::Ptr element, const Context * context);
 
