@@ -47,6 +47,12 @@ build .b0/extern/gubg.io/src/gubg/Strange.cpp.obj: compile extern/gubg.io/src/gu
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj: compile extern/gubg.io/src/gubg/bitmagic/bitmagic.cpp
     include_paths = $gubg_include_paths
+build .b0/extern/gubg.io/src/gubg/cpp/Function.cpp.obj: compile extern/gubg.io/src/gubg/cpp/Function.cpp
+    include_paths = $gubg_include_paths
+build .b0/extern/gubg.io/src/gubg/cpp/IncludeGuard.cpp.obj: compile extern/gubg.io/src/gubg/cpp/IncludeGuard.cpp
+    include_paths = $gubg_include_paths
+build .b0/extern/gubg.io/src/gubg/cpp/Struct.cpp.obj: compile extern/gubg.io/src/gubg/cpp/Struct.cpp
+    include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/file/File.cpp.obj: compile extern/gubg.io/src/gubg/file/File.cpp
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/file/Filesystem.cpp.obj: compile extern/gubg.io/src/gubg/file/Filesystem.cpp
@@ -233,6 +239,8 @@ build .b0/gubg.std/src/catch_runner.cpp.obj: compile extern/gubg.std/src/catch_r
 #  output.puts("    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths")
 #end
 #){
+build .b0/extern/gubg.std/test/src/gubg/History_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/History_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/OnlyOnce_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/Range_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/Range_tests.cpp
@@ -281,6 +289,8 @@ build .b0/extern/gubg.io/test/src/gubg/file/Filesystem_tests.cpp.obj: compile ex
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/file/Forest_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/frame/Recode_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/frame/Recode_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/hash/MD5_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/ip/Address_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/ip/Address_tests.cpp
@@ -309,6 +319,8 @@ build .b0/extern/gubg.io/test/src/gubg/s11n/Reader_tests.cpp.obj: compile extern
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/s11n/Writer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/s11n/Writer_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/sedes/Catalogue_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/sedes/Catalogue_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/serial/Endpoint_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/serial/Endpoint_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/string/Buffer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/string/Buffer_tests.cpp
@@ -331,6 +343,10 @@ build .b0/extern/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj: compile extern/gub
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/gp/World_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.algo/test/src/gubg/gp/tree/Grow_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/gp/tree/Grow_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.algo/test/src/gubg/gp/tree/Node_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/gp/tree/Node_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/graph/Graph_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/graph/Graph_tests.cpp
@@ -346,6 +362,8 @@ build .b0/extern/gubg.algo/test/src/gubg/pid/Controller_tests.cpp.obj: compile e
 build .b0/extern/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/planning/Planning_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/planning/Task_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.algo/test/src/gubg/signal/LinearChirp_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/signal/LinearChirp_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/xtree/Model_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/xtree/Model_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
@@ -415,6 +433,9 @@ build build/b0/libgubg.a: archive $
     .b0/extern/gubg.io/src/gubg/OptionParser.cpp.obj $
     .b0/extern/gubg.io/src/gubg/Strange.cpp.obj $
     .b0/extern/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/cpp/Function.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/cpp/IncludeGuard.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/cpp/Struct.cpp.obj $
     .b0/extern/gubg.io/src/gubg/file/File.cpp.obj $
     .b0/extern/gubg.io/src/gubg/file/Filesystem.cpp.obj $
     .b0/extern/gubg.io/src/gubg/file/Forest.cpp.obj $
@@ -531,6 +552,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/lib/test/src/cook/rules/C_family_tests.cpp.obj $
     .b0/lib/test/src/cook/rules/Extensions_tests.cpp.obj $
     .b0/lib/test/src/cook/rules/Resolve_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/History_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/Range_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/Signal_tests.cpp.obj $
@@ -555,6 +577,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/file/File_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/file/Filesystem_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/file/Forest_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/frame/Recode_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/hash/MD5_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/ip/Address_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/ip/Endpoint_tests.cpp.obj $
@@ -569,6 +592,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/rs485/Bus_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/s11n/Reader_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/s11n/Writer_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/sedes/Catalogue_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/serial/Endpoint_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/string/Buffer_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/string_tests.cpp.obj $
@@ -580,6 +604,8 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/gp/tree/Grow_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/gp/tree/Node_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/graph/AdjacencyList_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/graph/Graph_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/graph/NPartite_tests.cpp.obj $
@@ -588,6 +614,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/pid/Controller_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/signal/LinearChirp_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/xtree/Model_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/Matrix_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj $
