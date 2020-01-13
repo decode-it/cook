@@ -33,7 +33,6 @@ namespace cook { namespace process { namespace command {
             }
             else if (ltp.language == Language::Binary && ltp.type == cook::Type::Dependency)
             {
-                return true;
             }
             else if (ltp.language == Language::Binary && ltp.type == cook::Type::LibraryPath)
             {
@@ -64,12 +63,10 @@ namespace cook { namespace process { namespace command {
             else if (ltp.language == Language::Binary && ltp.type == cook::Type::Library)
             {
                 add_library_(kv.key());
-                return true;
             }
             else if (ltp.language == Language::Binary && ltp.type == cook::Type::Framework)
             {
                 add_framework_(kv.key());
-                return true;
             }
             else
             {

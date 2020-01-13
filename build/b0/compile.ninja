@@ -77,6 +77,8 @@ build .b0/extern/gubg.io/src/gubg/serial/Endpoint.cpp.obj: compile extern/gubg.i
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/std/filesystem.cpp.obj: compile extern/gubg.io/src/gubg/std/filesystem.cpp
     include_paths = $gubg_include_paths
+build .b0/extern/gubg.math/src/gubg/prob/rng.cpp.obj: compile extern/gubg.math/src/gubg/prob/rng.cpp
+    include_paths = $gubg_include_paths
 #}
     
 #[output](script:
@@ -365,6 +367,8 @@ build .b0/extern/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj: compile ex
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/signal/LinearChirp_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/signal/LinearChirp_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.algo/test/src/gubg/tree/Node_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/tree/Node_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/xtree/Model_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/xtree/Model_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.math/test/src/gubg/Matrix_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/Matrix_tests.cpp
@@ -448,6 +452,7 @@ build build/b0/libgubg.a: archive $
     .b0/extern/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
     .b0/extern/gubg.io/src/gubg/serial/Endpoint.cpp.obj $
     .b0/extern/gubg.io/src/gubg/std/filesystem.cpp.obj $
+    .b0/extern/gubg.math/src/gubg/prob/rng.cpp.obj $
 
 #}
 
@@ -615,6 +620,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/signal/LinearChirp_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/tree/Node_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/xtree/Model_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/Matrix_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj $

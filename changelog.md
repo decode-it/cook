@@ -221,6 +221,11 @@ Proof-of-concept version.
 * `include_relative` only tries to include from the relative directory
 * `load` loads and evaluates the file without any guards
 
+## 1.2.17
+* Better propagation of linked libraries
+
+
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements
