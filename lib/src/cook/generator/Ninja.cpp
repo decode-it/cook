@@ -2,6 +2,7 @@
 #include "cook/process/toolchain/Types.hpp"
 #include "cook/Context.hpp"
 #include "cook/log/Scope.hpp"
+#include "cook/OS.hpp"
 
 namespace cook { namespace generator { 
 
@@ -28,6 +29,46 @@ namespace cook { namespace generator {
                 res += ch;
             }
             return res;
+        }
+
+        void stream_command(std::ostream & ofs, cook::process::command::Ptr ptr)
+        {
+            ofs << "   command = ";
+
+            auto escape = [](process::toolchain::Part p, const std::string & str)
+            {
+                return escape_ninja(str);
+            };
+
+            if (ptr->delete_before_build())
+            {
+                switch(get_os())
+                {
+                    case OS::MacOS:
+                    case OS::Linux:
+                        ofs << "rm -f ${out} && ";
+                        ptr->stream_command(ofs, escape);
+                        break;
+                        
+                    case OS::Windows:
+//                         ofs << "cmd /c \"del ${out} && ";
+//                         ptr->stream_command(ofs, escape);
+//                         ofs << "\"";
+//                         break;
+//                         
+                    default:
+                        ptr->stream_command(ofs, escape);
+                        break;
+                }
+            }
+            else
+            {
+                ptr->stream_command(ofs, escape);
+            }
+
+
+            ofs << std::endl;
+
         }
     }
 
@@ -123,14 +164,8 @@ namespace cook { namespace generator {
                         ofs << "   depfile = " << depfile << std::endl;
                 }
             }
-            ofs << "   command = ";
 
-            auto escape = [](process::toolchain::Part p, const std::string & str)
-            {
-                return escape_ninja(str);
-            };
-            ptr->stream_command(ofs, escape);
-            ofs << std::endl;
+            stream_command(ofs, ptr);
 
             // add to them map
             if (add_to_map)

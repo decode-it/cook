@@ -42,6 +42,7 @@ namespace cook { namespace process { namespace command {
 
         virtual bool process_ingredient(const LanguageTypePair& ltp, const ingredient::File& file)  = 0;
         virtual bool process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& key_value)  = 0;
+        virtual bool delete_before_build() const = 0;
     };
 
     inline std::ostream & operator<<(std::ostream & str, Interface::Type type)

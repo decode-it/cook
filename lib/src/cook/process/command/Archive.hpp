@@ -30,6 +30,8 @@ namespace cook { namespace process { namespace command {
                 
             return false; 
         }
+        
+        bool delete_before_build() const override { return true; }
 
         std::string name() const override {return "Archive";}
         Type type() const override {return Type::Archive;}

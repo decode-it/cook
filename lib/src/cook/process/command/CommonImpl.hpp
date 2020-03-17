@@ -22,6 +22,8 @@ namespace cook { namespace process { namespace command {
         std::string recipe_uri() const override { return ptr_->recipe().uri().string(); }
         bool process_ingredient(const LanguageTypePair& ltp, const ingredient::File& file) override;
         bool process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& key_value) override;
+        bool delete_before_build() const override { return false; }
+
 
     protected:
         static std::string escape_spaces(const std::string & str);
@@ -31,6 +33,7 @@ namespace cook { namespace process { namespace command {
         toolchain::TranslatorMap & trans_;
         const Language language_;
         const std::filesystem::path recipe_path_;
+
     };
 
 } } } 
