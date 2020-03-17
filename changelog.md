@@ -224,6 +224,8 @@ Proof-of-concept version.
 ## 1.2.17
 * Better propagation of linked libraries
 
+## 1.2.18
+* Archives are deleted before rebuilding
 
 
 ## Next
