@@ -51,11 +51,11 @@ namespace cook { namespace generator {
                         break;
                         
                     case OS::Windows:
-//                         ofs << "cmd /c \"del ${out} && ";
-//                         ptr->stream_command(ofs, escape);
-//                         ofs << "\"";
-//                         break;
-//                         
+                         ofs << "cmd /c \"del ${out} && ";
+                         ptr->stream_command(ofs, escape);
+                         ofs << "\"";
+                         break;
+                         
                     default:
                         ptr->stream_command(ofs, escape);
                         break;
