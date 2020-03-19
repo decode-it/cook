@@ -19,15 +19,21 @@ namespace cook { namespace generator {
     }
 
     namespace {
-        std::string escape_ninja(const std::string & str)
+        std::string escape_ninja(const std::string & str, bool quote_spaces)
         {
             std::string res;
+
+            bool has_spaces = true;
             for (const auto ch: str)
             {
+                has_spaces = has_spaces || ch == ' ';
                 if (ch == ':' || ch == ' ')
                     res += '$';
                 res += ch;
             }
+
+            if(has_spaces && quote_spaces)
+                res = std::string("\"") + res  + std::string("\"");
             return res;
         }
 
@@ -35,23 +41,26 @@ namespace cook { namespace generator {
         {
             ofs << "   command = ";
 
-            auto escape = [](process::toolchain::Part p, const std::string & str)
+            bool add_quotes = false;
+            auto escape = [&add_quotes](process::toolchain::Part p, const std::string & str)
             {
-                return escape_ninja(str);
+                return escape_ninja(str, add_quotes);
             };
 
             if (ptr->delete_before_build())
             {
+
                 switch(get_os())
                 {
                     case OS::MacOS:
                     case OS::Linux:
-                        ofs << "rm -f ${out} && ";
+                        ofs << "rm -f \"${out}\" && ";
                         ptr->stream_command(ofs, escape);
                         break;
                         
                     case OS::Windows:
-                         ofs << "cmd /c \"del ${out} && ";
+                        add_quotes = true;
+                         ofs << "cmd /c \"del \"${out}\" && ";
                          ptr->stream_command(ofs, escape);
                          ofs << "\"";
                          break;
@@ -246,7 +255,7 @@ namespace cook { namespace generator {
                 //The build basically specifies the dependency between the output and input files
                 ofs << "build";
                 auto stream_escaped = [&](const std::string &str) {
-                    ofs << escape_ninja(str);
+                    ofs << escape_ninja(str, false);
                 };
                 for (const auto & f: output_files)
                 {

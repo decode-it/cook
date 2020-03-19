@@ -227,6 +227,8 @@ Proof-of-concept version.
 ## 1.2.18
 * Archives are deleted before rebuilding
 
+## 1.2.19
+* Quoting arguments if command should delete before rebuiding (on windows)
 
 ## Next
 
