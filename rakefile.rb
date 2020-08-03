@@ -152,6 +152,32 @@ namespace :b0 do
     desc "bootstrap-level0: Update rtags"
     task :dia => [:rtags, :build, :ut]
 end
+
+def toolchain_options()
+  toolchain_options = {"c++.std" => 17, "c++.runtime" => "static", "release" => nil}
+  case GUBG::os
+  when :macos     then toolchain_options["arch"] = "x64"
+  when :windows   then toolchain_options["arch"] = "x86"
+  end
+  toolchain_options
+end
+
+def publish(cook_executable)
+  ext = case GUBG::os
+        when :macos, :linux then ext = ""
+        when :windows then ext = ".exe"
+        else raise "stop" end
+
+  version = `#{cook_executable} -h`[/cook version (\d+\.\d+\.\d+) /, 1]
+  version_dir = GUBG::mkdir("releases/#{version}")
+  cp "changelog.md", version_dir
+  arch = toolchain_options["arch"]
+  dst_dir = GUBG::mkdir("#{version_dir}/#{GUBG::os}/#{arch}")
+  cp cook_executable, File.join(dst_dir, "cook#{ext}")
+  latest_dir = GUBG::mkdir("releases/latest/#{GUBG::os}/#{arch}")
+  cp cook_executable, File.join(latest_dir, "cook#{ext}")
+end
+
 #Bootstrap level 1: uses output from bootstrap level 0
 namespace :b1 do
     tmp_base = ".cook/b1"
@@ -162,11 +188,6 @@ namespace :b1 do
     #        sh("./unit_tests.exe -a -d yes")
     #    end
 
-    toolchain_options = {"c++.std" => 17, "c++.runtime" => "static", "release" => nil}
-    case GUBG::os
-    when :macos     then toolchain_options["arch"] = "x64"
-    when :windows   then toolchain_options["arch"] = "x86"
-    end
 
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
     task :build, [:ninja_opts] do |t,args|
@@ -188,20 +209,7 @@ namespace :b1 do
 
     desc "bootstrap-level1: Publish b1-cook.exe into releases"
     task :publish => :build do
-        ext = nil
-        case GUBG::os
-        when :macos, :linux then ext = ""
-        when :windows then ext = ".exe"
-        else raise "stop" end
-
-        version = `#{$b1_cook} -h`[/cook version (\d+\.\d+\.\d+) /, 1]
-        version_dir = GUBG::mkdir("releases/#{version}")
-        cp "changelog.md", version_dir
-        arch = toolchain_options["arch"]
-        dst_dir = GUBG::mkdir("#{version_dir}/#{GUBG::os}/#{arch}")
-        cp $b1_cook, File.join(dst_dir, "cook#{ext}")
-        latest_dir = GUBG::mkdir("releases/latest/#{GUBG::os}/#{arch}")
-        cp $b1_cook, File.join(latest_dir, "cook#{ext}")
+      publish($b1_cook)
     end
 
     desc "bootstrap-level1-cmake: Build b1-cook.exe using b0-cook.exe"
@@ -250,6 +258,29 @@ task :install, [:path] => "build" do |task, args|
         when :windows then cp("cook.exe", GUBG::shared("bin"))
         end
     end
+end
+
+namespace :docker do
+
+  desc "Publish a docker build (with old GLIBC version)"
+  task :publish do
+    exe = case GUBG::os
+          when :linux
+            Dir.chdir("publish/linux") do
+              # create the up-to-date docker
+              Rake.sh("docker build -t cook/linux:latest ./")
+              # build inside docker
+              Rake.sh("docker run --rm -v #{Dir.pwd}:/var/publish cook/linux bash script.sh")
+
+              File.join(Dir.pwd, "cook.exe")
+            end
+          else "No docker build available for #{GUGB::os}"
+          end
+
+    # publish the build artefact
+    publish(exe)
+    FileUtils.rm_rf(exe)
+  end
 end
 
 namespace :doc do
