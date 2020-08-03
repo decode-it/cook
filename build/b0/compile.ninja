@@ -73,6 +73,8 @@ build .b0/extern/gubg.io/src/gubg/ip/my/descriptor.cpp.obj: compile extern/gubg.
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/ip/resolve.cpp.obj: compile extern/gubg.io/src/gubg/ip/resolve.cpp
     include_paths = $gubg_include_paths
+build .b0/extern/gubg.io/src/gubg/markdown/ast/Writer.cpp.obj: compile extern/gubg.io/src/gubg/markdown/ast/Writer.cpp
+    include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/parse/basic.cpp.obj: compile extern/gubg.io/src/gubg/parse/basic.cpp
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile extern/gubg.io/src/gubg/parse/xml/Coding.cpp
@@ -309,7 +311,7 @@ build .b0/extern/gubg.io/test/src/gubg/ip/resolve_tests.cpp.obj: compile extern/
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/ip/tcp/ClientServer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/ip/tcp/ClientServer_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/extern/gubg.io/test/src/gubg/markup/Node_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/markup/Node_tests.cpp
+build .b0/extern/gubg.io/test/src/gubg/markdown/ast/Tree_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/markdown/ast/Tree_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/naft/Document_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
@@ -460,6 +462,7 @@ build build/b0/libgubg.a: archive $
     .b0/extern/gubg.io/src/gubg/ip/Socket.cpp.obj $
     .b0/extern/gubg.io/src/gubg/ip/my/descriptor.cpp.obj $
     .b0/extern/gubg.io/src/gubg/ip/resolve.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/markdown/ast/Writer.cpp.obj $
     .b0/extern/gubg.io/src/gubg/parse/basic.cpp.obj $
     .b0/extern/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
     .b0/extern/gubg.io/src/gubg/serial/Endpoint.cpp.obj $
@@ -601,7 +604,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/ip/Socket_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/ip/resolve_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/ip/tcp/ClientServer_tests.cpp.obj $
-    .b0/extern/gubg.io/test/src/gubg/markup/Node_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/markdown/ast/Tree_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/naft/Document_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/naft/Reader_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/parse/naft/Parser_tests.cpp.obj $

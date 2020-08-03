@@ -1,10 +1,10 @@
 rule compile
     depfile = $out.d
-    command = g++ -std=c++17 $cflags $defines $include_paths -c $in -o $out -MMD -MF $out.d
+    command = g++-8 -std=c++17 $cflags $defines $include_paths -c $in -o $out -MMD -MF $out.d
 rule archive
-    command = ar $aflags $out $in
+    command = gcc-ar-8 $aflags $out $in
 rule link
-    command = g++ -o $out $in $lflags $library_paths $user_libs_gcc $system_libs
+    command = g++-8 -o $out $in $lflags $library_paths $user_libs_gcc $system_libs
 
 #defines = -DNDEBUG 
 #cflags = -O3
