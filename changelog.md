@@ -230,6 +230,9 @@ Proof-of-concept version.
 ## 1.2.19
 * Quoting arguments if command should delete before rebuiding (on windows)
 
+## 1.2.20
+* Support for older LIBC version for linux (built on top of ubuntu16.04)
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements
