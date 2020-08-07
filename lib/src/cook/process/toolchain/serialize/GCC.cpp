@@ -207,11 +207,7 @@ oss << R"%(
     }
     tm[Part.Output]         = fun(k,v) { return k }
     tm[Part.Input]          = fun(k,v) { return k }
-    if (my(OS) == OS.MacOS) {
-        kv.append(Part.Pre, "crs")
-    } else {
-        kv.append(Part.Pre, "crf")
-    }
+    kv.append(Part.Pre, "crs")
 }
 )%";
 

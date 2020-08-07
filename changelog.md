@@ -232,6 +232,7 @@ Proof-of-concept version.
 
 ## 1.2.20
 * Support for older LIBC version for linux (built on top of ubuntu16.04)
+* GCC-like toolchains use `ar crs` now for non-MacOS as well, iso the previous `ar crf` that causes problems due to the truncated object filenames
 
 ## Next
 
