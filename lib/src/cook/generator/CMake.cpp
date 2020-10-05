@@ -264,6 +264,11 @@ Result CMake::process(const Context & context)
     const auto & recipe_list = context.menu().topological_order_recipes();
     ofs << "cmake_minimum_required (VERSION 3.12)" << std::endl;
 
+    //See `cmake --help-policy CMP0076`
+    //Reduces warning probably generated because relative paths are used
+    //`target_sources()` for targets where the `SOURCE_DIR` != `CMAKE_CURRENT_SOURCE_DIR`
+    ofs << "cmake_policy(SET CMP0076 NEW)" << std::endl;
+
     {
         std::string name = context.project_name();
         if (name.empty())
