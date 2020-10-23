@@ -68,6 +68,7 @@ struct Context::Pimpl
         gubg::chai::inject<std::string>(engine);
         gubg::chai::inject<gubg::chai::File>(engine);
         gubg::chai::inject<gubg::chai::Date>(engine);
+        gubg::chai::inject<gubg::chai::Time>(engine);
     }
 
     Logger logger;
