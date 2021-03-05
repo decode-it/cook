@@ -75,17 +75,19 @@ namespace cook { namespace chai {
             return manager_->remove_config(key, value);
         }
 
-        void Toolchain::configure(unsigned int priority, const std::string & uuid, const ConfigurationCallback & cb)
+        void Toolchain::configure(unsigned int priority, const std::string & uuid, ConfigurationCallback cb)
         {
             using CFG = process::toolchain::Configuration;
 
             CHAI_MSS_BEGIN();
             CHAI_MSS_MSG(!is_frozen(), Error, "The toolchain is frozen, cannot add configuration callbacks");
 
+            auto ctx = context_;
+
             CFG cfg(priority, uuid);
             cfg.callback = [=](process::toolchain::Element::Ptr e, const std::string & k, const std::string & v, ConfigurationBoard & b)
             {
-                return cb(ToolchainElement(e, context_), k, v, b);
+                return cb(ToolchainElement(e,ctx), k, v, b);
             };
             manager_->add_configuration_callback(std::move(cfg));
 

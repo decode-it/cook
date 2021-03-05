@@ -30,7 +30,7 @@ namespace cook { namespace chai {
         
         void add_config_1(const std::string & key);
         void add_config_2(const std::string & key, const std::string & value);
-        void configure(unsigned int priority, const std::string & uuid, const ConfigurationCallback & cb);
+        void configure(unsigned int priority, const std::string & uuid, ConfigurationCallback cb);
 
         using IterationCallback1 = std::function<void (const std::string &key, const std::string &value)>;
         void each_config_1(const IterationCallback1 &);

@@ -391,6 +391,8 @@ build .b0/extern/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj: compile ex
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.math/test/src/gubg/tensor/Tensor_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/tensor/Tensor_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj: compile extern/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp.obj: compile extern/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp
@@ -644,6 +646,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj $
+    .b0/extern/gubg.math/test/src/gubg/tensor/Tensor_tests.cpp.obj $
     .b0/extern/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj $
     .b0/extern/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp.obj $
     .b0/extern/gubg.chaiscript/test/src/gubg/chai/test/Engine.cpp.obj $
