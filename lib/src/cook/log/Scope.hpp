@@ -66,7 +66,7 @@ namespace cook { namespace log {
         return Scope{Node::top().add(oss.str(), importance)};
     }
     template <typename Ftor>
-    Scope scope(const std::string &tag, Ftor &&ftor, std::result_of_t<Ftor(details::Header &)> * /*dummy*/ = nullptr) { return scope(tag, Importance{}, ftor); }
+    Scope scope(const std::string &tag, Ftor &&ftor, std::invoke_result_t<Ftor, details::Header &> * /*dummy*/ = nullptr) { return scope(tag, Importance{}, ftor); }
 
 } } 
 

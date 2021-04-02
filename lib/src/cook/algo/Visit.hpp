@@ -12,7 +12,7 @@ template <typename InitializationFunctor, typename ProcessFunctor>
 auto visit(InitializationFunctor && initialize, ProcessFunctor && process)
 {
     using Stack = std::stack<model::Recipe*>;
-    using ResultType = typename std::result_of<ProcessFunctor(model::Recipe *, Stack &)>::type;
+    using ResultType = typename std::invoke_result_t<ProcessFunctor, model::Recipe *, Stack &>;
 
     MSS_BEGIN(ResultType);
 

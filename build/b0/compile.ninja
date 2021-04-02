@@ -59,6 +59,8 @@ build .b0/extern/gubg.io/src/gubg/file/Filesystem.cpp.obj: compile extern/gubg.i
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/file/Forest.cpp.obj: compile extern/gubg.io/src/gubg/file/Forest.cpp
     include_paths = $gubg_include_paths
+build .b0/extern/gubg.io/src/gubg/file/Range.cpp.obj: compile extern/gubg.io/src/gubg/file/Range.cpp
+    include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/hash/MD5.cpp.obj: compile extern/gubg.io/src/gubg/hash/MD5.cpp
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/ip/Address.cpp.obj: compile extern/gubg.io/src/gubg/ip/Address.cpp
@@ -82,6 +84,10 @@ build .b0/extern/gubg.io/src/gubg/parse/xml/Coding.cpp.obj: compile extern/gubg.
 build .b0/extern/gubg.io/src/gubg/serial/Endpoint.cpp.obj: compile extern/gubg.io/src/gubg/serial/Endpoint.cpp
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/std/filesystem.cpp.obj: compile extern/gubg.io/src/gubg/std/filesystem.cpp
+    include_paths = $gubg_include_paths
+build .b0/extern/gubg.io/src/gubg/wav/Reader.cpp.obj: compile extern/gubg.io/src/gubg/wav/Reader.cpp
+    include_paths = $gubg_include_paths
+build .b0/extern/gubg.io/src/gubg/wav/Writer.cpp.obj: compile extern/gubg.io/src/gubg/wav/Writer.cpp
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.math/src/gubg/prob/rng.cpp.obj: compile extern/gubg.math/src/gubg/prob/rng.cpp
     include_paths = $gubg_include_paths
@@ -269,6 +275,8 @@ build .b0/extern/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj: compil
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.std/test/src/gubg/time/Date_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/time/Date_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/tmp/If_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/tmp/If_tests.cpp
@@ -286,6 +294,16 @@ build .b0/extern/gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp.obj: compi
 build .b0/extern/gubg.io/test/src/gubg/Integer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/Integer_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/Strange_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/Strange_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/bit/Reader_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bit/Reader_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/bit/Writer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bit/Writer_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/bit/oor/Coded_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bit/oor/Coded_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/bit/oor/util_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bit/oor/util_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/bit/sign/codec_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bit/sign/codec_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
@@ -385,11 +403,15 @@ build .b0/extern/gubg.algo/test/src/gubg/xtree/Model_tests.cpp.obj: compile exte
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.math/test/src/gubg/Matrix_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/Matrix_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.math/test/src/gubg/Rosenbrock_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/Rosenbrock_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/RunningSum_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/decay/Average_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.math/test/src/gubg/ilog_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/ilog_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.math/test/src/gubg/tensor/Tensor_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/tensor/Tensor_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
@@ -457,6 +479,7 @@ build build/b0/libgubg.a: archive $
     .b0/extern/gubg.io/src/gubg/file/File.cpp.obj $
     .b0/extern/gubg.io/src/gubg/file/Filesystem.cpp.obj $
     .b0/extern/gubg.io/src/gubg/file/Forest.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/file/Range.cpp.obj $
     .b0/extern/gubg.io/src/gubg/hash/MD5.cpp.obj $
     .b0/extern/gubg.io/src/gubg/ip/Address.cpp.obj $
     .b0/extern/gubg.io/src/gubg/ip/Endpoint.cpp.obj $
@@ -469,6 +492,8 @@ build build/b0/libgubg.a: archive $
     .b0/extern/gubg.io/src/gubg/parse/xml/Coding.cpp.obj $
     .b0/extern/gubg.io/src/gubg/serial/Endpoint.cpp.obj $
     .b0/extern/gubg.io/src/gubg/std/filesystem.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/wav/Reader.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/wav/Writer.cpp.obj $
     .b0/extern/gubg.math/src/gubg/prob/rng.cpp.obj $
 
 #}
@@ -585,6 +610,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/mss_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/time/Date_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/tmp/FindBaseByName_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/tmp/If_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/tmp/IntType_tests.cpp.obj $
@@ -594,6 +620,11 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/tuple/TypeTransform_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/Integer_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/Strange_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/bit/Reader_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/bit/Writer_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/bit/oor/Coded_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/bit/oor/util_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/bit/sign/codec_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/bitmagic/bitmagic_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/file/Creater_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/file/File_tests.cpp.obj $
@@ -643,9 +674,11 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/tree/grow_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/xtree/Model_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/Matrix_tests.cpp.obj $
+    .b0/extern/gubg.math/test/src/gubg/Rosenbrock_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj $
+    .b0/extern/gubg.math/test/src/gubg/ilog_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/tensor/Tensor_tests.cpp.obj $
     .b0/extern/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj $
     .b0/extern/gubg.chaiscript/test/src/gubg/chai/inject_tests.cpp.obj $
