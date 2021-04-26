@@ -12,7 +12,7 @@ namespace cook { namespace ingredient {
     {
     public:
         File(const std::filesystem::path & dir, const std::filesystem::path & rel)
-        : Base<std::string>(dir/rel),
+        : Base<std::string>((dir/rel).string()),
         dir_(dir),
         rel_(rel)
         {

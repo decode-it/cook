@@ -117,15 +117,15 @@ namespace :b0 do
     task :ut, [:filter] do |t,args|
         filter = args[:filter] || "ut"
         filter = filter.split(":").map{|e|"[#{e}]"}*""
-        sh("#{ninja_exe} -f #{b0_ninja_fn} -v #{$b0_ut}")
-        sh("#{$b0_ut} -a -d yes #{filter}")
+        Rake.sh(ninja_exe, "-f", b0_ninja_fn, "-v", $b0_ut)
+        sh($b0_ut, "-a", "-d", "yes", filter)
     end
 
     desc "bootstrap-level0: Build b0-cook.exe"
     task :build, [:ninja_opts] => :generate do |t,args|
-        ninja_opts = args[:ninja_opts]||""
+        ninja_opts = (args[:ninja_opts] || "").split(" ")
         # ninja_opts = "-v -j 1"
-        sh "#{ninja_exe} -f #{b0_ninja_fn} #{$b0_cook} #{ninja_opts}"
+        Rake.sh(ninja_exe, "-f", b0_ninja_fn, $b0_cook, *ninja_opts)
     end
 
     desc "bootstrap-level0: Install b0-cook.exe as cook"
@@ -192,16 +192,16 @@ namespace :b1 do
     desc "bootstrap-level1: Build b1-cook.exe using b0-cook.exe"
     task :build, [:ninja_opts] do |t,args|
 
-        ninja_opts = args[:ninja_opts]||""
-        Rake::Task["b0:build"].invoke(ninja_opts)
+        ninja_opts = (args[:ninja_opts]||"").split(" ")
+        Rake::Task["b0:build"].invoke(ninja_opts.join(" "))
 
         odir = File.join($b1_build_dir, "ninja")
         tdir = File.join($b1_tmp, "ninja")
 
-        opts = toolchain_options.map {|k,v| "-T " + (v ? "#{k}=#{v}" : "#{k}") }.join(" ")
+        opts = toolchain_options.map {|k,v| ["-T"] + (v ? ["#{k}=#{v}"] : ["#{k}"]) }.flatten
 
-        sh "#{$b0_cook} -f ./ -g ninja -o #{odir} -O #{tdir} #{opts} cook/app/exe"
-        sh "#{ninja_exe} -f #{odir}/build.ninja #{ninja_opts}"
+        Rake.sh($b0_cook, "-f", "./", "-g", "ninja", "-o", odir, "-O", tdir, *opts, "cook/app/exe")
+        Rake.sh(ninja_exe, "-f", "#{odir}/build.ninja", *ninja_opts)
         exe = "cook.app.exe"
         exe += ".exe" if GUBG::os == :windows
         cp "#{odir}/#{exe}", $b1_cook

@@ -299,10 +299,6 @@ build .b0/extern/gubg.io/test/src/gubg/bit/Reader_tests.cpp.obj: compile extern/
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/bit/Writer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bit/Writer_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/extern/gubg.io/test/src/gubg/bit/gr/Codec_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bit/gr/Codec_tests.cpp
-    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/extern/gubg.io/test/src/gubg/bit/gr/Sequence_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bit/gr/Sequence_tests.cpp
-    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/bit/oor/Coded_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bit/oor/Coded_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/bit/oor/util_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/bit/oor/util_tests.cpp
@@ -414,8 +410,6 @@ build .b0/extern/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj: compile exter
 build .b0/extern/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/decay/Average_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp
-    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/extern/gubg.math/test/src/gubg/fxp/Number_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/fxp/Number_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.math/test/src/gubg/ilog_tests.cpp.obj: compile extern/gubg.math/test/src/gubg/ilog_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
@@ -628,8 +622,6 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/Strange_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/bit/Reader_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/bit/Writer_tests.cpp.obj $
-    .b0/extern/gubg.io/test/src/gubg/bit/gr/Codec_tests.cpp.obj $
-    .b0/extern/gubg.io/test/src/gubg/bit/gr/Sequence_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/bit/oor/Coded_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/bit/oor/util_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/bit/sign/codec_tests.cpp.obj $
@@ -686,7 +678,6 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/RunningSum_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/decay/Average_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/decay/Sum_tests.cpp.obj $
-    .b0/extern/gubg.math/test/src/gubg/fxp/Number_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/ilog_tests.cpp.obj $
     .b0/extern/gubg.math/test/src/gubg/tensor/Tensor_tests.cpp.obj $
     .b0/extern/gubg.chaiscript/test/src/gubg/chai/Regex_tests.cpp.obj $
