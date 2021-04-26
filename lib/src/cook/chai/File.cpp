@@ -7,9 +7,9 @@ File::File(const LanguageTypePair & ltp, const ingredient::File & file, const Co
 {
 }
 
-std::string File::key() const
+const std::string & File::key() const
 {
-    return element().key().string();
+    return element().key();
 }
 
 std::string File::dir() const

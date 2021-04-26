@@ -8,35 +8,31 @@ Result LinkLibrarySorter::process(model::Recipe & recipe, RecipeFilteredGraph & 
 {
     MSS_BEGIN(Result);
 
-    auto it = recipe.key_values().find(LanguageTypePair(Language::Binary, Type::Library));
-    if (it == recipe.key_values().end())
-        MSS_RETURN_OK();
-
-    MSS(process_(recipe, it->second, context.menu()));
-
-    MSS_END();
-}
-
-Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collection<LibType> & libraries, const process::Menu & menu) const
-{
-    MSS_BEGIN(Result);
-
     std::list<LibType> user_supplied_libs;
     std::unordered_map<model::Recipe *, std::list<LibType>> generated_libs;
 
+    const auto ltp = LanguageTypePair(Language::Binary, Type::Library);
+
     // store all the libraries, either as non-owned or as owned
-    for(const LibType & file : libraries)
-        if (!is_internal_generated(file.content()))
-            user_supplied_libs.push_back(file);
+    recipe.each_key_value(ltp, [&](const LibType &kv) {
+        if (!is_internal_generated(kv.content()))
+            user_supplied_libs.push_back(kv);
         else
-            generated_libs[file.owner()].push_back(file);
+            generated_libs[kv.owner()].push_back(kv);
 
-    const unsigned int prev_size = libraries.size();
-    libraries.clear();
+        return true;
+    });
 
+    // no generator libs, nothing to do
+    if (generated_libs.empty())
+        MSS_RETURN_OK();
+
+    // erase all the libraries
+    recipe.erase(ltp, model::tag::KeyValue_t());
+    
     // get a topological order for this recipe
     std::list<model::Recipe *> top_order;
-    MSS(menu.topological_order_recipes(&recipe, top_order));
+    MSS(context.menu().topological_order_recipes(&recipe, top_order));
 
     // add the owned in topological inverse order
     for (auto it = top_order.rbegin(); it != top_order.rend(); ++it)
@@ -44,15 +40,13 @@ Result LinkLibrarySorter::process_(model::Recipe & recipe, ingredient::Collectio
         model::Recipe * cur = *it;
         auto it2 = generated_libs.find(cur);
         if (it2 != generated_libs.end())
-            for(const auto & file : it2->second)
-                libraries.insert(file);
+            for(const auto & kv : it2->second)
+                MSS(recipe.insert(ltp, kv));
     }
 
     // add the non-owned
-    for(const auto & file : user_supplied_libs)
-        libraries.insert(file);
-
-    MSS(prev_size == libraries.size());
+    for(const auto & kv : user_supplied_libs)
+        MSS(recipe.insert(ltp, kv));
 
     MSS_END();
 }

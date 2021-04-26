@@ -36,15 +36,15 @@ namespace cook { namespace process { namespace command {
             }
             else if (ltp.language == Language::Binary && ltp.type == cook::Type::LibraryPath)
             {
-                add_library_path_(gubg::filesystem::combine(recipe_path_, file.dir()));
+                add_library_path_(file.dir());
             }
             else if (ltp.language == Language::Binary && ltp.type == cook::Type::FrameworkPath)
             {
-                add_framework_path_(gubg::filesystem::combine(recipe_path_, file.dir()));
+                add_framework_path_(file.dir());
             }
             else if(ltp.language == Language::Definition && ltp.type == cook::Type::Export)
             {
-                add_export_(gubg::filesystem::combine({recipe_path_, file.dir(), file.rel()}));
+                add_export_(file.key());
                 return true;
             }
             else

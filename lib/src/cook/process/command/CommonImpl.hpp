@@ -32,7 +32,6 @@ namespace cook { namespace process { namespace command {
         toolchain::KeyValuesMap & kvm_;
         toolchain::TranslatorMap & trans_;
         const Language language_;
-        const std::filesystem::path recipe_path_;
 
     };
 

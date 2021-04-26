@@ -12,7 +12,7 @@ namespace cook { namespace process { namespace souschef {
 
         auto ss = log::scope("Archiver::process", [&](auto &node){node.attr("graph", &file_command_graph);});
 
-        model::Recipe::Files & files = recipe.files();
+        const model::Recipe::Files & files = recipe.files();
         auto & g = file_command_graph;
 
         auto objects = files.range(LanguageTypePair(Language::Binary, Type::Object));
@@ -26,10 +26,10 @@ namespace cook { namespace process { namespace souschef {
         MSS(archive_command_(ac, recipe, context));
         auto archive_vertex = g.add_vertex(ac);
 
-        for(ingredient::File & object : objects)
+        for(const ingredient::File & object : objects)
         {
             auto ss = log::scope("object", [&](auto &node){node.attr("file", object);});
-            const std::filesystem::path & obj_fn = gubg::filesystem::combine({ recipe.working_directory(), object.dir(), object.rel() });
+            const std::filesystem::path & obj_fn = object.key();
             MSS(g.add_edge(archive_vertex, g.goc_vertex(obj_fn)));
         }
 
@@ -43,7 +43,7 @@ namespace cook { namespace process { namespace souschef {
         }
         
         {
-            std::filesystem::path library_dir = util::get_from_to_path(recipe, context.dirs().output(true));
+            std::filesystem::path library_dir = context.dirs().output(true);
 
             {
                 MSS(!!recipe.build_target().filename);
@@ -53,7 +53,7 @@ namespace cook { namespace process { namespace souschef {
                 dep.set_owner(&recipe);
                 dep.set_propagation(Propagation::Public);
                 const LanguageTypePair key(Language::Binary, Type::Dependency);
-                MSG_MSS(files.insert(key,dep).second, Error, "Dependency " << dep << " already present in " << recipe.uri());
+                MSG_MSS(recipe.insert(key,dep), Error, "Dependency " << dep << " already present in " << recipe.uri());
 
             }
 
@@ -66,7 +66,7 @@ namespace cook { namespace process { namespace souschef {
                 ar.set_content(Content::Generated);
 
                 const LanguageTypePair key(Language::Binary, Type::Library);
-                MSG_MSS(recipe.key_values().insert(key,ar).second, Error, "Archive " << ar << " already present in " << recipe.uri());
+                MSG_MSS(recipe.insert(key,ar), Error, "Archive " << ar << " already present in " << recipe.uri());
             }
 
             // add the library dir
@@ -77,7 +77,7 @@ namespace cook { namespace process { namespace souschef {
                 ar.set_propagation(Propagation::Public);
                 ar.set_content(Content::Generated);
                 const LanguageTypePair key(Language::Binary, Type::LibraryPath);
-                files.insert(key,ar);
+                recipe.insert(key,ar);
             }
         }
 

@@ -9,7 +9,6 @@ namespace cook { namespace process { namespace command {
             , kvm_(ptr_->key_values_map())
             , trans_(ptr->translator_map())
             , language_(ptr_->language())
-            , recipe_path_(util::get_from_to_path(".", ptr->recipe()))
         {}
 
     void CommonImpl::set_inputs_outputs(const Filenames& input_files, const Filenames& output_files)
@@ -86,8 +85,7 @@ namespace cook { namespace process { namespace command {
         
     bool CommonImpl::process_ingredient(const LanguageTypePair& ltp, const ingredient::File& file)
     {
-        ingredient::File f(file, recipe_path_);
-        return ptr_->process_ingredient(ltp, f); 
+        return ptr_->process_ingredient(ltp, file); 
     }
 
     bool CommonImpl::process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& key_value)

@@ -14,7 +14,7 @@ public:
     bool is_file() const        { return true; }
     bool is_key_value() const   { return false; }
 
-    std::string key() const;
+    const std::string & key() const;
     std::string dir() const;
     std::string rel() const;
 };

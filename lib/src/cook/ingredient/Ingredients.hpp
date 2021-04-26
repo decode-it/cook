@@ -22,11 +22,11 @@ namespace cook { namespace ingredient {
         Result insert_or_merge(const LanguageTypePair & key, const Ingredient & ingredient)
         {
             MSS_BEGIN(Result);
-            auto ss = log::scope("insert or merge", [&](auto & n) {
-                    n.attr("language", key.language).attr("type", key.type).attr("prop", ingredient.propagation());
-                    });
+            // auto ss = log::scope("insert or merge", [&](auto & n) {
+            //         n.attr("language", key.language).attr("type", key.type).attr("prop", ingredient.propagation());
+            //         });
 
-            auto s = ingredient.stream();
+            // auto s = ingredient.stream();
 
             auto p = insert(key, ingredient);
             if (!p.second)

@@ -12,7 +12,7 @@ namespace cook { namespace process { namespace souschef {
 
         auto ss = log::scope("Linker::process");
 
-        model::Recipe::Files & files = recipe.files();
+        const model::Recipe::Files & files = recipe.files();
         auto & g = file_command_graph;
 
         auto objects    = recipe.files().range(LanguageTypePair(Language::Binary, Type::Object));
@@ -34,28 +34,28 @@ namespace cook { namespace process { namespace souschef {
         }
 
         // link the objects
-        for(ingredient::File & object : objects)
+        for(const ingredient::File & object : objects)
         {
             auto ss = log::scope("object", [&](auto &node){node.attr("file", object);});
-            const std::filesystem::path & obj_fn = gubg::filesystem::combine({recipe.working_directory(), object.dir(), object.rel()});
+            const std::filesystem::path & obj_fn = object.key();
             MSS(g.add_edge(link_vertex, g.goc_vertex(obj_fn)));
         }
 
         // link the dependencies
-        for(ingredient::File & dep : deps)
+        for(const ingredient::File & dep : deps)
         {
-            const std::filesystem::path & fn = gubg::filesystem::combine({recipe.working_directory(), dep.dir(), dep.rel()});
+            const std::filesystem::path &fn = dep.key();
             MSS(g.add_edge(link_vertex, g.goc_vertex(fn), RecipeFilteredGraph::Implicit));
         }
-        for(ingredient::File & exp : exports)
+        for(const ingredient::File & exp : exports)
         {
-            const std::filesystem::path & fn = gubg::filesystem::combine({recipe.working_directory(), exp.dir(), exp.rel()});
+            const std::filesystem::path & fn = exp.key();
             MSS(g.add_edge(link_vertex, g.goc_vertex(fn), RecipeFilteredGraph::Implicit));
         }
 
 
         // create the local link dir
-        const std::filesystem::path & library_dir = util::get_from_to_path(recipe, context.dirs().output(true));
+        const std::filesystem::path & library_dir = context.dirs().output(true);
 
         // create the linked file
         {
@@ -71,7 +71,7 @@ namespace cook { namespace process { namespace souschef {
                 dep.set_content(Content::Generated);
                 dep.set_propagation(Propagation::Public);
                 const LanguageTypePair key(Language::Binary, Type::Dependency);
-                MSG_MSS(files.insert(key,dep).second, Error, "Dependency " << dep << " already present in " << recipe.uri());
+                MSG_MSS(recipe.insert(key,dep), Error, "Dependency " << dep << " already present in " << recipe.uri());
 
                 MSS_END();
             };
@@ -84,7 +84,7 @@ namespace cook { namespace process { namespace souschef {
                     ar.set_propagation(Propagation::Public);
                     ar.set_content(Content::Generated);
                     const LanguageTypePair key(Language::Binary, Type::LibraryPath);
-                    files.insert(key,ar);
+                    recipe.insert(key,ar);
             };
 
             auto add_link = [&](Type t, Propagation propagation)
@@ -98,7 +98,7 @@ namespace cook { namespace process { namespace souschef {
                 ar.set_content(Content::Generated);
 
                 const LanguageTypePair key(Language::Binary, t);
-                MSG_MSS(recipe.key_values().insert(key,ar).second, Error, t << " " << ar << " already present in " << recipe.uri());
+                MSG_MSS(recipe.insert(key,ar), Error, t << " " << ar << " already present in " << recipe.uri());
                 MSS_END();
             };
 

@@ -58,15 +58,108 @@ public:
     //Copying is needed in MESSAGE()
     Recipe(const Recipe &) = default;
 
-    const Files & files() const          { return files_; }
-    const KeyValues & key_values() const { return key_values_; }
-    Files & files()                      { return files_; }
-    KeyValues & key_values()             { return key_values_; }
+    bool insert(const LanguageTypePair & ltp, const ingredient::File & file)
+    {
+        return files_.insert(ltp, file.dir().is_absolute() ? file : ingredient::File(file, working_directory())).second;
+    }
+    bool insert(const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
+    {
+        return key_values_.insert(ltp, key_value).second;
+    }
+    bool insert_or_merge(const LanguageTypePair & ltp, const ingredient::File & file)
+    {
+        return files_.insert_or_merge(ltp, file.dir().is_absolute() ? file : ingredient::File(file, working_directory()));
+    }
+    bool insert_or_merge(const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
+    {
+        return key_values_.insert_or_merge(ltp, key_value);
+    }
+
+    template <typename Tag>
+    void erase(const LanguageTypePair & ltp, Tag t= {})
+    {
+        auto it = ingredients(t).find(ltp);
+        if (it != ingredients(t).end())
+            it->second.clear();
+    }
+    void erase(const LanguageTypePair & ltp, const ingredient::File & file);
+    void erase(const LanguageTypePair & ltp, const ingredient::KeyValue & key_value);
+
+    template <typename Func>
+    bool each_file(Func && func) const
+    {
+        return each(tag::File_t(), func);
+    }
+    template <typename Func>
+    bool each_file(Func && func)
+    {
+        return each(tag::File_t(), func);
+    }
+    template <typename Func>
+    bool each_file(const LanguageTypePair & ltp, Func && func) const
+    {
+        return each(ltp, tag::File_t(), func);
+    }
+    template <typename Func>
+    bool each_file(const LanguageTypePair & ltp, Func && func)
+    {
+        return each(ltp, tag::File_t(), func);
+    }
+    
+    template <typename Func>
+    bool each_key_value(Func && func) const
+    {
+        return each(tag::KeyValue_t(), func);
+    }
+    template <typename Func>
+    bool each_key_value(Func && func)
+    {
+        return each(tag::KeyValue_t(), func);
+    }
+    template <typename Func>
+    bool each_key_value(const LanguageTypePair & ltp, Func && func) const
+    {
+        return each(ltp, tag::KeyValue_t(), func);
+    }
+    template <typename Func>
+    bool each_key_value(const LanguageTypePair & ltp, Func && func)
+    {
+        return each(ltp, tag::KeyValue_t(), func);
+    }
+    
+    template <typename Tag, typename Func>
+    bool each(Tag t, Func && func) const
+    {
+        return ingredients(t).each(func);
+    }
+    template <typename Tag, typename Func>
+    bool each(Tag t, Func && func)
+    {
+        return ingredients(t).each(func);
+    }
+    template<typename Tag, typename Func>
+    bool each(const LanguageTypePair &ltp, Tag t, Func &&func) const
+    {
+        MSS_BEGIN(bool);
+        for (const auto &f : ingredients(t).range(ltp))
+            MSS(func(f));
+        MSS_END();
+    }
+    template<typename Tag, typename Func>
+    bool each(const LanguageTypePair &ltp, Tag t, Func &&func)
+    {
+        MSS_BEGIN(bool);
+        for (auto &f : ingredients(t).range(ltp))
+            MSS(func(f));
+        MSS_END();
+    }
+
+
+    const Files & files() const                             { return files_; }
+    const KeyValues & key_values() const                    { return key_values_; }
 
     const Files & ingredients(tag::File_t) const            { return files_; }
     const KeyValues & ingredients(tag::KeyValue_t) const    { return key_values_; }
-    Files & ingredients(tag::File_t)                        { return files_; }
-    KeyValues & ingredients(tag::KeyValue_t)                { return key_values_; }
 
     const BuildTarget & build_target() const                { return build_target_; }
     BuildTarget & build_target()                            { return build_target_; }
@@ -95,6 +188,8 @@ public:
     template <typename It> void set_languages(It first, It last) { languages_ = std::set<Language>(first, last); }
 
 private:
+    Files & ingredients(tag::File_t)                        { return files_; }
+    KeyValues & ingredients(tag::KeyValue_t)                { return key_values_; }
     Recipe(Recipe &&) = delete;
     Recipe & operator=(const Recipe &) = delete;
     Recipe & operator=(Recipe &&) = delete;

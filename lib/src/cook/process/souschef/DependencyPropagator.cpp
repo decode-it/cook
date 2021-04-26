@@ -12,7 +12,6 @@ Result merge_(const model::Recipe & src_recipe, model::Recipe & dst_recipe, cons
     MSS_BEGIN(Result);
 
     const auto & src_ingredients = src_recipe.ingredients(tag);
-    auto & dst_ingredients = dst_recipe.ingredients(tag);
 
     return src_ingredients.each([&](LanguageTypePair key, auto ingredient)
     {
@@ -21,7 +20,7 @@ Result merge_(const model::Recipe & src_recipe, model::Recipe & dst_recipe, cons
         if (ingredient.propagation() == Propagation::Public && selection(key))
         {
             if (!functor || functor(key, ingredient))
-                MSS(dst_ingredients.insert_or_merge(key, transform(ingredient)));
+                MSS(dst_recipe.insert_or_merge(key, transform(ingredient)));
         }
 
         MSS_END();
@@ -60,10 +59,9 @@ Result DependentPropagator::process(model::Recipe & recipe, RecipeFilteredGraph 
         });
 
         {
-            const std::filesystem::path & tr = util::get_from_to_path(recipe, *src_recipe);
             auto transform = [&](const ingredient::File & f) 
             { 
-                return util::combine_file(tr, f);
+                return f;
             };
             MSS( merge_(*src_recipe, recipe, selection_, p.second.file_filter, transform, model::tag::File_t() ) );
         }

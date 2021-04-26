@@ -154,7 +154,7 @@ namespace cook { namespace chai {
         lib.set_overwrite(flags.get_or(Overwrite::Always));
         lib.set_owner(recipe_);
 
-        recipe_->key_values().insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::Library)), lib);
+        recipe_->insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::Library)), lib);
     }
 
     void Recipe::framework(const std::string & library, const Flags & flags)
@@ -168,7 +168,7 @@ namespace cook { namespace chai {
         lib.set_overwrite(flags.get_or(Overwrite::Always));
         lib.set_owner(recipe_);
 
-        recipe_->key_values().insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::Framework)), lib);
+        recipe_->insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::Framework)), lib);
     }
     void Recipe::library_path(const std::string & path, const Flags & flags)
     {
@@ -181,7 +181,7 @@ namespace cook { namespace chai {
         lib_path.set_overwrite(flags.get_or(Overwrite::Always));
         lib_path.set_owner(recipe_);
 
-        recipe_->files().insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::LibraryPath)), lib_path);
+        recipe_->insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::LibraryPath)), lib_path);
     }
 
     void Recipe::framework_path(const std::string & path, const Flags & flags)
@@ -195,7 +195,7 @@ namespace cook { namespace chai {
         lib_path.set_overwrite(flags.get_or(Overwrite::Always));
         lib_path.set_owner(recipe_);
 
-        recipe_->files().insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::FrameworkPath)), lib_path);
+        recipe_->insert(LanguageTypePair(flags.get_or(Language::Binary), flags.get_or(Type::FrameworkPath)), lib_path);
     }
     void Recipe::include_path(const std::string & path, const Flags & flags)
     {
@@ -209,7 +209,7 @@ namespace cook { namespace chai {
         inc_path.set_overwrite(flags.get_or(Overwrite::Always));
         inc_path.set_owner(recipe_);
 
-        recipe_->files().insert(LanguageTypePair(flags.get_or(Language::Undefined), flags.get_or(Type::IncludePath)), inc_path);
+        recipe_->insert(LanguageTypePair(flags.get_or(Language::Undefined), flags.get_or(Type::IncludePath)), inc_path);
     }
 
     void Recipe::define(const std::string & name, const Flags & flags)
@@ -223,7 +223,7 @@ namespace cook { namespace chai {
         kv.set_overwrite(flags.get_or(Overwrite::IfSame));
         kv.set_owner(recipe_);
 
-        recipe_->key_values().insert(LanguageTypePair(flags.get_or(Language::Undefined), flags.get_or(Type::Define)), kv);
+        recipe_->insert(LanguageTypePair(flags.get_or(Language::Undefined), flags.get_or(Type::Define)), kv);
     }
 
     void Recipe::define(const std::string & name, const std::string & value, const Flags & flags)
@@ -237,7 +237,7 @@ namespace cook { namespace chai {
         kv.set_overwrite(flags.get_or(Overwrite::IfSame));
         kv.set_owner(recipe_);
 
-        recipe_->key_values().insert(LanguageTypePair(flags.get_or(Language::Undefined), flags.get_or(Type::Define)), kv);
+        recipe_->insert(LanguageTypePair(flags.get_or(Language::Undefined), flags.get_or(Type::Define)), kv);
     }
 
     void Recipe::run(const std::string & command)
@@ -247,7 +247,7 @@ namespace cook { namespace chai {
         kv.set_propagation(Propagation::Private);
         kv.set_overwrite(Overwrite::Never);
         kv.set_owner(recipe_);
-        recipe_->key_values().insert(LanguageTypePair(Language::Script, Type::Executable), kv);
+        recipe_->insert(LanguageTypePair(Language::Script, Type::Executable), kv);
     }
 
     bool Recipe::add_file(const std::string & dir, const std::string & rel, const Flags & flags)
@@ -260,7 +260,7 @@ namespace cook { namespace chai {
         file.set_owner(recipe_);
 
         LanguageTypePair ltp(flags.get_or(Language::Undefined), flags.get_or(Type::Undefined));
-        return recipe_->files().insert(ltp, file).second;
+        return recipe_->insert(ltp, file);
     }
 
     bool Recipe::add_key_value(const std::string & key, const Flags & flags)
@@ -273,7 +273,7 @@ namespace cook { namespace chai {
         key_value.set_owner(recipe_);
 
         LanguageTypePair ltp(flags.get_or(Language::Undefined), flags.get_or(Type::Undefined));
-        return recipe_->key_values().insert(ltp, key_value).second;
+        return recipe_->insert(ltp, key_value);
     }
 
     bool Recipe::add_key_value(const std::string & key, const std::string & value, const Flags & flags)
@@ -286,7 +286,7 @@ namespace cook { namespace chai {
         key_value.set_owner(recipe_);
 
         LanguageTypePair ltp(flags.get_or(Language::Undefined), flags.get_or(Type::Undefined));
-        return recipe_->key_values().insert(ltp, key_value).second;
+        return recipe_->insert(ltp, key_value);
     }
 
     void Recipe::each_file(const std::function<void (File &)> & functor)
@@ -304,7 +304,7 @@ namespace cook { namespace chai {
 
             return true;
         };
-        recipe_->files().each(each_functor);
+        recipe_->each_file(each_functor);
     }
 
     void Recipe::each_key_value(const std::function<void (KeyValue &)> & functor)
@@ -322,7 +322,7 @@ namespace cook { namespace chai {
             
             return true;
         };
-        recipe_->key_values().each(each_functor);
+        recipe_->each_key_value(each_functor);
 
     }
 

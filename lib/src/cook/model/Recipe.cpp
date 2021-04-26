@@ -75,6 +75,33 @@ namespace cook { namespace model {
         languages_.clear();
         languages_.insert(language);
     }
+    
+    
+    void Recipe::erase(const LanguageTypePair & ltp, const ingredient::File & file)
+    {
+        auto it = files_.find(ltp);
+        if (it == files_.end())
+            return;
+
+        auto &files = it->second;
+
+        auto it2 = files.find(file.key());
+        if (it2 != files.end())
+            files.erase(it2);
+
+    }
+    void Recipe::erase(const LanguageTypePair & ltp, const ingredient::KeyValue & key_value)
+    {
+        auto it = key_values_.find(ltp);
+        if (it == key_values_.end())
+            return;
+
+        auto &key_values = it->second;
+
+        auto it2 = key_values.find(key_value.key());
+        if (it2 != key_values.end())
+            key_values.erase(it2);
+    }
 
     void Recipe::stream(log::Importance importance) const
     {

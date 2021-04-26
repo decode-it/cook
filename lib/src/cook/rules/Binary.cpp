@@ -38,7 +38,7 @@ Result Binary::resolve_file(LanguageTypePair & key, ingredient::File & file) con
     key.language = language();
 
     //Deduce the type based on the extension
-    MSS(extensions_.get_type(key.type, file.key().extension(), key.type));
+    MSS(extensions_.get_type(key.type, file.rel().extension(), key.type));
 
     switch (key.type)
     {
@@ -65,7 +65,7 @@ Result Binary::add_file(model::Recipe & recipe, const LanguageTypePair & key, co
     MSS_BEGIN(Result);
 
     MSS(key.language == language());
-    MSS(recipe.files().insert_or_merge(key, file));
+    MSS(recipe.insert_or_merge(key, file));
 
     switch (key.type)
     {
@@ -86,15 +86,12 @@ bool Binary::add_additional_path_(model::Recipe & recipe, const ingredient::File
 {
     MSS_BEGIN(bool);
 
-    auto p = recipe.files().insert(LanguageTypePair(language(), type), ingredient::File(file.dir(), std::filesystem::path()));
+    ingredient::File include_path(file.dir(), std::filesystem::path());
+    include_path.set_owner(&recipe);
+    include_path.set_overwrite(Overwrite::Always);
+    include_path.set_propagation(propagation);
 
-    {
-        ingredient::File & include_path = *p.first;
-
-        include_path.set_owner(&recipe);
-        include_path.set_overwrite(Overwrite::Always);
-        include_path.set_propagation(propagation);
-    }
+    recipe.insert(LanguageTypePair(language(), type), include_path);
 
     MSS_END();
 }

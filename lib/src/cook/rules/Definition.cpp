@@ -21,7 +21,7 @@ namespace cook { namespace rules {
         MSS_Q(key.language == Language::Undefined);
 
         //Language is not known, check if the file exists and we recognise it
-        MSS_Q(extensions_.is_known(file.key().extension()));
+        MSS_Q(extensions_.is_known(file.rel().extension()));
 
         MSS_END();
     }
@@ -34,7 +34,7 @@ namespace cook { namespace rules {
         key.language = language();
 
         //Deduce the type based on the extension
-        MSS(extensions_.get_type(key.type, file.key().extension(), key.type));
+        MSS(extensions_.get_type(key.type, file.rel().extension(), key.type));
 
         switch (key.type)
         {
@@ -61,7 +61,7 @@ namespace cook { namespace rules {
         });
 
         MSS(key.language == language());
-        MSS(recipe.files().insert_or_merge(key, file));
+        MSS(recipe.insert_or_merge(key, file));
 
         MSS_END();
     }

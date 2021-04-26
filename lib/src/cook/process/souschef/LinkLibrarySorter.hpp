@@ -10,9 +10,6 @@ class LinkLibrarySorter : public Interface
 public:
     std::string description() const override { return "Link library sorter"; }
     Result process(model::Recipe & recipe, RecipeFilteredGraph & file_command_graph, const Context & context) const override;
-
-private:
-    Result process_(model::Recipe &, ingredient::Collection<ingredient::KeyValue> &libraries, const process::Menu &menu) const;
 };
 
 } } }

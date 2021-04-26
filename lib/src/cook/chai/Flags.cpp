@@ -18,7 +18,11 @@ namespace cook { namespace chai {
     }
 
     Flags::Flags()
-    : flags_(0)
+        : flags_(0)
+        , tLanguage_{}
+        , tType_{}
+        , tOverwrite_{}
+        , tPropagation_{}
     {
 
     }

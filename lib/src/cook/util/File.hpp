@@ -16,8 +16,6 @@ std::filesystem::path get_from_to_path(const model::Recipe & from, const std::fi
 std::filesystem::path get_from_to_path(const std::filesystem::path & from, const model::Recipe & to); 
 std::filesystem::path get_from_to_path(const std::filesystem::path & from, const std::filesystem::path & to); 
 
-ingredient::File combine_file(const std::filesystem::path & prefix, const ingredient::File & file);
-
 } }
 
 #endif

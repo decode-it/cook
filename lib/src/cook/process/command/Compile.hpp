@@ -29,7 +29,7 @@ namespace cook { namespace process { namespace command {
             }
             else if (ltp.language == Language::Undefined && ltp.type == cook::Type::IncludePath)
             {
-                add_include_path_(gubg::filesystem::combine(recipe_path_, file.dir()));
+                add_include_path_(file.dir());
             }
             else if (ltp.language == language_ && ltp.type == cook::Type::ForceInclude)
             {

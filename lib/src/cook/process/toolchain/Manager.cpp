@@ -118,8 +118,8 @@ namespace cook { namespace process { namespace toolchain {
             return true;
         };
 
-        MSS(recipe.key_values().each(process_ingredient));
-        MSS(recipe.files().each(process_ingredient));
+        MSS(recipe.each_key_value(process_ingredient));
+        MSS(recipe.each_file(process_ingredient));
 
         MSS_END();
     }

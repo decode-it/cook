@@ -8,11 +8,11 @@
 
 namespace cook { namespace ingredient {
 
-    class File : public Base<std::filesystem::path>
+    class File : public Base<std::string>
     {
     public:
         File(const std::filesystem::path & dir, const std::filesystem::path & rel)
-        : Base<std::filesystem::path>(dir/rel),
+        : Base<std::string>(dir/rel),
         dir_(dir),
         rel_(rel)
         {
@@ -39,14 +39,14 @@ namespace cook { namespace ingredient {
             MSS_BEGIN(Result);
 
             auto ss = log::scope("merge ingredient");
-            {
-                auto s = log::scope("source");
-                rhs.stream();
-            }
-            {
-                auto s = log::scope("target");
-                stream();
-            }
+            // {
+            //     auto s = log::scope("source");
+            //     rhs.stream();
+            // }
+            // {
+            //     auto s = log::scope("target");
+            //     stream();
+            // }
 
             MSS(merge_(*this, rhs));
 

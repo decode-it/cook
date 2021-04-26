@@ -49,7 +49,7 @@ Result Resolver::process_one(model::Recipe & recipe, const model::GlobInfo & glo
         MSS_BEGIN(Result);
 
         // resolve the file if possible
-        ingredient::File file(globber.dir, fn);
+        ingredient::File file(dir, fn);
         file.set_owner(&recipe);
         LanguageTypePair key(globber.language, globber.type);
         file.set_content(Content::Globbing);

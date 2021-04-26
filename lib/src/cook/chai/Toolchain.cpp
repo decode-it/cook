@@ -130,9 +130,9 @@ namespace cook { namespace chai {
         void Toolchain::set_command_configuration_functor(const CommandConfigurationFunctor & functor)
         {
             const Context * ctx = context_;
-            auto lambda = [=](process::toolchain::Element::Ptr element, model::Recipe * recipe)
+            auto lambda = [ctx,functor](process::toolchain::Element::Ptr element, model::Recipe * recipe)
             {
-                auto te = ToolchainElement(element, context_);
+                auto te = ToolchainElement(element, ctx);
                 auto re = Recipe(recipe, ctx);
                 functor(te, re);
             };

@@ -20,12 +20,14 @@ namespace cook { namespace process { namespace souschef {
 
         auto & g = file_command_graph;
 
-        model::Recipe::Files & files = recipe.files();
+        const model::Recipe::Files & files = recipe.files();
 
-        for(auto & file : files.range(LanguageTypePair(language_, Type::Header)))
-            file.set_propagation(Propagation::Private);
+        recipe.each_file(LanguageTypePair(language_, Type::Header), [](auto &f) {
+            f.set_propagation(Propagation::Private);
+            return true;
+        });
 
-        auto it = files.find(LanguageTypePair(language_, Type::Source));
+        auto it = recipe.files().find(LanguageTypePair(language_, Type::Source));
         if (it == files.end() || it->second.empty())
             MSS_RETURN_OK();
         L("Found source files for " << language_);
@@ -42,17 +44,17 @@ namespace cook { namespace process { namespace souschef {
             auto ss = log::scope("Compiler::process", [&](auto &node){node.attr("source", source).attr("object", object);});
             const LanguageTypePair key(Language::Binary, Type::Object);
 
-            MSG_MSS(files.insert(key, object).second, Error, "Object file '" << object << "' already present in " << recipe.uri());
+            MSG_MSS(recipe.insert(key, object), Error, "Object file '" << object << "' already present in " << recipe.uri());
 
             L("Adding compile command");
             auto compile_vertex = g.add_vertex(cp);
             {
-                const std::filesystem::path & src_fn = gubg::filesystem::combine({recipe.working_directory(), source.dir(), source.rel()});
+                const std::filesystem::path & src_fn = source.key();
                 auto source_vertex = g.goc_vertex(src_fn);
                 MSS(g.add_edge(compile_vertex, source_vertex));
             } 
             {
-                const std::filesystem::path & obj_fn = gubg::filesystem::combine({recipe.working_directory(), object.dir(), object.rel()});
+                const std::filesystem::path & obj_fn = object.key();
                 auto object_vertex = g.goc_vertex(obj_fn);
                 MSS(g.add_edge(object_vertex, compile_vertex));
             }
@@ -66,14 +68,13 @@ namespace cook { namespace process { namespace souschef {
         auto tmp_path = context.dirs().temporary(true);
 
         // get the path to the file, making sure the initial separator from the URI is dropped
-        std::filesystem::path p = tmp_path / recipe.uri().string(false);
+        std::filesystem::path dir = tmp_path / recipe.uri().string(false);
         {
             gubg::hash::md5::Stream s;
             s << source.dir().string();
-            p /= s.hash_hex();
+            dir /= s.hash_hex();
         }
 
-        std::filesystem::path dir = util::get_from_to_path(recipe, p);
         const std::filesystem::path rel = context.toolchain().intermediary_name(source.rel(), LanguageTypePair(language_, Type::Source), LanguageTypePair(Language::Binary, Type::Object), process::toolchain::Element::Compile);
 
         ingredient::File object(dir, rel);

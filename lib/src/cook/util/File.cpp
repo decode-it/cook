@@ -38,20 +38,5 @@ std::filesystem::path get_from_to_path(const std::filesystem::path & from, const
     return path;
 }
 
-ingredient::File combine_file(const std::filesystem::path & prefix, const ingredient::File & file)
-{
-    auto ss = log::scope("make_local_to_recipe(ingredient::File)");
-    if (file.key().is_absolute())
-        return file;
-
-    ingredient::File f(gubg::filesystem::combine(prefix, file.dir()), file.rel());
-    f.set_overwrite(file.overwrite());
-    f.set_owner(file.owner());
-    f.set_propagation(file.propagation());
-    f.set_content(file.content());
-
-    return f;
-}
-
 } }
 

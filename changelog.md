@@ -234,8 +234,12 @@ Proof-of-concept version.
 * Support for older LIBC version for linux (built on top of ubuntu16.04)
 * GCC-like toolchains use `ar crs` now for non-MacOS as well, iso the previous `ar crf` that causes problems due to the truncated object filenames
 
-## 1.2.21 (open)
+## 1.2.21 
 * Support for the time protection of a directory (all files inside this directory) or a file
+* Using absolute filenames 
+* Performance update
+
+## 1.2.22 (open)
 
 ## Next
 
