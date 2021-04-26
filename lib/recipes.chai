@@ -15,7 +15,6 @@
         if (my(OS) == OS.MacOS) 
         {
             r.library_path("/usr/local/opt/llvm/lib")
-            r.library("c++experimental")
         }
     }
 

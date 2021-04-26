@@ -9,7 +9,7 @@ rule link
 defines = -DNDEBUG 
 cflags = -O3
 lflags = 
-system_libs = -L/usr/local/opt/llvm/lib -ldl -lc++experimental -lpthread
+system_libs = -L/usr/local/opt/llvm/lib -ldl -lpthread
 
 #defines =
 #cflags = -g
