@@ -394,6 +394,7 @@ Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, c
     MSS_BEGIN(Result);
 
     str << "# " << recipe->uri() << std::endl;
+    set_link_paths_(str, recipe, output_to_source);
 
     std::string str_type = (type == CMakeType::Module ? "MODULE" : "SHARED");
     str << "add_library(" << recipe_name_(recipe) << " " << str_type << std::endl;
