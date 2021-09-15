@@ -156,8 +156,13 @@ end
 def toolchain_options()
   toolchain_options = {"c++.std" => 17, "c++.runtime" => "static", "release" => nil}
   case GUBG::os
-  when :macos     then toolchain_options["arch"] = "x64"
-  when :windows   then toolchain_options["arch"] = "x86"
+  when :macos
+    # For now, we always build for Intel x86_64. This works on M1 as well, although a bit slower.
+    # TODO: Add both x86_64 and arm64 builds
+    toolchain_options["arch"] = "x64"
+    toolchain_options["target"] = "x86_64-apple-macos10.15"
+  when :windows
+    toolchain_options["arch"] = "x86"
   end
   toolchain_options
 end
