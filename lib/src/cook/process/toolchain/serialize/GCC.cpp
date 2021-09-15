@@ -56,6 +56,12 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             else if (v == "dynamic") { }
             else if (v == "static") { kv.append(Part.Runtime, "-static-libstdc++") })%";
         }
+        if (gcc_variant == GCCVariant::Clang)
+        {
+        oss << R"%(
+        } else if (k == "target") {
+            kv.append(Part.Pre, "--target", "${v}"))%";
+        }
         oss << R"%(
         } else if (k == "c++.std" && e.language == Language.CXX) {
             kv.append(Part.Pre, "-std", "c++${v}")
@@ -98,6 +104,12 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             if (false) {}
             else if (v == "dynamic") { }
             else if (v == "static") { kv.append(Part.Runtime, "-static-libstdc++") })%";
+        }
+        if (gcc_variant == GCCVariant::Clang)
+        {
+        oss << R"%(
+        } else if (k == "target") {
+            kv.append(Part.Pre, "--target", "${v}"))%";
         }
         oss << R"%(
         } else if (k == "c++.std") {

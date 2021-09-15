@@ -366,6 +366,8 @@ Result CMake::add_object_library_(std::ofstream & str, model::Recipe * recipe, c
     add_source_and_header_(str, recipe, false, RecipeList(), output_to_source);
     str << ")" << std::endl;
 
+    MSS(set_source_files_properties_(str, recipe, output_to_source));
+
     MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
 
     str << "# " << recipe->uri() << std::endl << std::endl;
@@ -383,6 +385,8 @@ Result CMake::add_static_library_(std::ofstream & str, model::Recipe * recipe, c
     add_source_and_header_(str, recipe, false, objects, output_to_source);
     str << ")" << std::endl;
 
+    MSS(set_source_files_properties_(str, recipe, output_to_source));
+
     MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
 
     str << "# " << recipe->uri() << std::endl << std::endl;
@@ -396,11 +400,11 @@ Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, c
     str << "# " << recipe->uri() << std::endl;
     set_link_paths_(str, recipe, output_to_source);
 
-    std::string str_type = (type == CMakeType::Module ? "MODULE" : "SHARED");
-    str << "add_library(" << recipe_name_(recipe) << " " << str_type << std::endl;
-
+    str << "add_library(" << recipe_name_(recipe) << " " << (type == CMakeType::Module ? "MODULE" : "SHARED") << std::endl;
     add_source_and_header_(str, recipe, true, objects, output_to_source);
     str << ")" << std::endl;
+
+    MSS(set_source_files_properties_(str, recipe, output_to_source));
 
     MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
     MSS(set_link_libraries(str, recipe, links, "PRIVATE", output_to_source));
@@ -416,9 +420,12 @@ Result CMake::add_executable_(std::ofstream & str, model::Recipe * recipe, const
     str << "# " << recipe->uri() << std::endl;
     set_link_paths_(str, recipe, output_to_source);
 
-    str << "add_executable(" << recipe_name_(recipe) << " ";
+    str << "add_executable(" << recipe_name_(recipe) << std::endl;
     add_source_and_header_(str, recipe, false, objects, output_to_source);
     str << ")" << std::endl;
+
+    MSS(set_source_files_properties_(str, recipe, output_to_source));
+
     MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
 
     MSS(set_link_libraries(str, recipe, links, "PRIVATE", output_to_source));
@@ -498,6 +505,32 @@ Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe,
 
     MSS_END();
 }
+
+Result CMake::set_source_files_properties_(std::ostream & ofs, model::Recipe * recipe, const std::filesystem::path &output_to_source) const
+{
+    MSS_BEGIN(Result);
+
+    ofs << "set_source_files_properties(" << std::endl;
+
+    auto add_files = [&](const LanguageTypePair & ltp, const ingredient::File & file)
+    {
+        switch(ltp.type)
+        {
+            case Type::Header:
+                ofs << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
+                break;
+            default: break;
+        }
+        return true;
+    };
+    MSS(recipe->files().each(add_files));
+
+    ofs << "  PROPERTIES HEADER_FILE_ONLY TRUE" << std::endl;
+    ofs << ")" << std::endl;
+
+    MSS_END();
+}
+
 
 namespace  {
 

@@ -196,15 +196,15 @@ Proof-of-concept version.
 ## 1.2.11
 * File functionality exposed in chai (join, each\_line, absolute)
 
-## 1.2.12 
+## 1.2.12
 * More file functionality exposed in chai (basename, dirname, extname)
 * Exposing toolchain configuration per recipe in chai
 
-## 1.2.13 
+## 1.2.13
 * Different extensions for assembly
 * Response file for command line arguments
 
-## 1.2.14 
+## 1.2.14
 * New TargetType Plugin for runtime-loaded libraries (mac bundle)
 
 ## 1.2.15
@@ -234,12 +234,15 @@ Proof-of-concept version.
 * Support for older LIBC version for linux (built on top of ubuntu16.04)
 * GCC-like toolchains use `ar crs` now for non-MacOS as well, iso the previous `ar crf` that causes problems due to the truncated object filenames
 
-## 1.2.21 
+## 1.2.21
 * Support for the time protection of a directory (all files inside this directory) or a file
 * Using absolute filenames 
 * Performance update
 
-## 1.2.22 (open)
+## 1.2.22
+* The `cmake` generator now sets the `link_directories()` for a shared library as well
+* The `cmake` generator correctly uses the `set_source_files_properties()` to indicate `Type.Header` files
+* The default `clang` toolchain now supports the `-T target=<value>` toolchain option, which can eg. be set to `-T target=x86_64-apple-macos11.03` for Intel or `-T target=arm64-apple-macos11.3`for M1 Apple Silicon
 
 ## Next
 
