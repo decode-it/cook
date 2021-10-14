@@ -21,6 +21,8 @@ enum class Type
     Dependency,
     Define,
     Executable,
+    Resource,
+    PropertyList,
     UserDefined
 };
 
@@ -43,6 +45,8 @@ inline std::ostream & operator<<(std::ostream & os, Type type)
         L_CASE(Dependency);
         L_CASE(Define);
         L_CASE(Executable);
+        L_CASE(Resource);
+        L_CASE(PropertyList);
 #undef L_CASE
         default:
         return os << "UserDefined(" << (static_cast<unsigned int>(type) - static_cast<unsigned int>(Type::UserDefined)) << ")";

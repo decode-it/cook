@@ -363,7 +363,7 @@ Result CMake::add_object_library_(std::ofstream & str, model::Recipe * recipe, c
     str << "# " << recipe->uri() << std::endl;
 
     str << "add_library(" << recipe_name_(recipe) << " OBJECT" << std::endl;
-    add_source_and_header_(str, recipe, false, RecipeList(), output_to_source);
+    add_source_and_header_(str, recipe, false, false, RecipeList(), output_to_source);
     str << ")" << std::endl;
 
     MSS(set_source_files_properties_(str, recipe, output_to_source));
@@ -382,7 +382,7 @@ Result CMake::add_static_library_(std::ofstream & str, model::Recipe * recipe, c
     str << "# " << recipe->uri() << std::endl;
 
     str << "add_library(" << recipe_name_(recipe) << " STATIC" << std::endl;
-    add_source_and_header_(str, recipe, false, objects, output_to_source);
+    add_source_and_header_(str, recipe, false, false, objects, output_to_source);
     str << ")" << std::endl;
 
     MSS(set_source_files_properties_(str, recipe, output_to_source));
@@ -401,13 +401,16 @@ Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, c
     set_link_paths_(str, recipe, output_to_source);
 
     str << "add_library(" << recipe_name_(recipe) << " " << (type == CMakeType::Module ? "MODULE" : "SHARED") << std::endl;
-    add_source_and_header_(str, recipe, true, objects, output_to_source);
+    add_source_and_header_(str, recipe, true, false, objects, output_to_source);
     str << ")" << std::endl;
 
     MSS(set_source_files_properties_(str, recipe, output_to_source));
 
     MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
+
     MSS(set_link_libraries(str, recipe, links, "PRIVATE", output_to_source));
+
+    MSS(set_bundle_properties_(str, recipe, output_to_source));
 
     str << "# " << recipe->uri() << std::endl << std::endl;
     MSS_END();
@@ -421,7 +424,7 @@ Result CMake::add_executable_(std::ofstream & str, model::Recipe * recipe, const
     set_link_paths_(str, recipe, output_to_source);
 
     str << "add_executable(" << recipe_name_(recipe) << std::endl;
-    add_source_and_header_(str, recipe, false, objects, output_to_source);
+    add_source_and_header_(str, recipe, false, true, objects, output_to_source);
     str << ")" << std::endl;
 
     MSS(set_source_files_properties_(str, recipe, output_to_source));
@@ -429,6 +432,8 @@ Result CMake::add_executable_(std::ofstream & str, model::Recipe * recipe, const
     MSS(set_target_properties_(str, recipe, "PRIVATE", output_to_source));
 
     MSS(set_link_libraries(str, recipe, links, "PRIVATE", output_to_source));
+
+    MSS(set_bundle_properties_(str, recipe, output_to_source));
 
     str << "# " << recipe->uri() << std::endl << std::endl;
     MSS_END();
@@ -464,7 +469,7 @@ std::string CMake::recipe_name_(const model::Recipe * recipe) const
     return uri.string('_');
 }
 
-Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports, const RecipeList & possible_object_dependencies,  const std::filesystem::path & output_to_source) const
+Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports, bool add_resources, const RecipeList & possible_object_dependencies,  const std::filesystem::path & output_to_source) const
 {
     MSS_BEGIN(Result);
     auto add_files = [&](const LanguageTypePair & ltp, const ingredient::File & file)
@@ -481,6 +486,12 @@ Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe,
 
             case Type::Export:
                 if (add_exports)
+                    ofs << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
+                break;
+
+            case Type::Resource:
+                if (add_resources)
+                    //This is necessary for OSX bundles, maybe this should be disabled for other platforms
                     ofs << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
                 break;
 
@@ -510,23 +521,29 @@ Result CMake::set_source_files_properties_(std::ostream & ofs, model::Recipe * r
 {
     MSS_BEGIN(Result);
 
-    ofs << "set_source_files_properties(" << std::endl;
-
     auto add_files = [&](const LanguageTypePair & ltp, const ingredient::File & file)
     {
+        std::vector<std::pair<std::string, std::string>> properties;
+
         switch(ltp.type)
         {
-            case Type::Header:
-                ofs << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
-                break;
+            case Type::Header: properties.emplace_back("HEADER_FILE_ONLY", "TRUE"); break;
+            case Type::Resource: properties.emplace_back("MACOSX_PACKAGE_LOCATION", "\"Resources\""); break;
+
             default: break;
         }
+
+        if (!properties.empty())
+        {
+            ofs << "set_source_files_properties(" << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << " PROPERTIES";
+            for (const auto &property: properties)
+                ofs << " " << property.first << " " << property.second;
+            ofs << ")" << std::endl;
+        }
+
         return true;
     };
     MSS(recipe->files().each(add_files));
-
-    ofs << "  PROPERTIES HEADER_FILE_ONLY TRUE" << std::endl;
-    ofs << ")" << std::endl;
 
     MSS_END();
 }
@@ -734,6 +751,53 @@ bool CMake::set_target_properties_(std::ostream & ofs, model::Recipe * recipe, c
 
         write_elements_(ofs, [&](auto & os) { os << "add_dependencies(" << name; }, dependencies, false);
     }
+
+    MSS_END();
+}
+
+Result CMake::set_bundle_properties_(std::ostream & ofs, model::Recipe * recipe, const std::filesystem::path &output_to_source) const
+{
+    MSS_BEGIN(Result);
+
+    const std::string & name = recipe_name_(recipe);
+
+    std::optional<std::string> info_plist_opt;
+    auto find_info_plist = [&](const LanguageTypePair &ltp, const ingredient::File &file){
+        if (ltp.type == Type::PropertyList)
+        {
+            if (info_plist_opt)
+                MSS_RC << MESSAGE(Warning, "CMake: skipping property list file `" << file.key() << "`, already found `" << *info_plist_opt << "`");
+            else
+                info_plist_opt = file.key();
+        }
+        return true;
+    };
+    recipe->files().each(find_info_plist);
+
+    //We only create a bundle if an Info.plist was set
+    if (info_plist_opt)
+    {
+        const auto &info_plist = *info_plist_opt;
+
+        const std::string resources_varname = "BUNDLE_RESOURCE_FILES";
+        {
+            ofs << "set(" << resources_varname << std::endl;
+            auto add_resource_files = [&](const LanguageTypePair &ltp, const ingredient::File &file){
+                if (ltp.type == Type::Resource)
+                    ofs << "    " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
+                return true;
+            };
+            recipe->files().each(add_resource_files);
+            ofs << ")" << std::endl;
+        }
+
+        ofs << "set_target_properties(" << name << " PROPERTIES" << std::endl;
+        ofs << "    BUNDLE TRUE" << std::endl;
+        ofs << "    MACOSX_BUNDLE_INFO_PLIST " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, info_plist).string()) << std::endl;
+        ofs << "    RESOURCE \"${" << resources_varname << "}\"" << std::endl;
+        ofs << ")" << std::endl;
+    }
+
     MSS_END();
 }
 

@@ -83,6 +83,8 @@ ptr->add(chaiscript::fun([](const wrapper::TYPE##_t &) { return std::string(#TYP
         EXPOSE(Type, Dependency);
         EXPOSE(Type, Define);
         EXPOSE(Type, Executable);
+        EXPOSE(Type, Resource);
+        EXPOSE(Type, PropertyList);
         EXPOSE(Language, Undefined);
         EXPOSE(Language, Binary);
         EXPOSE(Language, C);
