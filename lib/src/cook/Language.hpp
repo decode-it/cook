@@ -17,6 +17,8 @@ enum class Language
     Resource,
     Script,
     Definition,
+    PropertyList,
+    Icon,
     UserDefined
 };
 
@@ -35,6 +37,8 @@ inline std::ostream & operator<<(std::ostream & os, Language type)
         L_CASE(Resource);
         L_CASE(Script);
         L_CASE(Definition);
+        L_CASE(PropertyList);
+        L_CASE(Icon);
 #undef L_CASE
         default:
         return os << "UserDefined(" << (static_cast<unsigned int>(type) - static_cast<unsigned int>(Language::UserDefined)) << ")";

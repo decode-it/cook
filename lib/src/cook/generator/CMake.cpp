@@ -469,7 +469,7 @@ std::string CMake::recipe_name_(const model::Recipe * recipe) const
     return uri.string('_');
 }
 
-Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports, bool add_resources, const RecipeList & possible_object_dependencies,  const std::filesystem::path & output_to_source) const
+Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports, bool add_bundle_files, const RecipeList & possible_object_dependencies,  const std::filesystem::path & output_to_source) const
 {
     MSS_BEGIN(Result);
     auto add_files = [&](const LanguageTypePair & ltp, const ingredient::File & file)
@@ -489,8 +489,8 @@ Result CMake::add_source_and_header_(std::ostream & ofs, model::Recipe * recipe,
                     ofs << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
                 break;
 
-            case Type::Resource:
-                if (add_resources)
+            case Type::Bundle:
+                if (add_bundle_files)
                     //This is necessary for OSX bundles, maybe this should be disabled for other platforms
                     ofs << "  " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
                 break;
@@ -528,7 +528,7 @@ Result CMake::set_source_files_properties_(std::ostream & ofs, model::Recipe * r
         switch(ltp.type)
         {
             case Type::Header: properties.emplace_back("HEADER_FILE_ONLY", "TRUE"); break;
-            case Type::Resource: properties.emplace_back("MACOSX_PACKAGE_LOCATION", "\"Resources\""); break;
+            case Type::Bundle: properties.emplace_back("MACOSX_PACKAGE_LOCATION", "\"Resources\""); break;
 
             default: break;
         }
@@ -761,29 +761,61 @@ Result CMake::set_bundle_properties_(std::ostream & ofs, model::Recipe * recipe,
 
     const std::string & name = recipe_name_(recipe);
 
-    std::optional<std::string> info_plist_opt;
-    auto find_info_plist = [&](const LanguageTypePair &ltp, const ingredient::File &file){
-        if (ltp.type == Type::PropertyList)
+    bool create_bundle = false;
+    std::optional<std::string> bundle_extension;
+    std::optional<std::string> bundle_identifier;
+    std::optional<std::string> bundle_name;
+    std::optional<std::string> bundle_info;
+    std::optional<std::string> bundle_version;
+    std::optional<std::string> bundle_long_version;
+    auto find_bundle_parameters = [&](const LanguageTypePair &ltp, const ingredient::KeyValue &kv){
+        if (ltp.type == Type::Bundle)
         {
-            if (info_plist_opt)
-                MSS_RC << MESSAGE(Warning, "CMake: skipping property list file `" << file.key() << "`, already found `" << *info_plist_opt << "`");
-            else
-                info_plist_opt = file.key();
+            if (kv.key() == "bundle") { create_bundle = (kv.value() == "true"); }
+            else if (kv.key() == "extension") { bundle_extension = kv.value(); }
+            else if (kv.key() == "identifier") { bundle_identifier = kv.value(); }
+            else if (kv.key() == "name") { bundle_name = kv.value(); }
+            else if (kv.key() == "info") { bundle_info = kv.value(); }
+            else if (kv.key() == "version") { bundle_version = kv.value(); }
+            else if (kv.key() == "long_version") { bundle_long_version = kv.value(); }
+            else { MSS_RC << MESSAGE(Warning, "CMake: unknown Bundle setting `" << kv.key() << "`"); return false; }
         }
         return true;
     };
-    recipe->files().each(find_info_plist);
+    recipe->key_values().each(find_bundle_parameters);
+
+    std::optional<std::string> info_plist;
+    std::optional<std::string> bundle_icon;
+    auto find_bundle_files = [&](const LanguageTypePair &ltp, const ingredient::File &file){
+        if (ltp.type == Type::Bundle)
+        {
+            if (ltp.language == Language::PropertyList)
+            {
+                if (info_plist)
+                    MSS_RC << MESSAGE(Warning, "CMake: skipping property list file `" << file.key() << "`, already found `" << *info_plist << "`");
+                else
+                    info_plist = file.key();
+            }
+            else if (ltp.language == Language::Icon)
+            {
+                if (bundle_icon)
+                    MSS_RC << MESSAGE(Warning, "CMake: skipping property icon `" << file.key() << "`, already found `" << *bundle_icon << "`");
+                else
+                    bundle_icon = file.rel().filename();
+            }
+        }
+        return true;
+    };
+    recipe->files().each(find_bundle_files);
 
     //We only create a bundle if an Info.plist was set
-    if (info_plist_opt)
+    if (create_bundle)
     {
-        const auto &info_plist = *info_plist_opt;
-
         const std::string resources_varname = "BUNDLE_RESOURCE_FILES";
         {
             ofs << "set(" << resources_varname << std::endl;
             auto add_resource_files = [&](const LanguageTypePair &ltp, const ingredient::File &file){
-                if (ltp.type == Type::Resource)
+                if (ltp.type == Type::Bundle)
                     ofs << "    " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, file.key()).string()) << std::endl;
                 return true;
             };
@@ -793,7 +825,27 @@ Result CMake::set_bundle_properties_(std::ostream & ofs, model::Recipe * recipe,
 
         ofs << "set_target_properties(" << name << " PROPERTIES" << std::endl;
         ofs << "    BUNDLE TRUE" << std::endl;
-        ofs << "    MACOSX_BUNDLE_INFO_PLIST " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, info_plist).string()) << std::endl;
+        if (recipe->build_target().type == TargetType::Executable)
+            ofs << "    MACOSX_BUNDLE TRUE" << std::endl;
+        if (bundle_identifier)
+            ofs << "    MACOSX_BUNDLE_IDENTIFIER " << *bundle_identifier << std::endl;
+        if (bundle_extension)
+            ofs << "    BUNDLE_EXTENSION " << *bundle_extension << std::endl;
+        if (bundle_icon)
+            ofs << "    MACOSX_BUNDLE_ICON_FILE " << *bundle_icon << std::endl;
+        if (bundle_name)
+            ofs << "    MACOSX_BUNDLE_BUNDLE_NAME \"" << *bundle_name << "\"" << std::endl;
+        if (bundle_info)
+            ofs << "    MACOSX_BUNDLE_INFO_STRING \"" << *bundle_info << "\"" << std::endl;
+        if (bundle_version)
+        {
+            ofs << "    MACOSX_BUNDLE_BUNDLE_VERSION \"" << *bundle_version << "\"" << std::endl;
+            ofs << "    MACOSX_BUNDLE_SHORT_VERSION_STRING \"" << *bundle_version << "\"" << std::endl;
+        }
+        if (bundle_long_version)
+            ofs << "    MACOSX_BUNDLE_LONG_VERSION_STRING \"" << *bundle_long_version << "\"" << std::endl;
+        if (info_plist)
+            ofs << "    MACOSX_BUNDLE_INFO_PLIST " << gubg::string::escape_cmake(gubg::filesystem::combine(output_to_source, *info_plist).string()) << std::endl;
         ofs << "    RESOURCE \"${" << resources_varname << "}\"" << std::endl;
         ofs << ")" << std::endl;
     }

@@ -61,7 +61,7 @@ private:
     std::string recipe_name_(const model::Recipe * recipe) const;
 //    std::string deduce_library_type_(const model::Recipe & recipe) const;
 
-    Result add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports, bool add_resources,  const RecipeList & dependencies, const std::filesystem::path &output_to_source) const;
+    Result add_source_and_header_(std::ostream & ofs, model::Recipe * recipe, bool add_exports, bool add_bundle_files,  const RecipeList & dependencies, const std::filesystem::path &output_to_source) const;
     Result set_source_files_properties_(std::ostream & ofs, model::Recipe * recipe, const std::filesystem::path &output_to_source) const;
     bool set_target_properties_(std::ostream & ofs, model::Recipe * recipe, const std::string &keyword, const std::filesystem::path & output_to_source) const;
     Result set_bundle_properties_(std::ostream & ofs, model::Recipe * recipe, const std::filesystem::path &output_to_source) const;

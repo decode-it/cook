@@ -58,6 +58,16 @@ namespace cook { namespace rules {
                 for (auto ext: Exts{ ".def" })
                     tm[ext] = Type::Export;
             }
+            else if (lang == Language::PropertyList)
+            {
+                for (auto ext: Exts{ ".plist" })
+                    tm[ext] = Type::Bundle;
+            }
+            else if (lang == Language::Icon)
+            {
+                for (auto ext: Exts{ ".icns" })
+                    tm[ext] = Type::Bundle;
+            }
             else
             {
                 MSS(false);

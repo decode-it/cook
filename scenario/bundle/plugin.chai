@@ -1,0 +1,4 @@
+cook.recipe("MyPlugin", TargetType.Plugin, fun(rcp){
+	rcp.add("./", "main.cpp")
+	rcp.add_key_value("bundle", "true", Type.Bundle)
+	})

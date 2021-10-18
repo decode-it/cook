@@ -1,0 +1,10 @@
+cook.recipe("MyApp", TargetType.Executable, fun(rcp){
+	rcp.add("./", "main.cpp")
+	rcp.add_key_value("bundle", "true", Type.Bundle)
+	rcp.add_key_value("extension", "app", Type.Bundle)
+	rcp.add_key_value("identifier", "com.cook-build.BundleApp", Type.Bundle)
+	rcp.add_key_value("name", "MyBundleName", Type.Bundle)
+	rcp.add_key_value("info", "MyInfo", Type.Bundle)
+	rcp.add_key_value("version", "1.2.3", Type.Bundle)
+	rcp.add_key_value("long_version", "1.2.3.4", Type.Bundle)
+	})

@@ -1,0 +1,6 @@
+cook.recipe("MyApp", TargetType.Executable, fun(rcp){
+	rcp.add("./", "main.cpp")
+	rcp.add("./", "Info.plist")
+	rcp.add("./", "my_icon.icns", Type.Bundle)
+	rcp.add_key_value("bundle", "true", Type.Bundle)
+	})

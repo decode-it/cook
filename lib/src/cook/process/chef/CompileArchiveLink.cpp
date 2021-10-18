@@ -11,6 +11,7 @@
 #include "cook/rules/C_family.hpp"
 #include "cook/rules/ASM.hpp"
 #include "cook/rules/Definition.hpp"
+#include "cook/rules/Bundle.hpp"
 #include "gubg/stream.hpp"
 
 namespace cook { namespace process { namespace chef {
@@ -162,6 +163,8 @@ std::list<SouschefPtr> CompileArchiveLink::generate_compile_only_steps_() const
     rule_set->add<rules::ASM>();
     rule_set->add<rules::Resource>();
     rule_set->add<rules::Definition>();
+    rule_set->add<rules::BundlePList>();
+    rule_set->add<rules::BundleIcon>();
     result.push_back(std::make_shared<souschef::Resolver>(rule_set));
 
     result.push_back(std::make_shared<souschef::DependentPropagator>());
