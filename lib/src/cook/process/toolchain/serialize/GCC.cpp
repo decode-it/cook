@@ -109,7 +109,9 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         {
         oss << R"%(
         } else if (k == "target") {
-            kv.append(Part.Pre, "--target", "${v}"))%";
+            kv.append(Part.Pre, "--target", "${v}")
+        } else if (k == "framework") {
+            kv.append(Part.Pre, "-framework ${v}"))%";
         }
         oss << R"%(
         } else if (k == "c++.std") {
