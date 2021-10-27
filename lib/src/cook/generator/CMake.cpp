@@ -401,7 +401,8 @@ Result CMake::add_shared_library_(std::ofstream & str, model::Recipe * recipe, c
     set_link_paths_(str, recipe, output_to_source);
 
     str << "add_library(" << recipe_name_(recipe) << " " << (type == CMakeType::Module ? "MODULE" : "SHARED") << std::endl;
-    add_source_and_header_(str, recipe, true, true, objects, output_to_source);
+    const auto add_bundle_files = type == CMakeType::Module;
+    add_source_and_header_(str, recipe, true, add_bundle_files, objects, output_to_source);
     str << ")" << std::endl;
 
     MSS(set_source_files_properties_(str, recipe, output_to_source));
