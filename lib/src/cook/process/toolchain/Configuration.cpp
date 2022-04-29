@@ -27,7 +27,7 @@ namespace cook { namespace process { namespace toolchain {
         auto s = log::scope("Configuration value", [&](auto & n){
             n.attr("key", key).attr("value", value);
         });
-        config_.insert(std::make_pair(ConfigPair(key, value), New));
+        config_.insert(std::make_pair(KeyValue(key, value), New));
     }
 
     bool ConfigurationBoard::add_callback(const Configuration & config)
@@ -37,11 +37,11 @@ namespace cook { namespace process { namespace toolchain {
 
     bool ConfigurationBoard::has_config(const std::string & key, const std::string & value) const
     {
-        return config_.find(ConfigPair(key, value)) != config_.end();
+        return config_.find(KeyValue(key, value)) != config_.end();
     }
     bool ConfigurationBoard::has_config(const std::string & key) const
     {
-        auto lambda = [&](const auto & p )
+        auto lambda = [&](const auto & p)
         {
             return p.first.first == key;
         };
@@ -65,7 +65,7 @@ namespace cook { namespace process { namespace toolchain {
     }
     bool ConfigurationBoard::remove_config(const std::string & key, const std::string & value)
     {
-        auto it = config_.find(ConfigPair(key, value));
+        auto it = config_.find(KeyValue(key, value));
         if (it == config_.end())
             return false;
         config_.erase(it);
@@ -82,14 +82,14 @@ namespace cook { namespace process { namespace toolchain {
         return result;
     }
 
-    bool ConfigurationBoard::resolve_(Element::Ptr element, const ConfigPair & p)
+    bool ConfigurationBoard::resolve_(Element::Ptr element, const KeyValue & kv)
     {
         auto s = log::scope("Resolving", [&](auto & n) {
-            n.attr("element_type", element->element_type()).attr("element_language", element->language()).attr("target_type", element->target_type()).attr("key", p.first).attr("value", p.second);
+            n.attr("element_type", element->element_type()).attr("element_language", element->language()).attr("target_type", element->target_type()).attr("key", kv.first).attr("value", kv.second);
         });
         for(const Configuration & cfg : config_cbs_)
         {
-            bool res = cfg.callback(element, p.first, p.second, *this);
+            const bool res = cfg.callback(element, kv.first, kv.second, *this);
             auto ss = log::scope("callback", [&](auto & n) {
                 n.attr("uuid", cfg.uuid).attr("result", res);
             });

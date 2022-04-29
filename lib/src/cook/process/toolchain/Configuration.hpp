@@ -38,17 +38,17 @@ namespace cook { namespace process { namespace toolchain {
         {
             New, Resolved, Unresolved
         };
-        using ConfigPair = std::pair<std::string, std::string>;
+        using KeyValue = std::pair<std::string, std::string>;
 
         void add_configuration(const std::string & key, const std::string & value);
         void add_configuration(const std::string & key);
 
         template <typename It>
-        bool process(It first, It second)
+        bool process(It element_begin, It element_end)
         {
             auto find_new = [&]() 
             {
-                return std::find_if(config_.begin(), config_.end(), [](std::map<ConfigPair, State>::value_type & p) { return p.second == New; });
+                return std::find_if(config_.begin(), config_.end(), [](std::map<KeyValue, State>::value_type & p) { return p.second == New; });
             };
 
             // find first unresolved
@@ -57,15 +57,16 @@ namespace cook { namespace process { namespace toolchain {
                 return false;
 
             // try to resolve the configuration for this element
-            auto & cfg = *it;
+            auto & cfg_kv = it->first;
+            auto & cfg_state = it->second;
             {
                 bool did_resolve = false;
-                for(Element::Ptr element : gubg::make_range(first, second))
-                    if (resolve_(element, cfg.first))
+                for(Element::Ptr element : gubg::make_range(element_begin, element_end))
+                    if (resolve_(element, cfg_kv))
                         did_resolve = true;
 
                 // we did
-                cfg.second = (did_resolve ? Resolved : Unresolved);
+                cfg_state = (did_resolve ? Resolved : Unresolved);
             }
 
             // check whether we have still element to do
@@ -91,10 +92,10 @@ namespace cook { namespace process { namespace toolchain {
         }
 
     private:
-        bool resolve_(Element::Ptr element, const ConfigPair & p);
+        bool resolve_(Element::Ptr element, const KeyValue & p);
 
         std::set<Configuration> config_cbs_;
-        std::map<ConfigPair, State> config_;
+        std::map<KeyValue, State> config_;
     };
 
 } } }
