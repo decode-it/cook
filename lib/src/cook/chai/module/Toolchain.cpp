@@ -13,6 +13,8 @@ namespace cook { namespace chai { namespace module {
         ptr->add(chaiscript::user_type<CFGBoard>(), "ConfigurationBoard");
         ptr->add(chaiscript::fun([](CFGBoard & b, const std::string & k) { b.add_configuration(k); }), "add_config");
         ptr->add(chaiscript::fun([](CFGBoard & b, const std::string & k, const std::string & v) { b.add_configuration(k, v); }), "add_config");
+        ptr->add(chaiscript::fun([](CFGBoard & b, const std::string & k) { return b.has_config(k); }), "has_config");
+        ptr->add(chaiscript::fun([](CFGBoard & b, const std::string & k, const std::string & v) { return b.has_config(k, v); }), "has_config");
 
 
         ptr->add(chaiscript::user_type<Toolchain::ConfigurationCallback>(), "ConfigurationCallback");

@@ -106,7 +106,7 @@ namespace :b0 do
         end
     end
 
-    desc "bootstrap-level0: generater the ninja scripts (depends on gubg.build)"
+    desc "bootstrap-level0: generate the ninja scripts (depends on gubg.build)"
     task :generate do
         require("gubg/build/expand_templates")
         GUBG::Build::expand_templates("#{$b0_build_dir}/compile.ninja")

@@ -244,9 +244,14 @@ Proof-of-concept version.
 * The `cmake` generator correctly uses the `set_source_files_properties()` to indicate `Type.Header` files
 * The default `clang` toolchain now supports the `-T target=<value>` toolchain option, which can eg. be set to `-T target=x86_64-apple-macos11.03` for Intel or `-T target=arm64-apple-macos11.3`for M1 Apple Silicon
 
+## 1.2.23
+* The toolchain configuration key-value pairs (-T key=value) are processed per priority new iso alphabetically. This allows a toolchain.configuration callback to check for other configuration key-value pairs to make a join decision. This was needed for handling the MSVC runtime compiler flags (/MT, /MTd, /MD, /MDd) and libraries: this is a combination of config:debug/release and c++.runtime dynamic/static. The trick with the Part.Runtime is gone now.
+* Added `_DEBUG` and `_ITERATOR_DEBUG_LEVEL=2` for MSVC debug builds
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements
+* Remove Part.Runtime, it is probably not needed anymore since v1.2.23
 * Support for `COOK_PATH` search for scripts
 * Internal #include-based dependency detection for compilers that cannot output dependencies
 * Defines specified at toolchain level (eg NOMINMAX for MSVC) should be translated into cmake as well

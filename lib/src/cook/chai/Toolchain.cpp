@@ -77,7 +77,7 @@ namespace cook { namespace chai {
 
         void Toolchain::configure(unsigned int priority, const std::string & uuid, ConfigurationCallback cb)
         {
-            using CFG = process::toolchain::Configuration;
+            using CFG = process::toolchain::ConfigurationCallback;
 
             CHAI_MSS_BEGIN();
             CHAI_MSS_MSG(!is_frozen(), Error, "The toolchain is frozen, cannot add configuration callbacks");

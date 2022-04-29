@@ -28,8 +28,8 @@ namespace cook { namespace process { namespace toolchain {
 
         void add_config(const std::string & value);
         void add_config(const std::string & key, const std::string & value);
-        void add_configuration_callback(Configuration && cb);
-        void add_configuration_callback(const Configuration & cb);
+        void add_configuration_callback(ConfigurationCallback && cb);
+        void add_configuration_callback(const ConfigurationCallback & cb);
 
         void each_config(const std::function<void (const std::string &, const std::string &)> &cb) const;
         void each_config(const std::function<void (const std::string &, const std::string &, bool resolved)> &cb) const;

@@ -802,7 +802,7 @@ Result CMake::set_bundle_properties_(std::ostream & ofs, model::Recipe * recipe,
                 if (bundle_icon)
                     MSS_RC << MESSAGE(Warning, "CMake: skipping property icon `" << file.key() << "`, already found `" << *bundle_icon << "`");
                 else
-                    bundle_icon = file.rel().filename();
+                    bundle_icon = file.rel().filename().string();
             }
         }
         return true;

@@ -16,16 +16,25 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         if (false) {
         } else if (k == "debug_symbols" && v == "true" && e.language != Language.Resource) {
             kv.append(Part.Pre, "Zi")
-            tm[Part.Runtime] = fun(k,v) { return "/${k}d" }
+            e.key_values.append(Part.Define, "_DEBUG")
+            e.key_values.append(Part.Define, "_ITERATOR_DEBUG_LEVEL", "2")
         } else if (k == "optimization" && v == "max_speed") {
             kv.append(Part.Pre, "O2")
         } else if (k == "arch" && v == "x86") {
         } else if (k == "arch" && v == "x64") {
         } else if (k == "position_independent_code" && v == "true") {
-        } else if (k == "c++.runtime") {
-            if (false) {}
-            else if (v == "dynamic") { kv.append(Part.Runtime, "MD") }
-            else if (v == "static") { kv.append(Part.Runtime, "MT") }
+        } else if (k == "c++.runtime" && v == "dynamic") {
+            if (b.has_config("config", "debug")) {
+                kv.append(Part.Runtime, "MDd")
+            } else {
+                kv.append(Part.Runtime, "MD")
+            }
+        } else if (k == "c++.runtime" && v == "static") {
+            if (b.has_config("config", "debug")) {
+                kv.append(Part.Runtime, "MTd")
+            } else {
+                kv.append(Part.Runtime, "MT")
+            }
         } else if (k == "c++.std" && e.language == Language.CXX) {
             kv.append(Part.Pre, "std", "c++${v}")
         } else {
@@ -35,6 +44,18 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         if (false) {
         } else if (k == "debug_symbols" && v == "true") {
             kv.append(Part.Pre, "DEBUG")
+        } else if (k == "c++.runtime" && v == "dynamic") {
+            if (b.has_config("config", "debug")) {
+                kv.append(Part.Library, "msvcrtd")
+            } else {
+                kv.append(Part.Library, "msvcrt")
+            }
+        } else if (k == "c++.runtime" && v == "static") {
+            if (b.has_config("config", "debug")) {
+                kv.append(Part.Library, "libcmtd")
+            } else {
+                kv.append(Part.Library, "libcmt")
+            }
         } else {
             return false
         }

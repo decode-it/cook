@@ -173,7 +173,8 @@ namespace cook { namespace process { namespace toolchain {
             auto first = gubg::iterator::transform(elements_.begin(), util::ElementAt<1>());
             auto last = gubg::iterator::transform(elements_.end(), util::ElementAt<1>());
             while (board_.process(first, last))
-                ;;
+            {
+            }
         }
 
         auto check_all_resolved =[](const std::string & key, const std::string & value, ConfigurationBoard::State s)
@@ -217,12 +218,12 @@ namespace cook { namespace process { namespace toolchain {
         return board_.remove_config(key);
     }
 
-    void Manager::add_configuration_callback(Configuration && cb)
+    void Manager::add_configuration_callback(ConfigurationCallback && cb)
     {
         board_.add_callback(std::move(cb));
     }
 
-    void Manager::add_configuration_callback(const Configuration & cb)
+    void Manager::add_configuration_callback(const ConfigurationCallback & cb)
     {
         board_.add_callback(cb);
     }
