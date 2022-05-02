@@ -1,8 +1,3 @@
-here = File.dirname(__FILE__)
-gubg_dir = File.join(here, "extern")
-ENV["gubg"] = gubg_dir
-$LOAD_PATH << File.join(gubg_dir, "gubg.build/src")
-
 begin
     require_relative("extern/gubg.build/bootstrap.rb")
 rescue LoadError
