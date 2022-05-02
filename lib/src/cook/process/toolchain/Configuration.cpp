@@ -20,15 +20,14 @@ namespace cook { namespace process { namespace toolchain {
     {
         {
             ConfigurationCallback first_cb{0u, ""};
-            first_cb.callback = [](Element::Ptr, const std::string &, const std::string &, ConfigurationBoard &){return false;};
+            first_cb.callback = [](Element::Ptr, const std::string &, const std::string &, ConfigurationBoard &){
+                return false;
+            };
             cb__state__kvs_.emplace(first_cb, State__KeyValues{});
         }
         {
             ConfigurationCallback last_cb{std::numeric_limits<ConfigurationCallback::Priority>::max(), "~~~~~~~~~~~~~~~~"};
             last_cb.callback = [](Element::Ptr, const std::string &key, const std::string &value, ConfigurationBoard &){
-                auto s = log::scope("Unhandled value", 1, [&](auto & n){
-                    n.attr("key", key).attr("value", value);
-                });
                 return true;
             };
             cb__state__kvs_.emplace(last_cb, State__KeyValues{});
