@@ -16,6 +16,24 @@ namespace cook { namespace process { namespace toolchain {
         (priority == rhs.priority && uuid < rhs.uuid);
     }
 
+    ConfigurationBoard::ConfigurationBoard()
+    {
+        {
+            ConfigurationCallback first_cb{0u, ""};
+            first_cb.callback = [](Element::Ptr, const std::string &, const std::string &, ConfigurationBoard &){return false;};
+            cb__state__kvs_.emplace(first_cb, State__KeyValues{});
+        }
+        {
+            ConfigurationCallback last_cb{std::numeric_limits<ConfigurationCallback::Priority>::max(), "~~~~~~~~~~~~~~~~"};
+            last_cb.callback = [](Element::Ptr, const std::string &key, const std::string &value, ConfigurationBoard &){
+                auto s = log::scope("Unhandled value", 1, [&](auto & n){
+                    n.attr("key", key).attr("value", value);
+                });
+                return true;
+            };
+            cb__state__kvs_.emplace(last_cb, State__KeyValues{});
+        }
+    }
 
     void ConfigurationBoard::add_configuration(const std::string & key)
     {
@@ -33,10 +51,16 @@ namespace cook { namespace process { namespace toolchain {
         for (const auto &[cb, state__kvs]: cb__state__kvs_)
             for (const auto &[state, kvs]: state__kvs)
                 if (kvs.count(kv))
+                {
                     return;
+                }
 
-        if (!cb__state__kvs_.empty())
-            cb__state__kvs_.begin()->second[New].insert(kv);
+        if (cb__state__kvs_.empty())
+        {
+            return;
+        }
+
+        cb__state__kvs_.begin()->second[New].insert(kv);
     }
 
     bool ConfigurationBoard::add_callback(const ConfigurationCallback & config_callback)

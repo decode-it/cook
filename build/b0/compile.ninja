@@ -41,6 +41,8 @@ catch_include_paths = -I extern/gubg.std/extern/catch/single_include
 #){
 build .b0/extern/gubg.std/src/gubg/platform/spawn.cpp.obj: compile extern/gubg.std/src/gubg/platform/spawn.cpp
     include_paths = $gubg_include_paths
+build .b0/extern/gubg.io/src/gubg/Logger.cpp.obj: compile extern/gubg.io/src/gubg/Logger.cpp
+    include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/OptionParser.cpp.obj: compile extern/gubg.io/src/gubg/OptionParser.cpp
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/Strange.cpp.obj: compile extern/gubg.io/src/gubg/Strange.cpp
@@ -269,6 +271,8 @@ build .b0/extern/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj: compile extern
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/iterator/Transform_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/iterator/Transform_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.std/test/src/gubg/ix/Range_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/ix/Range_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/macro/variadic_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/mss_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/mss_tests.cpp
@@ -405,6 +409,8 @@ build .b0/extern/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj: compile ex
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/signal/LinearChirp_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/signal/LinearChirp_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.algo/test/src/gubg/smooth/Quadratic_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/smooth/Quadratic_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/tree/Tree_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/tree/Tree_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/tree/grow_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/tree/grow_tests.cpp
@@ -482,6 +488,7 @@ build .b0/app/src/main.cpp.obj: compile app/src/main.cpp
 #){
 build build/b0/libgubg.a: archive $
     .b0/extern/gubg.std/src/gubg/platform/spawn.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/Logger.cpp.obj $
     .b0/extern/gubg.io/src/gubg/OptionParser.cpp.obj $
     .b0/extern/gubg.io/src/gubg/Strange.cpp.obj $
     .b0/extern/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
@@ -619,6 +626,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/Transition_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/iterator/Transform_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/ix/Range_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/mss_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj $
@@ -687,6 +695,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/planning/Planning_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/planning/Task_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/signal/LinearChirp_tests.cpp.obj $
+    .b0/extern/gubg.algo/test/src/gubg/smooth/Quadratic_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/tree/Tree_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/tree/grow_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/xtree/Model_tests.cpp.obj $

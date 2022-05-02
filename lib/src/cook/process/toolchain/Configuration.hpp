@@ -40,6 +40,8 @@ namespace cook { namespace process { namespace toolchain {
         };
         using KeyValue = std::pair<std::string, std::string>;
 
+        ConfigurationBoard();
+
         void add_configuration(const std::string & key, const std::string & value);
         void add_configuration(const std::string & key);
 
@@ -133,6 +135,7 @@ namespace cook { namespace process { namespace toolchain {
         using KeyValues = std::set<KeyValue>;
         using State__KeyValues = std::map<State, KeyValues>;
         using Callback__State__KeyValues = std::map<ConfigurationCallback, State__KeyValues>;
+
         Callback__State__KeyValues cb__state__kvs_;
     };
 

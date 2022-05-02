@@ -248,6 +248,9 @@ Proof-of-concept version.
 * The toolchain configuration key-value pairs (-T key=value) are processed per priority new iso alphabetically. This allows a toolchain.configuration callback to check for other configuration key-value pairs to make a join decision. This was needed for handling the MSVC runtime compiler flags (/MT, /MTd, /MD, /MDd) and libraries: this is a combination of config:debug/release and c++.runtime dynamic/static. The trick with the Part.Runtime is gone now.
 * Added `_DEBUG` and `_ITERATOR_DEBUG_LEVEL=2` for MSVC debug builds
 
+## 1.2.24
+* Unhandled configuration key-values disappeared in v1.2.23, now, they remain available for inspection by the recipes.
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements
