@@ -55,6 +55,11 @@ task :proper do
     Rake::Task["gubg:proper"].invoke
 end
 
+desc "Prepare the submodules"
+task :prepare do
+    Rake::Task["gubg:prepare"].invoke()
+end
+
 desc "Update all to head"
 task :uth do
     GUBG::each_submod(submods: all_submods) do |info|
