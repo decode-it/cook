@@ -7,6 +7,10 @@ rescue LoadError
 end
 require("gubg/shared")
 
+task :default do
+    sh "rake -T"
+end
+
 require("mkmf")
 ninja_exe = find_executable("ninja")
 case GUBG::os
