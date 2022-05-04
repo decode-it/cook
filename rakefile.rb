@@ -1,9 +1,8 @@
 begin
-    require_relative("extern/gubg.build/bootstrap.rb")
+    require_relative("extern/gubg.build/load")
 rescue LoadError
     puts("This seems to be a fresh clone: I will update all required submodules for you.")
-    sh "git submodule update --init"
-    sh "rake uth prepare"
+    sh "git submodule update --init --recursive"
     retry
 end
 require("gubg/shared")
@@ -33,30 +32,9 @@ when :windows
     end
 end
 
-task :default do
-    sh "rake -T"
-end
-
 gubg_submods = %w[build std math io algo chaiscript].map{|e| "extern/gubg.#{e}"}
 cook_submods = %w[releases doc/sphinx/sphinx-chai]
 all_submods = gubg_submods + cook_submods
-
-namespace :gubg do
-    task :prepare do
-        GUBG::each_submod(submods: gubg_submods) { |info| sh "rake prepare" }
-    end
-    task :clean do
-        GUBG::each_submod(submods: gubg_submods) { |info| sh "rake clean" }
-    end
-    task :proper do
-        GUBG::each_submod(submods: gubg_submods) { |info| sh "rake proper" }
-    end
-end
-
-desc "Prepare the submods"
-task :prepare do
-    Rake::Task["gubg:prepare"].invoke
-end
 
 desc "Clean"
 task :clean do
