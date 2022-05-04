@@ -61,7 +61,6 @@ namespace cook { namespace process { namespace toolchain {
                     {
                         cb_it = it;
                         kv = *kvs.begin();
-                        kvs.erase(kv);
                         break;
                     }
                 }
@@ -92,11 +91,14 @@ namespace cook { namespace process { namespace toolchain {
             if (did_resolve)
             {
                 // The callback could handle the key-value: keep it here as `Resolved`
+                cb_it->second[New].erase(kv);
                 cb_it->second[Resolved].insert(kv);
             }
             else
             {
                 // The callback could not handle it: move as `New` to the next callback
+                cb_it->second[New].erase(kv);
+
                 ++cb_it;
                 if (cb_it != cb__state__kvs_.end())
                     cb_it->second[New].insert(kv);

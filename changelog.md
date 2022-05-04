@@ -251,6 +251,10 @@ Proof-of-concept version.
 ## 1.2.24
 * Unhandled configuration key-values disappeared in v1.2.23, now, they remain available for inspection by the recipes.
 
+## 1.2.25
+* For MSVC for TargetType.SharedLibrary (DLL) builds using dynamic runtime (c++.runtime=dynamic), the `mfcs140u` and `mfcs140ud` libraries are used iso `msvcrt` and `msvcrtd`.
+* When a configuration key-value is processed, it is still available in the board when it is being processed.
+
 ## Next
 
 * Propagating all `key_values` and `files` to toolchain elements

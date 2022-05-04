@@ -45,10 +45,18 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         } else if (k == "debug_symbols" && v == "true") {
             kv.append(Part.Pre, "DEBUG")
         } else if (k == "c++.runtime" && v == "dynamic") {
-            if (b.has_config("config", "debug")) {
-                kv.append(Part.Library, "msvcrtd")
+            if (e.target_type() == TargetType.SharedLibrary) {
+                if (b.has_config("config", "debug")) {
+                    kv.append(Part.Library, "mfcs140ud")
+                } else {
+                    kv.append(Part.Library, "mfcs140u")
+                }
             } else {
-                kv.append(Part.Library, "msvcrt")
+                if (b.has_config("config", "debug")) {
+                    kv.append(Part.Library, "msvcrtd")
+                } else {
+                    kv.append(Part.Library, "msvcrt")
+                }
             }
         } else if (k == "c++.runtime" && v == "static") {
             if (b.has_config("config", "debug")) {
