@@ -27,17 +27,13 @@ namespace cook { namespace process { namespace toolchain {
             using KeyValueProcessingFctr = std::function<bool(Element & element, const LanguageTypePair&, const ingredient::KeyValue&)>;
 
             Element(Type type, Language language, TargetType target_type);
-            Element(const Element &) = default;
-            Element(Element &&) = default;
-            Element & operator=(const Element &) = default;
-            Element & operator=(Element &&) = default;
 
             void set_recipe(model::Recipe * recipe) { recipe_ = recipe; }
 
             template <typename T>
             std::shared_ptr<T> create() const
             {
-                return std::make_shared<T>(key_values_map(), trans_, language_);
+                return std::make_shared<T>(key_values_map(), trans_, key.language);
             }
 
             KeyValuesMap & key_values_map();
@@ -55,21 +51,32 @@ namespace cook { namespace process { namespace toolchain {
             bool process_ingredient(const LanguageTypePair& ltp, const ingredient::File& file);
             bool process_ingredient(const LanguageTypePair& ltp, const ingredient::KeyValue& key_value);
 
+            struct Key
+            {
+                Element::Type element_type;
+                Language language;
+                TargetType target_type;
+
+                Key(Element::Type etype, Language lang, TargetType ttype) : element_type(etype), language(lang), target_type(ttype) {}
+
+                bool operator<(const Key & rhs) const;
+            };
+
+            const Key key;
+
         private:
             model::Recipe * recipe_;
 
         protected:
             KeyValuesMap kvm_;
             TranslatorMap trans_;
-            Type element_type_;
-            Language language_;
-            TargetType target_type_;
             FileProcessingFctr process_file_;
             KeyValueProcessingFctr process_key_value_;
-    };
+        };
 
-    std::ostream & operator<<(std::ostream & str, Element::Type type);
+        std::ostream & operator<<(std::ostream & str, Element::Type);
+        std::ostream & operator<<(std::ostream & str, Element::Key);
 
-} } } 
+    } } } 
 
 #endif

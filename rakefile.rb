@@ -129,10 +129,14 @@ namespace :b0 do
         rm_rf($b0_tmp)
     end
 
-    desc "bootstrap-level0: Update rtags"
-    task :rtags do
-        puts "Make sure you have \"rdm &\" running somewhere."
+    desc "bootstrap-level0: Generate compile_commands.json"
+    task :gen_cc do
         sh "#{ninja_exe} -f #{b0_ninja_fn} -t compdb compile > compile_commands.json"
+    end
+
+    desc "bootstrap-level0: Update rtags"
+    task :rtags => :gen_cc do
+        puts "Make sure you have \"rdm &\" running somewhere."
         sh("rc -J"){}
     end
 

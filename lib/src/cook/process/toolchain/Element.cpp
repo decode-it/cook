@@ -4,9 +4,7 @@ namespace cook { namespace process { namespace toolchain {
 
         Element::Element(Type element_type, Language language, TargetType target_type)
             : trans_()
-            , element_type_(element_type)
-            , language_(language)
-            , target_type_(target_type)
+            , key(element_type, language, target_type)
             , process_file_([](const auto &, const auto & , const auto & ){return false; })
             , process_key_value_([](const auto &, const auto & , const auto & ){return false; })
         {
@@ -38,17 +36,17 @@ namespace cook { namespace process { namespace toolchain {
 
     Language Element::language() const 
     { 
-        return language_; 
+        return key.language; 
     }
 
     Element::Type Element::element_type() const 
     { 
-        return element_type_; 
+        return key.element_type; 
     }
 
     TargetType Element::target_type() const
     {
-        return target_type_;
+        return key.target_type;
     }
             
     bool Element::process_ingredient(const LanguageTypePair & ltp, const ingredient::File & file)
@@ -61,11 +59,11 @@ namespace cook { namespace process { namespace toolchain {
         return process_key_value_(*this, ltp, key_value);
     }
 
-    std::ostream & operator<<(std::ostream & str, Element::Type type)
+    std::ostream & operator<<(std::ostream &os, Element::Type type)
     {
         switch(type)
         {
-#define L_CASE(VAL) case Element::VAL: return str << #VAL
+#define L_CASE(VAL) case Element::VAL: return os << #VAL
             L_CASE(Undefined);
             L_CASE(Archive);
             L_CASE(Compile);
@@ -73,8 +71,29 @@ namespace cook { namespace process { namespace toolchain {
             L_CASE(UserDefined);
 #undef L_CASE
             default:
-            return str << "<unknown>";
+            return os << "<unknown>";
         }
+    }
+
+    std::ostream & operator<<(std::ostream &os, Element::Key key)
+    {
+        os << "[Element](type:" << key.element_type << ")(language:" << key.language << ")(target_type:" << key.target_type << ")";
+        return os;
+    }
+
+    bool Element::Key::operator<(const Key & rhs) const
+    {
+        if (element_type < rhs.element_type)
+            return true;
+        if (element_type > rhs.element_type)
+            return false;
+
+        if (language < rhs.language)
+            return true;
+        if (language > rhs.language)
+            return false;
+
+        return target_type < rhs.target_type;
     }
 
 } } } 

@@ -255,9 +255,11 @@ Proof-of-concept version.
 * For MSVC for TargetType.SharedLibrary (DLL) builds using dynamic runtime (c++.runtime=dynamic), the `mfcs140u` and `mfcs140ud` libraries are used iso `msvcrt` and `msvcrtd`.
 * When a configuration key-value is processed, it is still available in the board when it is being processed.
 
+## 1.2.26
+* Key-value configuration values are now processed per-element, as was the case for 1.2.22.
+
 ## Next
 
-* Propagating all `key_values` and `files` to toolchain elements
 * Remove Part.Runtime, it is probably not needed anymore since v1.2.23
 * Support for `COOK_PATH` search for scripts
 * Internal #include-based dependency detection for compilers that cannot output dependencies

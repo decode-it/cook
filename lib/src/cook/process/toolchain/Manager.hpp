@@ -74,34 +74,13 @@ namespace cook { namespace process { namespace toolchain {
     private:
         bool process_ingredients_(command::Interface & cmd, model::Recipe & recipe) const;
         Element::Ptr clone_(Element::Type element_type, Language language, TargetType target_type) const;
-        struct Key
-        {
-            Key() : 
-                element_type(Element::Undefined), 
-                language(Language::Undefined), 
-                target_type(TargetType::Undefined) 
-            {}
-
-            Key(Element::Type etype, Language lang, TargetType ttype) : 
-                element_type(etype),
-                language(lang),
-                target_type(ttype)
-            {
-            }
-
-            Element::Type element_type;
-            Language language;
-            TargetType target_type;
-
-            bool operator<(const Key & rhs) const;
-        };
         Result resolve_();
 
         bool configure_(Element & element);
         bool initialized_ = false;
 
         using ElementDesc = std::pair<Element::Type, Language>;
-        std::map<Key, Element::Ptr> elements_;
+        std::map<Element::Key, Element::Ptr> elements_;
         ConfigurationBoard board_;
         NameFunctor primary_target_functor_;
         IntermediaryName intermediary_name_;

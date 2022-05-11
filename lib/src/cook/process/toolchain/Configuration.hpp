@@ -4,11 +4,14 @@
 #include "cook/process/toolchain/Element.hpp"
 #include "cook/Result.hpp"
 #include "gubg/Range.hpp"
+
 #include <set>
 #include <map>
 #include <string>
 #include <algorithm>
 #include <functional>
+#include <queue>
+#include <list>
 
 namespace cook { namespace process { namespace toolchain {
 
@@ -23,24 +26,37 @@ namespace cook { namespace process { namespace toolchain {
 
         ConfigurationCallback(Priority priority, const std::string & uuid);
 
-        bool operator<(const ConfigurationCallback & rhs) const;
+        bool operator<(const ConfigurationCallback & rhs) const { return key < rhs.key; }
 
         Callback callback;
 
-        const std::string uuid;
-        const Priority priority;
+        struct Key
+        {
+            Priority priority;
+            std::string uuid;
+
+            Key(Priority priority, const std::string &uuid): uuid(uuid), priority(priority) {}
+
+            bool operator<(const Key & rhs) const;
+        };
+
+        const Key key;
     };
+
+    inline std::ostream &operator<<(std::ostream &os, const ConfigurationCallback::Key &key)
+    {
+        os << "[Callback](priority:" << key.priority << ")(uuid:" << key.uuid << ")";
+        return os;
+    }
 
     class ConfigurationBoard
     {
     public:
-        enum State
+        enum class State
         {
-            New, Resolved
+            New, Resolving, Resolved, Unresolved,
         };
         using KeyValue = std::pair<std::string, std::string>;
-
-        ConfigurationBoard();
 
         void add_configuration(const std::string & key, const std::string & value);
         void add_configuration(const std::string & key);
@@ -50,61 +66,86 @@ namespace cook { namespace process { namespace toolchain {
         template <typename It>
         bool process(It element_begin, It element_end)
         {
-            // Find new key-value with lowest callback priority
-            auto cb_it = cb__state__kvs_.end();
-            KeyValue kv;
-            for (auto it = cb__state__kvs_.begin(); it != cb__state__kvs_.end(); ++it)
+            MSS_BEGIN(bool);
+
+            using CB_EL_KV = std::tuple<ConfigurationCallback::Key, Element::Key, KeyValue>;
+            using PriorityQueue = std::priority_queue<CB_EL_KV, std::vector<CB_EL_KV>, std::greater<CB_EL_KV>>;
+            PriorityQueue priority_queue;
+
+            std::map<Element::Key, Element::Ptr> elements;
+            for (auto el = element_begin; el != element_end; ++el)
+                elements[(*el)->key] = *el;
+
+            while (true)
             {
-                if (auto p2 = it->second.find(New); p2 != it->second.end())
+                // Insert new key-values into the priority_queue
+                for (auto &[kv, state]: kv__state_)
                 {
-                    if (auto &kvs = p2->second; !kvs.empty())
+                    if (state != State::New)
+                        continue;
+                    for (const auto &[cb, _]: callbacks_)
                     {
-                        cb_it = it;
-                        kv = *kvs.begin();
+                        for (const auto &[el, _]: elements)
+                            priority_queue.emplace(cb, el, kv);
+
                         break;
+                    }
+                    state = State::Resolving;
+                }
+
+                if (priority_queue.empty())
+                    // Nothing to process anymore
+                    break;
+
+                // Get the highest prio callback-element-keyvalue combination to process
+                CB_EL_KV cb_el_kv = priority_queue.top();
+                priority_queue.pop();
+
+                auto cb_it = callbacks_.find(std::get<0>(cb_el_kv));
+                MSS(cb_it != callbacks_.end());
+                auto &cb = cb_it->second;
+                auto element = elements[std::get<1>(cb_el_kv)];
+                const auto kv = std::get<2>(cb_el_kv);
+
+                {
+                    auto s = log::scope("Resolving", [&](auto & n) {
+                        n.attr("element_type", element->element_type()).attr("element_language", element->language()).attr("target_type", element->target_type()).attr("key", kv.first).attr("value", kv.second);
+                    });
+                    const bool res = cb.callback(element, kv.first, kv.second, *this);
+                    auto ss = log::scope("callback", [&](auto & n) {
+                        n.attr("uuid", cb.key.uuid).attr("result", res);
+                    });
+                    if (res)
+                    {
+                        // The callback could handle the key-value for the given element
+                        kv__state_[kv] = State::Resolved;
+                    }
+                    else
+                    {
+                        // The callback could not handle the key-value. Try the next, if any.
+                        ++cb_it;
+                        if (cb_it == callbacks_.end())
+                        {
+                            kv__state_[kv] = State::Unresolved;
+                        }
+                        else
+                        {
+                            std::get<0>(cb_el_kv) = cb_it->first;
+                            priority_queue.push(cb_el_kv);
+                        }
                     }
                 }
             }
 
-            if (cb_it == cb__state__kvs_.end())
-                // All key-values are processed
-                return false;
-
-            const auto &cb = cb_it->first;
-
-            // Process the key-value with this callback for all elements
-            // Question: Shouldn't we keep track of the resolved state _per element_?
-            bool did_resolve = false;
-            for (Element::Ptr element : gubg::make_range(element_begin, element_end))
+            auto check_all_resolved =[](const std::string & key, const std::string & value, bool resolved)
             {
-                auto s = log::scope("Resolving", [&](auto & n) {
-                    n.attr("element_type", element->element_type()).attr("element_language", element->language()).attr("target_type", element->target_type()).attr("key", kv.first).attr("value", kv.second);
-                });
-                const bool res = cb.callback(element, kv.first, kv.second, *this);
-                auto ss = log::scope("callback", [&](auto & n) {
-                    n.attr("uuid", cb.uuid).attr("result", res);
-                });
-                if (res)
-                    did_resolve = true;
-            }
+                MSS_BEGIN(Result);
+                MSG_MSS(resolved, Warning, "Unresolved configuration " << key << " = " << value);
+                MSS_END();
+            };
+            MSS(each_config(check_all_resolved));
 
-            if (did_resolve)
-            {
-                // The callback could handle the key-value: keep it here as `Resolved`
-                cb_it->second[New].erase(kv);
-                cb_it->second[Resolved].insert(kv);
-            }
-            else
-            {
-                // The callback could not handle it: move as `New` to the next callback
-                cb_it->second[New].erase(kv);
-
-                ++cb_it;
-                if (cb_it != cb__state__kvs_.end())
-                    cb_it->second[New].insert(kv);
-            }
-
-            return true;
+            MSS_END();
         }
 
         bool add_callback(const ConfigurationCallback & config_callback);
@@ -119,26 +160,17 @@ namespace cook { namespace process { namespace toolchain {
         {
             MSS_BEGIN(Result);
 
-            for (const auto &[cb, state__kvs]: cb__state__kvs_)
+            for (const auto &[kv, state]: kv__state_)
             {
-                for (const auto &[state, kvs]: state__kvs)
-                {
-                    for (const auto &kv: kvs)
-                    {
-                        MSS(functor(kv.first, kv.second, state));
-                    }
-                }
+                MSS(functor(kv.first, kv.second, state == State::Resolved));
             }
 
             MSS_END();
         }
 
     private:
-        using KeyValues = std::set<KeyValue>;
-        using State__KeyValues = std::map<State, KeyValues>;
-        using Callback__State__KeyValues = std::map<ConfigurationCallback, State__KeyValues>;
-
-        Callback__State__KeyValues cb__state__kvs_;
+        std::map<KeyValue, State> kv__state_;
+        std::map<ConfigurationCallback::Key, ConfigurationCallback> callbacks_;
     };
 
 } } }

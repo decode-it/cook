@@ -7,21 +7,6 @@
 
 namespace cook { namespace process { namespace toolchain { 
 
-    bool Manager::Key::operator<(const Key & rhs) const
-    {
-        if (element_type < rhs.element_type)
-            return true;
-        if (element_type > rhs.element_type)
-            return false;
-
-        if (language < rhs.language)
-            return true;
-        if (language > rhs.language)
-            return false;
-
-        return target_type < rhs.target_type;
-    }
-
     namespace {
 
         std::filesystem::path linux_namer(const model::Recipe & recipe)
@@ -126,7 +111,7 @@ namespace cook { namespace process { namespace toolchain {
 
     Element::Ptr Manager::element(Element::Type type, Language language, TargetType target_type) const
     {
-        Key k(type, language, target_type);
+        Element::Key k{type, language, target_type};
         auto it = elements_.find(k);
         return it == elements_.end() ? Element::Ptr() : it->second;
     }
@@ -141,7 +126,7 @@ namespace cook { namespace process { namespace toolchain {
 
     Element::Ptr Manager::goc_element(Element::Type type, Language language, TargetType target_type)
     {
-        Key k(type, language, target_type);
+        Element::Key k{type, language, target_type};
         auto p = elements_.insert(std::make_pair(k, Element::Ptr()));
 
         // a new element
@@ -169,22 +154,10 @@ namespace cook { namespace process { namespace toolchain {
     {
         MSS_BEGIN(Result);
 
-        {
-            auto first = gubg::iterator::transform(elements_.begin(), util::ElementAt<1>());
-            auto last = gubg::iterator::transform(elements_.end(), util::ElementAt<1>());
-            while (board_.process(first, last))
-            {
-            }
-        }
+        auto first = gubg::iterator::transform(elements_.begin(), util::ElementAt<1>());
+        auto last = gubg::iterator::transform(elements_.end(), util::ElementAt<1>());
+        MSS(board_.process(first, last));
 
-        auto check_all_resolved =[](const std::string & key, const std::string & value, ConfigurationBoard::State s)
-        {
-            MSS_BEGIN(Result);
-            MSG_MSS(s == ConfigurationBoard::Resolved, Warning, "Unresolved configuration " << key << " = " << value);
-            MSS_END();
-
-        };
-        MSS(board_.each_config(check_all_resolved));
         MSS_END();
     }
 
@@ -231,7 +204,7 @@ namespace cook { namespace process { namespace toolchain {
     std::list<std::pair<std::string, std::string>> Manager::all_config_values() const
     {
         std::list<std::pair<std::string, std::string>> lst;
-        auto add = [&](const std::string & key, const std::string & value, ConfigurationBoard::State s)
+        auto add = [&](const std::string & key, const std::string & value, bool)
         {
             lst.push_back(std::make_pair(key, value));
             return true;
@@ -243,7 +216,7 @@ namespace cook { namespace process { namespace toolchain {
 
     void Manager::each_config(const std::function<void(const std::string &, const std::string &)> &cb) const
     {
-        auto lambda = [&](const std::string &key, const std::string &value, ConfigurationBoard::State)
+        auto lambda = [&](const std::string &key, const std::string &value, bool)
         {
             cb(key, value);
             return Result{};
@@ -252,16 +225,16 @@ namespace cook { namespace process { namespace toolchain {
     }
     void Manager::each_config(const std::function<void (const std::string &, const std::string &, bool resolved)> &cb) const
     {
-        auto lambda = [&](const std::string & key, const std::string & value, ConfigurationBoard::State s)
+        auto lambda = [&](const std::string & key, const std::string & value, bool resolved)
         {
-            cb(key, value, s == ConfigurationBoard::Resolved);
+            cb(key, value, resolved);
             return Result{};
         };
         board_.each_config(lambda);
     }
     void Manager::each_config(const std::string &wanted_key, const std::function<void(const std::string &)> &cb) const
     {
-        auto lambda = [&](const std::string &key, const std::string &value, ConfigurationBoard::State)
+        auto lambda = [&](const std::string &key, const std::string &value, bool)
         {
             if (key == wanted_key)
                 cb(value);
