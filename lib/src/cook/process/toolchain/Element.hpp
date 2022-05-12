@@ -6,7 +6,9 @@
 #include "cook/Language.hpp"
 #include "cook/TargetType.hpp"
 #include "gubg/mss.hpp"
+
 #include <memory>
+#include <map>
 
 namespace cook { namespace process { namespace toolchain { 
 
@@ -73,6 +75,8 @@ namespace cook { namespace process { namespace toolchain {
             FileProcessingFctr process_file_;
             KeyValueProcessingFctr process_key_value_;
         };
+
+        using Elements = std::map<Element::Key, Element::Ptr>;
 
         std::ostream & operator<<(std::ostream & str, Element::Type);
         std::ostream & operator<<(std::ostream & str, Element::Key);

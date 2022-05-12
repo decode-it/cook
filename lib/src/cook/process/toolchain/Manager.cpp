@@ -154,9 +154,7 @@ namespace cook { namespace process { namespace toolchain {
     {
         MSS_BEGIN(Result);
 
-        auto first = gubg::iterator::transform(elements_.begin(), util::ElementAt<1>());
-        auto last = gubg::iterator::transform(elements_.end(), util::ElementAt<1>());
-        MSS(board_.process(first, last));
+        MSS(board_.process(elements_));
 
         MSS_END();
     }

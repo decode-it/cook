@@ -79,8 +79,7 @@ namespace cook { namespace process { namespace toolchain {
         bool configure_(Element & element);
         bool initialized_ = false;
 
-        using ElementDesc = std::pair<Element::Type, Language>;
-        std::map<Element::Key, Element::Ptr> elements_;
+        Elements elements_;
         ConfigurationBoard board_;
         NameFunctor primary_target_functor_;
         IntermediaryName intermediary_name_;
