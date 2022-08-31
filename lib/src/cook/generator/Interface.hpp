@@ -25,13 +25,11 @@ public:
     {
         const std::string default_name = default_filename();
 
-        if (false) {}
-        else if (filename_.empty())
+        if (filename_.empty())
             return dirs.output() / default_name;
-        else if (filename_.back() == std::filesystem::path::preferred_separator)
+        if (filename_.back() == std::filesystem::path::preferred_separator)
             return std::filesystem::path(filename_) / default_name;
-        else
-            return std::filesystem::path(filename_);
+        return std::filesystem::path(filename_);
     }
 
 protected:
