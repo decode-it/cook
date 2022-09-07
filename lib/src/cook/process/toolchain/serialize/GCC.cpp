@@ -46,6 +46,8 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             kv.append(Part.Pre, "-mfpu", "auto")
             kv.append(Part.Pre, "-funsafe-math-optimizations")
             kv.append(Part.Pre, "-ftree-vectorize")
+        } else if (k == "fail_on_warning" && v == "return") {
+            kv.append(Part.Pre, "-Werror", "return-type")
         } else if (k == "position_independent_code" && v == "true") {
             kv.append(Part.Pre, "-fPIC"))%";
         if (gcc_variant == GCCVariant::Genuine)
