@@ -97,6 +97,8 @@ build .b0/extern/gubg.io/src/gubg/wav/Writer.cpp.obj: compile extern/gubg.io/src
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/xml/Reader.cpp.obj: compile extern/gubg.io/src/gubg/xml/Reader.cpp
     include_paths = $gubg_include_paths
+build .b0/extern/gubg.io/src/gubg/xml/Writer.cpp.obj: compile extern/gubg.io/src/gubg/xml/Writer.cpp
+    include_paths = $gubg_include_paths
 build .b0/extern/gubg.math/src/gubg/prob/rng.cpp.obj: compile extern/gubg.math/src/gubg/prob/rng.cpp
     include_paths = $gubg_include_paths
 #}
@@ -373,6 +375,8 @@ build .b0/extern/gubg.io/test/src/gubg/sedes/Catalogue_tests.cpp.obj: compile ex
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/serial/Endpoint_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/serial/Endpoint_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/std/filesystem_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/std/filesystem_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/string/Buffer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/string/Buffer_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/string_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/string_tests.cpp
@@ -389,11 +393,11 @@ build .b0/extern/gubg.io/test/src/gubg/terminal/Color_tests.cpp.obj: compile ext
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/wrap/Xcoder_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/wrap/Xcoder_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
-build .b0/extern/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/xml/Builder_tests.cpp
-    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/xml/Reader_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/xml/Reader_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/xml/SVG_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/xml/Writer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/xml/Writer_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.algo/test/src/gubg/eq/Processor_tests.cpp.obj: compile extern/gubg.algo/test/src/gubg/eq/Processor_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
@@ -526,6 +530,7 @@ build build/b0/libgubg.a: archive $
     .b0/extern/gubg.io/src/gubg/wav/Reader.cpp.obj $
     .b0/extern/gubg.io/src/gubg/wav/Writer.cpp.obj $
     .b0/extern/gubg.io/src/gubg/xml/Reader.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/xml/Writer.cpp.obj $
     .b0/extern/gubg.math/src/gubg/prob/rng.cpp.obj $
 
 #}
@@ -687,6 +692,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/s11n/Writer_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/sedes/Catalogue_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/serial/Endpoint_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/std/filesystem_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/string/Buffer_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/string_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj $
@@ -695,9 +701,9 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/t2/Segmenter_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/terminal/Color_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/wrap/Xcoder_tests.cpp.obj $
-    .b0/extern/gubg.io/test/src/gubg/xml/Builder_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/xml/Reader_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/xml/SVG_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/xml/Writer_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/eq/Processor_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/gp/World_tests.cpp.obj $
     .b0/extern/gubg.algo/test/src/gubg/gp/support/Formula_tests.cpp.obj $
