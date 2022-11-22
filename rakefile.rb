@@ -13,7 +13,7 @@ end
 
 require("mkmf")
 ninja_exe = find_executable("ninja")
-case GUBG::os
+case Gubg::os
 when :windows
     if !ninja_exe
         ninja_exe = "#{ENV["gubg"]}/bin/ninja"
@@ -23,7 +23,7 @@ when :windows
         puts "Could not find the msvc compiler \"cl\", trying to load it myself"
         begin
             require("gubg/msvc")
-            GUBG::MSVC::load_compiler(:x64)
+            Gubg::MSVC::load_compiler(:x64)
             if !find_executable("cl")
                 puts "WARING: Could not find the msvc compiler \"cl\":"
                 puts "* [must] Install Microsoft Visual Studio 2017"
@@ -62,7 +62,7 @@ end
 
 desc "Update all to head"
 task :uth do
-    GUBG::each_submod(submods: all_submods) do |info|
+    Gubg::each_submod(submods: all_submods) do |info|
         sh "git checkout #{info[:branch]}"
         sh "git pull --rebase"
         sh "rake uth" if (info[:name][/^gubg\./] and `rake -AT`["rake uth"])
@@ -86,7 +86,7 @@ namespace :b0 do
 
 
     def b0_ninja_fn()
-        case GUBG::os
+        case Gubg::os
         when :linux then "#{$b0_build_dir}/linux/gcc.ninja"
         when :windows then "#{$b0_build_dir}/windows/msvc.ninja"
         when :macos then "#{$b0_build_dir}/macos/clang.ninja"
@@ -96,7 +96,7 @@ namespace :b0 do
     desc "bootstrap-level0: generate the ninja scripts (depends on gubg.build)"
     task :generate do
         require("gubg/build/expand_templates")
-        GUBG::Build::expand_templates("#{$b0_build_dir}/compile.ninja")
+        Gubg::Build::expand_templates("#{$b0_build_dir}/compile.ninja")
     end
 
 
@@ -117,9 +117,9 @@ namespace :b0 do
 
     desc "bootstrap-level0: Install b0-cook.exe as cook"
     task :install => :build do
-        case GUBG::os
+        case Gubg::os
         when :linux, :macos then sh("sudo cp #{$b0_cook} /usr/local/bin/cook")
-        when :windows then cp($b0_cook, File.join(GUBG::shared("bin"), "cook.exe"))
+        when :windows then cp($b0_cook, File.join(Gubg::shared("bin"), "cook.exe"))
         end
     end
 
@@ -146,7 +146,7 @@ end
 
 def toolchain_options()
   toolchain_options = {"c++.std" => 17, "c++.runtime" => "static", "release" => nil}
-  case GUBG::os
+  case Gubg::os
   when :macos
     # For now, we always build for Intel x86_64. This works on M1 as well, although a bit slower.
     # TODO: Add both x86_64 and arm64 builds
@@ -159,18 +159,18 @@ def toolchain_options()
 end
 
 def publish(cook_executable)
-  ext = case GUBG::os
+  ext = case Gubg::os
         when :macos, :linux then ext = ""
         when :windows then ext = ".exe"
         else raise "stop" end
 
   version = `#{cook_executable} -h`[/cook version (\d+\.\d+\.\d+) /, 1]
-  version_dir = GUBG::mkdir("releases/#{version}")
+  version_dir = Gubg::mkdir("releases/#{version}")
   cp "changelog.md", version_dir
   arch = toolchain_options["arch"]
-  dst_dir = GUBG::mkdir("#{version_dir}/#{GUBG::os}/#{arch}")
+  dst_dir = Gubg::mkdir("#{version_dir}/#{Gubg::os}/#{arch}")
   cp cook_executable, File.join(dst_dir, "cook#{ext}")
-  latest_dir = GUBG::mkdir("releases/latest/#{GUBG::os}/#{arch}")
+  latest_dir = Gubg::mkdir("releases/latest/#{Gubg::os}/#{arch}")
   cp cook_executable, File.join(latest_dir, "cook#{ext}")
 end
 
@@ -199,7 +199,7 @@ namespace :b1 do
         Rake.sh($b0_cook, "-f", "./", "-g", "ninja", "-o", odir, "-O", tdir, *opts, "cook/app/exe")
         Rake.sh(ninja_exe, "-f", "#{odir}/build.ninja", *ninja_opts)
         exe = "cook.app.exe"
-        exe += ".exe" if GUBG::os == :windows
+        exe += ".exe" if Gubg::os == :windows
         cp "#{odir}/#{exe}", $b1_cook
     end
 
@@ -236,7 +236,7 @@ task :build => "b1:build" do
 end
 
 def release_filename()
-    case GUBG::os
+    case Gubg::os
     when :linux, :macos then "cook"
     when :windows then "cook.exe"
     end
@@ -246,12 +246,12 @@ desc "Install"
 task :install, [:path] => "build" do |task, args|
     path = args[:path]
     if path
-        GUBG::mkdir(path)
+        Gubg::mkdir(path)
         sh("cp cook.exe #{path}")
     else
-        case GUBG::os
+        case Gubg::os
         when :linux, :macos then sh("sudo cp cook.exe /usr/local/bin/cook")
-        when :windows then cp("cook.exe", GUBG::shared("bin"))
+        when :windows then cp("cook.exe", Gubg::shared("bin"))
         end
     end
 end
@@ -260,7 +260,7 @@ namespace :docker do
 
   desc "Publish a docker build (with old GLIBC version)"
   task :publish do
-    exe = case GUBG::os
+    exe = case Gubg::os
           when :linux
             Dir.chdir("publish/linux") do
               # create the up-to-date docker
@@ -314,5 +314,5 @@ end
 desc "Test"
 task :test, [:filter] => "build" do |t,args|
     FileList.new("scenario/*.rb").each{|fn|require_relative(fn)}
-    GUBG::Catch::run(args[:filter])
+    Gubg::Catch::run(args[:filter])
 end

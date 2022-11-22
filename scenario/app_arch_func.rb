@@ -1,5 +1,5 @@
 require("gubg/catch")
-include GUBG::Catch
+include Gubg::Catch
 
 test_case("app_arch_func") do
     cook_fn = File.expand_path("cook.exe")

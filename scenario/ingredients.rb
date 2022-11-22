@@ -1,5 +1,5 @@
 require("gubg/catch")
-include GUBG::Catch
+include Gubg::Catch
 
 name = "ingredients"
 

@@ -1,5 +1,5 @@
 require("gubg/catch")
-include GUBG::Catch
+include Gubg::Catch
 
 test_case("bundle") do
 	cook_fn = File.expand_path("cook.exe")
@@ -37,7 +37,7 @@ test_case("bundle") do
     	cmake_build = "cmake_build-#{name}"
     	FileUtils.rm_rf(cmake_build)
 
-        if GUBG.os == :macos
+        if Gubg.os == :macos
            sh("cmake -S . -B #{cmake_build} -G Xcode")
            case :xcode
            when :xcode then sh("xcodebuild -project #{cmake_build}/*.xcodeproj")
