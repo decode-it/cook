@@ -381,6 +381,8 @@ build .b0/extern/gubg.io/test/src/gubg/std/filesystem_tests.cpp.obj: compile ext
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/string/Buffer_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/string/Buffer_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.io/test/src/gubg/string/concat_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/string/concat_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/string_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/string_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj: compile extern/gubg.io/test/src/gubg/svg/Turtle_tests.cpp
@@ -697,6 +699,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/serial/Endpoint_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/std/filesystem_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/string/Buffer_tests.cpp.obj $
+    .b0/extern/gubg.io/test/src/gubg/string/concat_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/string_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/svg/Turtle_tests.cpp.obj $
     .b0/extern/gubg.io/test/src/gubg/t2/Builder_tests.cpp.obj $

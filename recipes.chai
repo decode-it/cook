@@ -1,4 +1,3 @@
-cook.toolchain.add_config("c++.std", "17")
 include("extern")
 include("lib")
 include("app")
