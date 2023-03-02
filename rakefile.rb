@@ -1,18 +1,20 @@
+orig_gubg_dir = ENV['gubg']
+
 begin
-    require_relative("extern/gubg.build/load")
+    require_relative('extern/gubg.build/load')
 rescue LoadError
-    puts("This seems to be a fresh clone: I will update all required submodules for you.")
-    sh "git submodule update --init --recursive"
+    puts('This seems to be a fresh clone: I will update all required submodules for you.')
+    sh 'git submodule update --init --recursive'
     retry
 end
-require("gubg/shared")
+require('gubg/shared')
 
 task :default do
-    sh "rake -T"
+    sh 'rake -T'
 end
 
-require("mkmf")
-ninja_exe = find_executable("ninja")
+require('mkmf')
+ninja_exe = find_executable('ninja')
 case Gubg::os
 when :windows
     if !ninja_exe
@@ -40,7 +42,7 @@ gubg_submods = %w[build std math io algo chaiscript].map{|e| "extern/gubg.#{e}"}
 cook_submods = %w[releases doc/sphinx/sphinx-chai]
 all_submods = gubg_submods + cook_submods
 
-desc "Clean"
+desc 'Clean'
 task :clean do
     rm(FileList.new("**/*.obj"))
     rm(FileList.new("*.exe"))
@@ -50,17 +52,17 @@ task :clean do
     Rake::Task["gubg:clean"].invoke
 end
 
-desc "Proper"
+desc 'Proper'
 task :proper do
     Rake::Task["gubg:proper"].invoke
 end
 
-desc "Prepare the submodules"
+desc 'Prepare the submodules'
 task :prepare do
     Rake::Task["gubg:prepare"].invoke()
 end
 
-desc "Update all to head"
+desc 'Update all to head'
 task :uth do
     Gubg::each_submod(submods: all_submods) do |info|
         sh "git checkout #{info[:branch]}"
@@ -119,7 +121,7 @@ namespace :b0 do
     task :install => :build do
         case Gubg::os
         when :linux, :macos then sh("sudo cp #{$b0_cook} /usr/local/bin/cook")
-        when :windows then cp($b0_cook, File.join(Gubg::shared("bin"), "cook.exe"))
+        when :windows then cp($b0_cook, File.join(orig_gubg_dir || Gubg.shared(), 'bin', 'cook.exe'))
         end
     end
 
@@ -251,7 +253,7 @@ task :install, [:path] => "build" do |task, args|
     else
         case Gubg::os
         when :linux, :macos then sh("sudo cp cook.exe /usr/local/bin/cook")
-        when :windows then cp("cook.exe", Gubg::shared("bin"))
+        when :windows then cp("cook.exe", File.join(orig_gubg_dir || Gubg.shared(), 'bin'))
         end
     end
 end
