@@ -258,6 +258,12 @@ task :install, [:path] => "build" do |task, args|
     end
 end
 
+desc 'Generate compile_commands.json'
+task :gencc do
+    sh('cook', '-g', 'ninja', 'cook/app/exe')
+    sh("ninja -t compdb > compile_commands.json")
+end
+
 namespace :docker do
 
   desc "Publish a docker build (with old GLIBC version)"
