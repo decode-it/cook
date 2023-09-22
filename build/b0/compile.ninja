@@ -49,6 +49,8 @@ build .b0/extern/gubg.io/src/gubg/Strange.cpp.obj: compile extern/gubg.io/src/gu
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj: compile extern/gubg.io/src/gubg/bitmagic/bitmagic.cpp
     include_paths = $gubg_include_paths
+build .b0/extern/gubg.io/src/gubg/cli/Range.cpp.obj: compile extern/gubg.io/src/gubg/cli/Range.cpp
+    include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/cpp/Function.cpp.obj: compile extern/gubg.io/src/gubg/cpp/Function.cpp
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/cpp/IncludeGuard.cpp.obj: compile extern/gubg.io/src/gubg/cpp/IncludeGuard.cpp
@@ -100,6 +102,10 @@ build .b0/extern/gubg.io/src/gubg/xml/Escaper.cpp.obj: compile extern/gubg.io/sr
 build .b0/extern/gubg.io/src/gubg/xml/Reader.cpp.obj: compile extern/gubg.io/src/gubg/xml/Reader.cpp
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.io/src/gubg/xml/Writer.cpp.obj: compile extern/gubg.io/src/gubg/xml/Writer.cpp
+    include_paths = $gubg_include_paths
+build .b0/extern/gubg.algo/src/gubg/graph/Graph.cpp.obj: compile extern/gubg.algo/src/gubg/graph/Graph.cpp
+    include_paths = $gubg_include_paths
+build .b0/extern/gubg.algo/src/gubg/graph/search/Dependency.cpp.obj: compile extern/gubg.algo/src/gubg/graph/search/Dependency.cpp
     include_paths = $gubg_include_paths
 build .b0/extern/gubg.math/src/gubg/prob/rng.cpp.obj: compile extern/gubg.math/src/gubg/prob/rng.cpp
     include_paths = $gubg_include_paths
@@ -510,6 +516,7 @@ build build/b0/libgubg.a: archive $
     .b0/extern/gubg.io/src/gubg/OptionParser.cpp.obj $
     .b0/extern/gubg.io/src/gubg/Strange.cpp.obj $
     .b0/extern/gubg.io/src/gubg/bitmagic/bitmagic.cpp.obj $
+    .b0/extern/gubg.io/src/gubg/cli/Range.cpp.obj $
     .b0/extern/gubg.io/src/gubg/cpp/Function.cpp.obj $
     .b0/extern/gubg.io/src/gubg/cpp/IncludeGuard.cpp.obj $
     .b0/extern/gubg.io/src/gubg/cpp/Struct.cpp.obj $
@@ -536,6 +543,8 @@ build build/b0/libgubg.a: archive $
     .b0/extern/gubg.io/src/gubg/xml/Escaper.cpp.obj $
     .b0/extern/gubg.io/src/gubg/xml/Reader.cpp.obj $
     .b0/extern/gubg.io/src/gubg/xml/Writer.cpp.obj $
+    .b0/extern/gubg.algo/src/gubg/graph/Graph.cpp.obj $
+    .b0/extern/gubg.algo/src/gubg/graph/search/Dependency.cpp.obj $
     .b0/extern/gubg.math/src/gubg/prob/rng.cpp.obj $
 
 #}

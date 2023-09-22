@@ -147,7 +147,7 @@ namespace :b0 do
 end
 
 def toolchain_options()
-  toolchain_options = {"c++.std" => 17, "c++.runtime" => "static", "release" => nil}
+  toolchain_options = {"c++.std" => 20, "c++.runtime" => "static", "release" => nil}
   case Gubg::os
   when :macos
     # For now, we always build for Intel x86_64. This works on M1 as well, although a bit slower.

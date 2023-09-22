@@ -1,6 +1,6 @@
 rule compile
     depfile = $out.d
-    command = g++ -std=c++17 $cflags $defines $include_paths -c $in -o $out -MMD -MF $out.d
+    command = g++ -std=c++20 $cflags $defines $include_paths -c $in -o $out -MMD -MF $out.d
 rule archive
     command = ar $aflags $out $in
 rule link
