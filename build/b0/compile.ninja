@@ -281,6 +281,8 @@ build .b0/extern/gubg.std/test/src/gubg/Range_tests.cpp.obj: compile extern/gubg
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/Signal_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/Signal_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.std/test/src/gubg/Signaled_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/Signaled_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/Transition_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/Transition_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/array/Pool_tests.cpp
@@ -655,6 +657,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/Range_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/Signal_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/Signaled_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/Transition_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/iterator/Transform_tests.cpp.obj $
