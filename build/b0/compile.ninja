@@ -289,6 +289,8 @@ build .b0/extern/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj: compile extern
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/iterator/Transform_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/iterator/Transform_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.std/test/src/gubg/ix/Queue_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/ix/Queue_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/ix/Range_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/ix/Range_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/macro/variadic_tests.cpp
@@ -296,6 +298,8 @@ build .b0/extern/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj: compile ex
 build .b0/extern/gubg.std/test/src/gubg/mss_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/mss_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp
+    include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
+build .b0/extern/gubg.std/test/src/gubg/thread/Pool2_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/thread/Pool2_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
 build .b0/extern/gubg.std/test/src/gubg/thread/Pool_tests.cpp.obj: compile extern/gubg.std/test/src/gubg/thread/Pool_tests.cpp
     include_paths = $gubg_include_paths $gubg_test_include_paths $catch_include_paths
@@ -661,10 +665,12 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/Transition_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/array/Pool_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/iterator/Transform_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/ix/Queue_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/ix/Range_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/macro/variadic_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/mss_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/pattern/SignalSlot_tests.cpp.obj $
+    .b0/extern/gubg.std/test/src/gubg/thread/Pool2_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/thread/Pool_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/thread/Semaphore_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/time/Date_tests.cpp.obj $
