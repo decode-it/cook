@@ -257,6 +257,13 @@ Proof-of-concept version.
 
 ## 1.2.26
 * Key-value configuration values are now processed per-element, as was the case for 1.2.22.
+* Support for building cook with C++20
+* Support for generating compile commands with `rake gencc`
+
+## 1.2.27
+* Support for `c++.noexcept`
+* Removed MSVC link against `mfcs140u`
+* Added `.clang-format` file
 
 ## Next
 

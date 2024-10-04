@@ -67,6 +67,8 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         oss << R"%(
         } else if (k == "c++.std" && e.language == Language.CXX) {
             kv.append(Part.Pre, "-std", "c++${v}")
+        } else if (k == "c++.noexcept" && e.language == Language.CXX) {
+            kv.append(Part.Pre, "-fno-exceptions")
         } else if (k == "c.std" && e.language == Language.C) {
             kv.append(Part.Pre, "-std", "c${v}")
         } else if (k == "c++.std" && e.language == Language.ObjectiveCXX) {

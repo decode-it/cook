@@ -260,7 +260,7 @@ end
 
 desc 'Generate compile_commands.json'
 task :gencc do
-    sh('cook', '-g', 'ninja', 'cook/app/exe')
+    sh('cook', '-T', 'c++.std=20', '-g', 'ninja', 'cook/app/exe')
     sh("ninja -t compdb > compile_commands.json")
 end
 

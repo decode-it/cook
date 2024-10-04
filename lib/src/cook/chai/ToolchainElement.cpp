@@ -2,8 +2,8 @@
 
 namespace cook { namespace chai {
 
-    KeyValues::KeyValues(key_values_type * map)
-    : map_(map)
+    KeyValues::KeyValues(key_values_type *map)
+        : map_(map)
     {
     }
 
@@ -12,27 +12,40 @@ namespace cook { namespace chai {
         (*map_)[part].clear();
     }
 
-    void KeyValues::append_1(Part part, const std::string & key)
+    void KeyValues::erase_1(Part part, const std::string &key)
+    {
+        auto &kvs = (*map_)[part];
+        for (auto it = kvs.begin(); it != kvs.end();)
+        {
+            const auto &kv = *it;
+            if (kv.first == key)
+                it = kvs.erase(it);
+            else
+                ++it;
+        }
+    }
+
+    void KeyValues::append_1(Part part, const std::string &key)
     {
         (*map_)[part].emplace_back(key, "");
     }
 
-    void KeyValues::append_2(Part part, const std::string & key, const std::string & value)
+    void KeyValues::append_2(Part part, const std::string &key, const std::string &value)
     {
         (*map_)[part].emplace_back(key, value);
     }
 
-    Translators::Translators(translators_type * map)
-    : map_(map)
+    Translators::Translators(translators_type *map)
+        : map_(map)
     {
     }
 
-    Translators::translator_type & Translators::operator[](Part part) 
+    Translators::translator_type &Translators::operator[](Part part)
     {
         return (*map_)[part];
     }
 
-    ToolchainElement::ToolchainElement(Element::Ptr element, const Context* context)
+    ToolchainElement::ToolchainElement(Element::Ptr element, const Context *context)
         : element_(element)
         , context_(context)
     {
@@ -66,14 +79,12 @@ namespace cook { namespace chai {
     {
         return element_->target_type();
     }
-        
-    void ToolchainElement::set_file_processing_function(const FileProcessingFctr & fctr)
-    {
-        const Context * context = context_;
-        
-        auto fct = [=](process::toolchain::Element & e, const LanguageTypePair & ltp, const ingredient::File & file)
-        {
 
+    void ToolchainElement::set_file_processing_function(const FileProcessingFctr &fctr)
+    {
+        const Context *context = context_;
+
+        auto fct = [=](process::toolchain::Element &e, const LanguageTypePair &ltp, const ingredient::File &file) {
             File f(ltp, file, context);
             ToolchainElement el(e.shared_from_this(), context);
             Recipe r(&e.recipe(), context);
@@ -81,11 +92,10 @@ namespace cook { namespace chai {
         };
         element_->set_file_processing_function(fct);
     }
-    void ToolchainElement::set_key_value_processing_function(const KeyValueProcessingFctr & fctr)
+    void ToolchainElement::set_key_value_processing_function(const KeyValueProcessingFctr &fctr)
     {
-        const Context * context = context_;
-        auto fct = [=](process::toolchain::Element & e, const LanguageTypePair & ltp, const ingredient::KeyValue& kv)
-        {
+        const Context *context = context_;
+        auto fct = [=](process::toolchain::Element &e, const LanguageTypePair &ltp, const ingredient::KeyValue &kv) {
             KeyValue k(ltp, kv, context);
             ToolchainElement el(e.shared_from_this(), context);
             Recipe r(&e.recipe(), context);
@@ -94,4 +104,4 @@ namespace cook { namespace chai {
         element_->set_key_value_processing_function(fct);
     }
 
-} }
+}} // namespace cook::chai

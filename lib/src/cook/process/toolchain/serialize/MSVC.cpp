@@ -37,6 +37,10 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             }
         } else if (k == "c++.std" && e.language == Language.CXX) {
             kv.append(Part.Pre, "std", "c++${v}")
+        } else if (k == "c++.noexcept" && e.language == Language.CXX) {
+            kv.erase(Part.Pre, "EHsc")
+            kv.append(Part.Pre, "EHs-")
+            kv.append(Part.Pre, "EHc-")
         } else {
             return false;
         }
@@ -45,13 +49,7 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         } else if (k == "debug_symbols" && v == "true") {
             kv.append(Part.Pre, "DEBUG")
         } else if (k == "c++.runtime" && v == "dynamic") {
-            if (e.target_type() == TargetType.SharedLibrary) {
-                if (b.has_config("config", "debug")) {
-                    kv.append(Part.Library, "mfcs140ud")
-                } else {
-                    kv.append(Part.Library, "mfcs140u")
-                }
-            } else {
+            if (e.target_type() != TargetType.SharedLibrary) {
                 if (b.has_config("config", "debug")) {
                     kv.append(Part.Library, "msvcrtd")
                 } else {

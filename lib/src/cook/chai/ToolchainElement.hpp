@@ -2,7 +2,6 @@
 #define HEADER_cook_chai_ToolchainElement_hpp_ALREADY_INCLUDED
 
 #include "cook/chai/Freezable.hpp"
-#include "cook/chai/Flags.hpp"
 #include "cook/chai/File.hpp"
 #include "cook/chai/Recipe.hpp"
 #include "cook/chai/KeyValue.hpp"
@@ -21,6 +20,7 @@ namespace cook { namespace chai {
         KeyValues(key_values_type * map);
 
         void clear(Part part);
+        void erase_1(Part part, const std::string & key);
         void append_1(Part part, const std::string & key);
         void append_2(Part part, const std::string & key, const std::string & value);
 

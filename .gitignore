@@ -18,3 +18,5 @@ test.svg
 mkmf.log
 doc/sphinx/_build
 .ycm_extra_conf.py
+.cache/
+*.resp

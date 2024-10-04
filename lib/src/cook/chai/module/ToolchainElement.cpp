@@ -63,6 +63,7 @@ namespace cook { namespace chai { namespace module {
         // the key values
         ptr->add(chaiscript::user_type<KeyValues>(), "KeyValues");
         ptr->add(chaiscript::fun(&KeyValues::clear), "clear");
+        ptr->add(chaiscript::fun(&KeyValues::erase_1), "erase");
         ptr->add(chaiscript::fun(&KeyValues::append_1), "append");
         ptr->add(chaiscript::fun(&KeyValues::append_2), "append");
 
