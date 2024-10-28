@@ -54,7 +54,20 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             if (false) {
             } else if (v == "dynamic") {
             } else if (v == "static") {
-                kv.append(Part.Runtime, "-static-libstdc++")
+                // Place each data variable in its own section, improving dead code elimination at link time
+                kv.append(Part.Runtime, "-fdata-sections")
+                // Place each function in its own section, improving dead code elimination at link time
+                kv.append(Part.Runtime, "-ffunction-sections")
+                // Improved stack overflow protection (also from statically linked C++ library) without too much performance impact
+                kv.append(Part.Runtime, "-fstack-protector-strong")
+                // Seems to be a good practice in combo with static C++ runtime
+                kv.append(Part.Runtime, "-funwind-tables")
+                // Do not use absolute paths for error messaging
+                kv.append(Part.Runtime, "-no-canonical-prefixes")
+                // Seems to be a good practice in combo with static C++ runtime
+                kv.append(Part.Runtime, "-fno-strict-aliasing")
+                // Improved runtime checks (also from statically linked C++ library) without too much performance impact
+                kv.append(Part.Define, "_FORTIFY_SOURCE", "2")
             } else {
                 return false;
             })%";
@@ -105,7 +118,10 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             if (false) {
             } else if (v == "dynamic") {
             } else if (v == "static") {
+                // Statically link-in C++ standard library
                 kv.append(Part.Runtime, "-static-libstdc++")
+                // Removes unused sections
+                kv.append(Part.Runtime, "-Wl,--gc-sections")
             } else {
                 return false;
             })%";
