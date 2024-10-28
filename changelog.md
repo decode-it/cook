@@ -265,6 +265,10 @@ Proof-of-concept version.
 * Removed MSVC link against `mfcs140u`
 * Added `.clang-format` file
 
+## 1.2.28
+* Support for `c++.runtime=static` for clang.
+* Unknown `c++.runtime` value is now properly indicated
+
 ## Next
 
 * Remove Part.Runtime, it is probably not needed anymore since v1.2.23

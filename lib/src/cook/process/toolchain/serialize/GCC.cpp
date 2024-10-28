@@ -49,15 +49,15 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
         } else if (k == "fail_on_warning" && v == "return") {
             kv.append(Part.Pre, "-Werror", "return-type")
         } else if (k == "position_independent_code" && v == "true") {
-            kv.append(Part.Pre, "-fPIC"))%";
-        if (gcc_variant == GCCVariant::Genuine)
-        {
-        oss << R"%(
+            kv.append(Part.Pre, "-fPIC")
         } else if (k == "c++.runtime") {
-            if (false) {}
-            else if (v == "dynamic") { }
-            else if (v == "static") { kv.append(Part.Runtime, "-static-libstdc++") })%";
-        }
+            if (false) {
+            } else if (v == "dynamic") {
+            } else if (v == "static") {
+                kv.append(Part.Runtime, "-static-libstdc++")
+            } else {
+                return false;
+            })%";
         if (gcc_variant == GCCVariant::Clang)
         {
         oss << R"%(
@@ -100,15 +100,15 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
             kv.append(Part.Pre, "-fsanitize", "address") 
             kv.append(Part.Pre, "-fsanitize", "undefined")
         } else if (k == "config" && v == "profile") {
-            kv.append(Part.Pre, "-pg", ""))%";
-        if (gcc_variant == GCCVariant::Genuine)
-        {
-        oss << R"%(
+            kv.append(Part.Pre, "-pg", "")
         } else if (k == "c++.runtime") {
-            if (false) {}
-            else if (v == "dynamic") { }
-            else if (v == "static") { kv.append(Part.Runtime, "-static-libstdc++") })%";
-        }
+            if (false) {
+            } else if (v == "dynamic") {
+            } else if (v == "static") {
+                kv.append(Part.Runtime, "-static-libstdc++")
+            } else {
+                return false;
+            })%";
         if (gcc_variant == GCCVariant::Clang)
         {
         oss << R"%(
