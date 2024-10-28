@@ -154,6 +154,8 @@ def toolchain_options()
     # TODO: Add both x86_64 and arm64 builds
     toolchain_options["arch"] = "x64"
     toolchain_options["target"] = "x86_64-apple-macos10.15"
+    # MacOS has no static C++ runtime
+    toolchain_options["c++.runtime"] = "dynamic"
   when :windows
     toolchain_options["arch"] = "x86"
   end
