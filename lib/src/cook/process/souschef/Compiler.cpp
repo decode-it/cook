@@ -2,6 +2,7 @@
 #include "cook/process/toolchain/Manager.hpp"
 #include "cook/process/command/Compile.hpp"
 #include "cook/util/File.hpp"
+#include "cook/util/WindowsName.hpp"
 #include "cook/log/Scope.hpp"
 #include "gubg/hash/MD5.hpp"
 
@@ -66,18 +67,29 @@ namespace cook { namespace process { namespace souschef {
     ingredient::File Compiler::construct_object_file(const ingredient::File & source, model::Recipe & recipe, const Context & context) const
     {
         auto tmp_path = context.dirs().temporary(true);
-
-        // get the path to the file, making sure the initial separator from the URI is dropped
-        std::filesystem::path dir = tmp_path / recipe.uri().string(false);
-        {
-            gubg::hash::md5::Stream s;
-            s << source.dir().string();
-            dir /= s.hash_hex();
-        }
-
         const std::filesystem::path rel = context.toolchain().intermediary_name(source.rel(), LanguageTypePair(language_, Type::Source), LanguageTypePair(Language::Binary, Type::Object), process::toolchain::Element::Compile);
 
-        ingredient::File object(dir, rel);
+        std::filesystem::path dir;
+        std::filesystem::path obj_rel = rel;
+
+        if (context.toolchain().has_config("shorten_names"))
+        {
+            const std::filesystem::path short_rel = util::shortened_object_relpath(recipe.uri(), source.dir(), source.rel(), rel);
+            dir = tmp_path / short_rel.parent_path();
+            obj_rel = short_rel.filename();
+        }
+        else
+        {
+            // get the path to the file, making sure the initial separator from the URI is dropped
+            dir = tmp_path / recipe.uri().string(false);
+            {
+                gubg::hash::md5::Stream s;
+                s << source.dir().string();
+                dir /= s.hash_hex();
+            }
+        }
+
+        ingredient::File object(dir, obj_rel);
         object.set_content(Content::Generated);
         object.set_owner(&recipe);
         object.set_overwrite(Overwrite::IfSame);

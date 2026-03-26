@@ -16,6 +16,8 @@ namespace cook { namespace ingredient {
         dir_(dir),
         rel_(rel)
         {
+
+            std::cout << "File: dir: " << dir << std::endl;
         }
         
         File(const File & rhs, const std::filesystem::path & rdir)

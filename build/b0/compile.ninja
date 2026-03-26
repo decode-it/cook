@@ -492,6 +492,8 @@ build .b0/lib/test/src/cook/rules/Extensions_tests.cpp.obj: compile lib/test/src
     include_paths = $cook_lib_include_paths $catch_include_paths 
 build .b0/lib/test/src/cook/rules/Resolve_tests.cpp.obj: compile lib/test/src/cook/rules/Resolve_tests.cpp
     include_paths = $cook_lib_include_paths $catch_include_paths 
+build .b0/lib/test/src/cook/util/WindowsName_tests.cpp.obj: compile lib/test/src/cook/util/WindowsName_tests.cpp
+    include_paths = $cook_lib_include_paths $catch_include_paths 
 #}
 
 #[output](script:
@@ -657,6 +659,7 @@ build build/b0/unit_tests.exe: link .b0/gubg.std/src/catch_runner.cpp.obj $
     .b0/lib/test/src/cook/rules/C_family_tests.cpp.obj $
     .b0/lib/test/src/cook/rules/Extensions_tests.cpp.obj $
     .b0/lib/test/src/cook/rules/Resolve_tests.cpp.obj $
+    .b0/lib/test/src/cook/util/WindowsName_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/History_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/OnlyOnce_tests.cpp.obj $
     .b0/extern/gubg.std/test/src/gubg/Range_tests.cpp.obj $

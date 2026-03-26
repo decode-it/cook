@@ -1,8 +1,10 @@
 #include "cook/generator/Ninja.hpp"
+#include "cook/process/toolchain/Manager.hpp"
 #include "cook/process/toolchain/Types.hpp"
 #include "cook/Context.hpp"
 #include "cook/log/Scope.hpp"
 #include "cook/OS.hpp"
+#include "cook/util/WindowsName.hpp"
 
 namespace cook { namespace generator { 
 
@@ -108,7 +110,10 @@ namespace cook { namespace generator {
             unsigned int count = uri_count_map[uri]++;
 
             // generate the name
-            cmd_name = gubg::stream([&](auto & os) { os << uri << "_" << count; });
+            if (context.toolchain().has_config("shorten_names"))
+                cmd_name = util::shortened_rule_name(uri, count);
+            else
+                cmd_name = gubg::stream([&](auto & os) { os << uri << "_" << count; });
             bool add_to_map = true;
 
             process::command::Filenames input = { "${in}" };
@@ -252,6 +257,7 @@ namespace cook { namespace generator {
 
                 std::string build_command;
                 MSS(goc_command(command, recipe->uri().string(false, '_'), build_command));
+                std::cout << "build_command: " << build_command << std::endl;
                 //The build basically specifies the dependency between the output and input files
                 ofs << "build";
                 auto stream_escaped = [&](const std::string &str) {

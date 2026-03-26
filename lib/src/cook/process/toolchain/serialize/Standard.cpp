@@ -57,6 +57,15 @@ namespace cook { namespace process { namespace toolchain { namespace serialize {
     {
         serialize_naming(oss);
         oss << R"%(
+cook.toolchain.configure(5, "generator config", fun(e, k, v, b) {
+    if (false) {
+    } else if (k == "shorten_names" && v == "true") {
+        return true
+    } else {
+        return false
+    }
+})
+
 cook.toolchain.configure(1, "single key translations", fun(e,k,v,b) {
     if (v != "true") {
         return false
@@ -116,5 +125,3 @@ cook.toolchain.configure(10, "standard toolchain config", fun(e, k, v, b) {
     }
 
 } } } }
-
-
